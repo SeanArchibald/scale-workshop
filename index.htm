@@ -1,0 +1,291 @@
+<!--
+  _____   __   ____  _        ___      __    __   ___   ____   __  _  _____ __ __   ___   ____
+ / ___/  /  ] /    || |      /  _]    |  |__|  | /   \ |    \ |  |/ ]/ ___/|  |  | /   \ |    \
+(   \_  /  / |  o  || |     /  [_     |  |  |  ||     ||  D  )|  ' /(   \_ |  |  ||     ||  o  )
+ \__  |/  /  |     || |___ |    _]    |  |  |  ||  O  ||    / |    \ \__  ||  _  ||  O  ||   _/
+ /  \ /   \_ |  _  ||     ||   [_     |  `  '  ||     ||    \ |     \/  \ ||  |  ||     ||  |
+ \    \     ||  |  ||     ||     |     \      / |     ||  .  \|  .  |\    ||  |  ||     ||  |
+  \___|\____||__|__||_____||_____|      \_/\_/   \___/ |__|\_||__|\_| \___||__|__| \___/ |__|
+
+                                                                                             -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Scale Workshop</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Scale Workshop" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://sevish.com/scaleworkshop/" />
+    <meta property="og:image" content="http://sevish.com/scaleworkshop/assets/img/scale-workshop-og-image.png" />
+    <meta property="og:description" content="Scale Workshop is a tool that allows you to create microtonal tunings within your web browser. You can export these tunings to your device and use them to tune various synthesizers." />
+    <meta property="og:site_name" content="Sevish Music" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="inc/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="inc/jquery-ui-1.12.1/jquery-ui.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#9bd03b">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse bg-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header" style="padding-left:10px;">
+          <button type="button" class="navbar-toggle collapsed pull-left" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="http://sevish.com/scaleworkshop" class="navbar-brand pull-right">Scale Workshop</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> New <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#" id="generate_equal_temperament"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Equal temperament</a></li>
+                <li><a href="#" id="generate_rank_2_temperament"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Rank-2 temperament</a></li>
+                <li><a href="#" id="generate_harmonic_series_segment"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Harmonic series segment</a></li>
+                <li><a href="#" id="generate_subharmonic_series_segment"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Subharmonic series segment</a></li>
+                <li class="divider"></li>
+                <li><a href="#" id="import-scala-scl"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Import .scl</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span> Modify <span class="caret"></span></a>
+              <ul class="dropdown-menu" id="modify-buttons">
+                <!--<li><a href="#" id="modify_key_transpose"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span> Key transpose</a></li>-->
+                <li><a href="#" id="modify_mode"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span> Mode</a></li>
+                <!--<li><a href="#" id="modify_extend">Extend/repeat</a></li>-->
+                <li><a href="#" id="modify_stretch"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span> Stretch/compress</a></li>
+                <li><a href="#" id="modify_random_variance"><span class="glyphicon glyphicon-random" aria-hidden="true"></span> Random variance</a></li>
+                <!--<li><a href="#" id="modify_quantize_to_bpm">Quantize to BPM</a></li>-->
+                <!--<li><a href="#" id="modify_quantize_to_bpm">Octave reduce</a></li>-->
+              </ul>
+            </li>
+            <!--<li><a href="#"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> Play</a></li>-->
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export <span class="caret"></span></a>
+              <ul class="dropdown-menu" id="export-buttons">
+                <li><a href="#">Generate some tuning data first</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="README.txt" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> View Readme</a></li>
+                <li><a href="http://sevish.com/contact" target="_blank"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Send Feedback</a></li>
+                <li><a href="http://sevish.com" target="_blank"><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span> Made by Sevish</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid">
+
+      <div class="row">
+        <div class="col-sm-6 col-md-4 col-lg-4">
+          <form>
+            <label>Tuning name/description</label>
+            <div class="form-group">
+              <input id="txt_name" name="base_frequency" type="text" class="form-control"></input>
+            </div>
+
+            <label>Tuning data</label>
+            <div class="form-group">
+              <textarea id="txt_tuning_data" class="form-control" rows="12"></textarea>
+            </div>
+
+            <p>One interval per line, values with a . are cents, values without are ratios</p>
+            <hr/>
+
+            <div class="form-group">
+              <label>Base frequency (note 1/1)</label>
+              <div class="input-group">
+                <input id="txt_base_frequency" name="base_frequency" type="number" min="0.0001" max="999999" class="form-control" value="440"></input>
+                <div class="input-group-addon">Hz</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Base MIDI note (note 1/1)</label>
+              <div class="input-group">
+                <input id="txt_base_midi_note" name="base_midi_note" type="number" min="0" max="127" step="1" class="form-control" value="69"></input>
+                <div id="base_midi_note_name" class="input-group-addon">A5</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <input name="Parse" id="btn_parse" type="button" value="Calculate" class="btn btn-primary"></input>
+              <input name="Clear" id="btn_clear" type="button" value="Clear all" class="btn btn-danger pull-right"></input>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-sm-6 col-md-4 col-lg-4">
+          <noscript>
+            <p class="bg-danger lead" style="padding:1em;">JavaScript is disabled in your browser. Please enable JavaScript in order to use this software.</p>
+          </noscript>
+          <table id="tuning-table" class="table table-condensed table-hover">
+          </table>
+        </div>
+
+        <!--<div class="col-sm-12 col-md-4 col-lg-4">
+          <div class="bg-info" style="padding:1em;">
+            <h4>What is this?</h4>
+            <p>Scale Workshop is a tool that allows you to create microtonal tunings within your web browser. You can export these tunings to your device and use them to tune various synthesizers.</p>
+          </div>
+        </div>-->
+
+      </div>
+      <div class="row">
+
+      </div>
+
+    </div><!-- .container-fluid -->
+
+    <!-- Hidden by default -->
+    <input type="file" id="scala-file" accept=".scl" style="display:none;" onchange="parse_imported_scala_scl(event)" />
+
+    <!-- Generator Modals -->
+    <div id="modal_generate_equal_temperament" class="modal" title="Generate equal temperament">
+      <form>
+        <label>Number of divisions</label>
+        <div class="form-group">
+          <input id="input_number_of_divisions" name="" type="number" min="0.0001" max="999999" class="form-control" value="15"></input>
+        </div>
+
+        <label>Interval to divide</label>
+        <div class="form-group">
+          <input id="input_interval_to_divide" name="" type="text" class="form-control" value="2/1"></input>
+        </div>
+      </form>
+    </div>
+
+    <div id="modal_generate_rank_2_temperament" class="modal" title="Generate rank-2 temperament">
+      <form>
+        <label>Generator</label>
+        <div class="form-group">
+          <input id="input_rank-2_generator" name="" type="text" class="form-control" value="3/2"></input>
+        </div>
+
+        <label>Period</label>
+        <div class="form-group">
+          <input id="input_rank-2_period" name="" type="text" class="form-control" value="2/1"></input>
+        </div>
+
+        <label>Scale size</label>
+        <div class="form-group">
+          <input id="input_rank-2_size" name="" type="number" min="2" max="99999" step="1" class="form-control" value="7"></input>
+        </div>
+      </form>
+      <hr/>
+      <button class="btn btn-default" onclick="show_mos( jQuery('#input_rank-2_period').val(), jQuery('#input_rank-2_generator').val(), jQuery('#input_rank-2_size').val(), jQuery('#input_rank-2_mos_threshold').val() );" style="float:left;">Show MOS</button>
+      <p style="text-align:right;">(ignore MOS with steps smaller than <input id="input_rank-2_mos_threshold" name="" type="number" min="0.1" max="600" value="2.5" style="width:4em;"></input> cents)</p>
+      <span id="info_rank_2_mos" style="display:block;margin-top:10px;"></span>
+    </div>
+
+    <div id="modal_generate_harmonic_series_segment" class="modal" title="Generate harmonic series segment">
+      <form>
+        <label>Lowest harmonic</label>
+        <div class="form-group">
+          <input id="input_lowest_harmonic" name="" type="number" min="1" max="999999" step="1" class="form-control" value="8"></input>
+        </div>
+
+        <label>Highest harmonic</label>
+        <div class="form-group">
+          <input id="input_highest_harmonic" name="" type="number" min="1" max="999999" step="1" class="form-control" value="16"></input>
+        </div>
+      </form>
+    </div>
+
+    <div id="modal_generate_subharmonic_series_segment" class="modal" title="Generate subharmonic series segment">
+      <form>
+        <label>Lowest subharmonic</label>
+        <div class="form-group">
+          <input id="input_lowest_subharmonic" name="" type="number" min="1" max="999999" step="1" class="form-control" value="8"></input>
+        </div>
+
+        <label>Highest subharmonic</label>
+        <div class="form-group">
+          <input id="input_highest_subharmonic" name="" type="number" min="1" max="999999" step="1" class="form-control" value="16"></input>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modify Modals -->
+    <div id="modal_modify_stretch" class="modal" title="Stretch/compress tuning">
+      <p>This applies a stretching or compression evenly across the whole scale.<br/>Entering 1 will cause no change; entering 2 will make every interval twice as large.</p>
+      <form>
+        <label>Stretch ratio</label>
+        <div class="form-group">
+          <input id="input_stretch_ratio" name="" type="number" class="form-control" value="1.005" min="0.0001" max="99999"></input>
+        </div>
+      </form>
+    </div>
+
+    <div id="modal_modify_random_variance" class="modal" title="Random variance">
+      <p>This will add a random amount of detuning to each note of the scale.</p>
+      <form>
+        <label>Maximum variance in cents</label>
+        <div class="form-group">
+          <input id="input_cents_max_variance" name="" type="number" class="form-control" value="10" min="0.0001" max="99999"></input>
+        </div>
+
+        <p>By default, the "octave" won't be detuned. This prevents the scale sound progressively more out-of-tune as you go up/down by octaves. Check the box below to over-ride this.</p>
+
+        <div class="checkbox">
+          <label>
+            <input id="input_checkbox_vary_period" type="checkbox" class="form-control"></input> Vary the octave
+          </label>
+        </div>
+      </form>
+    </div>
+
+    <div id="modal_modify_mode" class="modal" title="Mode">
+      <p>Create a subset of a scale.</p>
+      <form>
+        <label>Mode</label>
+        <div class="form-group">
+          <input id="input_modify_mode" name="" type="text" class="form-control" value="" placeholder="2 2 1 2 2 2 1"></input>
+        </div>
+      </form>
+    </div>
+
+    <!--<div id="modal_modify_key_transpose" class="modal" title="Key transpose">
+      <p>Set 1/1 to another note of your scale.</p>
+      <form>
+        <label>Key for 1/1</label>
+        <div class="form-group">
+          <input id="input_modify_key_transpose" name="" type="number" class="form-control" min="0" max="99999" step="1"></input>
+        </div>
+      </form>
+    </div>-->
+
+
+    <!-- Load scripts at end of document for faster page loading -->
+    <script src="inc/jquery-3.2.1.min.js"></script>
+    <script src="inc/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="inc/jquery-ui-1.12.1/external/jquery/jquery.js"></script>
+    <script src="inc/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+    <script src="assets/js/scaleworkshop.js"></script>
+    <script src="assets/js/helpers.js"></script>
+    <script src="assets/js/generators.js"></script>
+    <script src="assets/js/modifiers.js"></script>
+    <script src="assets/js/exporters.js"></script>
+    <script src="assets/js/events.js"></script>
+  </body>
+</html>
