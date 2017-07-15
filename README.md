@@ -1,5 +1,7 @@
 # Scale Workshop
 
+![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/assets/img/scale-workshop-og-image.png)
+
 ## Contributors
 
 * Sevish
@@ -8,7 +10,7 @@
 
 ## Description
 
-Scale Workshop is a tool that allows you to create microtonal tunings within your web browser. Your created tunings can be exported and downloaded to your device in the various formats. These tuning files can be loaded into some synthesizers, allowing you to play microtonal music with them.
+[Scale Workshop](http://sevish.com/scaleworkshop/) is a tool that allows you to create microtonal tunings within your web browser. Your created tunings can be exported and downloaded to your device in the various formats. These tuning files can be loaded into some synthesizers, allowing you to play microtonal music with them.
 
 
 ## Frequently Asked Questions
