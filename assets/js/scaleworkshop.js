@@ -4,6 +4,7 @@
 
 const APP_TITLE = "Scale Workshop 0.7.0";
 const TUNING_MAX_SIZE = 128;
+var newline = "\r\n";
 var tuning_table = {
   tuning_data: [], // an array containing tuning data user input in decimal format
   note_count: 0, // number of values stored in tuning_data
