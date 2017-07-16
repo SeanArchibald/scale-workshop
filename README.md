@@ -2,11 +2,6 @@
 
 ![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/assets/img/scale-workshop-og-image.png)
 
-## Contributors
-
-* Sevish
-* Scott Thompson
-
 
 ## Description
 
@@ -61,9 +56,9 @@ http://sevish.com/contact
 
 ### I found a bug
 
-Please contact the author with as much info as possible about the issue and how to reproduce it.
+Please create a bug report with as much info as possible about the issue and how to reproduce it.
 
-http://sevish.com/contact
+https://github.com/SeanArchibald/scale-workshop/issues
 
 
 ## Changelog
@@ -124,6 +119,12 @@ http://sevish.com/contact
 ### 2.0
 
 * Built-in synth using web audio API, allowing you to play and hear your scales in the browser
+
+
+## Contributors
+
+* Sevish
+* Scott Thompson
 
 
 ## License
