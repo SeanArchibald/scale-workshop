@@ -63,6 +63,11 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## Changelog
 
+### 0.7.1
+
+* Fix missing line breaks on Notepad and some other text editors
+* Improved readme formatting (thanks suhr!)
+
 ### 0.7.0
 
 * Scale modifiers added: ‘stretch’, ‘random variance’, ‘mode’
