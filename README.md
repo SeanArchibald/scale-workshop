@@ -113,7 +113,7 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## Roadmap
 
-### 0.7.1
+### 0.7.2
 
 * More scale modifiers? E.g. ‘quantize to BPM’, ‘sort ascending’, ‘octave reduce’
 
