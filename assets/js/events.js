@@ -169,6 +169,14 @@ jQuery( document ).ready( function() {
 
   } );
 
+  // nav_play option clicked
+  $( "#nav_play" ).click( function( event ) {
+
+    event.preventDefault();
+    jQuery( "#play_screen" ).show();
+
+  } );
+
   // modify_stretch option clicked
   $( "#modify_stretch" ).click( function( event ) {
 

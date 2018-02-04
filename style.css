@@ -16,6 +16,27 @@ img {
   cursor:default;
 }
 
+#play_screen {
+  position:absolute;
+  top:0; right:0; bottom:0; left:0;
+  background-color:white;
+}
+
+#play_screen table {
+  width:100%;
+}
+
+#play_screen table tr {
+  height:20vh;
+}
+
+#play_screen table tr td {
+  background-color:#eee;
+  padding:0.5em;
+  vertical-align:middle;
+  text-align:center;
+}
+
 /*
  * NON-MOBILE
  */

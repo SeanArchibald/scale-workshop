@@ -33,7 +33,7 @@ Scala files contain non-tuning related comments at the top of the file, so Scale
 
 ### Can I play and hear my scales in the browser?
 
-Not yet. But I am considering it for a future version. It would be useful right?
+Yes, this project now contains a synth that allows you to hear your current scale. New features and documentation coming later.
 
 ### Are non-octave based scales supported?
 
@@ -50,18 +50,20 @@ Exporting a file with the correct filename is not supported in Safari (iOS and m
 
 ### Can you add a new feature to Scale Workshop?
 
-Probably! Just contact the author and make a request.
-
-http://sevish.com/contact
+Probably! Just add your feature request to the issues tracker on GitHub:
+https://github.com/SeanArchibald/scale-workshop/issues
 
 ### I found a bug
 
-Please create a bug report with as much info as possible about the issue and how to reproduce it.
-
+Please create a bug report with as much info as possible about the issue and how to reproduce it:
 https://github.com/SeanArchibald/scale-workshop/issues
 
 
 ## Changelog
+
+### 0.8
+
+* Synth added: use the qwerty keys to play current scale
 
 ### 0.7.1
 
@@ -113,17 +115,18 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## Roadmap
 
-### 0.7.2
+### 0.8
 
+* Web synth
+
+### 0.9
+
+* UI improvements
 * More scale modifiers? E.g. ‘quantize to BPM’, ‘sort ascending’, ‘octave reduce’
 
 ### 1.0
 
 * Stable
-
-### 2.0
-
-* Built-in synth using web audio API, allowing you to play and hear your scales in the browser
 
 
 ## Contributors
@@ -134,7 +137,7 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## License
 
-Copyright (c) 2017 Sean Archibald
+Copyright (c) 2017-2018 Sean Archibald
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
