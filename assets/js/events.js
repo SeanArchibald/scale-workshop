@@ -258,4 +258,43 @@ jQuery( document ).ready( function() {
 
   } );
 
+  // settings_general option clicked
+  $( "#settings_general" ).click( function( event ) {
+
+    event.preventDefault();
+    jQuery( "#modal_settings_general" ).dialog({
+      modal: true,
+      buttons: {
+        Save: function() {
+          // save settings
+          debug = $( '#input_checkbox_debug_output' ).is( ':checked' );
+        },
+        Close: function() {
+          $( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
+  // settings_synth option clicked
+  $( "#settings_synth" ).click( function( event ) {
+
+    event.preventDefault();
+    jQuery( "#modal_settings_synth" ).dialog({
+      modal: true,
+      buttons: {
+        Save: function() {
+          // save settings
+          Synth.waveform = $( '#input_select_synth_waveform' ).find( ":selected" ).attr( 'data-waveform' );
+          Synth.row_tuning = $( '#input_number_row_tuning' ).val();
+        },
+        Close: function() {
+          $( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
 } );

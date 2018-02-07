@@ -56,6 +56,7 @@ var Synth = {
   },
   row_tuning: 5, // how many scale degrees as you move up/down by rows
   active_voices: {}, // polyphonic voice management
+  waveform: 'triangle',
   noteOn: function( midinote, velocity = 127 ) {
 
     var frequency = tuning_table.freq[ midinote ];
@@ -67,7 +68,9 @@ var Synth = {
 
         this.active_voices[midinote] = new Voice( frequency, velocity );
         this.active_voices[midinote].start(0);
-        // console.log( "PLAY NOTE:- note: " + keycode_to_midinote( event.which ) + " freq: " + frequency );
+
+        if ( debug )
+          console.log( "PLAY NOTE:- note: " + keycode_to_midinote( event.which ) + " freq: " + frequency + " velocity: " + velocity);
 
       }
 
@@ -79,10 +82,17 @@ var Synth = {
     if ( typeof Synth.active_voices[midinote] !== 'undefined' ) {
       Synth.active_voices[midinote].stop();
       delete Synth.active_voices[midinote];
-      // console.log( "keyup event.which = " + keycode_to_midinote( event.which ) );
+
+      if ( debug )
+        console.log( "keyup event.which = " + keycode_to_midinote( event.which ) );
     }
 
   },
+  panic: function() {
+
+    // TODO - this function stops all active voices
+
+  }
 };
 
 // create an audiocontext
@@ -99,7 +109,7 @@ var Voice = ( function( audioCtx ) {
 
     /* VCO */
     var vco = audioCtx.createOscillator();
-    vco.type = 'triangle';
+    vco.type = Synth.waveform;
     vco.frequency.value = this.frequency;
 
     /* VCA */
@@ -151,7 +161,7 @@ function keycode_to_midinote(keycode) {
 }
 
 // KEYDOWN -- capture keyboard input
-document.addEventListener("keydown", function(event) {
+document.addEventListener( "keydown", function(event) {
 
   // bail if focus is on an input or textarea element
   var focus = document.activeElement.tagName;
@@ -166,6 +176,6 @@ document.addEventListener("keydown", function(event) {
 });
 
 // KEYUP -- capture keyboard input
-document.addEventListener("keyup", function(event) {
+document.addEventListener( "keyup", function(event) {
   Synth.noteOff( keycode_to_midinote( event.which ) );
 });

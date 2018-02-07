@@ -227,7 +227,7 @@ function export_url() {
   jQuery( "#input_share_url" ).val( export_url );
 
   // add button to export tuning
-  $( "#export-buttons" ).append('<li><a href="#" id="btn-share-url"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Share scale as URL</a></li>');
+  $( "#export-buttons" ).append('<li class="divider"></li><li><a href="#" id="btn-share-url"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Share scale as URL</a></li>');
 
   // share url option clicked
   $( "#btn-share-url" ).click( function( event ) {

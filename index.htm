@@ -83,6 +83,13 @@
               </ul>
             </li>
             <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#" id="settings_general"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> General</a></li>
+                <li><a href="#" id="settings_synth"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Synth</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="https://github.com/SeanArchibald/scale-workshop" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> GitHub</a></li>
@@ -249,7 +256,7 @@
 
         <div class="checkbox">
           <label>
-            <input id="input_checkbox_vary_period" type="checkbox" class="form-control"></input> Vary the octave
+            <input id="input_checkbox_vary_period" type="checkbox"></input> Vary the octave
           </label>
         </div>
       </form>
@@ -265,6 +272,7 @@
       </form>
     </div>
 
+    <!-- Export Modals -->
     <div id="modal_share_url" class="modal" title="Share scale as URL">
       <p>Share your scale by copying and pasting the link below.</p>
       <form>
@@ -284,6 +292,41 @@
       </form>
     </div>-->
 
+    <!-- Settings Modals -->
+    <div id="modal_settings_general" class="modal" title="General settings">
+      <!--<p>lalalala.</p>-->
+      <form>
+        <!--<label>label</label>-->
+        <div class="form-group">
+          <div class="checkbox">
+            <label>
+              <input id="input_checkbox_debug_output" type="checkbox"></input> Enable debug output
+            </label>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div id="modal_settings_synth" class="modal" title="Synth settings">
+      <form>
+        <div class="form-group">
+          <label>Waveform</label>
+          <select id="input_select_synth_waveform" class="form-control">
+            <option data-waveform="triangle">Triangle</option>
+            <option data-waveform="sawtooth">Sawtooth</option>
+            <option data-waveform="square">Square</option>
+            <option data-waveform="sine">Sine</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>QWERTY row tuning</label>
+          <p>Each row of the keyboard is separated from the next by a number of scale degrees (default 5)</p>
+          <input id="input_number_row_tuning" type="number" class="form-control" value="5" min="1" max="100" />
+        </div>
+      </form>
+    </div>
+
+    <!-- Synth modals/screens -->
     <div id="play_screen" class="modal" title="Play">
       <table>
         <tr>
