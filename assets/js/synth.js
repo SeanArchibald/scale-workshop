@@ -4,68 +4,94 @@
  * Web audio synth
  */
 
- var synth = {
-   keymap: {
-     // keycode: [row, col]
-     90: [-1,0], // z
-     88: [-1,1], // x
-     67: [-1,2], // c
-     86: [-1,3], // v
-     66: [-1,4], // b
-     78: [-1,5], // n
-     77: [-1,6], // m
-     188: [-1,7], // ,
-     190: [-1,8], // .
-     191: [-1,9], // /
-     65: [0,0], // a
-     83: [0,1], // s
-     68: [0,2], // d
-     70: [0,3], // f
-     71: [0,4], // g
-     72: [0,5], // h
-     74: [0,6], // j
-     75: [0,7], // k
-     76: [0,8], // l
-     186: [0,9], // ;
-     222: [0,10], // '
-     220: [0,11], // \
-     81: [1,0], // q
-     87: [1,1], // w
-     69: [1,2], // e
-     82: [1,3], // r
-     84: [1,4], // t
-     89: [1,5], // y
-     85: [1,6], // u
-     73: [1,7], // i
-     79: [1,8], // o
-     80: [1,9], // p
-     219: [1,10], // [
-     221: [1,11], // ]
-     49: [2,0], // 1
-     50: [2,1], // 2
-     51: [2,2], // 3
-     52: [2,3], // 4
-     53: [2,4], // 5
-     54: [2,5], // 6
-     55: [2,6], // 7
-     56: [2,7], // 8
-     57: [2,8], // 9
-     48: [2,9], // 0
-     189: [2,10], // -
-     187: [2,11] // =
-   },
-   row_tuning: 5 // how many scale degrees as you move up/down by rows
- };
+var Synth = {
+  keymap: {
+    // keycode: [row, col]
+    90: [-1,0], // z
+    88: [-1,1], // x
+    67: [-1,2], // c
+    86: [-1,3], // v
+    66: [-1,4], // b
+    78: [-1,5], // n
+    77: [-1,6], // m
+    188: [-1,7], // ,
+    190: [-1,8], // .
+    191: [-1,9], // /
+    65: [0,0], // a
+    83: [0,1], // s
+    68: [0,2], // d
+    70: [0,3], // f
+    71: [0,4], // g
+    72: [0,5], // h
+    74: [0,6], // j
+    75: [0,7], // k
+    76: [0,8], // l
+    186: [0,9], // ;
+    222: [0,10], // '
+    220: [0,11], // \
+    81: [1,0], // q
+    87: [1,1], // w
+    69: [1,2], // e
+    82: [1,3], // r
+    84: [1,4], // t
+    89: [1,5], // y
+    85: [1,6], // u
+    73: [1,7], // i
+    79: [1,8], // o
+    80: [1,9], // p
+    219: [1,10], // [
+    221: [1,11], // ]
+    49: [2,0], // 1
+    50: [2,1], // 2
+    51: [2,2], // 3
+    52: [2,3], // 4
+    53: [2,4], // 5
+    54: [2,5], // 6
+    55: [2,6], // 7
+    56: [2,7], // 8
+    57: [2,8], // 9
+    48: [2,9], // 0
+    189: [2,10], // -
+    187: [2,11] // =
+  },
+  row_tuning: 5, // how many scale degrees as you move up/down by rows
+  active_voices: {}, // polyphonic voice management
+  noteOn: function( midinote, velocity = 127 ) {
+
+    var frequency = tuning_table.freq[ midinote ];
+
+    if ( frequency !== undefined ) {
+
+      // make sure note triggers only on first input (prevent duplicate notes)
+      if ( typeof Synth.active_voices[midinote] === 'undefined' ) {
+
+        this.active_voices[midinote] = new Voice( frequency, velocity );
+        this.active_voices[midinote].start(0);
+        // console.log( "PLAY NOTE:- note: " + keycode_to_midinote( event.which ) + " freq: " + frequency );
+
+      }
+
+    }
+
+  },
+  noteOff: function( midinote ) {
+
+    if ( typeof Synth.active_voices[midinote] !== 'undefined' ) {
+      Synth.active_voices[midinote].stop();
+      delete Synth.active_voices[midinote];
+      // console.log( "keyup event.which = " + keycode_to_midinote( event.which ) );
+    }
+
+  },
+};
 
 // create an audiocontext
 var audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
 
-// polyphonic voice management
-var active_voices = {};
-
-var Voice = (function(audioCtx) {
-  function Voice(frequency){
+var Voice = ( function( audioCtx ) {
+  function Voice( frequency, velocity ) {
     this.frequency = frequency;
+    this.velocity = velocity;
     this.oscillators = [];
   };
 
@@ -78,7 +104,8 @@ var Voice = (function(audioCtx) {
 
     /* VCA */
     var vca = audioCtx.createGain();
-    vca.gain.value = 0.2;
+    this.velocity = 0.2; // TODO: velocity sensitivity
+    vca.gain.value = this.velocity;
 
     /* routing */
     vco.connect( vca );
@@ -111,12 +138,12 @@ var Voice = (function(audioCtx) {
 function keycode_to_midinote(keycode) {
 
   // get row/col vals from the keymap
-  var key = synth['keymap'][keycode];
+  var key = Synth['keymap'][keycode];
 
   if ( key != undefined ) {
     var row = key[0];
     var col = key[1];
-    var midinote = (row * synth["row_tuning"]) + col + tuning_table['base_midi_note'];
+    var midinote = (row * Synth["row_tuning"]) + col + tuning_table['base_midi_note'];
     return midinote;
   }
   // return false if there is no note assigned to this key
@@ -126,32 +153,19 @@ function keycode_to_midinote(keycode) {
 // KEYDOWN -- capture keyboard input
 document.addEventListener("keydown", function(event) {
 
-  // check that the keydown event corresponds to a midi note
-  var midinote = keycode_to_midinote( event.which );
-  if ( midinote ) {
-
-    var frequency = tuning_table.freq[ midinote ];
-
-    // make sure this triggers only on first input
-    if ( typeof active_voices[event.which] === 'undefined' ) {
-
-      active_voices[event.which] = new Voice( frequency );
-      active_voices[event.which].start(0);
-      // console.log( "PLAY NOTE:- keycode: " + event.which + " note: " + keycode_to_midinote( event.which ) + " freq: " + frequency );
-
-    }
-
+  // bail if focus is on an input or textarea element
+  var focus = document.activeElement.tagName;
+  if ( focus == 'TEXTAREA' || focus == 'INPUT' ) {
+    return false;
   }
 
+  Synth.noteOn(
+    keycode_to_midinote( event.which ), // midi note number 0-127
+    100 // note velocity 0-127
+  );
 });
 
 // KEYUP -- capture keyboard input
 document.addEventListener("keyup", function(event) {
-
-  if ( typeof active_voices[event.which] !== 'undefined' ) {
-    active_voices[event.which].stop();
-    delete active_voices[event.which];
-  }
-
-  // console.log( "keyup event.which = " + keycode_to_midinote( event.which ) );
+  Synth.noteOff( keycode_to_midinote( event.which ) );
 });

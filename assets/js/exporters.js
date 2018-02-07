@@ -206,3 +206,53 @@ function export_kontakt_script() {
   return true;
 
 }
+
+/**
+ * export_url()
+ */
+
+function export_url() {
+
+  var url = new URL(window.location.href);
+  var protocol = ( url.domain !== undefined ) ? url.domain : 'http:';
+  var domain = ( url.domain !== undefined ) ? url.domain : 'sevish.com/scaleworkshop';
+  var name = encodeURIComponent( jQuery("#txt_name").val() );
+  var data = encodeURIComponent( jQuery("#txt_tuning_data").val() );
+  var freq = encodeURIComponent( jQuery("#txt_base_frequency").val() );
+  var midi = encodeURIComponent( jQuery("#txt_base_midi_note").val() );
+
+  var export_url = protocol + '//' + domain + '/index.htm?name=' + name + '&data=' + data + '&freq=' + freq + '&midi=' + midi;
+
+  // copy url in to url field
+  jQuery( "#input_share_url" ).val( export_url );
+
+  // add button to export tuning
+  $( "#export-buttons" ).append('<li><a href="#" id="btn-share-url"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Share scale as URL</a></li>');
+
+  // share url option clicked
+  $( "#btn-share-url" ).click( function( event ) {
+
+    event.preventDefault();
+
+    $( "#input_share_url" ).select();
+    $( "#modal_share_url" ).dialog({
+      modal: true,
+      buttons: {
+        Copy: function() {
+          $( "#input_share_url" ).select();
+          document.execCommand("Copy");
+          $( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
+  // url field clicked
+  $( "#input_share_url" ).click( function( event ) {
+    $(this).select();
+  } );
+
+  return true;
+
+}

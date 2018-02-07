@@ -165,7 +165,7 @@
       <form>
         <label>Number of divisions</label>
         <div class="form-group">
-          <input id="input_number_of_divisions" name="" type="number" min="0.0001" max="999999" class="form-control" value="15"></input>
+          <input id="input_number_of_divisions" name="" type="number" min="0.0001" max="999999" class="form-control" value="5"></input>
         </div>
 
         <label>Interval to divide</label>
@@ -265,6 +265,15 @@
       </form>
     </div>
 
+    <div id="modal_share_url" class="modal" title="Share scale as URL">
+      <p>Share your scale by copying and pasting the link below.</p>
+      <form>
+        <div class="form-group">
+          <input id="input_share_url" name="" type="text" class="form-control" value="" readonly></input>
+        </div>
+      </form>
+    </div>
+
     <!--<div id="modal_modify_key_transpose" class="modal" title="Key transpose">
       <p>Set 1/1 to another note of your scale.</p>
       <form>
@@ -276,66 +285,64 @@
     </div>-->
 
     <div id="play_screen" class="modal" title="Play">
-      <!--<p>Play the scale</p>-->
       <table>
         <tr>
-          <td colspan="2">1</td>
-          <td colspan="2">2</td>
-          <td colspan="2">3</td>
-          <td colspan="2">4</td>
-          <td colspan="2">5</td>
-          <td colspan="2">6</td>
-          <td colspan="2">7</td>
-          <td colspan="2">8</td>
-          <td colspan="2">9</td>
-          <td colspan="2">0</td>
-          <td colspan="2">-</td>
-          <td colspan="2">=</td>
+          <td colspan="11">Use your keyboard to play.</td>
+          <td id="play_screen_close"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></td>
         </tr>
         <tr>
-          <td colspan="1"></td>
-          <td colspan="2">Q</td>
-          <td colspan="2">W</td>
-          <td colspan="2">E</td>
-          <td colspan="2">R</td>
-          <td colspan="2">T</td>
-          <td colspan="2">Y</td>
-          <td colspan="2">U</td>
-          <td colspan="2">I</td>
-          <td colspan="2">O</td>
-          <td colspan="2">P</td>
-          <td colspan="2">[</td>
-          <td colspan="2">]</td>
+          <td data-row="2" data-col="0">1</td>
+          <td data-row="2" data-col="1">2</td>
+          <td data-row="2" data-col="2">3</td>
+          <td data-row="2" data-col="3">4</td>
+          <td data-row="2" data-col="4">5</td>
+          <td data-row="2" data-col="5">6</td>
+          <td data-row="2" data-col="6">7</td>
+          <td data-row="2" data-col="7">8</td>
+          <td data-row="2" data-col="8">9</td>
+          <td data-row="2" data-col="9">0</td>
+          <td data-row="2" data-col="10">-</td>
+          <td data-row="2" data-col="11">=</td>
         </tr>
         <tr>
-          <td colspan="2"></td>
-          <td colspan="2">A</td>
-          <td colspan="2">S</td>
-          <td colspan="2">D</td>
-          <td colspan="2">F</td>
-          <td colspan="2">G</td>
-          <td colspan="2">H</td>
-          <td colspan="2">J</td>
-          <td colspan="2">K</td>
-          <td colspan="2">L</td>
-          <td colspan="2">;</td>
-          <td colspan="2">'</td>
-          <td colspan="2">\</td>
+          <td data-row="1" data-col="0">Q</td>
+          <td data-row="1" data-col="1">W</td>
+          <td data-row="1" data-col="2">E</td>
+          <td data-row="1" data-col="3">R</td>
+          <td data-row="1" data-col="4">T</td>
+          <td data-row="1" data-col="5">Y</td>
+          <td data-row="1" data-col="6">U</td>
+          <td data-row="1" data-col="7">I</td>
+          <td data-row="1" data-col="8">O</td>
+          <td data-row="1" data-col="9">P</td>
+          <td data-row="1" data-col="10">[</td>
+          <td data-row="1" data-col="11">]</td>
         </tr>
         <tr>
-          <td colspan="3"></td>
-          <td colspan="2">Z</td>
-          <td colspan="2">X</td>
-          <td colspan="2">C</td>
-          <td colspan="2">V</td>
-          <td colspan="2">B</td>
-          <td colspan="2">N</td>
-          <td colspan="2">M</td>
-          <td colspan="2">,</td>
-          <td colspan="2">.</td>
-          <td colspan="2">/</td>
-          <td colspan="2"></td>
-          <td colspan="2"></td>
+          <td data-row="0" data-col="0">A</td>
+          <td data-row="0" data-col="1">S</td>
+          <td data-row="0" data-col="2">D</td>
+          <td data-row="0" data-col="3">F</td>
+          <td data-row="0" data-col="4">G</td>
+          <td data-row="0" data-col="5">H</td>
+          <td data-row="0" data-col="6">J</td>
+          <td data-row="0" data-col="7">K</td>
+          <td data-row="0" data-col="8">L</td>
+          <td data-row="0" data-col="9">;</td>
+          <td data-row="0" data-col="10">'</td>
+          <td data-row="0" data-col="11">\</td>
+        </tr>
+        <tr>
+          <td data-row="-1" data-col="0">Z</td>
+          <td data-row="-1" data-col="1">X</td>
+          <td data-row="-1" data-col="2">C</td>
+          <td data-row="-1" data-col="3">V</td>
+          <td data-row="-1" data-col="4">B</td>
+          <td data-row="-1" data-col="5">N</td>
+          <td data-row="-1" data-col="6">M</td>
+          <td data-row="-1" data-col="7">,</td>
+          <td data-row="-1" data-col="8">.</td>
+          <td data-row="-1" data-col="9">/</td>
         </tr>
       </table>
     </div>

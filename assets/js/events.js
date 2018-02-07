@@ -28,6 +28,9 @@
 
 jQuery( document ).ready( function() {
 
+  // get data encoded in url
+  parse_url();
+
   // base MIDI note changed
   $( "#txt_base_midi_note" ).change( function() {
 
@@ -174,6 +177,12 @@ jQuery( document ).ready( function() {
 
     event.preventDefault();
     jQuery( "#play_screen" ).show();
+
+  } );
+  $( "#play_screen_close" ).click( function( event ) {
+
+    event.preventDefault();
+    jQuery( "#play_screen" ).hide();
 
   } );
 

@@ -18,8 +18,9 @@ No, those pieces of software are much more sophisticated. The goal of this proje
 
 Tuning data should be entered in to the text area labeled ‘Tuning Data’. Add each note on its own new line. Cents and ratios are both supported.
 
-* To specify a ratio, simply write it in the format e.g. `3/2`.
+* To specify a ratio, simply write it in the format e.g. `3/2`
 * To specify an interval in cents, include a . in the line e.g. `701.9` or `1200.`
+* To specify n steps out of m-EDO, write it in the format `n\m`
 
 No need to enter `0.` or `1/1` on the first line as your scale is automatically assumed to contain this interval.
 
@@ -63,7 +64,8 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ### 0.8
 
-* Synth added: use the qwerty keys to play current scale
+* Synth added: use the QWERTY keys to play current scale
+* Export a scale as a URL with the 'Share scale as URL' option
 
 ### 0.7.1
 
@@ -115,14 +117,13 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## Roadmap
 
-### 0.8
+### 0.x.x
 
-* Web synth
-
-### 0.9
-
+* MIDI controller input
+* Synth options
 * UI improvements
-* More scale modifiers? E.g. ‘quantize to BPM’, ‘sort ascending’, ‘octave reduce’
+* More scale modifiers e.g. ‘quantize to BPM’, ‘sort ascending’, ‘octave reduce’
+* What should go here?
 
 ### 1.0
 

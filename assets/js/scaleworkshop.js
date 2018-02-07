@@ -48,6 +48,45 @@ function generate_tuning_table( tuning ) {
 
 
 /**
+ * parse_url()
+ */
+
+function parse_url() {
+
+  // name=5%20EDO&data=1%5C5%0A480.%0A720.%0A960.%0A2%2F1&freq=261.626&midi=60
+  var url = new URL(window.location.href);
+
+  // get data from url params, and use sane defaults for tuning name, base frequency and base midi note number if data missing
+  var name = ( url.searchParams.has("name") ) ? url.searchParams.get("name") : "";
+  var data = ( url.searchParams.has("data") ) ? url.searchParams.get("data") : false;
+  var freq = ( url.searchParams.has("freq") && !isNaN( url.searchParams.get("freq") ) ) ? url.searchParams.get("freq") : 440;
+  var midi = ( url.searchParams.has("midi") && !isNaN( url.searchParams.get("midi") ) ) ? url.searchParams.get("midi") : 69;
+
+  // bail if there is no data
+  if ( !data ) {
+    return false;
+  }
+
+  // enter the data from url in to the on-page form
+  jQuery( "#txt_name" ).val(name);
+  jQuery( "#txt_tuning_data" ).val(data);
+  jQuery( "#txt_base_frequency" ).val(freq);
+  jQuery( "#txt_base_midi_note" ).val(midi);
+
+  // parse the tuning data
+  if ( parse_tuning_data() ) {
+    // success
+    return true;
+  }
+  else {
+    // something probably wrong with the input data
+    return false;
+  }
+
+}
+
+
+/**
  * parse_tuning_data()
  */
 
@@ -128,6 +167,7 @@ function parse_tuning_data() {
   export_scala_kbm();
   export_maxmsp_coll();
   export_kontakt_script();
+  export_url();
 
   // success
   return true;

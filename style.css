@@ -24,14 +24,12 @@ img {
 
 #play_screen table {
   width:100%;
-}
-
-#play_screen table tr {
-  height:20vh;
+  height:100%;
 }
 
 #play_screen table tr td {
-  background-color:#eee;
+  background-color:#ddd;
+  border:2px solid white;
   padding:0.5em;
   vertical-align:middle;
   text-align:center;
