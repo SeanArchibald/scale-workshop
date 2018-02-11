@@ -62,6 +62,17 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## Changelog
 
+### 0.8.1
+
+* Choice of waveform for the synth: triangle, sawtooth, square, sine
+* Settings menus added - General, Synth and Note Input settings
+* Qwerty isomorphic keyboard mapping can be changed in the Note Input settings
+* Qwerty isomorphic keyboard mapping is saved when sharing scale by URL
+* Currently displayed notes are now highlighted in the tuning data table
+* Fix stuck note in FireFox when pressing `/` key
+* UI improvement (for large screens): tall columns are now contained within one window and individually scrollable
+* Tuning data table is now displayed more compactly to show more info at once
+
 ### 0.8
 
 * Synth added: use the QWERTY keys to play current scale
@@ -120,7 +131,8 @@ https://github.com/SeanArchibald/scale-workshop/issues
 ### 0.x.x
 
 * MIDI controller input
-* Synth options
+* Synth amplitude envelope options
+* Prevent stuck notes from occurring and add a 'panic' button to stop all notes
 * UI improvements
 * More scale modifiers e.g. ‘quantize to BPM’, ‘sort ascending’, ‘octave reduce’
 * What should go here?

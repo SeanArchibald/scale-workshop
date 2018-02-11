@@ -54,7 +54,10 @@ var Synth = {
     189: [2,10], // -
     187: [2,11] // =
   },
-  row_tuning: 5, // how many scale degrees as you move up/down by rows
+  isomorphicMapping: {
+    vertical: 5, // how many scale degrees as you move up/down by rows
+    horizontal: 1  // how many scale degrees as you move left/right by cols
+  },
   active_voices: {}, // polyphonic voice management
   waveform: 'triangle',
   noteOn: function( midinote, velocity = 127 ) {
@@ -68,6 +71,7 @@ var Synth = {
 
         this.active_voices[midinote] = new Voice( frequency, velocity );
         this.active_voices[midinote].start(0);
+        jQuery( "#tuning-table-row-" + midinote ).addClass( "bg-playnote" );
 
         if ( debug )
           console.log( "PLAY NOTE:- note: " + keycode_to_midinote( event.which ) + " freq: " + frequency + " velocity: " + velocity);
@@ -82,6 +86,7 @@ var Synth = {
     if ( typeof Synth.active_voices[midinote] !== 'undefined' ) {
       Synth.active_voices[midinote].stop();
       delete Synth.active_voices[midinote];
+      jQuery( "#tuning-table-row-" + midinote ).removeClass( "bg-playnote" );
 
       if ( debug )
         console.log( "keyup event.which = " + keycode_to_midinote( event.which ) );
@@ -153,7 +158,7 @@ function keycode_to_midinote(keycode) {
   if ( key != undefined ) {
     var row = key[0];
     var col = key[1];
-    var midinote = (row * Synth["row_tuning"]) + col + tuning_table['base_midi_note'];
+    var midinote = (row * Synth.isomorphicMapping.vertical) + (col * Synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
     return midinote;
   }
   // return false if there is no note assigned to this key
@@ -169,6 +174,7 @@ document.addEventListener( "keydown", function(event) {
     return false;
   }
 
+  event.preventDefault();
   Synth.noteOn(
     keycode_to_midinote( event.which ), // midi note number 0-127
     100 // note velocity 0-127
@@ -177,5 +183,6 @@ document.addEventListener( "keydown", function(event) {
 
 // KEYUP -- capture keyboard input
 document.addEventListener( "keyup", function(event) {
+  event.preventDefault();
   Synth.noteOff( keycode_to_midinote( event.which ) );
 });

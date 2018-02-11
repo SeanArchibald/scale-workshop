@@ -262,14 +262,19 @@ jQuery( document ).ready( function() {
   $( "#settings_general" ).click( function( event ) {
 
     event.preventDefault();
+
+    // reset form values
+    $( '#input_checkbox_debug_output' ).prop( 'checked', debug );
+
     jQuery( "#modal_settings_general" ).dialog({
       modal: true,
       buttons: {
         Save: function() {
           // save settings
           debug = $( '#input_checkbox_debug_output' ).is( ':checked' );
+          $( this ).dialog( 'close' );
         },
-        Close: function() {
+        Cancel: function() {
           $( this ).dialog( 'close' );
         }
       }
@@ -281,15 +286,45 @@ jQuery( document ).ready( function() {
   $( "#settings_synth" ).click( function( event ) {
 
     event.preventDefault();
+
+    // reset form values
+    $( '#input_select_synth_waveform' ).val( Synth.waveform );
+
     jQuery( "#modal_settings_synth" ).dialog({
       modal: true,
       buttons: {
         Save: function() {
           // save settings
-          Synth.waveform = $( '#input_select_synth_waveform' ).find( ":selected" ).attr( 'data-waveform' );
-          Synth.row_tuning = $( '#input_number_row_tuning' ).val();
+          Synth.waveform = $( '#input_select_synth_waveform' ).val();
+          $( this ).dialog( 'close' );
         },
-        Close: function() {
+        Cancel: function() {
+          $( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
+  // settings_note_input option clicked
+  $( "#settings_note_input" ).click( function( event ) {
+
+    event.preventDefault();
+
+    // reset form values
+    $( '#input_number_isomorphicmapping_vert' ).val( Synth.isomorphicMapping.vertical );
+    $( '#input_number_isomorphicmapping_horiz' ).val( Synth.isomorphicMapping.horizontal );
+
+    jQuery( "#modal_settings_note_input" ).dialog({
+      modal: true,
+      buttons: {
+        Save: function() {
+          // save settings
+          Synth.isomorphicMapping.vertical = $( '#input_number_isomorphicmapping_vert' ).val();
+          Synth.isomorphicMapping.horizontal = $( '#input_number_isomorphicmapping_horiz' ).val();
+          $( this ).dialog( 'close' );
+        },
+        Cancel: function() {
           $( this ).dialog( 'close' );
         }
       }

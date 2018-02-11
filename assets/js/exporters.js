@@ -220,8 +220,10 @@ function export_url() {
   var data = encodeURIComponent( jQuery("#txt_tuning_data").val() );
   var freq = encodeURIComponent( jQuery("#txt_base_frequency").val() );
   var midi = encodeURIComponent( jQuery("#txt_base_midi_note").val() );
+  var row = Synth.isomorphicMapping.row;
+  var col = Synth.isomorphicMapping.col;
 
-  var export_url = protocol + '//' + domain + '/index.htm?name=' + name + '&data=' + data + '&freq=' + freq + '&midi=' + midi;
+  var export_url = protocol + '//' + domain + '/index.htm?name=' + name + '&data=' + data + '&freq=' + freq + '&midi=' + midi + '&row=' + row + '&col=' + col;
 
   // copy url in to url field
   jQuery( "#input_share_url" ).val( export_url );

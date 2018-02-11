@@ -54,6 +54,7 @@ function generate_tuning_table( tuning ) {
 
 function parse_url() {
 
+  //name=10%20equal%20divisions%20of%201198.&data=119.8%0A239.6%0A359.4%0A479.2%0A599.%0A718.8%0A838.6%0A958.4%0A1078.2%0A1198.&freq=440&midi=69&vert=-1&horiz=2
   // name=5%20EDO&data=1%5C5%0A480.%0A720.%0A960.%0A2%2F1&freq=261.626&midi=60
   var url = new URL(window.location.href);
 
@@ -62,6 +63,10 @@ function parse_url() {
   var data = ( url.searchParams.has("data") ) ? url.searchParams.get("data") : false;
   var freq = ( url.searchParams.has("freq") && !isNaN( url.searchParams.get("freq") ) ) ? url.searchParams.get("freq") : 440;
   var midi = ( url.searchParams.has("midi") && !isNaN( url.searchParams.get("midi") ) ) ? url.searchParams.get("midi") : 69;
+
+  // get isomorphic keyboard mapping
+  var vertical = ( url.searchParams.has("vert") && !isNaN( url.searchParams.get("vert") ) ) ? url.searchParams.get("vert") : false;
+  var horizontal = ( url.searchParams.has("horiz") && !isNaN( url.searchParams.get("horiz") ) ) ? url.searchParams.get("horiz") : false;
 
   // bail if there is no data
   if ( !data ) {
@@ -73,6 +78,10 @@ function parse_url() {
   jQuery( "#txt_tuning_data" ).val(data);
   jQuery( "#txt_base_frequency" ).val(freq);
   jQuery( "#txt_base_midi_note" ).val(midi);
+
+  // if there is isomorphic keyboard mapping data, apply it
+  if ( vertical !== false ) Synth.isomorphicMapping.vertical = vertical;
+  if ( horizontal !== false ) Synth.isomorphicMapping.horizontal = horizontal;
 
   // parse the tuning data
   if ( parse_tuning_data() ) {
@@ -152,7 +161,7 @@ function parse_tuning_data() {
     }
 
     // assemble the HTML for the table row
-    $( "#tuning-table" ).append("<tr class=" + table_class + "><td>" + i + "</td><td>" + parseFloat( tuning_table['freq'][i] ).toFixed(3) + " Hz</td><td>" + tuning_table['cents'][i].toFixed(3) + "</td><td>" + tuning_table['decimal'][i].toFixed(3) + "</td></tr>");
+    $( "#tuning-table" ).append("<tr id='tuning-table-row-" + i + "' class='" + table_class + "'><td>" + i + "</td><td>" + parseFloat( tuning_table['freq'][i] ).toFixed(3) + " Hz</td><td>" + tuning_table['cents'][i].toFixed(3) + "</td><td>" + tuning_table['decimal'][i].toFixed(3) + "</td></tr>");
 
   }
 
@@ -169,6 +178,13 @@ function parse_tuning_data() {
   export_maxmsp_coll();
   export_kontakt_script();
   export_url();
+
+  // scroll to reference note on the table
+  jQuery('#col-tuning-table').animate({ scrollTop: 0 }, 0); // reset
+  jQuery('#col-tuning-table').animate({
+    scrollTop: $( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top
+  }, 600); // 600ms scroll to reference note
+  if (debug) console.log('scrolling to ' + jQuery( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top);
 
   // success
   return true;
