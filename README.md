@@ -62,6 +62,10 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## Changelog
 
+### 0.8.3
+
+* Fix sharing scale as URL - now the qwerty isomorphic mapping is correctly shared
+
 ### 0.8.2
 
 * Settings have been moved to the right-side column (desktop)

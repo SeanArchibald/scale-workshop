@@ -2,7 +2,7 @@
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 0.8.2";
+const APP_TITLE = "Scale Workshop 0.8.3";
 const TUNING_MAX_SIZE = 128;
 var newline = "\r\n";
 var tuning_table = {
@@ -78,6 +78,8 @@ function parse_url() {
   jQuery( "#txt_tuning_data" ).val(data);
   jQuery( "#txt_base_frequency" ).val(freq);
   jQuery( "#txt_base_midi_note" ).val(midi);
+  jQuery( "#input_number_isomorphicmapping_vert" ).val(vertical);
+  jQuery( "#input_number_isomorphicmapping_horiz" ).val(horizontal);
 
   // if there is isomorphic keyboard mapping data, apply it
   if ( vertical !== false ) Synth.isomorphicMapping.vertical = vertical;
