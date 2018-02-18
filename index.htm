@@ -83,14 +83,6 @@
               </ul>
             </li>
             <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#" id="settings_general"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> General</a></li>
-                <li><a href="#" id="settings_synth"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Synth</a></li>
-                <li><a href="#" id="settings_note_input"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Note Input</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="https://github.com/SeanArchibald/scale-workshop" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> GitHub</a></li>
@@ -143,27 +135,103 @@
           </form>
         </div>
 
-        <div id="col-tuning-table" class="col-sm-6 col-md-4 col-lg-4 col-main">
-          <noscript>
-            <p class="bg-danger lead" style="padding:1em;">JavaScript is disabled in your browser. Please enable JavaScript in order to use this software.</p>
-          </noscript>
-          <table id="tuning-table" class="table table-condensed table-hover">
-          </table>
-        </div>
+        <div class="col-sm-6 col-md-8 col-lg-8 col-main">
+          <div class="row">
 
-        <!--<div class="col-sm-12 col-md-4 col-lg-4 col-main">
-          <div class="bg-info" style="padding:1em;">
-            <h4>What is this?</h4>
-            <p>Scale Workshop is a tool that allows you to create microtonal tunings within your web browser. You can export these tunings to your device and use them to tune various synthesizers.</p>
-          </div>
-        </div>-->
+            <!-- Settings column -->
+            <div class="col-sm-12 col-md-6 col-md-push-6 col-lg-6 col-sub">
 
-      </div>
-      <!--<div class="row">
+              <!--<div class="bg-info" style="padding:1em;">
+                <h4>What is this?</h4>
+                <p>Scale Workshop allows you to create microtonal tunings within your web browser. You can export these tunings to your device and use them to tune various synthesizers.</p>
+              </div>-->
 
-      </div>-->
+              <div id="settings-accordion">
 
-    </div><!-- .container-fluid -->
+                <!-- general settings -->
+                <div id="settings_general" class="group">
+                  <h3>General settings</h3>
+                  <div>
+                    <form>
+                      <div class="form-group">
+                        <div class="checkbox">
+                          <label>
+                            <input id="input_checkbox_debug_output" type="checkbox"></input> Enable debug output
+                          </label>
+                        </div>
+                      </div>
+                      <input name="Save" id="btn_settings_general_save" type="button" value="Save" class="btn btn-default">
+                      <input name="Revert" id="btn_settings_general_revert" type="button" value="Revert" class="btn btn-default">
+                    </form>
+                  </div>
+                </div>
+
+                <!-- synth settings -->
+                <div id="settings_synth" class="group">
+                  <h3>Synth settings</h3>
+                  <div>
+                    <form>
+                      <div class="form-group">
+                        <label>Waveform</label>
+                        <select id="input_select_synth_waveform" class="form-control">
+                          <option value="triangle">Triangle</option>
+                          <option value="sawtooth">Sawtooth</option>
+                          <option value="square">Square</option>
+                          <option value="sine">Sine</option>
+                        </select>
+                      </div>
+                      <input name="Save" id="btn_settings_synth_save" type="button" value="Save" class="btn btn-default">
+                      <input name="Revert" id="btn_settings_synth_revert" type="button" value="Revert" class="btn btn-default">
+                    </form>
+                  </div>
+                </div>
+
+                <!-- note input settings -->
+                <div id="settings_note_input" class="group">
+                  <h3>Note input settings</h3>
+                  <div>
+                    <form>
+                      <!--<div class="form-group">
+                        <label>MIDI input device</label>
+                        <select id="input_select_midi_device" class="form-control">
+                          <option>???</option>
+                        </select>
+                      </div>-->
+                      <div class="form-group">
+                        <label>QWERTY keys mapping</label>
+                        <p>Distance (in scale degrees) between adjacent keys on the horizontal/vertical axes.</p>
+                        <div class="input-group">
+                          <div class="input-group-addon">V</div>
+                          <input id="input_number_isomorphicmapping_vert" type="number" class="form-control" value="5" min="-100" max="100" />
+                          <div class="input-group-addon">default 5</div>
+                        </div>
+                        <div class="input-group">
+                          <div class="input-group-addon">H</div>
+                          <input id="input_number_isomorphicmapping_horiz" type="number" class="form-control" value="1" min="-100" max="100" />
+                          <div class="input-group-addon">default 1</div>
+                        </div>
+                      </div>
+                    </form>
+                    <input name="Save" id="btn_settings_note_input_save" type="button" value="Save" class="btn btn-default">
+                    <input name="Revert" id="btn_settings_note_input_revert" type="button" value="Revert" class="btn btn-default">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- tuning table column -->
+            <div id="col-tuning-table" class="col-sm-12 col-md-6 col-md-pull-6 col-lg-6 col-sub">
+              <noscript>
+                <p class="bg-danger lead" style="padding:1em;">JavaScript is disabled in your browser. Please enable JavaScript in order to use this software.</p>
+              </noscript>
+              <table id="tuning-table" class="table table-condensed table-hover">
+              </table>
+            </div>
+
+          </div><!-- /.row -->
+        </div><!-- /col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
 
     <!-- Hidden by default -->
     <input type="file" id="scala-file" accept=".scl" style="display:none;" onchange="parse_imported_scala_scl(event)" />
@@ -273,16 +341,6 @@
       </form>
     </div>
 
-    <!-- Export Modals -->
-    <div id="modal_share_url" class="modal" title="Share scale as URL">
-      <p>Share your scale by copying and pasting the link below.</p>
-      <form>
-        <div class="form-group">
-          <input id="input_share_url" name="" type="text" class="form-control" value="" readonly></input>
-        </div>
-      </form>
-    </div>
-
     <!--<div id="modal_modify_key_transpose" class="modal" title="Key transpose">
       <p>Set 1/1 to another note of your scale.</p>
       <form>
@@ -293,125 +351,15 @@
       </form>
     </div>-->
 
-    <!-- Settings Modals -->
-    <div id="modal_settings_general" class="modal" title="General settings">
-      <!--<p>lalalala.</p>-->
+    <!-- Export Modals -->
+    <div id="modal_share_url" class="modal" title="Share scale as URL">
+      <p>Share your scale by copying and pasting the link below.</p>
       <form>
-        <!--<label>label</label>-->
         <div class="form-group">
-          <div class="checkbox">
-            <label>
-              <input id="input_checkbox_debug_output" type="checkbox"></input> Enable debug output
-            </label>
-          </div>
+          <input id="input_share_url" name="" type="text" class="form-control" value="" readonly></input>
         </div>
       </form>
     </div>
-
-    <div id="modal_settings_synth" class="modal" title="Synth settings">
-      <form>
-        <div class="form-group">
-          <label>Waveform</label>
-          <select id="input_select_synth_waveform" class="form-control">
-            <option value="triangle">Triangle</option>
-            <option value="sawtooth">Sawtooth</option>
-            <option value="square">Square</option>
-            <option value="sine">Sine</option>
-          </select>
-        </div>
-      </form>
-    </div>
-
-    <div id="modal_settings_note_input" class="modal" title="Note Input settings">
-      <form>
-        <!--<div class="form-group">
-          <label>MIDI input device</label>
-          <select id="input_select_midi_device" class="form-control">
-            <option>???</option>
-          </select>
-        </div>
-        <hr/>-->
-        <div class="form-group">
-          <label>QWERTY keys mapping</label>
-          <p>Distance (in scale degrees) between adjacent keys on the horizontal/vertical axes.</p>
-          <div class="input-group">
-            <div class="input-group-addon">V</div>
-            <input id="input_number_isomorphicmapping_vert" type="number" class="form-control" value="5" min="-100" max="100" />
-            <div class="input-group-addon">default 5</div>
-          </div>
-          <div class="input-group">
-            <div class="input-group-addon">H</div>
-            <input id="input_number_isomorphicmapping_horiz" type="number" class="form-control" value="1" min="-100" max="100" />
-            <div class="input-group-addon">default 1</div>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <!-- Synth modals/screens -->
-    <div id="play_screen" class="modal" title="Play">
-      <table>
-        <tr>
-          <td colspan="11">Use your keyboard to play.</td>
-          <td id="play_screen_close"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></td>
-        </tr>
-        <tr>
-          <td data-row="2" data-col="0">1</td>
-          <td data-row="2" data-col="1">2</td>
-          <td data-row="2" data-col="2">3</td>
-          <td data-row="2" data-col="3">4</td>
-          <td data-row="2" data-col="4">5</td>
-          <td data-row="2" data-col="5">6</td>
-          <td data-row="2" data-col="6">7</td>
-          <td data-row="2" data-col="7">8</td>
-          <td data-row="2" data-col="8">9</td>
-          <td data-row="2" data-col="9">0</td>
-          <td data-row="2" data-col="10">-</td>
-          <td data-row="2" data-col="11">=</td>
-        </tr>
-        <tr>
-          <td data-row="1" data-col="0">Q</td>
-          <td data-row="1" data-col="1">W</td>
-          <td data-row="1" data-col="2">E</td>
-          <td data-row="1" data-col="3">R</td>
-          <td data-row="1" data-col="4">T</td>
-          <td data-row="1" data-col="5">Y</td>
-          <td data-row="1" data-col="6">U</td>
-          <td data-row="1" data-col="7">I</td>
-          <td data-row="1" data-col="8">O</td>
-          <td data-row="1" data-col="9">P</td>
-          <td data-row="1" data-col="10">[</td>
-          <td data-row="1" data-col="11">]</td>
-        </tr>
-        <tr>
-          <td data-row="0" data-col="0">A</td>
-          <td data-row="0" data-col="1">S</td>
-          <td data-row="0" data-col="2">D</td>
-          <td data-row="0" data-col="3">F</td>
-          <td data-row="0" data-col="4">G</td>
-          <td data-row="0" data-col="5">H</td>
-          <td data-row="0" data-col="6">J</td>
-          <td data-row="0" data-col="7">K</td>
-          <td data-row="0" data-col="8">L</td>
-          <td data-row="0" data-col="9">;</td>
-          <td data-row="0" data-col="10">'</td>
-          <td data-row="0" data-col="11">\</td>
-        </tr>
-        <tr>
-          <td data-row="-1" data-col="0">Z</td>
-          <td data-row="-1" data-col="1">X</td>
-          <td data-row="-1" data-col="2">C</td>
-          <td data-row="-1" data-col="3">V</td>
-          <td data-row="-1" data-col="4">B</td>
-          <td data-row="-1" data-col="5">N</td>
-          <td data-row="-1" data-col="6">M</td>
-          <td data-row="-1" data-col="7">,</td>
-          <td data-row="-1" data-col="8">.</td>
-          <td data-row="-1" data-col="9">/</td>
-        </tr>
-      </table>
-    </div>
-
 
     <!-- Load scripts at end of document for faster page loading -->
     <script src="inc/jquery-3.2.1.min.js"></script>

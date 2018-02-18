@@ -2,30 +2,6 @@
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
-/*var scale_generators = [
-  {
-    trigger: "#generate_equal_temperament",
-    modal: "#modal_generate_equal_temperament",
-    func: "generate_equal_temperament()"
-  },
-  {
-    trigger: "#generate_rank_2_temperament",
-    modal: "#modal_generate_rank_2_temperament",
-    func: "generate_rank_2_temperament()"
-  },
-  {
-    trigger: "#generate_harmonic_series_segment",
-    modal: "#modal_generate_harmonic_series_segment",
-    func: "generate_harmonic_series_segment()"
-  },
-  {
-    trigger: "#generate_subharmonic_series_segment",
-    modal: "#modal_generate_subharmonic_series_segment",
-    func: "generate_subharmonic_series_segment()"
-  }
-];*/
-
-
 jQuery( document ).ready( function() {
 
   // get data encoded in url
@@ -76,29 +52,6 @@ jQuery( document ).ready( function() {
     import_scala_scl();
 
   } );
-
-  // scale generator option clicked
-  /*for ( var i = 0; i < scale_generators.length; i++ ) {
-
-    $( window.scale_generators[i]['trigger'] ).click( function( event ) {
-
-      event.preventDefault();
-
-      $( window.scale_generators[i]['modal'] ).dialog({
-        modal: true,
-        buttons: {
-          OK: function() {
-            eval( window.scale_generators[i]['func'] );
-          },
-          Cancel: function() {
-            $( this ).dialog( 'close' );
-          }
-        }
-      });
-
-    } );
-
-  }*/
 
   // generate_equal_temperament option clicked
   $( "#generate_equal_temperament" ).click( function( event ) {
@@ -258,78 +211,50 @@ jQuery( document ).ready( function() {
 
   } );
 
-  // settings_general option clicked
-  $( "#settings_general" ).click( function( event ) {
-
-    event.preventDefault();
-
-    // reset form values
+  // General Settings
+  // Save
+  $( "#btn_settings_general_save" ).click( function( event ) {
+    debug = $( '#input_checkbox_debug_output' ).is( ':checked' );
+    console.log( "debug = " + debug );
+  } );
+  // Revert
+  $( "#btn_settings_general_revert" ).click( function( event ) {
     $( '#input_checkbox_debug_output' ).prop( 'checked', debug );
-
-    jQuery( "#modal_settings_general" ).dialog({
-      modal: true,
-      buttons: {
-        Save: function() {
-          // save settings
-          debug = $( '#input_checkbox_debug_output' ).is( ':checked' );
-          $( this ).dialog( 'close' );
-        },
-        Cancel: function() {
-          $( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    console.log( "debug = " + debug );
   } );
 
-  // settings_synth option clicked
-  $( "#settings_synth" ).click( function( event ) {
-
-    event.preventDefault();
-
-    // reset form values
+  // Synth Settings
+  // Save
+  $( "#btn_settings_synth_save" ).click( function( event ) {
+    Synth.waveform = $( '#input_select_synth_waveform' ).val();
+  } );
+  // Revert
+  $( "#btn_settings_synth_revert" ).click( function( event ) {
     $( '#input_select_synth_waveform' ).val( Synth.waveform );
-
-    jQuery( "#modal_settings_synth" ).dialog({
-      modal: true,
-      buttons: {
-        Save: function() {
-          // save settings
-          Synth.waveform = $( '#input_select_synth_waveform' ).val();
-          $( this ).dialog( 'close' );
-        },
-        Cancel: function() {
-          $( this ).dialog( 'close' );
-        }
-      }
-    });
-
   } );
 
-  // settings_note_input option clicked
-  $( "#settings_note_input" ).click( function( event ) {
-
-    event.preventDefault();
-
-    // reset form values
+  // Note Input Settings
+  // Save
+  $( "#btn_settings_note_input_save" ).click( function( event ) {
+    Synth.isomorphicMapping.vertical = $( '#input_number_isomorphicmapping_vert' ).val();
+    Synth.isomorphicMapping.horizontal = $( '#input_number_isomorphicmapping_horiz' ).val();
+  } );
+  // Revert
+  $( "#btn_settings_note_input_revert" ).click( function( event ) {
     $( '#input_number_isomorphicmapping_vert' ).val( Synth.isomorphicMapping.vertical );
     $( '#input_number_isomorphicmapping_horiz' ).val( Synth.isomorphicMapping.horizontal );
+  } );
 
-    jQuery( "#modal_settings_note_input" ).dialog({
-      modal: true,
-      buttons: {
-        Save: function() {
-          // save settings
-          Synth.isomorphicMapping.vertical = $( '#input_number_isomorphicmapping_vert' ).val();
-          Synth.isomorphicMapping.horizontal = $( '#input_number_isomorphicmapping_horiz' ).val();
-          $( this ).dialog( 'close' );
-        },
-        Cancel: function() {
-          $( this ).dialog( 'close' );
-        }
-      }
-    });
-
+  // set "accordion" settings UI
+  $( function() {
+    $( "#settings-accordion" )
+      .accordion({
+        collapsible: true, // allow all tabs to be closed
+        active: false, // start all tabs closed
+        heightStyle: "content", // size each section to content
+        icons: null, // turn off triangle icons
+        header: "> div > h3"
+      });
   } );
 
 } );

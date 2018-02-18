@@ -2,7 +2,7 @@
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 0.8.1";
+const APP_TITLE = "Scale Workshop 0.8.2";
 const TUNING_MAX_SIZE = 128;
 var newline = "\r\n";
 var tuning_table = {
@@ -176,6 +176,7 @@ function parse_tuning_data() {
   export_scala_scl();
   export_scala_kbm();
   export_maxmsp_coll();
+  export_pd_text();
   export_kontakt_script();
   export_url();
 

@@ -62,6 +62,11 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## Changelog
 
+### 0.8.2
+
+* Settings have been moved to the right-side column (desktop)
+* Added option to export a list of frequencies in text format readable by Pure Data's [text] object
+
 ### 0.8.1
 
 * Choice of waveform for the synth: triangle, sawtooth, square, sine

@@ -83,6 +83,25 @@ function export_maxmsp_coll() {
 
 }
 
+function export_pd_text() {
+
+  // assemble the text file contents
+  var file = "";
+  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+    file += tuning_table['freq'][i].toFixed(7) + ";" + newline;
+  }
+
+  // convert file to data URI
+  var uriContent = "data:application/octet-stream," + encodeURIComponent( file );
+
+  // add button to export tuning
+  $( "#export-buttons" ).append('<li><a download="' + tuning_table['filename'] + '.txt" href="' + uriContent + '" id="btn-dl-pd-text"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download PureData text Tuning (.txt)</a></li>');
+
+  // success
+  return true;
+
+}
+
 function export_scala_scl() {
 
   // assemble the .scl file contents
