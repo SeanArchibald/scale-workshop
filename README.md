@@ -68,7 +68,7 @@ https://github.com/SeanArchibald/scale-workshop/issues
 * Added 'auto' function for base frequency, which calculates the frequency for the specified MIDI note number assuming 12-EDO A440
 * Added option to choose between Microsoft/Unix line endings
 * Added indicator to show when Qwerty isomorphic keyboard is active (when typing in a text field, it is inactive)
-* Added 'panic' button to turn off all playing synth notes
+* Added 'Quiet' button in case things get noisy in the workshop
 * Added share scale as URL to email, twitter
 * Fix sharing scale as URL - isomorphic mapping
 * Removed debug option - debug messages will now be output to the JavaScript console by default. Use `debug = false;` in console to disable

@@ -106,6 +106,12 @@ var Synth = {
 
     }
 
+    // turn down delay gain
+    jQuery( "#input_range_feedback_gain" ).val( 0 );
+    Delay.gain = 0;
+    Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
+    Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
+
   }
 };
 
