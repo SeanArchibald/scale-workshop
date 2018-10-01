@@ -2,6 +2,10 @@ img {
   max-width:100%;
 }
 
+.hidden {
+  display: none;
+}
+
 .ui-widget-overlay {
     position: absolute;
     top: 0;
@@ -40,10 +44,27 @@ tr.bg-playnote td {
   background-color: #dff0d8 !important;
 }
 
+p.social-icons {
+  text-align: center;
+  font-size: 1.5em;
+}
+.social-icons .socicon-twitter {
+  color: #4da7de;
+}
+
+div#qwerty-indicator {
+  padding: 1em;
+  display:none;
+}
+
 /*
  * NON-MOBILE
  */
 @media (min-width: 768px) {
+
+  div#qwerty-indicator {
+    display:block;
+  }
 
   .col-main { /* main columns of the Scale Workshop UI */
     height: calc(100vh - 80px);

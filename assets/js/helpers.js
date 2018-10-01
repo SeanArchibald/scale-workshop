@@ -259,3 +259,12 @@ function show_mos( per, gen, ssz, threshold) {
 
     jQuery( "#info_rank_2_mos" ).text( mos.join(", ") );
 }
+
+function debug( msg = "" ) {
+  if ( debug_enabled ) {
+    msg = ( msg == "" ) ? "Debug" : msg;
+    console.log( msg );
+    return true;
+  }
+  return false;
+}

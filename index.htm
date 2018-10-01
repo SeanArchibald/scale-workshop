@@ -26,6 +26,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="inc/bootstrap-3.3.7-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="inc/jquery-ui-1.12.1/jquery-ui.min.css">
+    <link rel="stylesheet" href="inc/socicon/style.css">
     <link rel="stylesheet" href="style.css">
 
     <!-- Favicon -->
@@ -118,13 +119,14 @@
                 <input id="txt_base_frequency" name="base_frequency" type="number" min="0.0001" max="999999" class="form-control" value="440"></input>
                 <div class="input-group-addon">Hz</div>
               </div>
+              <input name="Auto" id="btn_frequency_auto" type="button" value="Auto" class="btn btn-default pull-right"></input>
             </div>
 
             <div class="form-group">
               <label>Base MIDI note (note 1/1)</label>
               <div class="input-group">
                 <input id="txt_base_midi_note" name="base_midi_note" type="number" min="0" max="127" step="1" class="form-control" value="69"></input>
-                <div id="base_midi_note_name" class="input-group-addon">A5</div>
+                <div id="base_midi_note_name" class="input-group-addon" style="min-width:5em;">A5</div>
               </div>
             </div>
 
@@ -141,10 +143,14 @@
             <!-- Settings column -->
             <div class="col-sm-12 col-md-6 col-md-push-6 col-lg-6 col-sub">
 
-              <!--<div class="bg-info" style="padding:1em;">
-                <h4>What is this?</h4>
-                <p>Scale Workshop allows you to create microtonal tunings within your web browser. You can export these tunings to your device and use them to tune various synthesizers.</p>
-              </div>-->
+              <noscript>
+                <p class="bg-danger lead" style="padding:1em;">JavaScript is disabled in your browser. Please enable JavaScript in order to use this software.</p>
+              </noscript>
+
+              <a id="btn_panic" href="#" class="btn btn-link" style="float:right;margin-top:1em;">All notes OFF</a>
+
+              <div id="qwerty-indicator">
+              </div>
 
               <div id="settings-accordion">
 
@@ -153,15 +159,21 @@
                   <h3>General settings</h3>
                   <div>
                     <form>
-                      <div class="form-group">
+                      <!--<div class="form-group">
                         <div class="checkbox">
                           <label>
                             <input id="input_checkbox_debug_output" type="checkbox"></input> Enable debug output
                           </label>
                         </div>
+                      </div>-->
+                      <div class="form-group">
+                        <label>Line endings format</label>
+                        <select id="input_select_newlines" class="form-control">
+                          <option value="windows">Microsoft (Windows/MS-DOS)</option>
+                          <option value="unix">Unix (Mac/Linux)</option>
+                        </select>
                       </div>
-                      <input name="Save" id="btn_settings_general_save" type="button" value="Save" class="btn btn-default">
-                      <input name="Revert" id="btn_settings_general_revert" type="button" value="Revert" class="btn btn-default">
+                      <p id="info_newlines" class="hidden">After changing this option, make sure to click 'Calculate' before exporting the current tuning.</p>
                     </form>
                   </div>
                 </div>
@@ -180,8 +192,31 @@
                           <option value="sine">Sine</option>
                         </select>
                       </div>
-                      <input name="Save" id="btn_settings_synth_save" type="button" value="Save" class="btn btn-default">
-                      <input name="Revert" id="btn_settings_synth_revert" type="button" value="Revert" class="btn btn-default">
+                      <!--<div class="form-group">
+                        <label>Amplitude Envelope</label>
+                        <select id="input_select_synth_waveform" class="form-control">
+                          <option value="keys">Keys</option>
+                          <option value="pad">Pad</option>
+                          <option value="perc-short">Percussive (Short)</option>
+                          <option value="perc-long">Percussive (Long)</option>
+                        </select>
+                      </div>-->
+                      <div class="form-group">
+                        <label>Delay effect</label>
+                        <div class="checkbox">
+                          <label>
+                            <input id="input_checkbox_delay_on" type="checkbox"></input> On
+                          </label>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="input_range_feedback_gain">Feedback gain</label>
+                        <input type="range" class="form-control-range" id="input_range_feedback_gain" min="0" max="0.99" step="0.005">
+                      </div>
+                      <div class="form-group">
+                        <label for="input_range_delay_time">Delay Time (ms)</label>
+                        <input type="range" class="form-control-range" id="input_range_delay_time" min="10" max="5000">
+                      </div>
                     </form>
                   </div>
                 </div>
@@ -212,8 +247,6 @@
                         </div>
                       </div>
                     </form>
-                    <input name="Save" id="btn_settings_note_input_save" type="button" value="Save" class="btn btn-default">
-                    <input name="Revert" id="btn_settings_note_input_revert" type="button" value="Revert" class="btn btn-default">
                   </div>
                 </div>
               </div>
@@ -221,9 +254,6 @@
 
             <!-- tuning table column -->
             <div id="col-tuning-table" class="col-sm-12 col-md-6 col-md-pull-6 col-lg-6 col-sub">
-              <noscript>
-                <p class="bg-danger lead" style="padding:1em;">JavaScript is disabled in your browser. Please enable JavaScript in order to use this software.</p>
-              </noscript>
               <table id="tuning-table" class="table table-condensed table-hover">
               </table>
             </div>
@@ -235,6 +265,8 @@
 
     <!-- Hidden by default -->
     <input type="file" id="scala-file" accept=".scl" style="display:none;" onchange="parse_imported_scala_scl(event)" />
+
+
 
     <!-- Generator Modals -->
     <div id="modal_generate_equal_temperament" class="modal" title="Generate equal temperament">
@@ -351,15 +383,23 @@
       </form>
     </div>-->
 
+
+
     <!-- Export Modals -->
     <div id="modal_share_url" class="modal" title="Share scale as URL">
-      <p>Share your scale by copying and pasting the link below.</p>
+      <p>Share your scale using the sharing link.</p>
       <form>
         <div class="form-group">
           <input id="input_share_url" name="" type="text" class="form-control" value="" readonly></input>
         </div>
       </form>
+      <p class="social-icons">
+        <a class="social-icons-email" href="#"><span class="socicon-mail"></span></a>
+        <a class="social-icons-twitter" href="#"><span class="socicon-twitter"></span></a>
+      </p>
     </div>
+
+
 
     <!-- Load scripts at end of document for faster page loading -->
     <script src="inc/jquery-3.2.1.min.js"></script>
@@ -372,6 +412,7 @@
     <script src="assets/js/modifiers.js"></script>
     <script src="assets/js/exporters.js"></script>
     <script src="assets/js/synth.js"></script>
+    <!--<script src="assets/js/midi.js"></script>-->
     <script src="assets/js/events.js"></script>
   </body>
 </html>

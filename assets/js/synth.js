@@ -73,8 +73,7 @@ var Synth = {
         this.active_voices[midinote].start(0);
         jQuery( "#tuning-table-row-" + midinote ).addClass( "bg-playnote" );
 
-        if ( debug )
-          console.log( "PLAY NOTE:- note: " + keycode_to_midinote( event.which ) + " freq: " + frequency + " velocity: " + velocity);
+        debug( "Play note " + keycode_to_midinote( event.which ) + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
 
       }
 
@@ -88,14 +87,24 @@ var Synth = {
       delete Synth.active_voices[midinote];
       jQuery( "#tuning-table-row-" + midinote ).removeClass( "bg-playnote" );
 
-      if ( debug )
-        console.log( "keyup event.which = " + keycode_to_midinote( event.which ) );
+      debug( "Stop note " + keycode_to_midinote( midinote ) );
     }
 
   },
   panic: function() {
 
     // TODO - this function stops all active voices
+
+    // show which voices are active (playing)
+    debug( Synth.active_voices );
+
+    // loop through active voices
+    for ( i=0; i<127; i++ ) {
+
+      // turn off voice
+      Synth.noteOff( i );
+
+    }
 
   }
 };
@@ -107,6 +116,10 @@ var Voice = ( function( audioCtx ) {
   function Voice( frequency, velocity ) {
     this.frequency = frequency;
     this.velocity = velocity;
+    this.attackTime = 0.1; // TODO
+    this.decayTime = 0.1; // TODO
+    this.sustain = 0.7; // TODO
+    this.releaseTime = 0.1; // TODO
     this.oscillators = [];
   };
 
@@ -122,8 +135,17 @@ var Voice = ( function( audioCtx ) {
     this.velocity = 0.2; // TODO: velocity sensitivity
     vca.gain.value = this.velocity;
 
+    /*
+    now = audioCtx.currentTime;
+    this.param.cancelScheduledValues(now);
+    this.param.setValueAtTime(0, now);
+    this.param.linearRampToValueAtTime(1, now + this.attackTime);
+    this.param.linearRampToValueAtTime(0, now + this.attackTime + this.releaseTime);
+    */
+
     /* routing */
     vco.connect( vca );
+    vca.connect( Delay.channelL );
     vca.connect( audioCtx.destination );
 
     vco.start(0);
@@ -165,12 +187,29 @@ function keycode_to_midinote(keycode) {
   return false;
 }
 
+// is_qwerty_active()
+// check if qwerty key playing should be active
+// returns true if focus is in safe area for typing
+// returns false if focus is on an input or textarea element
+function is_qwerty_active() {
+  var focus = document.activeElement.tagName;
+  if ( focus == 'TEXTAREA' || focus == 'INPUT' ) {
+    jQuery( "div#qwerty-indicator" ).empty();
+    jQuery( "div#qwerty-indicator" ).html('<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-off" aria-hidden="true" style="color:#d9534f"></span> Keyboard disabled</h4><p>Click here to enable QWERTY keyboard playing.</p>');
+    return false;
+  }
+  else {
+    jQuery( "div#qwerty-indicator" ).empty();
+    jQuery( "div#qwerty-indicator" ).html('<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-down" aria-hidden="true"></span> Keyboard enabled</h4><p>Press QWERTY keys to play current tuning.</p>');
+    return true;
+  }
+}
+
 // KEYDOWN -- capture keyboard input
 document.addEventListener( "keydown", function(event) {
 
   // bail if focus is on an input or textarea element
-  var focus = document.activeElement.tagName;
-  if ( focus == 'TEXTAREA' || focus == 'INPUT' ) {
+  if ( !is_qwerty_active() ) {
     return false;
   }
 
@@ -186,3 +225,35 @@ document.addEventListener( "keyup", function(event) {
   event.preventDefault();
   Synth.noteOff( keycode_to_midinote( event.which ) );
 });
+
+
+
+
+
+// DELAY EFFECT
+var Delay = {
+  on: false,
+  channelL: audioCtx.createDelay(5.0),
+  channelR: audioCtx.createDelay(5.0),
+  gainL: audioCtx.createGain(0.8),
+  gainR: audioCtx.createGain(0.8),
+  panL: audioCtx.createPanner(),
+  panR: audioCtx.createPanner(),
+  time: 0.3,
+  gain: 0.4
+};
+// feedback loop with gain stage
+Delay.channelL.connect( Delay.gainL );
+Delay.gainL.connect( Delay.channelR );
+Delay.channelR.connect( Delay.gainR );
+Delay.gainR.connect( Delay.channelL );
+// panning
+Delay.gainL.connect( Delay.panL );
+Delay.gainR.connect( Delay.panR );
+Delay.panL.setPosition( -1, 0, 0 );
+Delay.panR.setPosition( 1, 0, 0 );
+// setup delay time and gain for delay lines
+Delay.channelL.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
+Delay.channelR.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
+Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
+Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);

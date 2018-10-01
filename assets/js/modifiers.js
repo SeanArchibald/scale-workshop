@@ -231,7 +231,7 @@ function modify_key_transpose() {
 
   // warn user when their input is unusable
   if ( isNaN( key ) || key < 0 ) {
-    alert( "" ); // TODO
+    alert( "Could not transpose, input error" );
     return false;
   }
 

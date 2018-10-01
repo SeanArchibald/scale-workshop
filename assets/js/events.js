@@ -45,6 +45,15 @@ jQuery( document ).ready( function() {
 
   } );
 
+  // auto frequency button clicked
+  $( "#btn_frequency_auto" ).click( function( event ) {
+
+    event.preventDefault();
+
+    jQuery("#txt_base_frequency").val( mtof( jQuery("#txt_base_midi_note").val() ).toFixed(6) );
+
+  } );
+
   // import scala option clicked
   $( "#import-scala-scl" ).click( function( event ) {
 
@@ -211,39 +220,76 @@ jQuery( document ).ready( function() {
 
   } );
 
-  // General Settings
-  // Save
-  $( "#btn_settings_general_save" ).click( function( event ) {
-    debug = $( '#input_checkbox_debug_output' ).is( ':checked' );
-    console.log( "debug = " + debug );
-  } );
-  // Revert
-  $( "#btn_settings_general_revert" ).click( function( event ) {
-    $( '#input_checkbox_debug_output' ).prop( 'checked', debug );
-    console.log( "debug = " + debug );
+  // Panic button
+  $( "#btn_panic" ).click( function( event ) {
+    event.preventDefault();
+    Synth.panic(); // turns off all playing synth notes
   } );
 
-  // Synth Settings
-  // Save
-  $( "#btn_settings_synth_save" ).click( function( event ) {
+  // General Settings - Line ending format (newlines)
+  $( '#input_select_newlines' ).change( function( event ) {
+    if ( $( '#input_select_newlines' ).val() == "windows" ) {
+      newline = "\r\n"; // windows
+    }
+    else {
+      newline = "\n"; // unix
+    }
+    debug( $( '#input_select_newlines' ).val() + ' line endings selected' );
+    $( 'p#info_newlines' ).removeClass( 'hidden' );
+  } );
+
+
+
+  // Synth Settings - Waveform
+  $( "#input_select_synth_waveform" ).change( function( event ) {
     Synth.waveform = $( '#input_select_synth_waveform' ).val();
   } );
-  // Revert
-  $( "#btn_settings_synth_revert" ).click( function( event ) {
-    $( '#input_select_synth_waveform' ).val( Synth.waveform );
+
+
+
+  // Synth Settings - Delay
+  $( "#input_checkbox_delay_on" ).change( function( event ) {
+    Delay.on = $( "#input_checkbox_delay_on" ).is(':checked');
+    if ( Delay.on ) {
+      // turn delay on
+      debug("delay ON");
+      Delay.panL.connect( audioCtx.destination );
+      Delay.panR.connect( audioCtx.destination );
+    }
+    else {
+      // turn delay off
+      debug("delay OFF");
+      Delay.panL.disconnect( audioCtx.destination );
+      Delay.panR.disconnect( audioCtx.destination );
+    }
   } );
 
+  $(document).on('input', '#input_range_feedback_gain', function() {
+    Delay.gain = $(this).val();
+    debug(Delay.gain);
+    Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
+    Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
+  });
+
+  $(document).on('input', '#input_range_delay_time', function() {
+    Delay.time = $(this).val() * 0.001;
+    Delay.channelL.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
+    Delay.channelR.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
+  });
+
+
+
   // Note Input Settings
-  // Save
-  $( "#btn_settings_note_input_save" ).click( function( event ) {
+  $( "#input_number_isomorphicmapping_vert" ).change( function( event ) {
     Synth.isomorphicMapping.vertical = $( '#input_number_isomorphicmapping_vert' ).val();
+    export_url();
+  } );
+  $( "#input_number_isomorphicmapping_horiz" ).change( function( event ) {
     Synth.isomorphicMapping.horizontal = $( '#input_number_isomorphicmapping_horiz' ).val();
+    export_url();
   } );
-  // Revert
-  $( "#btn_settings_note_input_revert" ).click( function( event ) {
-    $( '#input_number_isomorphicmapping_vert' ).val( Synth.isomorphicMapping.vertical );
-    $( '#input_number_isomorphicmapping_horiz' ).val( Synth.isomorphicMapping.horizontal );
-  } );
+
+
 
   // set "accordion" settings UI
   $( function() {
@@ -257,4 +303,26 @@ jQuery( document ).ready( function() {
       });
   } );
 
-} );
+  // Social Icons
+  // Email
+  $( "a.social-icons-email" ).click( function( event ) {
+    event.preventDefault();
+    var email = '';
+    var subject = encodeURIComponent( 'Scale Workshop - ' + jQuery( '#txt_name' ).val() );
+    var emailBody = encodeURIComponent( "Sending you this musical scale:" + newline + jQuery( '#txt_name' ).val() + newline + newline + "The link below has more info:" + newline + newline + jQuery( '#input_share_url' ).val() );
+    window.location = 'mailto:' + email + '?subject=' + subject + '&body=' + emailBody;
+  } );
+  // Twitter
+  $( "a.social-icons-twitter" ).click( function( event ) {
+    event.preventDefault();
+    var text = encodeURIComponent( 'Check this tuning ♫ ' + jQuery( '#txt_name' ).val() + ' ' );
+    var url = encodeURIComponent( jQuery( '#input_share_url' ).val() );
+    window.open( 'https://twitter.com/intent/tweet?text=' + text + url );
+  } );
+
+  // handle QWERTY key active indicator
+  is_qwerty_active();
+  $( "input,textarea" ).focusin( function() { is_qwerty_active(); } );
+  $( "input,textarea" ).focusout( function() { is_qwerty_active(); } );
+
+} ); // end of document ready block

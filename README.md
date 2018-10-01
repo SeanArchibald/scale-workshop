@@ -12,7 +12,7 @@
 
 ### Is this a replacement for Scala/LMSO?
 
-No, those pieces of software are much more sophisticated. The goal of this project is *quick* input/generation/generation of tuning data within the web browser. It's just a simple tool you can use conveniently.
+No, those pieces of software are much more sophisticated. The goal of this project is *quick* input/generation/audition of tunings within the web browser. It's just a simple tool you can use conveniently.
 
 ### How do I enter tuning data?
 
@@ -61,6 +61,18 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 
 ## Changelog
+
+### 0.8.4
+
+* Added delay effect
+* Added 'auto' function for base frequency, which calculates the frequency for the specified MIDI note number assuming 12-EDO A440
+* Added option to choose between Microsoft/Unix line endings
+* Added indicator to show when Qwerty isomorphic keyboard is active (when typing in a text field, it is inactive)
+* Added 'panic' button to turn off all playing synth notes
+* Added share scale as URL to email, twitter
+* Fix sharing scale as URL - isomorphic mapping
+* Removed debug option - debug messages will now be output to the JavaScript console by default. Use `debug = false;` in console to disable
+* Improved options menu - options instantly take effect when changed (removed Apply/Save button)
 
 ### 0.8.3
 

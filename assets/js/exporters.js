@@ -244,6 +244,18 @@ function export_url() {
 
   var export_url = protocol + '//' + domain + '/index.htm?name=' + name + '&data=' + data + '&freq=' + freq + '&midi=' + midi + '&vert=' + vert + '&horiz=' + horiz;
 
+  debug( "export_url = " + export_url );
+
+  // check if export URL option already exists - if so it will need to be removed so we can add a new one
+  var btnelement = document.getElementById( 'btn-share-url' );
+  if (typeof(btnelement) != 'undefined' && btnelement != null) {
+    // remove divider item in menu
+    jQuery("#btn-share-url").parent().prev().remove();
+    // remove the export URL menu item itself
+    jQuery("#btn-share-url").parent().remove();
+    debug("Existing 'Export URL' option found in menu. Removed");
+  }
+
   // copy url in to url field
   jQuery( "#input_share_url" ).val( export_url );
 
@@ -259,7 +271,7 @@ function export_url() {
     $( "#modal_share_url" ).dialog({
       modal: true,
       buttons: {
-        Copy: function() {
+        "Copy URL": function() {
           $( "#input_share_url" ).select();
           document.execCommand("Copy");
           $( this ).dialog( 'close' );
