@@ -57,6 +57,10 @@ div#qwerty-indicator {
   display:none;
 }
 
+#btn_panic {
+  display: none;
+}
+
 /*
  * NON-MOBILE
  */
@@ -64,6 +68,10 @@ div#qwerty-indicator {
 
   div#qwerty-indicator {
     display:block;
+  }
+
+  #btn_panic {
+    display: unset;
   }
 
   .col-main { /* main columns of the Scale Workshop UI */
