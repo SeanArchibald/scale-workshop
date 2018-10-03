@@ -119,50 +119,71 @@ var Synth = {
 var audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
 
 var Voice = ( function( audioCtx ) {
+
   function Voice( frequency, velocity ) {
+
     this.frequency = frequency;
-    this.velocity = velocity;
-    this.attackTime = 0.1; // TODO
-    this.decayTime = 0.1; // TODO
-    this.sustain = 0.7; // TODO
-    this.releaseTime = 0.1; // TODO
+    this.velocity = 0.2 * velocity / 127;
+
+    this.vco = audioCtx.createOscillator();
+    this.vca = audioCtx.createGain();
+
+    switch ( $( '#input_select_synth_amp_env' ).val() ) {
+      case 'organ' :
+        this.attackTime = 0.008; this.decayTime = 0.008; break;
+      case 'pad' :
+        this.attackTime = 1; this.decayTime = 2; break;
+      case 'perc-short' :
+        this.attackTime = 0.01; this.decayTime = 0.2; break;
+      case 'perc-medium' :
+        this.attackTime = 0.01; this.decayTime = 1; break;
+      case 'perc-long' :
+        this.attackTime = 0.01; this.decayTime = 5; break;
+    }
+    debug(this.decayTime);
+
     this.oscillators = [];
+
   };
 
+  // note start
   Voice.prototype.start = function() {
 
+    now = audioCtx.currentTime;
+
     /* VCO */
-    var vco = audioCtx.createOscillator();
-    vco.type = Synth.waveform;
-    vco.frequency.value = this.frequency;
+    this.vco.type = Synth.waveform;
+    this.vco.frequency.value = this.frequency;
 
     /* VCA */
-    var vca = audioCtx.createGain();
-    this.velocity = 0.2; // TODO: velocity sensitivity
-    vca.gain.value = this.velocity;
-
-    /*
-    now = audioCtx.currentTime;
-    this.param.cancelScheduledValues(now);
-    this.param.setValueAtTime(0, now);
-    this.param.linearRampToValueAtTime(1, now + this.attackTime);
-    this.param.linearRampToValueAtTime(0, now + this.attackTime + this.releaseTime);
-    */
+    this.vca.gain.value = 0;
+    this.vca.gain.setValueAtTime(this.vca.gain.value, now);
+    this.vca.gain.linearRampToValueAtTime(this.velocity, now + this.attackTime);
 
     /* routing */
-    vco.connect( vca );
-    vca.connect( Delay.channelL );
-    vca.connect( audioCtx.destination );
+    this.vco.connect( this.vca );
+    this.vca.connect( Delay.channelL );
+    this.vca.connect( audioCtx.destination );
 
-    vco.start(0);
+    this.vco.start(0);
 
     /* keep track of oscillators used */
-    this.oscillators.push(vco);
+    this.oscillators.push(this.vco);
   };
 
+  // note stop
   Voice.prototype.stop = function() {
+
+    vca = this.vca;
+    decayTime = this.decayTime;
+
     this.oscillators.forEach(function(oscillator, _) {
-      oscillator.stop();
+
+      now = audioCtx.currentTime;
+
+      //this.vca.gain.cancelScheduledValues(now);
+      this.vca.gain.exponentialRampToValueAtTime( 0.01, now + this.decayTime );
+      oscillator.stop( now + this.decayTime );
     });
   };
 
