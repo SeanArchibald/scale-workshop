@@ -290,7 +290,21 @@ jQuery( document ).ready( function() {
 
 
 
-  // Note Input Settings
+  // Note Input Settings - Keyboard Layout
+  $( "#input_select_keyboard_layout" ).change( function( event ) {
+    switch( $( '#input_select_keyboard_layout' ).val() ) {
+      case 'EN':
+        Synth.keymap = Keymap.EN;
+        break;
+      case 'HU':
+        Synth.keymap = Keymap.HU;
+        break;
+    }
+  } );
+
+
+
+  // Note Input Settings - Isomorphic Mapping
   $( "#input_number_isomorphicmapping_vert" ).change( function( event ) {
     Synth.isomorphicMapping.vertical = $( '#input_number_isomorphicmapping_vert' ).val();
     export_url();
