@@ -62,6 +62,12 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## Changelog
 
+### 0.8.5
+
+* Added amplitude envelope for synth notes (organ, pad, and percussive presets)
+* Added main volume control
+* Added keyboard layout setting for international keyboards (English and Hungarian supported)
+
 ### 0.8.4
 
 * Added delay effect
@@ -152,8 +158,6 @@ https://github.com/SeanArchibald/scale-workshop/issues
 ### 0.x.x
 
 * MIDI controller input
-* Synth amplitude envelope options
-* Prevent stuck notes from occurring and add a 'panic' button to stop all notes
 * UI improvements
 * More scale modifiers e.g. ‘quantize to BPM’, ‘sort ascending’, ‘octave reduce’
 * What should go here?
