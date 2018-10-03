@@ -240,6 +240,17 @@ jQuery( document ).ready( function() {
 
 
 
+  // Synth Settings - Main Volume
+  $(document).on('input', '#input_range_main_vol', function() {
+    gain = $(this).val();
+    now = audioCtx.currentTime;
+    debug(gain);
+    Synth.masterGain.gain.value = gain;
+    Synth.masterGain.gain.setValueAtTime(gain, now);
+  });
+
+
+
   // Synth Settings - Waveform
   $( "#input_select_synth_waveform" ).change( function( event ) {
     Synth.waveform = $( '#input_select_synth_waveform' ).val();
@@ -253,14 +264,14 @@ jQuery( document ).ready( function() {
     if ( Delay.on ) {
       // turn delay on
       debug("delay ON");
-      Delay.panL.connect( audioCtx.destination );
-      Delay.panR.connect( audioCtx.destination );
+      Delay.panL.connect( Synth.masterGain );
+      Delay.panR.connect( Synth.masterGain );
     }
     else {
       // turn delay off
       debug("delay OFF");
-      Delay.panL.disconnect( audioCtx.destination );
-      Delay.panR.disconnect( audioCtx.destination );
+      Delay.panL.disconnect( Synth.masterGain );
+      Delay.panR.disconnect( Synth.masterGain );
     }
   } );
 

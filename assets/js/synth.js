@@ -93,7 +93,7 @@ var Synth = {
   },
   panic: function() {
 
-    // TODO - this function stops all active voices
+    // this function stops all active voices and cuts the delay
 
     // show which voices are active (playing)
     debug( Synth.active_voices );
@@ -117,6 +117,9 @@ var Synth = {
 
 // create an audiocontext
 var audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
+Synth.masterGain = audioCtx.createGain(); // create master gain before output
+Synth.masterGain.gain.value = 0.8;
+Synth.masterGain.connect( audioCtx.destination ); // connect master gain control to master output
 
 var Voice = ( function( audioCtx ) {
 
@@ -168,7 +171,7 @@ var Voice = ( function( audioCtx ) {
     /* routing */
     this.vco.connect( this.vca );
     this.vca.connect( Delay.channelL );
-    this.vca.connect( audioCtx.destination );
+    this.vca.connect( Synth.masterGain );
 
     this.vco.start(0);
 
