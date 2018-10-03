@@ -244,7 +244,6 @@ jQuery( document ).ready( function() {
   $(document).on('input', '#input_range_main_vol', function() {
     gain = $(this).val();
     now = audioCtx.currentTime;
-    debug(gain);
     Synth.masterGain.gain.value = gain;
     Synth.masterGain.gain.setValueAtTime(gain, now);
   });
