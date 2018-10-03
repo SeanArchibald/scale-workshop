@@ -130,17 +130,20 @@ var Voice = ( function( audioCtx ) {
 
     switch ( $( '#input_select_synth_amp_env' ).val() ) {
       case 'organ' :
-        this.attackTime = 0.008; this.decayTime = 0.008; break;
+        this.attackTime = 0.008; this.decayTime = 0.1; this.sustain = 0.8; this.releaseTime = 0.008; break;
       case 'pad' :
-        this.attackTime = 1; this.decayTime = 2; break;
+        this.attackTime = 1; this.decayTime = 3; this.sustain = 0.5; this.releaseTime = 3; break;
       case 'perc-short' :
-        this.attackTime = 0.01; this.decayTime = 0.2; break;
+        this.attackTime = 0.001; this.decayTime = 0.2; this.sustain = 0.001; this.releaseTime = 0.2; break;
       case 'perc-medium' :
-        this.attackTime = 0.01; this.decayTime = 1; break;
+        this.attackTime = 0.001; this.decayTime = 1; this.sustain = 0.001; this.releaseTime = 1; break;
       case 'perc-long' :
-        this.attackTime = 0.01; this.decayTime = 5; break;
+        this.attackTime = 0.001; this.decayTime = 5; this.sustain = 0.001; this.releaseTime = 5; break;
     }
-    debug(this.decayTime);
+    debug("attack " + this.attackTime);
+    debug("decay " + this.decayTime);
+    debug("sustain " + this.sustain);
+    debug("release " + this.releaseTime);
 
     this.oscillators = [];
 
@@ -157,8 +160,10 @@ var Voice = ( function( audioCtx ) {
 
     /* VCA */
     this.vca.gain.value = 0;
-    this.vca.gain.setValueAtTime(this.vca.gain.value, now);
-    this.vca.gain.linearRampToValueAtTime(this.velocity, now + this.attackTime);
+    this.vca.gain.setValueAtTime(this.vca.gain.value, now); // initial gain
+    this.vca.gain.linearRampToValueAtTime(this.velocity, now + this.attackTime); // attack
+    this.vca.gain.exponentialRampToValueAtTime(this.velocity * this.sustain, now + this.attackTime + this.decayTime); // decay & sustain
+    // TODO decay and sustain
 
     /* routing */
     this.vco.connect( this.vca );
@@ -175,15 +180,15 @@ var Voice = ( function( audioCtx ) {
   Voice.prototype.stop = function() {
 
     vca = this.vca;
-    decayTime = this.decayTime;
+    releaseTime = this.releaseTime;
 
     this.oscillators.forEach(function(oscillator, _) {
 
       now = audioCtx.currentTime;
 
-      //this.vca.gain.cancelScheduledValues(now);
-      this.vca.gain.exponentialRampToValueAtTime( 0.01, now + this.decayTime );
-      oscillator.stop( now + this.decayTime );
+      this.vca.gain.cancelAndHoldAtTime(now);
+      this.vca.gain.exponentialRampToValueAtTime( 0.001, now + this.releaseTime ); // release
+      oscillator.stop( now + this.releaseTime );
     });
   };
 
