@@ -194,11 +194,11 @@ $(() => {
   midi.on('update', updateStatus)
 
   midi.on('note on', (note, velocity, channel) => {
-    console.log('note on:', note, velocity, channel)
+    Synth.noteOn(note, velocity)
   })
 
   midi.on('note off', (note, velocity, channel) => {
-    console.log('note off:', note, velocity, channel)
+    Synth.noteOff(note, velocity)
   })
 
   midi.init()
