@@ -2,6 +2,11 @@ img {
   max-width:100%;
 }
 
+.helpicon {
+  color: #999;
+  font-size: 0.9em;
+}
+
 .hidden {
   display: none;
 }

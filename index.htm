@@ -107,24 +107,23 @@
 
             <label>Tuning data</label>
             <div class="form-group">
-              <textarea id="txt_tuning_data" class="form-control" rows="12"></textarea>
+              <textarea id="txt_tuning_data" class="form-control" rows="12" title="Enter one interval per line. Values with a . will be calculated as cents. Values with a backslash (n\m) are n degrees of m-EDO. Values with forward slash (/) are calculated as ratios."></textarea>
             </div>
 
-            <p>One interval per line, values with a . are cents, values without are ratios</p>
             <hr/>
 
             <div class="form-group">
               <label>Base frequency (note 1/1)</label>
               <div class="input-group">
-                <input id="txt_base_frequency" name="base_frequency" type="number" min="0.0001" max="999999" class="form-control" value="440"></input>
+                <input id="txt_base_frequency" name="base_frequency" type="number" min="0.0001" max="999999" class="form-control" value="440" title="Set the frequency (in Hz) of note 1/1"></input>
                 <div class="input-group-addon">Hz</div>
               </div>
-              <input name="Auto" id="btn_frequency_auto" type="button" value="Auto" class="btn btn-default pull-right"></input>
+              <input name="Auto" id="btn_frequency_auto" type="button" value="Auto" class="btn btn-default pull-right" title="Automatically set base frequency from the MIDI note, assuming 12-EDO A440Hz"></input>
             </div>
 
             <div class="form-group">
               <label>Base MIDI note (note 1/1)</label>
-              <div class="input-group">
+              <div class="input-group" title="Set the MIDI note number to be note 1/1. By default this is 69 (A above middle C).">
                 <input id="txt_base_midi_note" name="base_midi_note" type="number" min="0" max="127" step="1" class="form-control" value="69"></input>
                 <div id="base_midi_note_name" class="input-group-addon" style="min-width:5em;">A5</div>
               </div>
@@ -159,21 +158,13 @@
                   <h3>General settings</h3>
                   <div>
                     <form>
-                      <!--<div class="form-group">
-                        <div class="checkbox">
-                          <label>
-                            <input id="input_checkbox_debug_output" type="checkbox"></input> Enable debug output
-                          </label>
-                        </div>
-                      </div>-->
                       <div class="form-group">
                         <label>Line endings format</label>
-                        <select id="input_select_newlines" class="form-control">
+                        <select id="input_select_newlines" class="form-control" title="If your exported tuning files didn't work right on macOS synths, try changing this option to Unix. Note: after changing this option you must click the 'Calculate' button to update exported tuning files correctly.">>
                           <option value="windows">Microsoft (Windows/MS-DOS)</option>
                           <option value="unix">Unix (Mac/Linux)</option>
                         </select>
                       </div>
-                      <p id="info_newlines" class="hidden">After changing this option, make sure to click 'Calculate' before exporting the current tuning.</p>
                     </form>
                   </div>
                 </div>
@@ -239,7 +230,7 @@
                       </div>-->
                       <div class="form-group">
                         <label>Keyboard layout</label>
-                        <select id="input_select_keyboard_layout" class="form-control">
+                        <select id="input_select_keyboard_layout" class="form-control" title="Select an alternative keyboard layout.">
                           <option value="EN">English (QWERTY)</option>
                           <option value="HU">Hungarian (QWERTZ)</option>
                         </select>

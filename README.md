@@ -62,6 +62,10 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## Changelog
 
+### 0.8.6
+
+* Added info tooltips
+
 ### 0.8.5
 
 * Added amplitude envelope for synth notes (organ, pad, and percussive presets)
