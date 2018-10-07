@@ -278,7 +278,7 @@
       <form>
         <label>Number of divisions</label>
         <div class="form-group">
-          <input id="input_number_of_divisions" name="" type="number" min="0.0001" max="999999" class="form-control" value="5"></input>
+          <input id="input_number_of_divisions" name="" type="number" min="1" max="999999" class="form-control" value="5"></input>
         </div>
 
         <label>Interval to divide</label>
@@ -355,12 +355,10 @@
       <form>
         <label>Maximum variance in cents</label>
         <div class="form-group">
-          <input id="input_cents_max_variance" name="" type="number" class="form-control" value="10" min="0.0001" max="99999"></input>
+          <input id="input_cents_max_variance" name="" type="number" class="form-control" value="10" min="0" max="99999"></input>
         </div>
 
-        <p>By default, the "octave" won't be detuned. This prevents the scale sound progressively more out-of-tune as you go up/down by octaves. Check the box below to over-ride this.</p>
-
-        <div class="checkbox">
+        <div class="checkbox" title="By default, the 'octave' won't be detuned. This prevents the scale sound progressively more out-of-tune as you go up/down by octaves. Check this box option to over-ride this.">
           <label>
             <input id="input_checkbox_vary_period" type="checkbox"></input> Vary the octave
           </label>
