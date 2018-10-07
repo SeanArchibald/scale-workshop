@@ -79,6 +79,8 @@ var Voice = ( function( audioCtx ) {
 
     this.frequency = frequency;
     this.velocity = 0.2 * velocity / 127;
+    this.velocity = ( this.velocity == 0 ) ? 0.001 : this.velocity; // prevent 0 value for velocity - safe for using exponential ramp
+
 
     this.vco = audioCtx.createOscillator();
     this.vca = audioCtx.createGain();
@@ -95,10 +97,10 @@ var Voice = ( function( audioCtx ) {
       case 'perc-long' :
         this.attackTime = 0.001; this.decayTime = 5; this.sustain = 0.001; this.releaseTime = 5; break;
     }
-    debug("attack " + this.attackTime);
-    debug("decay " + this.decayTime);
-    debug("sustain " + this.sustain);
-    debug("release " + this.releaseTime);
+    //debug("attack " + this.attackTime);
+    //debug("decay " + this.decayTime);
+    //debug("sustain " + this.sustain);
+    //debug("release " + this.releaseTime);
 
     this.oscillators = [];
 

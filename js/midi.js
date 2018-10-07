@@ -114,12 +114,14 @@ class MIDI extends EventEmitter {
             switch (cmd) {
               case commands.noteOff: {
                 const [note, velocity] = params
-                this.emit('note off', note, (velocity / 128) * 100, channel)
+                // this.emit('note off', note, (velocity / 128) * 100, channel)
+                this.emit('note off', note, velocity, channel);
               }
                 break
               case commands.noteOn: {
                 const [note, velocity] = params
-                this.emit('note on', note, (velocity / 128) * 100, channel)
+                //this.emit('note on', note, (velocity / 128) * 100, channel)
+                this.emit('note on', note, velocity, channel);
               }
                 break
               case commands.aftertouch: {
