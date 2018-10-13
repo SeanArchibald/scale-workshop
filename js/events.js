@@ -235,7 +235,6 @@ jQuery( document ).ready( function() {
       newline = "\n"; // unix
     }
     debug( $( '#input_select_newlines' ).val() + ' line endings selected' );
-    $( 'p#info_newlines' ).removeClass( 'hidden' );
   } );
 
 
@@ -281,7 +280,7 @@ jQuery( document ).ready( function() {
     Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
   });
 
-  $(document).on('input', '#input_range_delay_time', function() {
+  $(document).on('change', '#input_range_delay_time', function() {
     Delay.time = $(this).val() * 0.001;
     Delay.channelL.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
     Delay.channelR.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );

@@ -62,6 +62,11 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ## Changelog
 
+### 0.8.6
+
+* Added basic MIDI in
+* Added info tooltips
+
 ### 0.8.5
 
 * Added amplitude envelope for synth notes (organ, pad, and percussive presets)
@@ -157,7 +162,6 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ### 0.x.x
 
-* MIDI controller input
 * UI improvements
 * More scale modifiers e.g. ‘quantize to BPM’, ‘sort ascending’, ‘octave reduce’
 * What should go here?
@@ -171,6 +175,7 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 * Sevish
 * Scott Thompson
+* Lajos Mészáros
 
 
 ## License

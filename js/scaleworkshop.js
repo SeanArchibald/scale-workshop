@@ -2,7 +2,7 @@
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 0.8.5";
+const APP_TITLE = "Scale Workshop 0.8.6";
 const TUNING_MAX_SIZE = 128;
 var newline = "\r\n";
 var tuning_table = {
@@ -291,3 +291,8 @@ function parse_imported_scala_scl( event ) {
   };
 
 }
+
+// use jQuery UI tooltips instead of default
+$( function() {
+  $( document ).tooltip();
+} );
