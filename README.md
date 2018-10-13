@@ -162,7 +162,6 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ### 0.x.x
 
-* MIDI controller input
 * UI improvements
 * More scale modifiers e.g. ‘quantize to BPM’, ‘sort ascending’, ‘octave reduce’
 * What should go here?
@@ -176,6 +175,7 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 * Sevish
 * Scott Thompson
+* Lajos Mészáros
 
 
 ## License
