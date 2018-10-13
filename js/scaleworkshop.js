@@ -47,14 +47,13 @@ function generate_tuning_table( tuning ) {
 
 }
 
-
 /**
  * parse_url()
  */
 
 function parse_url() {
 
-  //name=10%20equal%20divisions%20of%201198.&data=119.8%0A239.6%0A359.4%0A479.2%0A599.%0A718.8%0A838.6%0A958.4%0A1078.2%0A1198.&freq=440&midi=69&vert=-1&horiz=2
+  // name=10%20equal%20divisions%20of%201198.&data=119.8%0A239.6%0A359.4%0A479.2%0A599.%0A718.8%0A838.6%0A958.4%0A1078.2%0A1198.&freq=440&midi=69&vert=-1&horiz=2
   // name=5%20EDO&data=1%5C5%0A480.%0A720.%0A960.%0A2%2F1&freq=261.626&midi=60
   var url = new URL(window.location.href);
 
@@ -63,6 +62,7 @@ function parse_url() {
   var data = ( url.searchParams.has("data") ) ? url.searchParams.get("data") : false;
   var freq = ( url.searchParams.has("freq") && !isNaN( url.searchParams.get("freq") ) ) ? url.searchParams.get("freq") : 440;
   var midi = ( url.searchParams.has("midi") && !isNaN( url.searchParams.get("midi") ) ) ? url.searchParams.get("midi") : 69;
+  var source = ( url.searchParams.has("source") ) ? url.searchParams.get("source") : "";
 
   // get isomorphic keyboard mapping
   var vertical = ( url.searchParams.has("vert") && !isNaN( url.searchParams.get("vert") ) ) ? url.searchParams.get("vert") : false;
@@ -71,6 +71,31 @@ function parse_url() {
   // bail if there is no data
   if ( !data ) {
     return false;
+  }
+
+  // decodes HTML entities
+  function decodeHTML(input) {
+    var doc = new DOMParser().parseFromString(input, "text/html");
+    return doc.documentElement.textContent;
+  }
+
+  // parses Scala entries from the Xenharmonic Wiki
+  function parseWiki(str) {
+    var s = decodeHTML(str);
+    s = s.replace(/_/g, ' '); // change underscores to spaces
+    s = s.replace(/ /g, ''); // remove horizontal whitespace
+    var a = s.split(/\n/); // split by line into an array
+    a = a.filter(line => line[0] !== '<'); // remove <nowiki> tag
+    a = a.filter(line => line[0] !== '{'); // remove wiki templates
+    a = a.map(line => line.split('!')[0]); // remove .scl comments
+    a = a.filter(line => line !== ''); // remove blank lines
+    a = a.slice(2); // remove .scl metadata
+    return a.join('\n');
+  }
+
+  // specially parse inputs from the Xenharmonic Wiki
+  if (source === "wiki") {
+    data = parseWiki(data);
   }
 
   // enter the data from url in to the on-page form
@@ -96,7 +121,6 @@ function parse_url() {
   }
 
 }
-
 
 /**
  * parse_tuning_data()
