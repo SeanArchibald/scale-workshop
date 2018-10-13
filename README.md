@@ -64,8 +64,8 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 ### 0.8.6
 
-* Added basic MIDI in
 * Added info tooltips
+* URL fix for Xenharmonic Wiki
 
 ### 0.8.5
 
