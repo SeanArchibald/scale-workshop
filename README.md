@@ -40,10 +40,10 @@ Yes, this project now contains a synth that allows you to hear your current scal
 
 Yeah.
 
-### How do I make my own keyboard mapping?
+### How do I make my own Scala keyboard mapping?
 
-Keyboard mappings are not supported. You can still export a Scala keyboard mapping file (.kbm) but it will assume a linear mapping.
-However you can always use duplicate lines in your tuning in order to skip any keys that you don't want to include.
+Keyboard mappings are not currently supported. You can still export a Scala keyboard mapping file (.kbm) but it will assume a linear mapping.
+However you can always use duplicate lines in your tuning in order to skip any keys that you don't want to include, or write your .kbm file manually.
 
 ### When I export a tuning, I get a weird filename, why?
 
@@ -58,6 +58,11 @@ https://github.com/SeanArchibald/scale-workshop/issues
 
 Please create a bug report with as much info as possible about the issue and how to reproduce it:
 https://github.com/SeanArchibald/scale-workshop/issues
+
+
+## Contributing
+
+Please base any work on develop branch, and pull requests should also be made against develop branch not master.
 
 
 ## Changelog
@@ -176,6 +181,7 @@ https://github.com/SeanArchibald/scale-workshop/issues
 * Sevish
 * Scott Thompson
 * Lajos Mészáros
+* Carl Lumma
 
 
 ## License
