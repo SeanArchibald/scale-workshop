@@ -67,6 +67,10 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 0.8.7
+
+* Basic MIDI input support
+
 ### 0.8.6
 
 * Added info tooltips
