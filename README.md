@@ -70,6 +70,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 ### 0.8.7
 
 * Basic MIDI input support
+* Added "Night Mode" dark theme for late night sessions in the workshop
+* Added user.js file where you can add your own custom script if needed
+* TODO General Settings are now automatically saved and restored across sessions
 
 ### 0.8.6
 

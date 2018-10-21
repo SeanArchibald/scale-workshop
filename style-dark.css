@@ -1,0 +1,145 @@
+/* "Night Mode" dark theme styles */
+
+body.dark {
+  background-color: #000;
+  color: #bbb;
+}
+
+.dark .navbar {
+  background-color: #111;
+}
+
+.dark p, .dark label {
+  color: #bbb;
+}
+
+.dark hr {
+  border-color: #222;
+}
+
+.dark .ui-tooltip {
+  background-color: #000;
+}
+
+/* Interactable elements */
+
+.dark input:not(.btn), .dark textarea, .dark select {
+  background-color: #222;
+  color: #bbb;
+  border-color: #888;
+}
+
+.dark .input-group-addon {
+  background-color: #000;
+  color: #bbb;
+}
+
+.dark .btn-default, .dark .ui-button {
+  background-color: #222;
+  color: #bbb;
+}
+
+/* Accordion menu */
+
+.dark .ui-accordion-header {
+  background-color: #222;
+  color: #bbb;
+}
+
+.dark .ui-accordion-content {
+  background-color: #000;
+  color: #bbb;
+}
+
+/* Navbar menu */
+
+.dark ul.dropdown-menu {
+  background-color: #000;
+  border: 1px solid #444;
+  border-top: none;
+}
+
+.dark .dropdown-menu > li > a {
+  color: #bbb;
+}
+
+.dark .dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover {
+  background-color: #222;
+}
+
+.dark .dropdown-menu .divider {
+  background-color: #222;
+}
+
+.dark .ui-widget-overlay {
+  background: black;
+}
+
+/* Modal dialogs */
+
+.dark .ui-widget-content {
+  color: #bbb;
+}
+
+.dark .ui-dialog, .dark .ui-dialog-titlebar {
+  background-color: #000;
+  color: #bbb;
+  border: none;
+  border-bottom: 1px solid #888;
+  border-radius: 0px;
+}
+
+.dark button.ui-button.ui-corner-all.ui-widget.ui-button-icon-only.ui-dialog-titlebar-close { /* modal close buttons */
+  background: #000;
+  border: none;
+}
+
+.dark .ui-dialog-buttonpane {
+  background: #000;
+  border: none;
+}
+
+.dark .socicon-mail {
+  color: #bbb;
+}
+
+/* Tuning Table */
+
+.dark #tuning-table th, .dark #tuning-table td {
+  border-color: #333;
+}
+
+.dark #tuning-table th:hover, .dark #tuning-table tr:hover {
+  background-color: #222;
+}
+
+.dark #tuning-table tr.warning td {
+  background-color: #192d37; /*#fcf8e3*/
+}
+
+.dark #tuning-table tr.info td {
+  background-color: #4c4823; /*#d9edf7*/
+}
+
+.dark tr.bg-playnote td {
+  background-color: #1f4018 !important; /*#dff0d8*/
+}
+
+/*
+ * NON-MOBILE
+ */
+@media (min-width: 768px) {
+
+
+
+}
+@media (min-width: 992px) {
+
+
+
+}
+@media (max-width: 991px) {
+
+
+
+}

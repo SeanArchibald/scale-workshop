@@ -237,6 +237,16 @@ jQuery( document ).ready( function() {
     debug( $( '#input_select_newlines' ).val() + ' line endings selected' );
   } );
 
+  // General Settings - Night mode
+  $( "#input_checkbox_night_mode" ).change( function( event ) {
+    if ( $( "#input_checkbox_night_mode" ).is(':checked') ) {
+      $('body').addClass('dark');
+    }
+    else {
+      $('body').removeClass('dark');
+    }
+  } );
+
 
 
   // Synth Settings - Main Volume
@@ -348,4 +358,9 @@ jQuery( document ).ready( function() {
   $( "input,textarea" ).focusin( function() { is_qwerty_active(); } );
   $( "input,textarea" ).focusout( function() { is_qwerty_active(); } );
 
+
+
+
+  // now everything is initialised we finally run any custom user scripts
+  run_user_scripts_on_document_ready();
 } ); // end of document ready block
