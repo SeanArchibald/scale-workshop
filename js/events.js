@@ -4,18 +4,20 @@
 
 jQuery( document ).ready( function() {
 
+  // automatically load generatal options saved in localStorage (if available)
   if (typeof(Storage) !== "undefined") {
 
-    // get general settings from localStorage
-    debug('localStorage supported');
-
+    // recall newline format
     $( '#input_select_newlines' ).val( localStorage.getItem("newline") );
 
+    // recall night mode
+    if ( localStorage.getItem( 'night_mode' ) === "true" ) {
+      $( "#input_checkbox_night_mode" ).trigger( "click" );
+      $('body').addClass('dark');
+    }
+
   } else {
-
-      // Output console error if no Web Storage support..
       debug( 'localStorage not supported in your browser. Please check your browser settings. If using Safari, you may need to disable private browsing mode.' );
-
   }
 
   // get data encoded in url
@@ -257,9 +259,11 @@ jQuery( document ).ready( function() {
   $( "#input_checkbox_night_mode" ).change( function( event ) {
     if ( $( "#input_checkbox_night_mode" ).is(':checked') ) {
       $('body').addClass('dark');
+      localStorage.setItem( 'night_mode', true );
     }
     else {
       $('body').removeClass('dark');
+      localStorage.setItem( 'night_mode', false );
     }
   } );
 
