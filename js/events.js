@@ -4,6 +4,20 @@
 
 jQuery( document ).ready( function() {
 
+  if (typeof(Storage) !== "undefined") {
+
+    // get general settings from localStorage
+    debug('localStorage supported');
+
+    $( '#input_select_newlines' ).val( localStorage.getItem("newline") );
+
+  } else {
+
+      // Output console error if no Web Storage support..
+      debug( 'localStorage not supported in your browser. Please check your browser settings. If using Safari, you may need to disable private browsing mode.' );
+
+  }
+
   // get data encoded in url
   parse_url();
 
@@ -230,9 +244,11 @@ jQuery( document ).ready( function() {
   $( '#input_select_newlines' ).change( function( event ) {
     if ( $( '#input_select_newlines' ).val() == "windows" ) {
       newline = "\r\n"; // windows
+      localStorage.setItem( 'newline', 'windows' );
     }
     else {
       newline = "\n"; // unix
+      localStorage.setItem( 'newline', 'unix' );
     }
     debug( $( '#input_select_newlines' ).val() + ' line endings selected' );
   } );
