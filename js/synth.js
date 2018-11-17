@@ -25,7 +25,7 @@ var Synth = {
         this.active_voices[midinote].start(0);
         jQuery( "#tuning-table-row-" + midinote ).addClass( "bg-playnote" );
 
-        debug( "Play note " + keycode_to_midinote( midinote ) + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
+        debug( "Play note " + midinote + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
 
       }
 
@@ -39,7 +39,7 @@ var Synth = {
       delete Synth.active_voices[midinote];
       jQuery( "#tuning-table-row-" + midinote ).removeClass( "bg-playnote" );
 
-      debug( "Stop note " + keycode_to_midinote( midinote ) );
+      debug( "Stop note " + midinote );
     }
 
   },
