@@ -25,7 +25,7 @@ var Synth = {
         this.active_voices[midinote].start(0);
         jQuery( "#tuning-table-row-" + midinote ).addClass( "bg-playnote" );
 
-        debug( "Play note " + keycode_to_midinote( event.which ) + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
+        debug( "Play note " + keycode_to_midinote( midinote ) + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
 
       }
 
@@ -143,7 +143,13 @@ var Voice = ( function( audioCtx ) {
 
       now = audioCtx.currentTime;
 
-      this.vca.gain.cancelAndHoldAtTime(now);
+      // using try/catch here because Firefox doesn't support cancelAndHoldAtTime.. shame!!
+      try {
+        this.vca.gain.cancelAndHoldAtTime(now);
+      }
+      catch(err) {
+        //debug(err);
+      }
       this.vca.gain.exponentialRampToValueAtTime( 0.001, now + this.releaseTime ); // release
       oscillator.stop( now + this.releaseTime );
     });

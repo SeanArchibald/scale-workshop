@@ -68,8 +68,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 0.8.8
-* Fix blank option showing up in newline format on first load
-* Fix dark style being applied to light theme menus when hovering
+* Fix stuck notes in Mozilla Firefox (due to differing implementations of the Web Audio API between web browsers, the amplitude envelopes are going to sound slightly different in Firefox)
+* Fix blank option shown in 'Line endings format' when using Scale Workshop for the first time
+* Fix styling issue with light theme when hovering over top menu option
 
 ### 0.8.7
 
