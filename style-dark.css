@@ -63,7 +63,7 @@ body.dark {
   color: #bbb;
 }
 
-.dark .dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover {
+.dark .dropdown-menu>li>a:focus, .dark .dropdown-menu>li>a:hover {
   background-color: #222;
 }
 

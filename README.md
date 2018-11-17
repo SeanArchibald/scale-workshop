@@ -67,6 +67,10 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 0.8.8
+* Fix blank option showing up in newline format on first load
+* Fix dark style being applied to light theme menus when hovering
+
 ### 0.8.7
 
 * Basic MIDI input support
