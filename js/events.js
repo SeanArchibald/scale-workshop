@@ -8,7 +8,12 @@ jQuery( document ).ready( function() {
   if (typeof(Storage) !== "undefined") {
 
     // recall newline format
-    $( '#input_select_newlines' ).val( localStorage.getItem("newline") );
+    if ( localStorage.getItem("newline") !== null ) {
+      $( '#input_select_newlines' ).val( localStorage.getItem("newline") );
+    } else {
+      debug("localStorage: assuming default of windows");
+      $( '#input_select_newlines' ).val( "windows" );
+    }
 
     // recall night mode
     if ( localStorage.getItem( 'night_mode' ) === "true" ) {
