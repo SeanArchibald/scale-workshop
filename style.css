@@ -81,7 +81,7 @@ div#qwerty-indicator {
 
   .col-main { /* main columns of the Scale Workshop UI */
     height: calc(100vh - 80px);
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   .navbar {
@@ -93,7 +93,7 @@ div#qwerty-indicator {
 
   .col-sub { /* main columns of the Scale Workshop UI */
     height: calc(100vh - 80px);
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   .navbar {
