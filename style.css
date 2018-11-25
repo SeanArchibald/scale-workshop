@@ -83,9 +83,9 @@ div#splash-center {
   text-align: center;
 }
 div#splash-center img {
-  max-width: 25vw;
+  max-width: 70vw;
   height: auto;
-  box-shadow: #8b9e5e 0px 0px 40px;
+  box-shadow: #aaa 0px 0px 40px;
 }
 
 /*
