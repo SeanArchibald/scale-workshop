@@ -383,8 +383,8 @@ jQuery( document ).ready( function() {
   $( "input,textarea" ).focusin( function() { is_qwerty_active(); } );
   $( "input,textarea" ).focusout( function() { is_qwerty_active(); } );
 
-
-
+  // Remove splash screen
+  $( "div#splash" ).fadeOut();
 
   // now everything is initialised we finally run any custom user scripts
   run_user_scripts_on_document_ready();

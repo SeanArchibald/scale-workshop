@@ -67,6 +67,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 0.8.9
+* 
+
 ### 0.8.8
 * Fix stuck notes in Mozilla Firefox (due to differing implementations of the Web Audio API between web browsers, the amplitude envelopes are going to sound slightly different in Firefox)
 * Fix blank option shown in 'Line endings format' when using Scale Workshop for the first time

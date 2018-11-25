@@ -66,6 +66,28 @@ div#qwerty-indicator {
   display: none;
 }
 
+div#splash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  z-index: 10;
+  display: table;
+}
+
+div#splash-center {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+div#splash-center img {
+  max-width: 25vw;
+  height: auto;
+  box-shadow: #8b9e5e 0px 0px 40px;
+}
+
 /*
  * NON-MOBILE
  */
