@@ -93,7 +93,14 @@
             <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export <span class="caret"></span></a>
               <ul class="dropdown-menu" id="export-buttons">
-                <li><a href="#">Generate some tuning data first</a></li>
+                <li><a href="#" onclick="event.preventDefault(); export_anamark_tun();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download AnaMark Tuning (.tun)</a></li>
+                <li><a href="#" onclick="event.preventDefault(); export_scala_scl();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Scala Scale (.scl)</a></li>
+                <li><a href="#" onclick="event.preventDefault(); export_scala_kbm();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Scala Mapping (.kbm)</a></li>
+                <li><a href="#" onclick="event.preventDefault(); export_maxmsp_coll();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Max/MSP coll Tuning (.txt)</a></li>
+                <li><a href="#" onclick="event.preventDefault(); export_pd_text();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download PureData text Tuning (.txt)</a></li>
+                <li><a href="#" onclick="event.preventDefault(); export_kontakt_script();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Kontakt Tuning Script (.txt)</a></li>
+                <li class="divider"></li>
+                <li><a href="#" onclick="event.preventDefault(); export_url();"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Share scale as URL</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -113,14 +120,54 @@
       <div class="row">
         <div class="col-sm-6 col-md-4 col-lg-4 col-main">
           <form>
-            <label>Tuning name/description</label>
+            <label>Scale name/description</label>
             <div class="form-group">
               <input id="txt_name" name="base_frequency" type="text" class="form-control"></input>
             </div>
 
-            <label>Tuning data</label>
+            <label>Scale data</label>
             <div class="form-group">
-              <textarea id="txt_tuning_data" class="form-control" rows="12" title="Enter one interval per line. Values with a . will be calculated as cents. Values with a backslash (n\m) are n degrees of m-EDO. Values with forward slash (/) are calculated as ratios."></textarea>
+              <textarea id="txt_tuning_data" class="form-control" rows="12" title="Enter one interval per line. Values with a . will be calculated as cents. Values with a backslash (n\m) are n degrees of m-EDO. Values with forward slash (/) are calculated as ratios." placeholder="Enter one interval per line.
+
+Values with a . are cents values: e.g. 701.955
+Values with slash (/) are ratios: e.g. 3/2
+Values with a backslash (n\m) are n degrees of m-EDO: e.g. 7\12
+The final value is your octave or pseudo-octave: e.g. 2/1
+
+Example just intonation major scale:
+
+9/8
+5/4
+4/3
+3/2
+5/3
+15/8
+2/1
+
+Example Blackwood[10] in 15edo:
+
+2\15
+3\15
+5\15
+6\15
+8\15
+9\15
+11\15
+12\15
+14\15
+15\15
+
+Example 8edo:
+
+150.
+300.
+450.
+600.
+750.
+900.
+1050.
+1200.
+ "></textarea>
             </div>
 
             <hr/>
@@ -143,8 +190,7 @@
             </div>
 
             <div class="form-group">
-              <input name="Parse" id="btn_parse" type="button" value="Calculate" class="btn btn-primary"></input>
-              <input name="Clear" id="btn_clear" type="button" value="Clear all" class="btn btn-danger pull-right"></input>
+              <input name="Clear" id="btn_clear" type="button" value="Clear scale" class="btn btn-danger"></input>
             </div>
           </form>
         </div>
@@ -169,7 +215,7 @@
                     <form>
                       <div class="form-group">
                         <label>Line endings format</label>
-                        <select id="input_select_newlines" class="form-control" title="If your exported tuning files didn't work right on macOS synths, try changing this option to Unix. Note: after changing this option you must click the 'Calculate' button to update exported tuning files correctly.">>
+                        <select id="input_select_newlines" class="form-control" title="If your exported tuning files didn't work right on macOS synths, try changing this option to Unix.">
                           <option value="windows">Microsoft (Windows/MS-DOS)</option>
                           <option value="unix">Unix (Mac/Linux)</option>
                         </select>

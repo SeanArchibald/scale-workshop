@@ -36,23 +36,6 @@ jQuery( document ).ready( function() {
 
   } );
 
-  // parse the tuning data when it has been edited
-  $( "#btn_parse" ).click( function( event ) {
-
-    event.preventDefault();
-
-    // parse the tuning data - success case
-    if ( parse_tuning_data() ) {
-      jQuery("#txt_tuning_data").parent().removeClass("has-error");
-    }
-
-    // parse the tuning data - failed case
-    else {
-      jQuery("#txt_tuning_data").parent().addClass("has-error");
-    }
-
-  } );
-
   // clear button clicked
   $( "#btn_clear" ).click( function( event ) {
 
@@ -70,8 +53,8 @@ jQuery( document ).ready( function() {
   $( "#btn_frequency_auto" ).click( function( event ) {
 
     event.preventDefault();
-
     jQuery("#txt_base_frequency").val( mtof( jQuery("#txt_base_midi_note").val() ).toFixed(6) );
+    parse_tuning_data();
 
   } );
 
@@ -340,11 +323,9 @@ jQuery( document ).ready( function() {
   // Note Input Settings - Isomorphic Mapping
   $( "#input_number_isomorphicmapping_vert" ).change( function( event ) {
     Synth.isomorphicMapping.vertical = $( '#input_number_isomorphicmapping_vert' ).val();
-    export_url();
   } );
   $( "#input_number_isomorphicmapping_horiz" ).change( function( event ) {
     Synth.isomorphicMapping.horizontal = $( '#input_number_isomorphicmapping_horiz' ).val();
-    export_url();
   } );
 
 
@@ -376,6 +357,11 @@ jQuery( document ).ready( function() {
     var text = encodeURIComponent( 'Check this tuning ♫ ' + jQuery( '#txt_name' ).val() + ' ' );
     var url = encodeURIComponent( jQuery( '#input_share_url' ).val() );
     window.open( 'https://twitter.com/intent/tweet?text=' + text + url );
+  } );
+
+  // parse tuning data when changes are made
+  $( "#txt_name, #txt_tuning_data, #txt_base_frequency, #txt_base_midi_note, #input_select_newlines" ).change( function() {
+    parse_tuning_data();
   } );
 
   // handle QWERTY key active indicator

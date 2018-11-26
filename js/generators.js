@@ -60,7 +60,7 @@ function generate_equal_temperament() {
 
   $( "#txt_name" ).val( divider + " equal divisions of " + original_period );
 
-  $( "#btn_parse" ).trigger( "click" );
+  parse_tuning_data();
 
   $( "#modal_generate_equal_temperament" ).dialog( "close" );
 
@@ -142,7 +142,7 @@ function generate_rank_2_temperament() {
   // update name of scale
   $( "#txt_name" ).val( "Rank 2 scale (" + original_generator + ", " + original_period + ")" );
 
-  $( "#btn_parse" ).trigger( "click" );
+  parse_tuning_data();
 
   $( "#modal_generate_rank_2_temperament" ).dialog( "close" );
 
@@ -196,7 +196,7 @@ function generate_harmonic_series_segment() {
 
   $( "#txt_name" ).val( "Harmonics " + lo + "-" + hi );
 
-  $( "#btn_parse" ).trigger( "click" );
+  parse_tuning_data();
 
   $( "#modal_generate_harmonic_series_segment" ).dialog( "close" );
 
@@ -250,7 +250,7 @@ function generate_subharmonic_series_segment() {
 
   $( "#txt_name" ).val( "Subharmonics " + lo + "-" + hi );
 
-  $( "#btn_parse" ).trigger( "click" );
+  parse_tuning_data();
 
   $( "#modal_generate_subharmonic_series_segment" ).dialog( "close" );
 

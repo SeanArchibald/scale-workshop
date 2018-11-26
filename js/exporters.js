@@ -1,4 +1,25 @@
+function export_error() {
+
+  // no tuning data to export
+  if ( tuning_table['freq'][ tuning_table['base_midi_note'] ] === undefined ) {
+    alert( "No tuning data to export." );
+    return true;
+  }
+}
+
+function save_file( filename, contents ) {
+  var link = document.createElement('a');
+  link.download = filename;
+  link.href = "data:application/octet-stream," + encodeURIComponent( contents );
+  debug( link.href );
+  link.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window})); // opens save dialog
+}
+
 function export_anamark_tun() {
+
+  if ( export_error() ) {
+    return;
+  }
 
   // TUN format spec:
   // http://www.mark-henning.de/files/am/Tuning_File_V2_Doc.pdf
@@ -50,52 +71,7 @@ function export_anamark_tun() {
   file += "note " + tuning_table['base_midi_note'] + '="! ' + tuning_table['base_frequency'].toFixed(6) + '"' + newline;
   file += "[Scale End]" + newline;
 
-  // convert file to data URI
-  var uriContent = "data:application/octet-stream," + encodeURIComponent( file );
-
-  // add button to export tuning
-  $( "#export-buttons" ).append('<li><a download="' + tuning_table['filename'] + '.tun" href="' + uriContent + '" id="btn-dl-anamark-tun"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download AnaMark Tuning (.tun)</a></li>');
-
-  // success
-  return true;
-
-}
-
-function export_maxmsp_coll() {
-
-  // assemble the coll file contents
-  var file = "# Tuning file for Max/MSP coll objects. - Created using " + APP_TITLE + newline;
-  file += "# " + $( "#txt_name" ).val() + newline;
-  file += "#" + newline;
-
-  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
-    file += i + ", " + tuning_table['freq'][i].toFixed(7) + ";" + newline;
-  }
-
-  // convert file to data URI
-  var uriContent = "data:application/octet-stream," + encodeURIComponent( file );
-
-  // add button to export tuning
-  $( "#export-buttons" ).append('<li><a download="' + tuning_table['filename'] + '.txt" href="' + uriContent + '" id="btn-dl-maxmsp-coll"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Max/MSP coll Tuning (.txt)</a></li>');
-
-  // success
-  return true;
-
-}
-
-function export_pd_text() {
-
-  // assemble the text file contents
-  var file = "";
-  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
-    file += tuning_table['freq'][i].toFixed(7) + ";" + newline;
-  }
-
-  // convert file to data URI
-  var uriContent = "data:application/octet-stream," + encodeURIComponent( file );
-
-  // add button to export tuning
-  $( "#export-buttons" ).append('<li><a download="' + tuning_table['filename'] + '.txt" href="' + uriContent + '" id="btn-dl-pd-text"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download PureData text Tuning (.txt)</a></li>');
+  save_file( tuning_table['filename'] + '.tun', file );
 
   // success
   return true;
@@ -103,6 +79,10 @@ function export_pd_text() {
 }
 
 function export_scala_scl() {
+
+  if ( export_error() ) {
+    return;
+  }
 
   // assemble the .scl file contents
   var file = "! " + tuning_table['filename'] + ".scl" + newline;
@@ -115,15 +95,17 @@ function export_scala_scl() {
 
   for ( i = 1; i < tuning_table['note_count']; i++ ) {
 
-    file += " " + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + newline;
+    // if the current interval is n-of-m edo type, output as cents instead
+    if ( line_type( tuning_table['scale_data'][i] ) == 'n_of_edo' ) {
+      file += " " + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + newline;
+    }
+    else {
+      file += " " + tuning_table['scale_data'][i] + newline;
+    }
 
   }
 
-  // convert file to data URI
-  var uriContent = "data:application/octet-stream," + encodeURIComponent( file );
-
-  // add button to export tuning
-  $( "#export-buttons" ).append('<li><a download="' + tuning_table['filename'] + '.scl" href="' + uriContent + '" id="btn-dl-scala-scl"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Scala Tuning (.scl)</a></li>');
+  save_file( tuning_table['filename'] + '.scl', file );
 
   // success
   return true;
@@ -131,6 +113,10 @@ function export_scala_scl() {
 }
 
 function export_scala_kbm() {
+
+  if ( export_error() ) {
+    return;
+  }
 
   // assemble the .kbm file contents
   var file = "! Template for a keyboard mapping" + newline;
@@ -159,17 +145,59 @@ function export_scala_kbm() {
     file += i + newline;
   }
 
-  // convert file to data URI
-  var uriContent = "data:application/octet-stream," + encodeURIComponent( file );
+  save_file( tuning_table['filename'] + '.kbm', file );
 
-  // add button to export tuning
-  $( "#export-buttons" ).append('<li><a download="Linear mapping - note ' + tuning_table['base_midi_note'] + " at " + tuning_table['base_frequency'] + ' Hz.kbm" href="' + uriContent + '" id="btn-dl-scala-kbm"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Scala Mapping (.kbm)</a></li>');
+  // success
+  return true;
 
+}
+
+function export_maxmsp_coll() {
+
+  if ( export_error() ) {
+    return;
+  }
+
+  // assemble the coll file contents
+  var file = "# Tuning file for Max/MSP coll objects. - Created using " + APP_TITLE + newline;
+  file += "# " + $( "#txt_name" ).val() + newline;
+  file += "#" + newline;
+
+  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+    file += i + ", " + tuning_table['freq'][i].toFixed(7) + ";" + newline;
+  }
+
+  save_file( tuning_table['filename'] + '.txt', file );
+
+  // success
+  return true;
+
+}
+
+function export_pd_text() {
+
+  if ( export_error() ) {
+    return;
+  }
+
+  // assemble the text file contents
+  var file = "";
+  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+    file += tuning_table['freq'][i].toFixed(7) + ";" + newline;
+  }
+
+  save_file( tuning_table['filename'] + '.txt', file );
+
+  // success
   return true;
 
 }
 
 function export_kontakt_script() {
+
+  if ( export_error() ) {
+    return;
+  }
 
   // assemble the kontakt script contents
   var file = "{**************************************" + newline;
@@ -215,11 +243,7 @@ function export_kontakt_script() {
   file += "change_tune ($EVENT_ID, $bend, 0)" + newline;
   file += "end on" + newline;
 
-  // convert file to data URI
-  var uriContent = "data:application/octet-stream," + encodeURIComponent( file );
-
-  // add button to export tuning
-  $( "#export-buttons" ).append('<li><a download="' + tuning_table['filename'] + '.txt" href="' + uriContent + '" id="btn-dl-kontakt-script"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Kontakt Tuning Script (.txt)</a></li>');
+  save_file( tuning_table['filename'] + '.txt', file );
 
   // success
   return true;
@@ -244,48 +268,33 @@ function export_url() {
 
   var export_url = protocol + '//' + domain + '/index.htm?name=' + name + '&data=' + data + '&freq=' + freq + '&midi=' + midi + '&vert=' + vert + '&horiz=' + horiz;
 
-  debug( "export_url = " + export_url );
-
-  // check if export URL option already exists - if so it will need to be removed so we can add a new one
-  var btnelement = document.getElementById( 'btn-share-url' );
-  if (typeof(btnelement) != 'undefined' && btnelement != null) {
-    // remove divider item in menu
-    jQuery("#btn-share-url").parent().prev().remove();
-    // remove the export URL menu item itself
-    jQuery("#btn-share-url").parent().remove();
-    debug("Existing 'Export URL' option found in menu. Removed");
+  if ( export_error() ) {
+    export_url = "http://sevish.com/scaleworkshop/"
   }
 
   // copy url in to url field
   jQuery( "#input_share_url" ).val( export_url );
+  debug( "export_url = " + export_url );
 
-  // add button to export tuning
-  $( "#export-buttons" ).append('<li class="divider"></li><li><a href="#" id="btn-share-url"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Share scale as URL</a></li>');
-
-  // share url option clicked
-  $( "#btn-share-url" ).click( function( event ) {
-
-    event.preventDefault();
-
-    $( "#input_share_url" ).select();
-    $( "#modal_share_url" ).dialog({
-      modal: true,
-      buttons: {
-        "Copy URL": function() {
-          $( "#input_share_url" ).select();
-          document.execCommand("Copy");
-          $( this ).dialog( 'close' );
-        }
+  $( "#input_share_url" ).select();
+  $( "#modal_share_url" ).dialog({
+    modal: true,
+    buttons: {
+      "Copy URL": function() {
+        $( "#input_share_url" ).select();
+        document.execCommand("Copy");
+        $( this ).dialog( 'close' );
       }
-    });
+    }
+  });
 
-  } );
 
   // url field clicked
   $( "#input_share_url" ).click( function( event ) {
     $(this).select();
   } );
 
+  // success
   return true;
 
 }

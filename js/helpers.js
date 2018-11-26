@@ -152,12 +152,24 @@ function clear_all() {
 
   // empty any information displayed on page
   $( "#tuning-table" ).empty();
-  $( "#debug" ).empty();
-  $( "#export-buttons" ).empty();
 
   // restore default base tuning
   $( "#txt_base_frequency" ).val( 440 );
   $( "#txt_base_midi_note" ).val( 69 );
+
+  // re-init tuning_table
+  tuning_table = {
+    scale_data: [], // an array containing list of intervals input by the user
+    tuning_data: [], // an array containing the same list above converted to decimal format
+    note_count: 0, // number of values stored in tuning_data
+    freq: [], // an array containing the frequency for each MIDI note
+    cents: [], // an array containing the cents value for each MIDI note
+    decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
+    base_frequency: 440, // init val
+    base_midi_note: 69, // init val
+    description: "",
+    filename: ""
+  };
 
 }
 

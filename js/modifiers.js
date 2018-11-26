@@ -61,7 +61,7 @@ function modify_stretch() {
   // update tuning input field with new tuning
   jQuery( "#txt_tuning_data" ).val( new_tuning );
 
-  $( "#btn_parse" ).trigger( "click" );
+  parse_tuning_data();
 
   $( "#modal_modify_stretch" ).dialog( "close" );
 
@@ -124,7 +124,7 @@ function modify_random_variance() {
   // update tuning input field with new tuning
   jQuery( "#txt_tuning_data" ).val( new_tuning );
 
-  $( "#btn_parse" ).trigger( "click" );
+  parse_tuning_data();
 
   $( "#modal_modify_random_variance" ).dialog( "close" );
 
@@ -198,7 +198,7 @@ function modify_mode() {
   // update tuning input field with new tuning
   jQuery( "#txt_tuning_data" ).val( new_tuning );
 
-  $( "#btn_parse" ).trigger( "click" );
+  parse_tuning_data();
 
   $( "#modal_modify_mode" ).dialog( "close" );
 
@@ -261,7 +261,7 @@ function modify_key_transpose() {
   // update tuning input field with new tuning
   jQuery( "#txt_tuning_data" ).val( new_tuning );
 
-  $( "#btn_parse" ).trigger( "click" );
+  parse_tuning_data();
 
   $( "#modal_modify_mode" ).dialog( "close" );
 

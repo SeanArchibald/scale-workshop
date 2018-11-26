@@ -68,7 +68,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 0.8.9
-* 
+* Improved workflow ('Calculate' button removed as the app now responds to scale data changes automatically)
+* Improved no-javascript error message
+* Fix: Scala .scl file export now preserves ratios instead of converting them to cents
 
 ### 0.8.8
 * Fix stuck notes in Mozilla Firefox (due to differing implementations of the Web Audio API between web browsers, the amplitude envelopes are going to sound slightly different in Firefox)

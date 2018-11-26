@@ -81,12 +81,19 @@ body.dark {
   color: #bbb;
 }
 
+.dark .ui-dialog {
+  box-shadow: #444 0px 0px 70px;
+}
+
 .dark .ui-dialog, .dark .ui-dialog-titlebar {
   background-color: #000;
   color: #bbb;
   border: none;
-  border-bottom: 1px solid #888;
   border-radius: 0px;
+}
+
+.dark .ui-dialog-titlebar {
+  border-bottom: 1px solid #888;
 }
 
 .dark button.ui-button.ui-corner-all.ui-widget.ui-button-icon-only.ui-dialog-titlebar-close { /* modal close buttons */

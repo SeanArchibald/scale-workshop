@@ -6,9 +6,10 @@ const APP_TITLE = "Scale Workshop 0.8.9";
 const TUNING_MAX_SIZE = 128;
 var newline = "\r\n";
 var tuning_table = {
-  tuning_data: [], // an array containing tuning data user input in decimal format
+  scale_data: [], // an array containing list of intervals input by the user
+  tuning_data: [], // an array containing the same list above converted to decimal format
   note_count: 0, // number of values stored in tuning_data
-  freq: [], // an array containing the frequency of each MIDI note
+  freq: [], // an array containing the frequency for each MIDI note
   cents: [], // an array containing the cents value for each MIDI note
   decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
   base_frequency: 440, // init val
@@ -139,7 +140,8 @@ function parse_tuning_data() {
   // check if user pasted a scala file
   // we check if the first character is !
   if ( user_tuning_data.value.charAt(0) == "!" ) {
-    alert('Hello, trying to paste a Scala file into this app?\nPlease use the \'Load\' function instead or remove the first few lines (description) from the text box');
+    alert('Hello, trying to paste a Scala file into this app?\nPlease use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
+    jQuery("#txt_tuning_data").parent().addClass("has-error");
     return false;
   }
 
@@ -149,21 +151,34 @@ function parse_tuning_data() {
   // strip out the unusable lines, assemble an array of usable tuning data
   tuning_table['tuning_data'] = ['1']; // when initialised the array contains only '1' (unison)
   tuning_table['note_count'] = 1;
+  var empty = true;
   for ( var i = 0; i < lines.length; i++ ) {
 
     // check that line is not empty
     if ( lines[i] !== "" ) {
 
       if ( line_type( lines[i] ) == false ) {
+        jQuery("#txt_tuning_data").parent().addClass("has-error");
         return false;
       }
 
       // so far so good - store the line in tuning array
+      tuning_table['scale_data'][ tuning_table['note_count'] ] = lines[i];
       tuning_table['tuning_data'][ tuning_table['note_count'] ] = line_to_decimal( lines[i] );
       tuning_table['note_count']++;
 
+      // if we got to this point, then the tuning must not be empty
+      empty = false;
+
     }
 
+  }
+
+  if ( empty ) {
+    // if the input tuning is totally empty
+    debug("no tuning data");
+    jQuery("#txt_tuning_data").parent().addClass("has-error");
+    return false;
   }
 
   // finally, generate the frequency table
@@ -193,25 +208,13 @@ function parse_tuning_data() {
 
   $( "#tuning-table" ).append("</tbody>");
 
-  // remove Export buttons
-  $( "#export-buttons" ).empty();
-
-  // this block of functions will export the tuning data in various formats
-  // and display an export button for each format
-  export_anamark_tun();
-  export_scala_scl();
-  export_scala_kbm();
-  export_maxmsp_coll();
-  export_pd_text();
-  export_kontakt_script();
-  export_url();
-
   // scroll to reference note on the table
-  jQuery('#col-tuning-table').animate({ scrollTop: 0 }, 0); // reset
   jQuery('#col-tuning-table').animate({
-    scrollTop: $( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top
+    scrollTop: $( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top + jQuery('#col-tuning-table').scrollTop()
   }, 600); // 600ms scroll to reference note
   if (debug) console.log('scrolling to ' + jQuery( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top);
+
+  jQuery("#txt_tuning_data").parent().removeClass("has-error");
 
   // success
   return true;
@@ -226,7 +229,7 @@ function import_scala_scl() {
 
   // Check for the various File API support.
   if (window.File && window.FileReader && window.FileList && window.Blob) {
-    console.log('Your browser supports all the File APIs. Nice.');
+    debug('Your browser supports all the File APIs. Nice.');
   } else {
     // File API not supported
     alert('Trying to load a file? Sorry, your browser doesn\'t support the HTML5 File API. Please try using a different browser.');
@@ -286,7 +289,7 @@ function parse_imported_scala_scl( event ) {
 
     }
 
-    $( "#btn_parse" ).trigger( "click" );
+    parse_tuning_data();
 
   };
 
