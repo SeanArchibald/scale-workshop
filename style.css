@@ -41,6 +41,10 @@ h3.ui-accordion-header {
   cursor:default;
 }
 
+.navbar {
+  z-index: 4;
+}
+
 .table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
   padding:3px 5px;
 }
@@ -86,6 +90,22 @@ div#splash-center img {
   max-width: 70vw;
   height: auto;
   box-shadow: #aaa 0px 0px 40px;
+}
+
+#virtual-keyboard {
+  background-color: white;
+  position: absolute;
+  top:50px;
+  left: 0;
+  width: 100vw;
+  height: calc( 100vh - 50px );
+  display: none;
+  z-index: 2;
+}
+#virtual-keyboard td {
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid grey;
 }
 
 /*

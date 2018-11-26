@@ -142,13 +142,12 @@ jQuery( document ).ready( function() {
   $( "#nav_play" ).click( function( event ) {
 
     event.preventDefault();
-    jQuery( "#play_screen" ).show();
 
-  } );
-  $( "#play_screen_close" ).click( function( event ) {
+    if( $( 'button.navbar-toggle' ).is( ':visible' ) ) {
+      $('button.navbar-toggle').trigger('click'); // roll down navigation menu to expose touch keyboard
+    }
 
-    event.preventDefault();
-    jQuery( "#play_screen" ).hide();
+    jQuery( "#virtual-keyboard" ).toggle();
 
   } );
 

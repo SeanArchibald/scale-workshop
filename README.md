@@ -67,6 +67,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 0.9
+* Added virtual keyboard for touch interfaces
+
 ### 0.8.9
 * Improved workflow ('Calculate' button removed as the app now responds to scale data changes automatically)
 * Improved no-javascript error message

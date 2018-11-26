@@ -110,6 +110,15 @@ body.dark {
   color: #bbb;
 }
 
+/* Virtual Keyboard */
+
+#virtual-keyboard {
+  background-color: black;
+}
+#virtual-keyboard td {
+  border: 1px solid grey;
+}
+
 /* Tuning Table */
 
 .dark #tuning-table th, .dark #tuning-table td {

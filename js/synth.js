@@ -182,6 +182,11 @@ function keycode_to_midinote(keycode) {
   return false;
 }
 
+function touch_to_midinote( row, col ) {
+  var midinote = (row * Synth.isomorphicMapping.vertical) + (col * Synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
+  return midinote;
+}
+
 // is_qwerty_active()
 // check if qwerty key playing should be active
 // returns true if focus is in safe area for typing
@@ -222,7 +227,21 @@ document.addEventListener( "keyup", function(event) {
 });
 
 
+// KEYDOWN -- virtual keybaird
+$( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
+  event.preventDefault();
+  var coord = $( event.target ).data('coord');
+  debug( coord );
+  Synth.noteOn( touch_to_midinote( coord[0], coord[1] ) );
+});
 
+// KEYUP -- virtual keybaird
+$( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
+  event.preventDefault();
+  var coord = $( event.target ).data('coord');
+  debug( coord );
+  Synth.noteOff( touch_to_midinote( coord[0], coord[1] ) );
+});
 
 
 // DELAY EFFECT
