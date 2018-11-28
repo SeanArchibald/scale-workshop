@@ -80,8 +80,8 @@ Synth.masterGain = audioCtx.createGain(); // create master gain before output
 Synth.masterGain.gain.value = 0.8;
 // master filter
 Synth.masterLPfilter = audioCtx.createBiquadFilter();
-Synth.masterLPfilter.frequency.value = 6000;
-Synth.masterLPfilter.Q.value = 0.5;
+Synth.masterLPfilter.frequency.value = 5000;
+Synth.masterLPfilter.Q.value = 1;
 Synth.masterLPfilter.type = 'lowpass';
 // connect master gain control > filter > master output
 Synth.masterGain.connect( Synth.masterLPfilter );
