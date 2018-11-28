@@ -112,10 +112,10 @@ body.dark {
 
 /* Virtual Keyboard */
 
-#virtual-keyboard {
+.dark #virtual-keyboard {
   background-color: black;
 }
-#virtual-keyboard td {
+.dark #virtual-keyboard td {
   border: 1px solid grey;
 }
 
