@@ -5,6 +5,7 @@
  */
 
 var Synth = {
+
   keymap: Keymap.EN,
   isomorphicMapping: {
     vertical: 5, // how many scale degrees as you move up/down by rows
@@ -64,14 +65,37 @@ var Synth = {
     Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
     Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
 
+  },
+  custom_waveforms: {
+    bell: {
+      real: new Float32Array(7), // [0,   1,    2,    7,   54,    55,    256  ], // to be improved
+      imag: new Float32Array(7), // [0,   0,    1,    -1,  -1,    -1,    0    ], // to be improved
+      periodicWave: null
+    }
   }
 };
 
+
+
+
+
 // create an audiocontext
 var audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
+
+// master gain
 Synth.masterGain = audioCtx.createGain(); // create master gain before output
 Synth.masterGain.gain.value = 0.8;
-Synth.masterGain.connect( audioCtx.destination ); // connect master gain control to master output
+// master filter
+Synth.masterLPfilter = audioCtx.createBiquadFilter();
+Synth.masterLPfilter.frequency.value = 6000;
+Synth.masterLPfilter.Q.value = 0.5;
+Synth.masterLPfilter.type = 'lowpass';
+// connect master gain control > filter > master output
+Synth.masterGain.connect( Synth.masterLPfilter );
+Synth.masterLPfilter.connect( audioCtx.destination );
+
+// setup custom waveforms
+Synth.custom_waveforms.bell.periodicWave = audioCtx.createPeriodicWave( Synth.custom_waveforms.bell.real, Synth.custom_waveforms.bell.imag );
 
 var Voice = ( function( audioCtx ) {
 
@@ -97,10 +121,7 @@ var Voice = ( function( audioCtx ) {
       case 'perc-long' :
         this.attackTime = 0.001; this.decayTime = 5; this.sustain = 0.001; this.releaseTime = 5; break;
     }
-    //debug("attack " + this.attackTime);
-    //debug("decay " + this.decayTime);
-    //debug("sustain " + this.sustain);
-    //debug("release " + this.releaseTime);
+    // debug("attack " + this.attackTime); debug("decay " + this.decayTime); debug("sustain " + this.sustain); debug("release " + this.releaseTime);
 
     this.oscillators = [];
 
@@ -112,15 +133,20 @@ var Voice = ( function( audioCtx ) {
     now = audioCtx.currentTime;
 
     /* VCO */
-    this.vco.type = Synth.waveform;
     this.vco.frequency.value = this.frequency;
+
+    if ( Synth.waveform === 'triangle' || Synth.waveform === 'square' || Synth.waveform === 'sawtooth' || Synth.waveform === 'sine' ) {
+      this.vco.type = Synth.waveform;
+    }
+    else {
+      this.vco.setPeriodicWave( Synth.custom_waveforms[Synth.waveform].periodicWave );
+    }
 
     /* VCA */
     this.vca.gain.value = 0;
     this.vca.gain.setValueAtTime(this.vca.gain.value, now); // initial gain
     this.vca.gain.linearRampToValueAtTime(this.velocity, now + this.attackTime); // attack
     this.vca.gain.exponentialRampToValueAtTime(this.velocity * this.sustain, now + this.attackTime + this.decayTime); // decay & sustain
-    // TODO decay and sustain
 
     /* routing */
     this.vco.connect( this.vca );
@@ -251,6 +277,10 @@ var Delay = {
   channelR: audioCtx.createDelay(5.0),
   gainL: audioCtx.createGain(0.8),
   gainR: audioCtx.createGain(0.8),
+  //lowpassL: audioCtx.createBiquadFilter(),
+  //lowpassR: audioCtx.createBiquadFilter(),
+  //highpassL: audioCtx.createBiquadFilter(),
+  //highpassR: audioCtx.createBiquadFilter(),
   panL: audioCtx.createPanner(),
   panR: audioCtx.createPanner(),
   time: 0.3,
@@ -261,9 +291,28 @@ Delay.channelL.connect( Delay.gainL );
 Delay.gainL.connect( Delay.channelR );
 Delay.channelR.connect( Delay.gainR );
 Delay.gainR.connect( Delay.channelL );
+// filters
+//Delay.gainL.connect( Delay.lowpassL );
+//Delay.gainR.connect( Delay.lowpassR );
+//Delay.lowpassL.frequency.value = 6500;
+//Delay.lowpassR.frequency.value = 7000;
+//Delay.lowpassL.Q.value = 0.7;
+//Delay.lowpassR.Q.value = 0.7;
+//Delay.lowpassL.type = 'lowpass';
+//Delay.lowpassR.type = 'lowpass';
+//Delay.lowpassL.connect( Delay.highpassL );
+//Delay.lowpassR.connect( Delay.highpassR );
+//Delay.highpassL.frequency.value = 130;
+//Delay.highpassR.frequency.value = 140;
+//Delay.highpassL.Q.value = 0.7;
+//Delay.highpassR.Q.value = 0.7;
+//Delay.highpassL.type = 'highpass';
+//Delay.highpassR.type = 'highpass';
+//Delay.highpassL.connect( Delay.panL );
+//Delay.highpassR.connect( Delay.panR );
 // panning
-Delay.gainL.connect( Delay.panL );
-Delay.gainR.connect( Delay.panR );
+Delay.gainL.connect( Delay.panL ); //
+Delay.gainR.connect( Delay.panR ); //
 Delay.panL.setPosition( -1, 0, 0 );
 Delay.panR.setPosition( 1, 0, 0 );
 // setup delay time and gain for delay lines

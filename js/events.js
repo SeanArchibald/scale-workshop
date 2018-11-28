@@ -139,7 +139,7 @@ jQuery( document ).ready( function() {
   } );
 
   // nav_play option clicked
-  $( "#nav_play" ).click( function( event ) {
+  $( "#nav_play, #launch-kbd" ).click( function( event ) {
 
     event.preventDefault();
 
@@ -147,9 +147,17 @@ jQuery( document ).ready( function() {
       $('button.navbar-toggle').trigger('click'); // roll down navigation menu to expose touch keyboard
     }
 
-    jQuery( "#virtual-keyboard" ).toggle();
-
+    // slide the virtual keyboard up or down
+    ( jQuery( "#virtual-keyboard" ).is(":visible") ) ? jQuery( "#virtual-keyboard" ).slideUp() : jQuery( "#virtual-keyboard" ).slideDown();
   } );
+
+  // hide virtual keyboard when mobile hamburger menu button is clicked
+  $( "button.navbar-toggle" ).click( function( event ) {
+    if ( jQuery( "#virtual-keyboard" ).is(":visible") ) {
+      jQuery( "#virtual-keyboard" ).slideUp();
+    }
+  } );
+
 
   // modify_stretch option clicked
   $( "#modify_stretch" ).click( function( event ) {
