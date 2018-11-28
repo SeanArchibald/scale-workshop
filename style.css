@@ -37,6 +37,7 @@ h3.ui-accordion-header {
   font-weight:bold;
 }
 
+/* normal cursor when hovering over navbar */
 .navbar a {
   cursor:default;
 }
@@ -106,6 +107,10 @@ div#splash-center img {
   text-align: center;
   vertical-align: middle;
   border: 1px solid grey;
+}
+
+input#btn_frequency_auto {
+  margin-top: 3px;
 }
 
 /*
