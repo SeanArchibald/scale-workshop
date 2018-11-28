@@ -65,13 +65,6 @@ var Synth = {
     Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
     Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
 
-  },
-  custom_waveforms: {
-    bell: {
-      real: new Float32Array(7), // [0,   1,    2,    7,   54,    55,    256  ], // to be improved
-      imag: new Float32Array(7), // [0,   0,    1,    -1,  -1,    -1,    0    ], // to be improved
-      periodicWave: null
-    }
   }
 };
 
@@ -93,9 +86,6 @@ Synth.masterLPfilter.type = 'lowpass';
 // connect master gain control > filter > master output
 Synth.masterGain.connect( Synth.masterLPfilter );
 Synth.masterLPfilter.connect( audioCtx.destination );
-
-// setup custom waveforms
-Synth.custom_waveforms.bell.periodicWave = audioCtx.createPeriodicWave( Synth.custom_waveforms.bell.real, Synth.custom_waveforms.bell.imag );
 
 var Voice = ( function( audioCtx ) {
 
@@ -133,14 +123,8 @@ var Voice = ( function( audioCtx ) {
     now = audioCtx.currentTime;
 
     /* VCO */
+    this.vco.type = Synth.waveform;
     this.vco.frequency.value = this.frequency;
-
-    if ( Synth.waveform === 'triangle' || Synth.waveform === 'square' || Synth.waveform === 'sawtooth' || Synth.waveform === 'sine' ) {
-      this.vco.type = Synth.waveform;
-    }
-    else {
-      this.vco.setPeriodicWave( Synth.custom_waveforms[Synth.waveform].periodicWave );
-    }
 
     /* VCA */
     this.vca.gain.value = 0;
