@@ -111,10 +111,15 @@ function generate_rank_2_temperament() {
 
   period = parseFloat( period );
 
-  var size = jQuery("#input_rank-2_size").val();
+  var size = parseInt( jQuery("#input_rank-2_size").val() );
+  var up = parseInt( jQuery("#input_rank-2_up").val() );
 
   if ( isNaN( size ) || size < 2 ) {
     alert( 'Warning: scale size must be a number greater than 1' );
+    return false;
+  }
+  if ( isNaN( up ) || up < 0 || up >= size ) {
+    alert( 'Warning: generators up must be a number greater than -1 and less than the scale size' );
     return false;
   }
 
@@ -122,13 +127,38 @@ function generate_rank_2_temperament() {
   var tuning_data = jQuery( "#txt_tuning_data" );
   tuning_data.val("");
 
-  // calculate scale
+  // array aa stores the scale data, starting from 1/1 (0.0 cents)
   var aa = [0.0];
   for ( i = 1; i < size; i++ ) {
-    aa[i] = ( aa[i - 1] + generator ) % period;
+
+    // calculate generators up
+    if ( i <= up ) {
+
+      aa[i] = ( aa[i - 1] + generator ).mod(period);
+      debug('up: ' + i + ': ' + aa[i]);
+
+    }
+
+    else {
+
+      // first down generator
+      if ( i == up + 1 ) {
+        aa[i] = ( aa[0] - generator ).mod(period);
+      }
+
+      // subsequent down generators
+      else {
+        aa[i] = ( aa[i - 1] - generator ).mod(period);
+      }
+      debug('down: ' + i + ': ' + aa[i]);
+    }
+
   }
 
+  // sort the scale ascending
   aa.sort( function ( a, b ) { return a - b } );
+
+  // add the period to the scale
   aa.push( period );
 
   for ( i = 1; i <= size; i++ ) {

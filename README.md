@@ -68,7 +68,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 0.9.1
-* TODO: Improved rank-2 temperament generator. You can now specify how many generators up or down from 1/1
+* Improved rank-2 temperament generator. You can now specify how many generators up or down from 1/1
 
 ### 0.9
 * Added virtual keyboard for touch interfaces (experimental)

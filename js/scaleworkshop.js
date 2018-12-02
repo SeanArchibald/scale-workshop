@@ -299,3 +299,8 @@ function parse_imported_scala_scl( event ) {
 $( function() {
   $( document ).tooltip();
 } );
+
+// modulo function
+Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n;
+};
