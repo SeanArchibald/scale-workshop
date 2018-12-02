@@ -367,6 +367,18 @@ Example 8edo:
         <div class="form-group">
           <input id="input_rank-2_size" name="" type="number" min="2" max="99999" step="1" class="form-control" value="7"></input>
         </div>
+
+        <label>Generators up/down from 1/1</label>
+        <div class="form-group form-inline">
+          <div class="input-group">
+            <input id="input_rank-2_up" name="" type="number" min="0" max="99999" step="1" class="form-control" value="" title="Number of generators up" style="width:5em;"></input>
+            <div class="input-group-addon">Up</div>
+          </div>
+          <div class="input-group">
+            <input id="input_rank-2_down" name="" type="number" min="0" max="99999" step="1" class="form-control" value="" disabled></input>
+            <div class="input-group-addon">Down</div>
+          </div>
+        </div>
       </form>
       <hr/>
       <button class="btn btn-default" onclick="show_mos( jQuery('#input_rank-2_period').val(), jQuery('#input_rank-2_generator').val(), jQuery('#input_rank-2_size').val(), jQuery('#input_rank-2_mos_threshold').val() );" style="float:left;">Show MOS</button>

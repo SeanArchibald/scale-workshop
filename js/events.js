@@ -88,6 +88,14 @@ jQuery( document ).ready( function() {
   $( "#generate_rank_2_temperament" ).click( function( event ) {
 
     event.preventDefault();
+
+    // get the number of notes in the scale and set up the up/down dialog
+    if ( $( '#input_rank-2_up' ).val() == "" ) {
+      $( '#input_rank-2_up' ).val( $( '#input_rank-2_size' ).val() );
+      $( '#input_rank-2_up' ).attr({ "max" : $( '#input_rank-2_size' ).val() });
+      $( '#input_rank-2_down' ).val( 0 );
+    }
+
     jQuery( "#modal_generate_rank_2_temperament" ).dialog({
       modal: true,
       buttons: {
@@ -100,6 +108,25 @@ jQuery( document ).ready( function() {
       }
     });
 
+  } );
+
+  // rank-2 temperament generator - generators up changed
+  $( '#input_rank-2_up' ).change( function() {
+    $( '#input_rank-2_down' ).val( $( '#input_rank-2_size' ).val() - $( '#input_rank-2_up' ).val() );
+  } );
+
+  // rank-2 temperament generator - scale size changed
+  $( '#input_rank-2_size' ).change( function() {
+
+    // check if generators up is larger than scale size, then update up/down values accordingly
+    if ( parseInt( $( '#input_rank-2_up' ).val() ) > parseInt( $( '#input_rank-2_size' ).val() ) ) {
+      // set generators up to be same as scale size
+      $( '#input_rank-2_up' ).val( $( '#input_rank-2_size' ).val() );
+    }
+    // correct the value for generators down
+    $( '#input_rank-2_down' ).val( $( '#input_rank-2_size' ).val() - $( '#input_rank-2_up' ).val() );
+    // set generators up input maximum
+    $( '#input_rank-2_up' ).attr({ "max" : $( '#input_rank-2_size' ).val() });
   } );
 
   // generate_harmonic_series_segment option clicked
