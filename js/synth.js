@@ -169,6 +169,58 @@ var Voice = ( function( audioCtx ) {
 })(audioCtx);
 
 
+// DELAY EFFECT
+var Delay = {
+  on: false,
+  channelL: audioCtx.createDelay(5.0),
+  channelR: audioCtx.createDelay(5.0),
+  gainL: audioCtx.createGain(0.8),
+  gainR: audioCtx.createGain(0.8),
+  //lowpassL: audioCtx.createBiquadFilter(),
+  //lowpassR: audioCtx.createBiquadFilter(),
+  //highpassL: audioCtx.createBiquadFilter(),
+  //highpassR: audioCtx.createBiquadFilter(),
+  panL: audioCtx.createPanner(),
+  panR: audioCtx.createPanner(),
+  time: 0.3,
+  gain: 0.4
+};
+// feedback loop with gain stage
+Delay.channelL.connect( Delay.gainL );
+Delay.gainL.connect( Delay.channelR );
+Delay.channelR.connect( Delay.gainR );
+Delay.gainR.connect( Delay.channelL );
+// filters
+//Delay.gainL.connect( Delay.lowpassL );
+//Delay.gainR.connect( Delay.lowpassR );
+//Delay.lowpassL.frequency.value = 6500;
+//Delay.lowpassR.frequency.value = 7000;
+//Delay.lowpassL.Q.value = 0.7;
+//Delay.lowpassR.Q.value = 0.7;
+//Delay.lowpassL.type = 'lowpass';
+//Delay.lowpassR.type = 'lowpass';
+//Delay.lowpassL.connect( Delay.highpassL );
+//Delay.lowpassR.connect( Delay.highpassR );
+//Delay.highpassL.frequency.value = 130;
+//Delay.highpassR.frequency.value = 140;
+//Delay.highpassL.Q.value = 0.7;
+//Delay.highpassR.Q.value = 0.7;
+//Delay.highpassL.type = 'highpass';
+//Delay.highpassR.type = 'highpass';
+//Delay.highpassL.connect( Delay.panL );
+//Delay.highpassR.connect( Delay.panR );
+// panning
+Delay.gainL.connect( Delay.panL ); // if you uncomment the above filters lines, then comment out this line
+Delay.gainR.connect( Delay.panR ); // if you uncomment the above filters lines, then comment out this line
+Delay.panL.setPosition( -1, 0, 0 );
+Delay.panR.setPosition( 1, 0, 0 );
+// setup delay time and gain for delay lines
+Delay.channelL.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
+Delay.channelR.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
+Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
+Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
+
+
 // keycode_to_midinote()
 // it turns a keycode to a MIDI note based on this reference layout:
 //
@@ -236,71 +288,20 @@ document.addEventListener( "keyup", function(event) {
   Synth.noteOff( keycode_to_midinote( event.which ) );
 });
 
-
-// KEYDOWN -- virtual keybaird
+// TOUCHSTART -- virtual keyboard
 $( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
   event.preventDefault();
+  $(event.originalEvent.targetTouches[0].target).addClass('active');
   var coord = $( event.target ).data('coord');
   debug( coord );
   Synth.noteOn( touch_to_midinote( coord[0], coord[1] ) );
 });
 
-// KEYUP -- virtual keybaird
+// TOUCHEND -- virtual keyboard
 $( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
   event.preventDefault();
+  $(event.originalEvent.changedTouches[0].target).removeClass('active');
   var coord = $( event.target ).data('coord');
   debug( coord );
   Synth.noteOff( touch_to_midinote( coord[0], coord[1] ) );
 });
-
-
-// DELAY EFFECT
-var Delay = {
-  on: false,
-  channelL: audioCtx.createDelay(5.0),
-  channelR: audioCtx.createDelay(5.0),
-  gainL: audioCtx.createGain(0.8),
-  gainR: audioCtx.createGain(0.8),
-  //lowpassL: audioCtx.createBiquadFilter(),
-  //lowpassR: audioCtx.createBiquadFilter(),
-  //highpassL: audioCtx.createBiquadFilter(),
-  //highpassR: audioCtx.createBiquadFilter(),
-  panL: audioCtx.createPanner(),
-  panR: audioCtx.createPanner(),
-  time: 0.3,
-  gain: 0.4
-};
-// feedback loop with gain stage
-Delay.channelL.connect( Delay.gainL );
-Delay.gainL.connect( Delay.channelR );
-Delay.channelR.connect( Delay.gainR );
-Delay.gainR.connect( Delay.channelL );
-// filters
-//Delay.gainL.connect( Delay.lowpassL );
-//Delay.gainR.connect( Delay.lowpassR );
-//Delay.lowpassL.frequency.value = 6500;
-//Delay.lowpassR.frequency.value = 7000;
-//Delay.lowpassL.Q.value = 0.7;
-//Delay.lowpassR.Q.value = 0.7;
-//Delay.lowpassL.type = 'lowpass';
-//Delay.lowpassR.type = 'lowpass';
-//Delay.lowpassL.connect( Delay.highpassL );
-//Delay.lowpassR.connect( Delay.highpassR );
-//Delay.highpassL.frequency.value = 130;
-//Delay.highpassR.frequency.value = 140;
-//Delay.highpassL.Q.value = 0.7;
-//Delay.highpassR.Q.value = 0.7;
-//Delay.highpassL.type = 'highpass';
-//Delay.highpassR.type = 'highpass';
-//Delay.highpassL.connect( Delay.panL );
-//Delay.highpassR.connect( Delay.panR );
-// panning
-Delay.gainL.connect( Delay.panL ); //
-Delay.gainR.connect( Delay.panR ); //
-Delay.panL.setPosition( -1, 0, 0 );
-Delay.panR.setPosition( 1, 0, 0 );
-// setup delay time and gain for delay lines
-Delay.channelL.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
-Delay.channelR.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
-Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
-Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);

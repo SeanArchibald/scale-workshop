@@ -2,7 +2,7 @@
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 0.9.1";
+const APP_TITLE = "Scale Workshop 0.9.2";
 const TUNING_MAX_SIZE = 128;
 var newline = "\r\n";
 var tuning_table = {
@@ -17,6 +17,7 @@ var tuning_table = {
   description: "",
   filename: ""
 };
+var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ]
 var debug_enabled = true;
 
 /**
@@ -47,6 +48,30 @@ function generate_tuning_table( tuning ) {
   }
 
 }
+
+function set_key_colors( list ) {
+
+  // check if the list of colors is empty
+  if ( list == "" ) {
+    // bail, leaving the previous colors in place
+    return false;
+  }
+
+  key_colors = list.split(" ");
+
+  // get all the tuning table key cell elements
+  var ttkeys = $( '#tuning-table .key-color' );
+  // for each td.key-color
+  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+    // get the number representing this key color, with the first item being 0
+
+    var keynum = ( i - tuning_table['base_midi_note'] ).mod( key_colors.length );
+    // set the color of the key
+    $( ttkeys[i] ).css( "background-color", key_colors[keynum] );
+    //debug( i + ": " + key_colors[keynum] );
+  }
+}
+
 
 /**
  * parse_url()
@@ -163,8 +188,8 @@ function parse_tuning_data() {
       }
 
       // so far so good - store the line in tuning array
-      tuning_table['scale_data'][ tuning_table['note_count'] ] = lines[i];
-      tuning_table['tuning_data'][ tuning_table['note_count'] ] = line_to_decimal( lines[i] );
+      tuning_table['scale_data'][ tuning_table['note_count'] ] = lines[i]; // 'scale_data' is the scale in the original format input in the text box
+      tuning_table['tuning_data'][ tuning_table['note_count'] ] = line_to_decimal( lines[i] ); // 'tuning_data' is the same as before but all input is converted to decimal format to make the maths easier later
       tuning_table['note_count']++;
 
       // if we got to this point, then the tuning must not be empty
@@ -186,7 +211,7 @@ function parse_tuning_data() {
 
   // display generated tuning in a table on the page
   $( "#tuning-table" ).empty();
-  $( "#tuning-table" ).append("<tbody><tr><th>#</th><th>Freq.</th><th>Cents</th><th>Ratio</th></tr>");
+  $( "#tuning-table" ).append("<tbody><tr><th></th><th>#</th><th>Freq.</th><th>Cents</th><th>Ratio</th></tr>");
 
   for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
 
@@ -202,19 +227,21 @@ function parse_tuning_data() {
     }
 
     // assemble the HTML for the table row
-    $( "#tuning-table" ).append("<tr id='tuning-table-row-" + i + "' class='" + table_class + "'><td>" + i + "</td><td>" + parseFloat( tuning_table['freq'][i] ).toFixed(3) + " Hz</td><td>" + tuning_table['cents'][i].toFixed(3) + "</td><td>" + tuning_table['decimal'][i].toFixed(3) + "</td></tr>");
+    $( "#tuning-table" ).append("<tr id='tuning-table-row-" + i + "' class='" + table_class + "'><td class='key-color'></td><td>" + i + "</td><td>" + parseFloat( tuning_table['freq'][i] ).toFixed(3) + " Hz</td><td>" + tuning_table['cents'][i].toFixed(3) + "</td><td>" + tuning_table['decimal'][i].toFixed(3) + "</td></tr>");
 
   }
 
   $( "#tuning-table" ).append("</tbody>");
 
+  set_key_colors( $( "#input_key_colors" ).val() );
+
   // scroll to reference note on the table
-  jQuery('#col-tuning-table').animate({
+  $('#col-tuning-table').animate({
     scrollTop: $( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top + jQuery('#col-tuning-table').scrollTop()
   }, 600); // 600ms scroll to reference note
   if (debug) console.log('scrolling to ' + jQuery( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top);
 
-  jQuery("#txt_tuning_data").parent().removeClass("has-error");
+  $("#txt_tuning_data").parent().removeClass("has-error");
 
   // success
   return true;
@@ -294,13 +321,3 @@ function parse_imported_scala_scl( event ) {
   };
 
 }
-
-// use jQuery UI tooltips instead of default
-$( function() {
-  $( document ).tooltip();
-} );
-
-// modulo function
-Number.prototype.mod = function(n) {
-    return ((this%n)+n)%n;
-};

@@ -162,17 +162,13 @@ jQuery( document ).ready( function() {
 
   } );
 
-  // nav_play option clicked
+  // Touch keyboard (#nav_play) option clicked
   $( "#nav_play, #launch-kbd" ).click( function( event ) {
 
     event.preventDefault();
+    // close or open the touch keyboard depending on if it is already visible
+    ( jQuery( "#virtual-keyboard" ).is(":visible") ) ? touch_kbd_close() : touch_kbd_open();
 
-    if( $( 'button.navbar-toggle' ).is( ':visible' ) ) {
-      $('button.navbar-toggle').trigger('click'); // roll down navigation menu to expose touch keyboard
-    }
-
-    // slide the virtual keyboard up or down
-    ( jQuery( "#virtual-keyboard" ).is(":visible") ) ? jQuery( "#virtual-keyboard" ).slideUp() : jQuery( "#virtual-keyboard" ).slideDown();
   } );
 
   // hide virtual keyboard when mobile hamburger menu button is clicked
@@ -180,6 +176,11 @@ jQuery( document ).ready( function() {
     if ( jQuery( "#virtual-keyboard" ).is(":visible") ) {
       jQuery( "#virtual-keyboard" ).slideUp();
     }
+  } );
+
+  // Touch keyboard clicked with mouse
+  $( "#virtual-keyboard" ).click( function() {
+    touch_kbd_close();
   } );
 
 
@@ -337,7 +338,7 @@ jQuery( document ).ready( function() {
 
 
 
-  // Note Input Settings - Keyboard Layout
+  // Isomorphic Settings - Keyboard Layout
   $( "#input_select_keyboard_layout" ).change( function( event ) {
     switch( $( '#input_select_keyboard_layout' ).val() ) {
       case 'EN':
@@ -351,7 +352,7 @@ jQuery( document ).ready( function() {
 
 
 
-  // Note Input Settings - Isomorphic Mapping
+  // Isomorphic Settings - Isomorphic Mapping
   $( "#input_number_isomorphicmapping_vert" ).change( function( event ) {
     Synth.isomorphicMapping.vertical = $( '#input_number_isomorphicmapping_vert' ).val();
   } );
@@ -361,17 +362,37 @@ jQuery( document ).ready( function() {
 
 
 
-  // set "accordion" settings UI
-  $( function() {
-    $( "#settings-accordion" )
-      .accordion({
-        collapsible: true, // allow all tabs to be closed
-        active: false, // start all tabs closed
-        heightStyle: "content", // size each section to content
-        icons: null, // turn off triangle icons
-        header: "> div > h3"
-      });
+  // Isomorphic Settings - Key colors
+  $( "#input_key_colors" ).change( function( event ) {
+    set_key_colors( $( "#input_key_colors" ).val() );
   } );
+  // initialise key colors. defaults to Halberstadt layout on A
+  set_key_colors( $( "#input_key_colors" ).val() );
+
+
+
+  // Isomorphic Settings - Key colors Auto button clicked
+  $( "#btn_key_colors_auto" ).click( function( event ) {
+
+    event.preventDefault();
+
+    var size = tuning_table['note_count'];
+
+    // fall back in some situations
+    if ( size < 2 ) {
+
+      $( "#input_key_colors" ).val( "white black white white black white black white white black white black" );
+      set_key_colors( $( "#input_key_colors" ).val() );
+      return false;
+
+    }
+
+    $( "#input_key_colors" ).val( /* something list of colours magically appears here */ );
+    set_key_colors( $( "#input_key_colors" ).val() );
+
+  } );
+
+
 
   // Social Icons
   // Email

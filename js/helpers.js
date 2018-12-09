@@ -2,10 +2,17 @@
  * HELPER FUNCTIONS
  */
 
+// modulo function
+Number.prototype.mod = function(n) {
+  return ((this%n)+n)%n;
+};
+
+// convert a cents value to decimal
 function cents_to_decimal( input ) {
   return Math.pow( 2, ( parseFloat( input ) / 1200.0 ) );
 }
 
+// convert a ratio (string 'x/y') to decimal
 function ratio_to_decimal( input ) {
   try {
     return eval( input );
@@ -17,6 +24,7 @@ function ratio_to_decimal( input ) {
   }
 }
 
+// convert a decimal value to cents
 function decimal_to_cents( input ) {
   input = parseFloat( input );
   // check input
@@ -30,10 +38,12 @@ function decimal_to_cents( input ) {
   }
 }
 
+// convert a ratio to cents
 function ratio_to_cents( input ) {
   return decimal_to_cents( ratio_to_decimal( input ) );
 }
 
+// convert an n-of-m-edo (string 'x\y') to decimal
 function n_of_edo_to_decimal( input ) {
   input = input.split( "\\" );
   if ( input.length > 2 ) {
@@ -43,12 +53,20 @@ function n_of_edo_to_decimal( input ) {
   return Math.pow( 2, parseInt( input[0] ) / parseInt( input[1] ) );
 }
 
+// convert an n-of-m-edo (string 'x\y') to cents
 function n_of_edo_to_cents( input ) {
   return decimal_to_cents( n_of_edo_to_decimal( input ) );
 }
 
-// detect if a line is a cents, ratio, or n_of_edo value
+// return cents, ratio or n_of_edo depending on the format of inputted value 'line'
 function line_type( input ) {
+
+  // line_type() examples:
+  //
+  // line_type("700.00") -> "cents"
+  // line_type("3/2")    -> "ratio"
+  // line_type("7\12")   -> "n_of_edo"
+  // line_type("Hello")  -> false
 
   // line contains a period, so it should be a value in cents
   if ( input.toString().indexOf('.') !== -1 ) {
@@ -89,6 +107,7 @@ function line_type( input ) {
 
 }
 
+// convert any input 'line' to decimal
 function line_to_decimal( input ) {
 
   var type = line_type( input );
@@ -115,35 +134,38 @@ function line_to_decimal( input ) {
 
 }
 
+// convert any input 'line' to a cents value
 function line_to_cents( input ) {
   return decimal_to_cents( line_to_decimal( input ) );
 }
 
+// convert a midi note number to a frequency in Hertz
+// assuming 12-edo at 1440Hz (100% organic vanilla)
 function mtof( input ) {
-  // get the frequency of any MIDI number
-  // assuming 12-edo at A440Hz
   return 8.17579891564 * Math.pow( 1.05946309436, parseInt( input ) );
 }
 
+// convert a frequency to a midi note number and cents offset
+// assuming 12-edo at 1440Hz
+// returns an array [midi_note_number, cents_offset]
 function ftom ( input ) {
-  // get the MIDI note number for an input frequency
-  // returns an array [midi_note_number, cents_offset]
   input = parseFloat( input );
-  var midi_note_number = 69 + ( 12* Math.log2( input / 440 ) );
+  var midi_note_number = 69 + ( 12 * Math.log2( input / 440 ) );
   var cents_offset = ( midi_note_number - Math.round( midi_note_number ) ) * 100;
   midi_note_number = Math.round( midi_note_number );
   return [ midi_note_number, cents_offset ];
 }
 
+// convert an input string into a filename-sanitized version
+// if input is empty, returns "tuning" as a fallback
 function sanitize_filename( input ) {
-  // check for empty filename
   if ( input.trim() == "" ) {
     return "tuning";
   }
   return input.replace(/[|&;$%@"<>()+,?]/g, "").replace(/\//g, "_");
 }
 
-// clear all
+// clear all inputted scale data
 function clear_all() {
 
   // empty text fields

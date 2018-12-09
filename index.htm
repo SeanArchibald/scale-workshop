@@ -282,9 +282,9 @@ Example 8edo:
                   </div>
                 </div>
 
-                <!-- note input settings -->
-                <div id="settings_note_input" class="group">
-                  <h3>Note input settings</h3>
+                <!-- MIDI settings -->
+                <!--<div id="settings_midi" class="group">
+                  <h3>MIDI settings</h3>
                   <div>
                     <form>
                       <!--<div class="form-group" id="midi-group">
@@ -292,16 +292,27 @@ Example 8edo:
                         <select id="input_select_midi_device" class="form-control">
                           <option>???</option>
                         </select>
-                      </div>-->
+                      </div>
+                    </form>
+                  </div>
+                </div>-->
+
+                <!-- Isomorphic keyboard settings -->
+                <div id="settings_note_input" class="group">
+                  <h3>Isomorphic keyboard settings</h3>
+                  <div>
+                    <p>Play your scale using your computer keyboard or the touch keyboard.</p>
+                    <form>
+
                       <div class="form-group">
-                        <label>Keyboard layout</label>
-                        <select id="input_select_keyboard_layout" class="form-control" title="Select an alternative keyboard layout.">
+                        <label>Computer keyboard layout</label>
+                        <select id="input_select_keyboard_layout" class="form-control" title="Select your regional keyboard layout.">
                           <option value="EN">English (QWERTY)</option>
                           <option value="HU">Hungarian (QWERTZ)</option>
                         </select>
                       </div>
                       <div class="form-group">
-                        <label>QWERTY keys mapping</label>
+                        <label>Isomorphic key mapping</label>
                         <p>Distance (in scale degrees) between adjacent keys on the horizontal/vertical axes.</p>
                         <div class="input-group">
                           <div class="input-group-addon">V</div>
@@ -313,6 +324,12 @@ Example 8edo:
                           <input id="input_number_isomorphicmapping_horiz" type="number" class="form-control" value="1" min="-100" max="100" />
                           <div class="input-group-addon">default 1</div>
                         </div>
+                      </div>
+                      <div class="form-group">
+                        <label>Key colours</label>
+                        <p>A list of key colours, ascending from 1/1</p>
+                        <textarea id="input_key_colors" class="form-control" placeholder="white black white white black white black white white black white black" title="Examples: black grey white red green blue palevioletred antiquewhite steelblue olive">white black white white black white black white white black white black</textarea>
+                        <input name="Auto" id="btn_key_colors_auto" type="button" value="Auto" class="btn btn-default pull-right" title="Automatically set the key colors depending on how many notes your scale has"></input>
                       </div>
                     </form>
                   </div>
@@ -556,6 +573,21 @@ Example 8edo:
         <td data-coord="[-1,11]" class="hidden-xs hidden-sm"></td>
         <td data-coord="[-1,12]" class="hidden-xs hidden-sm"></td>
       </tr>
+      <tr class="hidden-xs hidden-sm">
+        <td data-coord="[-2,0]"></td>
+        <td data-coord="[-2,1]"></td>
+        <td data-coord="[-2,2]"></td>
+        <td data-coord="[-2,3]"></td>
+        <td data-coord="[-2,4]"></td>
+        <td data-coord="[-2,5]"></td>
+        <td data-coord="[-2,6]"></td>
+        <td data-coord="[-2,7]"></td>
+        <td data-coord="[-2,8]"></td>
+        <td data-coord="[-2,9]"></td>
+        <td data-coord="[-2,10]"></td>
+        <td data-coord="[-2,11]"></td>
+        <td data-coord="[-2,12]"></td>
+      </tr>
     </table>
 
 
@@ -570,6 +602,7 @@ Example 8edo:
     <!-- Scale Workshop scripts -->
     <script src="js/scaleworkshop.js"></script>
     <script src="js/helpers.js"></script>
+    <script src="js/ui.js"></script>
     <script src="js/generators.js"></script>
     <script src="js/modifiers.js"></script>
     <script src="js/exporters.js"></script>

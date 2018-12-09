@@ -37,6 +37,10 @@ h3.ui-accordion-header {
   font-weight:bold;
 }
 
+textarea {
+  resize: vertical;
+}
+
 /* normal cursor when hovering over navbar */
 .navbar a {
   cursor:default;
@@ -44,6 +48,10 @@ h3.ui-accordion-header {
 
 .navbar {
   z-index: 4;
+}
+
+input#btn_frequency_auto, input#btn_key_colors_auto {
+  margin-top: 3px;
 }
 
 .table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
@@ -93,12 +101,16 @@ div#splash-center img {
   box-shadow: #aaa 0px 0px 40px;
 }
 
+
+/* Virtual keyboard */
+
 #virtual-keyboard {
   background-color: white;
   position: absolute;
   top:50px;
   left: 0;
   width: 100vw;
+  min-width: 500px; /* this stops the keys getting too close together for portrait mobile users */
   height: calc( 100vh - 50px );
   display: none;
   z-index: 2;
@@ -107,11 +119,30 @@ div#splash-center img {
   text-align: center;
   vertical-align: middle;
   border: 1px solid grey;
+  font-size: 0.6em;
 }
 
-input#btn_frequency_auto {
-  margin-top: 3px;
+#virtual-keyboard td.base {
+  background-color: blue;
 }
+
+#virtual-keyboard td.period {
+  background-color: green;
+}
+
+#virtual-keyboard td.active {
+  background-color: grey;
+}
+
+#virtual-keyboard td p {
+  pointer-events: none;
+  word-break: break-word;
+  line-height: 1.1em;
+}
+
+
+
+
 
 /*
  * NON-MOBILE
@@ -133,6 +164,10 @@ input#btn_frequency_auto {
 
   .navbar {
     border-radius: 0px;
+  }
+
+  #virtual-keyboard td {
+    font-size: 0.9em;
   }
 
 }
