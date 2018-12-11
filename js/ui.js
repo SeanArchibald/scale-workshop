@@ -22,6 +22,14 @@ $( function() {
 
 function touch_kbd_open() {
 
+  // check if scale already set up - we can't use the touch kbd if there is no scale
+  if ( tuning_table['note_count'] == 0 ) {
+
+    alert("Can't open the touch keyboard until you have created or loaded a scale.");
+    return false;
+
+  }
+
   // display tuning info on virtual keys
   jQuery('#virtual-keyboard td' ).each( function(index) {
 
@@ -31,24 +39,13 @@ function touch_kbd_open() {
     var midinote = touch_to_midinote( row, col );
 
     // add text to key
-    $(this).append("<p><small>midi</small> <strong>" + midinote + "</strong></p>");
-    $(this).append("<p><strong>" + tuning_table['freq'][midinote].toFixed(1) + "</strong><br/><small>Hz</small></p>");
-
-    // set note colours
-    if ( midinote == tuning_table['base_midi_note'].mod( tuning_table['note_count'] ) ) {
-      $(this).addClass( "base" );
-    }
-    if ( midinote == tuning_table['base_midi_note'] ) {
-      // $(this).css( "background-color", "blue");
-      $(this).addClass( "base" );
-    }
+    //$(this).append("<p><small>midi</small> <strong>" + midinote + "</strong></p>");
+    //$(this).append("<p><strong>" + tuning_table['freq'][midinote].toFixed(1) + "</strong><br/><small>Hz</small></p>");
 
     // get the number representing this key color, with the first item being 0
-    var keynum = ( midinote - tuning_table['base_midi_note'] ).mod( key_colors.length ); // TODO this is wrong!
-    debug( keynum );
+    var keynum = ( midinote - tuning_table['base_midi_note'] ).mod( key_colors.length );
     // set the color of the key
     $( this ).css( "background-color", key_colors[keynum] );
-    debug( index + ": " + key_colors[keynum] );
 
   } );
 
@@ -59,6 +56,8 @@ function touch_kbd_open() {
 
   // show the virtual keyboard
   jQuery( "#virtual-keyboard" ).slideDown();
+
+  return true;
 
 }
 
@@ -76,5 +75,7 @@ function touch_kbd_close() {
     $(this).attr('class','')
 
   } );
+
+  return true;
 
 }

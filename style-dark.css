@@ -81,6 +81,10 @@ body.dark {
   color: #bbb;
 }
 
+.dark .ui-dialog a {
+  color: #ddd;
+}
+
 .dark .ui-dialog {
   box-shadow: #444 0px 0px 70px;
 }

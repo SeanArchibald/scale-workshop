@@ -256,6 +256,22 @@ jQuery( document ).ready( function() {
 
   } );
 
+  // About Scale Workshop option clicked
+  $( "#about_scale_workshop" ).click( function() {
+
+    event.preventDefault();
+    $('#about_version').text( APP_TITLE );
+    jQuery( "#modal_about_scale_workshop" ).dialog({
+      modal: true,
+      width: 500,
+      buttons: {
+        OK: function() {
+          $( this ).dialog( 'close' );
+        }
+      }
+    });
+  } );
+
   // Panic button
   $( "#btn_panic" ).click( function( event ) {
     event.preventDefault();
@@ -375,20 +391,66 @@ jQuery( document ).ready( function() {
   $( "#btn_key_colors_auto" ).click( function( event ) {
 
     event.preventDefault();
-
-    var size = tuning_table['note_count'];
+    var size = tuning_table['note_count'] - 1;
+    var colors = "";
 
     // fall back in some situations
     if ( size < 2 ) {
 
-      $( "#input_key_colors" ).val( "white black white white black white black white white black white black" );
-      set_key_colors( $( "#input_key_colors" ).val() );
+      if ( $( "#input_key_colors" ).val() == "" ) {
+        // field is empty so we'll apply a sensible default key colouring
+        $( "#input_key_colors" ).val( "white black white white black white black white white black white black" );
+        set_key_colors( $( "#input_key_colors" ).val() );
+        return true;
+      }
+
+      // field already has content so we'll do nothing
       return false;
+    }
+
+    switch ( size.toString() ) {
+
+      case "10":
+        colors = "white black white white white black white white black white";
+        break;
+
+      case "12":
+        colors = "white black white white black white black white white black white black";
+        break;
+
+      case "13":
+        colors = "antiquewhite white black white black white white black white white black white black";
+        break;
+
+      case "16":
+        colors = "white black white black white black white white black white black white black white black white";
+        break;
+
+      case "17":
+        colors = "white black black white white black black white black black white white black black white black black";
+        break;
+
+      case "19":
+        colors = "white black grey white black grey white black white black grey white black grey white black grey white black white";
+        break;
+
+      case "22":
+        colors = "white black white black white black white black white black white white black white black white black white black white black white";
+        break;
+
+      default:
+        // assemble a key colouring for any arbitrary scale size
+        for ( i = 0; i < size; i++ ) { colors += ( i % 2 == 0 ) ? "white " : "black "; }
+        // trim ending space
+        colors = colors.slice(0, -1);
+        break;
 
     }
 
-    $( "#input_key_colors" ).val( /* something list of colours magically appears here */ );
-    set_key_colors( $( "#input_key_colors" ).val() );
+    // make it so
+    $( "#input_key_colors" ).val( colors );
+    set_key_colors( colors );
+    return true;
 
   } );
 

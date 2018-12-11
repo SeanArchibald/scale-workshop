@@ -62,6 +62,10 @@ tr.bg-playnote td {
   background-color: #dff0d8 !important;
 }
 
+#tuning-table td.key-color {
+  border-left: 1px solid #ddd;
+}
+
 p.social-icons {
   text-align: center;
   font-size: 1.5em;
@@ -122,22 +126,11 @@ div#splash-center img {
   font-size: 0.6em;
 }
 
-#virtual-keyboard td.base {
-  background-color: blue;
-}
-
-#virtual-keyboard td.period {
-  background-color: green;
-}
-
-#virtual-keyboard td.active {
-  background-color: grey;
-}
-
 #virtual-keyboard td p {
   pointer-events: none;
   word-break: break-word;
   line-height: 1.1em;
+  color: #888;
 }
 
 

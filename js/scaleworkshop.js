@@ -67,7 +67,7 @@ function set_key_colors( list ) {
 
     var keynum = ( i - tuning_table['base_midi_note'] ).mod( key_colors.length );
     // set the color of the key
-    $( ttkeys[i] ).css( "background-color", key_colors[keynum] );
+    $( ttkeys[i] ).attr( "style", "background-color: " + key_colors[keynum] + " !important" );
     //debug( i + ": " + key_colors[keynum] );
   }
 }
