@@ -73,6 +73,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 * When sharing scale by URL, key colour layout and synth options will now carry across
 * When using a menu option that opens a modal dialog, the first field will automatically be selected
 * Choice of regional keyboard layout is now remembered across sessions
+* Delay time control now shows milliseconds value
 
 ### 0.9.1
 * Improved rank-2 temperament generator. You can now specify how many generators up or down from 1/1

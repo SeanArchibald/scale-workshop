@@ -362,6 +362,9 @@ jQuery( document ).ready( function() {
     Delay.channelL.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
     Delay.channelR.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
   });
+  $(document).on('input', '#input_range_delay_time', function() {
+    $( "#delay_time_ms" ).text( $(this).val() );
+  });
 
 
 
