@@ -79,8 +79,7 @@ function set_key_colors( list ) {
 
 function parse_url() {
 
-  // name=10%20equal%20divisions%20of%201198.&data=119.8%0A239.6%0A359.4%0A479.2%0A599.%0A718.8%0A838.6%0A958.4%0A1078.2%0A1198.&freq=440&midi=69&vert=-1&horiz=2
-  // name=5%20EDO&data=1%5C5%0A480.%0A720.%0A960.%0A2%2F1&freq=261.626&midi=60
+  // ?name=16%20equal%20divisions%20of%202%2F1&data=75.%0A150.%0A225.%0A300.%0A375.%0A450.%0A525.%0A600.%0A675.%0A750.%0A825.%0A900.%0A975.%0A1050.%0A1125.%0A1200.&freq=440&midi=69&vert=5&horiz=1&colors=white%20black%20white%20black%20white%20black%20white%20white%20black%20white%20black%20white%20black%20white%20black%20white&waveform=sine&ampenv=pad
   var url = new URL(window.location.href);
 
   // get data from url params, and use sane defaults for tuning name, base frequency and base midi note number if data missing
@@ -93,6 +92,13 @@ function parse_url() {
   // get isomorphic keyboard mapping
   var vertical = ( url.searchParams.has("vert") && !isNaN( url.searchParams.get("vert") ) ) ? url.searchParams.get("vert") : false;
   var horizontal = ( url.searchParams.has("horiz") && !isNaN( url.searchParams.get("horiz") ) ) ? url.searchParams.get("horiz") : false;
+
+  // get key colours
+  var colors = ( url.searchParams.has("colors") ) ? url.searchParams.get("colors") : false;
+
+  // get synth options
+  var waveform = ( url.searchParams.has("waveform") ) ? url.searchParams.get("waveform") : false;
+  var ampenv = ( url.searchParams.has("ampenv") ) ? url.searchParams.get("ampenv") : false;
 
   // bail if there is no data
   if ( !data ) {
@@ -138,6 +144,21 @@ function parse_url() {
 
   // parse the tuning data
   if ( parse_tuning_data() ) {
+
+    // if there are key colorings, apply them
+    if ( colors !== false ) {
+      jQuery( "#input_key_colors" ).val( colors );
+      set_key_colors( colors );
+    }
+
+    // if there are synth options, apply them
+    if ( waveform !== false ) {
+      $( '#input_select_synth_waveform' ).val( waveform );
+      Synth.waveform = waveform;
+
+    }
+    if ( ampenv !== false ) $( '#input_select_synth_amp_env' ).val( ampenv );
+
     // success
     return true;
   }

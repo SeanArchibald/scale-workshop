@@ -265,8 +265,11 @@ function export_url() {
   var midi = encodeURIComponent( jQuery("#txt_base_midi_note").val() );
   var vert = encodeURIComponent( Synth.isomorphicMapping.vertical );
   var horiz = encodeURIComponent( Synth.isomorphicMapping.horizontal );
+  var colors = encodeURIComponent( jQuery("#input_key_colors").val() );
+  var waveform = encodeURIComponent( jQuery('#input_select_synth_waveform').val() );
+  var ampenv = encodeURIComponent( jQuery('#input_select_synth_amp_env').val() );
 
-  var export_url = protocol + '//' + domain + '/index.htm?name=' + name + '&data=' + data + '&freq=' + freq + '&midi=' + midi + '&vert=' + vert + '&horiz=' + horiz;
+  var export_url = protocol + '//' + domain + '/index.htm?name=' + name + '&data=' + data + '&freq=' + freq + '&midi=' + midi + '&vert=' + vert + '&horiz=' + horiz + '&colors=' + colors + '&waveform=' + waveform + '&ampenv=' + ampenv;
 
   if ( export_error() ) {
     export_url = "http://sevish.com/scaleworkshop/"

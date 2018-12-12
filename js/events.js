@@ -21,6 +21,12 @@ jQuery( document ).ready( function() {
       $('body').addClass('dark');
     }
 
+    // recall computer keyboard layout
+    if ( localStorage.getItem( 'keybd_region' ) !== null ) {
+      $( "#input_select_keyboard_layout" ).val( localStorage.getItem( 'keybd_region' ) );
+      Synth.keymap = eval( 'Keymap.' + localStorage.getItem( 'keybd_region' ) );
+    }
+
   } else {
       debug( 'localStorage not supported in your browser. Please check your browser settings. If using Safari, you may need to disable private browsing mode.' );
   }
@@ -70,6 +76,7 @@ jQuery( document ).ready( function() {
   $( "#generate_equal_temperament" ).click( function( event ) {
 
     event.preventDefault();
+    $( "#input_number_of_divisions" ).select();
     jQuery( "#modal_generate_equal_temperament" ).dialog({
       modal: true,
       buttons: {
@@ -88,7 +95,7 @@ jQuery( document ).ready( function() {
   $( "#generate_rank_2_temperament" ).click( function( event ) {
 
     event.preventDefault();
-
+    $( "#input_rank-2_generator" ).select();
     jQuery( "#modal_generate_rank_2_temperament" ).dialog({
       modal: true,
       buttons: {
@@ -130,6 +137,7 @@ jQuery( document ).ready( function() {
   $( "#generate_harmonic_series_segment" ).click( function( event ) {
 
     event.preventDefault();
+    $( "#input_lowest_harmonic" ).select();
     jQuery( "#modal_generate_harmonic_series_segment" ).dialog({
       modal: true,
       buttons: {
@@ -148,11 +156,87 @@ jQuery( document ).ready( function() {
   $( "#generate_subharmonic_series_segment" ).click( function( event ) {
 
     event.preventDefault();
+    $( "#input_lowest_subharmonic" ).select();
     jQuery( "#modal_generate_subharmonic_series_segment" ).dialog({
       modal: true,
       buttons: {
         OK: function() {
           generate_subharmonic_series_segment();
+        },
+        Cancel: function() {
+          $( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
+  // modify_mode option clicked
+  $( "#modify_mode" ).click( function( event ) {
+
+    event.preventDefault();
+    $( "#input_modify_mode" ).select();
+    jQuery( "#modal_modify_mode" ).dialog({
+      modal: true,
+      buttons: {
+        OK: function() {
+          modify_mode();
+        },
+        Cancel: function() {
+          $( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
+  // modify_stretch option clicked
+  $( "#modify_stretch" ).click( function( event ) {
+
+    event.preventDefault();
+    $( "#input_stretch_ratio" ).select();
+    jQuery( "#modal_modify_stretch" ).dialog({
+      modal: true,
+      buttons: {
+        OK: function() {
+          modify_stretch();
+        },
+        Cancel: function() {
+          $( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
+  // modify_random_variance option clicked
+  $( "#modify_random_variance" ).click( function( event ) {
+
+    event.preventDefault();
+    $( "#input_cents_max_variance" ).select();
+    jQuery( "#modal_modify_random_variance" ).dialog({
+      modal: true,
+      buttons: {
+        OK: function() {
+          modify_random_variance();
+        },
+        Cancel: function() {
+          $( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
+  // modify_mode option clicked
+  $( "#modify_key_transpose" ).click( function( event ) {
+
+    event.preventDefault();
+    jQuery( "#modal_modify_key_transpose" ).dialog({
+      modal: true,
+      buttons: {
+        OK: function() {
+          modify_key_transpose();
         },
         Cancel: function() {
           $( this ).dialog( 'close' );
@@ -181,79 +265,6 @@ jQuery( document ).ready( function() {
   // Touch keyboard clicked with mouse
   $( "#virtual-keyboard" ).click( function() {
     touch_kbd_close();
-  } );
-
-
-  // modify_stretch option clicked
-  $( "#modify_stretch" ).click( function( event ) {
-
-    event.preventDefault();
-    jQuery( "#modal_modify_stretch" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_stretch();
-        },
-        Cancel: function() {
-          $( this ).dialog( 'close' );
-        }
-      }
-    });
-
-  } );
-
-  // modify_random_variance option clicked
-  $( "#modify_random_variance" ).click( function( event ) {
-
-    event.preventDefault();
-    jQuery( "#modal_modify_random_variance" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_random_variance();
-        },
-        Cancel: function() {
-          $( this ).dialog( 'close' );
-        }
-      }
-    });
-
-  } );
-
-  // modify_mode option clicked
-  $( "#modify_mode" ).click( function( event ) {
-
-    event.preventDefault();
-    jQuery( "#modal_modify_mode" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_mode();
-        },
-        Cancel: function() {
-          $( this ).dialog( 'close' );
-        }
-      }
-    });
-
-  } );
-
-  // modify_mode option clicked
-  $( "#modify_key_transpose" ).click( function( event ) {
-
-    event.preventDefault();
-    jQuery( "#modal_modify_key_transpose" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_key_transpose();
-        },
-        Cancel: function() {
-          $( this ).dialog( 'close' );
-        }
-      }
-    });
-
   } );
 
   // About Scale Workshop option clicked
@@ -359,9 +370,11 @@ jQuery( document ).ready( function() {
     switch( $( '#input_select_keyboard_layout' ).val() ) {
       case 'EN':
         Synth.keymap = Keymap.EN;
+        localStorage.setItem( 'keybd_region', 'EN' );
         break;
       case 'HU':
         Synth.keymap = Keymap.HU;
+        localStorage.setItem( 'keybd_region', 'HU' );
         break;
     }
   } );
