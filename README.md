@@ -68,6 +68,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 0.9.2
+* 
+
+### 0.9.2
 * Added key colour customisation
 * Added 'About Scale Workshop' screen
 * When sharing scale by URL, key colour layout and synth options will now carry across
