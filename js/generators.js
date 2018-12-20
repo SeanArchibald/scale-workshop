@@ -2,22 +2,51 @@
  * TUNING DATA GENERATORS
  */
 
+function getFloat(id, errorMessage) {
+  var value = parseFloat(jQuery(id).val());
+
+  if (isNaN(value) || value === 0) {
+    alert(errorMessage);
+    return false;
+  }
+
+  return value
+}
+
+function getString(id, errorMessage) {
+  var value = jQuery(id).val();
+
+  if (value === '' || value === null) {
+    alert(errorMessage);
+    return false;
+  }
+
+  return value
+}
+
+function getLine(id, errorMessage) {
+  var value = jQuery(id).val();
+
+  if (value === '' || parseFloat(value) <= 0 || value == null || line_type(value) == false) {
+    alert(errorMessage);
+    return false;
+  }
+
+  return value
+}
+
+function setScaleName(title) {
+  $("#txt_name").val(title);
+}
+
+function closePopup(id) {
+  jQuery(id).dialog("close");
+}
+
 function generate_equal_temperament() {
 
-  var divider = parseFloat(jQuery("#input_number_of_divisions").val());
-
-  // check for null input
-  if (isNaN(divider) || divider == 0) {
-    alert('Warning: no divider');
-    return false;
-  }
-
-  var period = jQuery("#input_interval_to_divide").val();
-
-  if (period === "" || period == null) {
-    alert('Warning: no interval to divide');
-    return false;
-  }
+  var divider = getFloat('#input_number_of_divisions', 'Warning: no divider')
+  var period = getString('#input_interval_to_divide', 'Warning: no interval to divide')
 
   // convert period to cents
   var period_cents = line_to_cents(period);
@@ -27,13 +56,13 @@ function generate_equal_temperament() {
     return false;
   }
 
-  $("#txt_name").val(divider + " equal divisions of " + period);
+  setScaleName(divider + " equal divisions of " + period)
 
-  jQuery("#txt_tuning_data").val(generate_equal_temperament_data(divider, period_cents));
+  jQuery("#txt_tuning_data").val(generate_equal_temperament_data(divider, parseFloat(period_cents)));
 
   parse_tuning_data();
 
-  $("#modal_generate_equal_temperament").dialog("close");
+  closePopup('#modal_generate_equal_temperament')
 
   // success
   return true;
@@ -69,13 +98,8 @@ function generate_equal_temperament_data(divider, period) {
 }
 
 function generate_rank_2_temperament() {
-  var generator = jQuery("#input_rank-2_generator").val();
 
-  // check for null input
-  if (generator === "" || generator <= 0 || generator == null || line_type(generator) == false) {
-    alert('Warning: no generator');
-    return false;
-  }
+  var generator = getLine('#input_rank-2_generator', 'Warning: no generator')
 
   var generator_cents = line_to_cents(generator);
 
@@ -84,13 +108,7 @@ function generate_rank_2_temperament() {
     return false;
   }
 
-  var period = jQuery("#input_rank-2_period").val();
-
-  // check for null input
-  if (period === "" || parseFloat(period) <= 0 || period == null || line_type(period) == false) {
-    alert('Warning: no period');
-    return false;
-  }
+  var period = getLine('#input_rank-2_period', 'Warning: no period')
 
   var period_cents = line_to_cents(period);
 
@@ -113,12 +131,11 @@ function generate_rank_2_temperament() {
 
   jQuery("#txt_tuning_data").val(generate_rank_2_temperament_data(parseFloat(generator_cents), parseFloat(period_cents), size, up))
 
-  // update name of scale
-  $("#txt_name").val("Rank 2 scale (" + original_generator + ", " + original_period + ")");
+  setScaleName("Rank 2 scale (" + original_generator + ", " + original_period + ")");
 
   parse_tuning_data();
 
-  $("#modal_generate_rank_2_temperament").dialog("close");
+  closePopup('#modal_generate_rank_2_temperament');
 
   // success
   return true;
@@ -217,11 +234,11 @@ function generate_harmonic_series_segment() {
 
   }
 
-  $("#txt_name").val("Harmonics " + lo + "-" + hi);
+  setScaleName("Harmonics " + lo + "-" + hi);
 
   parse_tuning_data();
 
-  $("#modal_generate_harmonic_series_segment").dialog("close");
+  closePopup("#modal_generate_harmonic_series_segment");
 
   // success
   return true;
@@ -271,11 +288,11 @@ function generate_subharmonic_series_segment() {
 
   }
 
-  $("#txt_name").val("Subharmonics " + lo + "-" + hi);
+  setScaleName("Subharmonics " + lo + "-" + hi);
 
   parse_tuning_data();
 
-  $("#modal_generate_subharmonic_series_segment").dialog("close");
+  closePopup("#modal_generate_subharmonic_series_segment");
 
   // success
   return true;
