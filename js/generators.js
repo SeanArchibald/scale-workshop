@@ -90,7 +90,7 @@ function generate_rank_2_temperament() {
 
   setTuningData(generate_rank_2_temperament_data(parseFloat(generator_cents), parseFloat(period_cents), size, up))
 
-  setScaleName("Rank 2 scale (" + original_generator + ", " + original_period + ")");
+  setScaleName("Rank 2 scale (" + generator + ", " + period + ")");
 
   parse_tuning_data();
 
