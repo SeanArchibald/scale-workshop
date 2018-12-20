@@ -69,7 +69,6 @@ function generate_equal_temperament_data(divider, period) {
 }
 
 function generate_rank_2_temperament() {
-
   var generator = jQuery("#input_rank-2_generator").val();
 
   // check for null input
@@ -78,17 +77,12 @@ function generate_rank_2_temperament() {
     return false;
   }
 
-  // save original user input for later
-  var original_generator = generator;
-
-  generator = line_to_cents(generator);
+  var generator_cents = line_to_cents(generator);
 
   // bail if generator is invalid
-  if (!generator) {
+  if (!generator_cents) {
     return false;
   }
-
-  generator = parseFloat(generator);
 
   var period = jQuery("#input_rank-2_period").val();
 
@@ -98,17 +92,12 @@ function generate_rank_2_temperament() {
     return false;
   }
 
-  // save original user input for later
-  var original_period = period;
-
-  period = line_to_cents(period);
+  var period_cents = line_to_cents(period);
 
   // bail if period is invalid
-  if (!period) {
+  if (!period_cents) {
     return false;
   }
-
-  period = parseFloat(period);
 
   var size = parseInt(jQuery("#input_rank-2_size").val());
   var up = parseInt(jQuery("#input_rank-2_up").val());
@@ -122,9 +111,23 @@ function generate_rank_2_temperament() {
     return false;
   }
 
+  jQuery("#txt_tuning_data").val(generate_rank_2_temperament_data(parseFloat(generator_cents), parseFloat(period_cents), size, up))
+
+  // update name of scale
+  $("#txt_name").val("Rank 2 scale (" + original_generator + ", " + original_period + ")");
+
+  parse_tuning_data();
+
+  $("#modal_generate_rank_2_temperament").dialog("close");
+
+  // success
+  return true;
+}
+
+function generate_rank_2_temperament_data(generator, period, size, up) {
+
   // empty existing tuning data
-  var tuning_data = jQuery("#txt_tuning_data");
-  tuning_data.val("");
+  var tuning_data = "";
 
   // array aa stores the scale data, starting from 1/1 (0.0 cents)
   var aa = [0.0];
@@ -161,23 +164,14 @@ function generate_rank_2_temperament() {
   aa.push(period);
 
   for (i = 1; i <= size; i++) {
-    tuning_data.val(tuning_data.val() + aa[i].toFixed(6));
+    tuning_data += aa[i].toFixed(6);
 
     if (i < size) {
-      tuning_data.val(tuning_data.val() + '\n');
+      tuning_data += '\n';
     }
   }
 
-  // update name of scale
-  $("#txt_name").val("Rank 2 scale (" + original_generator + ", " + original_period + ")");
-
-  parse_tuning_data();
-
-  $("#modal_generate_rank_2_temperament").dialog("close");
-
-  // success
-  return true;
-
+  return tuning_data
 }
 
 function generate_harmonic_series_segment() {
