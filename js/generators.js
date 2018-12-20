@@ -2,51 +2,6 @@
  * TUNING DATA GENERATORS
  */
 
-function getFloat(id, errorMessage) {
-  var value = parseFloat(jQuery(id).val());
-
-  if (isNaN(value) || value === 0) {
-    alert(errorMessage);
-    return false;
-  }
-
-  return value
-}
-
-function getString(id, errorMessage) {
-  var value = jQuery(id).val();
-
-  if (value === '' || value === null) {
-    alert(errorMessage);
-    return false;
-  }
-
-  return value
-}
-
-function getLine(id, errorMessage) {
-  var value = jQuery(id).val();
-
-  if (value === '' || parseFloat(value) <= 0 || value == null || line_type(value) == false) {
-    alert(errorMessage);
-    return false;
-  }
-
-  return value
-}
-
-function setScaleName(title) {
-  $("#txt_name").val(title);
-}
-
-function closePopup(id) {
-  jQuery(id).dialog("close");
-}
-
-function setTuningData(tuning) {
-  jQuery("#txt_tuning_data").val(tuning)
-}
-
 function generate_equal_temperament() {
 
   var divider = getFloat('#input_number_of_divisions', 'Warning: no divider')
@@ -281,11 +236,11 @@ function generate_subharmonic_series_segment_data(lo, hi) {
   for (i = hi - 1; i >= lo; i--) {
 
     // add ratio to text box
-    tuning_data.val(tuning_data.val() + hi + "/" + i);
+    tuning_data += hi + "/" + i;
 
     // add newlines
     if (i > lo) {
-      tuning_data.val(tuning_data.val() + "\n");
+      tuning_data += "\n";
     }
 
   }
