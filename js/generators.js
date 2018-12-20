@@ -43,6 +43,10 @@ function closePopup(id) {
   jQuery(id).dialog("close");
 }
 
+function setTuningData(tuning) {
+  jQuery("#txt_tuning_data").val(tuning)
+}
+
 function generate_equal_temperament() {
 
   var divider = getFloat('#input_number_of_divisions', 'Warning: no divider')
@@ -58,7 +62,7 @@ function generate_equal_temperament() {
 
   setScaleName(divider + " equal divisions of " + period)
 
-  jQuery("#txt_tuning_data").val(generate_equal_temperament_data(divider, parseFloat(period_cents)));
+  setTuningData(generate_equal_temperament_data(divider, parseFloat(period_cents)));
 
   parse_tuning_data();
 
@@ -129,7 +133,7 @@ function generate_rank_2_temperament() {
     return false;
   }
 
-  jQuery("#txt_tuning_data").val(generate_rank_2_temperament_data(parseFloat(generator_cents), parseFloat(period_cents), size, up))
+  setTuningData(generate_rank_2_temperament_data(parseFloat(generator_cents), parseFloat(period_cents), size, up))
 
   setScaleName("Rank 2 scale (" + original_generator + ", " + original_period + ")");
 
@@ -193,17 +197,8 @@ function generate_rank_2_temperament_data(generator, period, size, up) {
 
 function generate_harmonic_series_segment() {
 
-  // user input and validation
-  var lo = parseInt(jQuery("#input_lowest_harmonic").val());
-  if (isNaN(lo) || lo == 0) {
-    alert("Warning: lowest harmonic should be a positive integer");
-    return false;
-  }
-  var hi = parseInt(jQuery("#input_highest_harmonic").val());
-  if (isNaN(hi) || hi == 0) {
-    alert("Warning: highest harmonic should be a positive integer");
-    return false;
-  }
+  var lo = getFloat('#input_lowest_harmonic', 'Warning: lowest harmonic should be a positive integer')
+  var hi = getFloat('#input_highest_harmonic', 'Warning: highest harmonic should be a positive integer')
 
   // bail if lo = hi
   if (lo == hi) {
@@ -211,30 +206,16 @@ function generate_harmonic_series_segment() {
     return false;
   }
 
-  // ensure that lo if lower than hi
+  // ensure that lo is lower than hi
   if (lo > hi) {
     var tmp = lo;
     lo = hi;
     hi = tmp;
   }
 
-  // empty existing tuning data
-  var tuning_data = jQuery("#txt_tuning_data");
-  tuning_data.val("");
-
-  for (i = lo + 1; i <= hi; i++) {
-
-    // add ratio to text box
-    tuning_data.val(tuning_data.val() + i + "/" + lo);
-
-    // add newlines
-    if (i < hi) {
-      tuning_data.val(tuning_data.val() + "\n");
-    }
-
-  }
-
   setScaleName("Harmonics " + lo + "-" + hi);
+
+  setTuningData(generate_harmonic_series_segment_data(lo, hi));
 
   parse_tuning_data();
 
@@ -245,36 +226,57 @@ function generate_harmonic_series_segment() {
 
 }
 
+function generate_harmonic_series_segment_data(lo, hi) {
+  var tuning_data = '';
+
+  for (i = lo + 1; i <= hi; i++) {
+
+    // add ratio to text box
+    tuning_data += i + "/" + lo;
+
+    // add newlines
+    if (i < hi) {
+      tuning_data += "\n";
+    }
+
+  }
+
+  return tuning_data
+}
+
 function generate_subharmonic_series_segment() {
 
-  // user input and validation
-  var lo = parseInt(jQuery("#input_lowest_subharmonic").val());
-  if (isNaN(lo) || lo == 0) {
-    alert("Warning: lowest subharmonic should be a positive integer");
-    return false;
-  }
-  var hi = parseInt(jQuery("#input_highest_subharmonic").val());
-  if (isNaN(hi) || hi == 0) {
-    alert("Warning: highest subharmonic should be a positive integer");
-    return false;
-  }
+  var lo = getFloat('#input_lowest_subharmonic', 'Warning: lowest subharmonic should be a positive integer')
+  var hi = getFloat('#input_highest_subharmonic', 'Warning: highest subharmonic should be a positive integer')
 
   // bail if lo = hi
   if (lo == hi) {
-    alert("Warning: Lowest and highest harmonics are the same. Can't generate a scale based on only one harmonic.");
+    alert("Warning: Lowest and highest subharmonics are the same. Can't generate a scale based on only one harmonic.");
     return false;
   }
 
-  // ensure that lo if lower than hi
+  // ensure that lo is lower than hi
   if (lo > hi) {
     var tmp = lo;
     lo = hi;
     hi = tmp;
   }
 
-  // empty existing tuning data
-  var tuning_data = jQuery("#txt_tuning_data");
-  tuning_data.val("");
+  setTuningData(generate_subharmonic_series_segment_data(lo, hi));
+
+  setScaleName("Subharmonics " + lo + "-" + hi);
+
+  parse_tuning_data();
+
+  closePopup("#modal_generate_subharmonic_series_segment");
+
+  // success
+  return true;
+
+}
+
+function generate_subharmonic_series_segment_data(lo, hi) {
+  var tuning_data = ''
 
   for (i = hi - 1; i >= lo; i--) {
 
@@ -288,13 +290,5 @@ function generate_subharmonic_series_segment() {
 
   }
 
-  setScaleName("Subharmonics " + lo + "-" + hi);
-
-  parse_tuning_data();
-
-  closePopup("#modal_generate_subharmonic_series_segment");
-
-  // success
-  return true;
-
+  return tuning_data
 }
