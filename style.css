@@ -60,6 +60,11 @@ textarea {
   border-radius: unset;
   border: none;
   background-color: #333;
+  width: 50px;
+}
+
+.navbar-toggle .icon-bar {
+  width: 30px;
 }
 
 .navbar-inverse {
@@ -71,7 +76,7 @@ textarea {
 }
 
 .navbar-toggle .icon-bar+.icon-bar {
-  margin-top: 6px;
+  margin-top: 12px;
 }
 
 .navbar-header {
@@ -81,10 +86,14 @@ textarea {
 .navbar-collapse {
   background-color: #333;
   border: none;
+  width: calc(100vw - 50px);
+  position: fixed;
+  top: 0px;
+  max-height: 100vh;
 }
 
 .navbar {
-  min-height: 38px;
+  /*min-height: 38px;*/
 }
 
 .navbar-brand {
@@ -104,7 +113,7 @@ textarea {
 #header-mobile {
   background-color: #333;
   width: 100%;
-  height: 38px;
+  height: 50px;
   margin-top: -20px;
 }
 
@@ -112,7 +121,7 @@ textarea {
   font-size: 12pt;
   font-weight: normal;
   color: white;
-  padding: 10px;
+  padding: 17px;
 }
 
 body > .container-fluid > .row {
@@ -126,6 +135,10 @@ input#btn_frequency_auto, input#btn_key_colors_auto {
 #col-tuning-table {
   padding-left: 0px;
   padding-right: 0px;
+}
+
+#tuning-table {
+  margin-bottom: 4px;
 }
 
 .table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
@@ -185,11 +198,11 @@ div#splash-center img {
 #virtual-keyboard {
   background-color: white;
   position: fixed;
-  top:38px;
+  top:50px;
   left: 0;
   width: 100vw;
   min-width: 500px; /* this stops the keys getting too close together for portrait mobile users */
-  height: calc( 100vh - 38px );
+  height: calc( 100vh - 50px );
   display: none;
   z-index: 2;
 }
@@ -225,7 +238,7 @@ div#splash-center img {
   }
 
   .col-main { /* main columns of the Scale Workshop UI */
-    height: calc(100vh - 80px);
+    height: calc(100vh - 70px);
     overflow-y: auto;
   }
 
@@ -235,7 +248,6 @@ div#splash-center img {
 
   #virtual-keyboard {
     font-size: 0.9em;
-    margin-top: 12px;
     height: calc( 100vh - 50px );
   }
 
@@ -262,6 +274,7 @@ div#splash-center img {
 
   .navbar-collapse {
     background-color: unset;
+    position: unset;
   }
 
   .navbar-brand {
@@ -281,7 +294,7 @@ div#splash-center img {
 @media (min-width: 992px) {
 
   .col-sub { /* main columns of the Scale Workshop UI */
-    height: calc(100vh - 80px);
+    height: calc(100vh - 70px);
     overflow-y: auto;
   }
 
