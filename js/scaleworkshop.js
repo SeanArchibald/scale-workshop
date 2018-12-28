@@ -60,7 +60,7 @@ function set_key_colors( list ) {
   key_colors = list.split(" ");
 
   // get all the tuning table key cell elements
-  var ttkeys = $( '#tuning-table .key-color' );
+  var ttkeys = $( '#tuning-table td.key-color' );
   // for each td.key-color
   for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
     // get the number representing this key color, with the first item being 0
