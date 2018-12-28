@@ -206,7 +206,7 @@ function generate_subharmonic_series_segment() {
 
   // bail if lo = hi
   if (lo == hi) {
-    alert("Warning: Lowest and highest subharmonics are the same. Can't generate a scale based on only one harmonic.");
+    alert("Warning: Lowest and highest subharmonics are the same. Can't generate a scale based on only one subharmonic.");
     return false;
   }
 
