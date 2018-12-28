@@ -232,7 +232,7 @@ function parse_tuning_data() {
 
   // display generated tuning in a table on the page
   $( "#tuning-table" ).empty();
-  $( "#tuning-table" ).append("<tbody><tr><th></th><th>#</th><th>Freq.</th><th>Cents</th><th>Ratio</th></tr>");
+  $( "#tuning-table" ).append("<tbody><tr><th class='key-color'></th><th>#</th><th>Freq.</th><th>Cents</th><th>Ratio</th></tr>");
 
   for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
 

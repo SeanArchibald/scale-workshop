@@ -5,10 +5,6 @@ body.dark {
   color: #bbb;
 }
 
-.dark .navbar {
-  background-color: #111;
-}
-
 .dark p, .dark label {
   color: #bbb;
 }
@@ -21,7 +17,15 @@ body.dark {
   background-color: #000;
 }
 
+.dark #header-mobile {
+  background-color: #111;
+}
+
 /* Interactable elements */
+
+.dark .navbar button, .dark .navbar-inverse .navbar-toggle:focus, .dark .navbar-inverse .navbar-toggle:hover, .dark .navbar-collapse {
+  background-color: #111;
+}
 
 .dark input:not(.btn), .dark textarea, .dark select {
   background-color: #222;
@@ -150,7 +154,9 @@ body.dark {
  */
 @media (min-width: 768px) {
 
-
+  .dark .navbar {
+    background-color: #111;
+  }
 
 }
 @media (min-width: 992px) {
