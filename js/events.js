@@ -397,6 +397,9 @@ jQuery( document ).ready( function() {
   // Isomorphic Settings - Key colors
   $( "#input_key_colors" ).change( function( event ) {
     set_key_colors( $( "#input_key_colors" ).val() );
+    // update this change in the browser's Back/Forward navigation
+    update_page_url();
+
   } );
   // initialise key colors. defaults to Halberstadt layout on A
   set_key_colors( $( "#input_key_colors" ).val() );
@@ -466,6 +469,8 @@ jQuery( document ).ready( function() {
     // make it so
     $( "#input_key_colors" ).val( colors );
     set_key_colors( colors );
+    // update this change in the browser's Back/Forward navigation
+    update_page_url();
     return true;
 
   } );
@@ -484,7 +489,7 @@ jQuery( document ).ready( function() {
   // Twitter
   $( "a.social-icons-twitter" ).click( function( event ) {
     event.preventDefault();
-    var text = encodeURIComponent( 'Check this tuning ♫ ' + jQuery( '#txt_name' ).val() + ' ' );
+    var text = encodeURIComponent( jQuery( '#txt_name' ).val() + ' ♫ ' );
     var url = encodeURIComponent( jQuery( '#input_share_url' ).val() );
     window.open( 'https://twitter.com/intent/tweet?text=' + text + url );
   } );

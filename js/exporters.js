@@ -251,14 +251,16 @@ function export_kontakt_script() {
 }
 
 /**
- * export_url()
+ * get_export_url()
  */
 
-function export_url() {
+function get_scale_url() {
 
-  var url = new URL(window.location.href);
-  var protocol = ( url.domain !== undefined ) ? url.domain : 'http:';
-  var domain = ( url.domain !== undefined ) ? url.domain : 'sevish.com/scaleworkshop';
+  var url = new URL( window.location.href );
+  var protocol = ( url.protocol !== "" ) ? url.protocol + '//' : 'http://';
+  var host = url.host;
+  var pathname = ( url.pathname !== "" ) ? url.pathname : '/scaleworkshop/';
+  var domain = ( window.location.href !== undefined ) ? window.location.href : 'http://sevish.com/scaleworkshop';
   var name = encodeURIComponent( jQuery("#txt_name").val() );
   var data = encodeURIComponent( jQuery("#txt_tuning_data").val() );
   var freq = encodeURIComponent( jQuery("#txt_base_frequency").val() );
@@ -269,10 +271,29 @@ function export_url() {
   var waveform = encodeURIComponent( jQuery('#input_select_synth_waveform').val() );
   var ampenv = encodeURIComponent( jQuery('#input_select_synth_amp_env').val() );
 
-  var export_url = protocol + '//' + domain + '/index.htm?name=' + name + '&data=' + data + '&freq=' + freq + '&midi=' + midi + '&vert=' + vert + '&horiz=' + horiz + '&colors=' + colors + '&waveform=' + waveform + '&ampenv=' + ampenv;
+  return protocol + host + pathname + '?name=' + name + '&data=' + data + '&freq=' + freq + '&midi=' + midi + '&vert=' + vert + '&horiz=' + horiz + '&colors=' + colors + '&waveform=' + waveform + '&ampenv=' + ampenv;
+
+}
+
+/**
+ * update_page_url()
+ */
+
+function update_page_url( url = get_scale_url() ) {
+  // update this change in the browser's Back/Forward navigation
+  history.pushState( { }, tuning_table['description'], url );
+}
+
+/**
+ * export_url()
+ */
+
+function export_url() {
+
+  var export_url = window.location.href;
 
   if ( export_error() ) {
-    export_url = "http://sevish.com/scaleworkshop/"
+    export_url = "http://sevish.com/scaleworkshop/";
   }
 
   // copy url in to url field

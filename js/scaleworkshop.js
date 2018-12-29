@@ -1,4 +1,16 @@
 /**
+ * INIT
+ */
+
+// check if coming from a Back/Forward history navigation
+// need to reload the page so that url params take effect
+$(window).on('popstate', function() {
+  debug('Back/Forward navigation detected - reloading page');
+  location.reload(true);
+});
+
+
+/**
  * GLOBALS
  */
 
@@ -260,9 +272,14 @@ function parse_tuning_data() {
   $('#col-tuning-table').animate({
     scrollTop: $( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top + jQuery('#col-tuning-table').scrollTop()
   }, 600); // 600ms scroll to reference note
-  if (debug) console.log('scrolling to ' + jQuery( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top);
 
   $("#txt_tuning_data").parent().removeClass("has-error");
+
+  // if has changed, convert the scale into a URL then add that URL to the browser's Back/Forward navigation
+  var url = get_scale_url();
+  if ( url !== window.location.href ) {
+    update_page_url( url );
+  }
 
   // success
   return true;

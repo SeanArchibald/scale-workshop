@@ -68,6 +68,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 0.9.3
+* Undo/redo function (via browser back/forward navigation)
 * Various UI improvements, mostly for phone-sized devices
 * Code refactoring and improvements (thanks Lajos)
 
