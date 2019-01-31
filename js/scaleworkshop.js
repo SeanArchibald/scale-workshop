@@ -421,7 +421,6 @@ function parse_imported_anamark_tun( event ) {
       debug("this shouldn't be happening right now");
       name = input.files[0].name.slice(0, -4);
     }
-    $( "#txt_name" ).val( name );
 
     // line number where tuning starts
     var first_line = 0;
@@ -444,13 +443,18 @@ function parse_imported_anamark_tun( event ) {
 
       // get note values
       for ( i = first_line; i < lines.length; i++ ) {
-        if ( lines[i].indexOf("%") != -1 ) {
+        var n = i - first_line; // note number
+        if ( lines[i].indexOf("#=0") != -1 ) {
           debug( "line contains a value" );
-          tuning[i-first_line] = lines[i].substring( lines[i].indexOf("%") + 1, lines[i].length - 2 ).trim();
+          tuning[n] = lines[i].substring( lines[i].indexOf("#=0") + 6, lines[i].length - 2 ).trim();
         }
-        if ( lines[i].indexOf("*") != -1 ) {
+        if ( lines[i].indexOf("#>") != -1 ) {
           debug( "line contains the period" );
-          tuning[i-first_line] = lines[i].substring( lines[i].indexOf("*") + 1, lines[i].indexOf("~") ).trim();
+          var m = (n + 1).toString();
+          var prefix = "note " + m + "=\"#>-" + m + " * ";
+          debug(prefix);
+          tuning[n] = lines[i].replace( prefix, "" );
+          tuning[n] = tuning[n].substring( 0, tuning[n].indexOf("~") ).trim();
         }
       }
       debug( tuning );
