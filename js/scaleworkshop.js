@@ -445,19 +445,15 @@ function parse_imported_anamark_tun( event ) {
       for ( i = first_line; i < lines.length; i++ ) {
         var n = i - first_line; // note number
         if ( lines[i].indexOf("#=0") != -1 ) {
-          debug( "line contains a value" );
           tuning[n] = lines[i].substring( lines[i].indexOf("#=0") + 6, lines[i].length - 2 ).trim();
         }
         if ( lines[i].indexOf("#>") != -1 ) {
-          debug( "line contains the period" );
           var m = (n + 1).toString();
           var prefix = "note " + m + "=\"#>-" + m + " * ";
-          debug(prefix);
           tuning[n] = lines[i].replace( prefix, "" );
           tuning[n] = tuning[n].substring( 0, tuning[n].indexOf("~") ).trim();
         }
       }
-      debug( tuning );
 
       // enter tuning data
       var tuning_data = jQuery( "#txt_tuning_data" );
