@@ -66,10 +66,14 @@ jQuery( document ).ready( function() {
 
   // import scala option clicked
   $( "#import-scala-scl" ).click( function( event ) {
-
     event.preventDefault();
     import_scala_scl();
+  } );
 
+  // import anamark tun option clicked
+  $( "#import-anamark-tun" ).click( function( event ) {
+    event.preventDefault();
+    import_anamark_tun();
   } );
 
   // generate_equal_temperament option clicked

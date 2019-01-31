@@ -54,7 +54,7 @@ function export_anamark_tun() {
     file += "note " + i + "= " + ratio_to_cents( parseFloat( tuning_table['freq'][i] ) / mtof(0) ).toFixed(6) + newline;
   }
 
-  file += newline + "[Functional tuning]" + newline;
+  file += newline + "[Functional Tuning]" + newline;
 
   for ( i = 1; i < tuning_table['note_count']; i++ ) {
 
