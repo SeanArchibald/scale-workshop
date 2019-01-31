@@ -449,9 +449,9 @@ function parse_imported_anamark_tun( event ) {
         }
         if ( lines[i].indexOf("#>") != -1 ) {
           var m = (n + 1).toString();
-          var prefix = "note " + m + "=\"#>-" + m + " * ";
+          var prefix = "note " + m + "=\"#>-" + m;
           tuning[n] = lines[i].replace( prefix, "" );
-          tuning[n] = tuning[n].substring( 0, tuning[n].indexOf("~") ).trim();
+          tuning[n] = tuning[n].substring( 3, tuning[n].indexOf("~") ).trim();
         }
       }
 
