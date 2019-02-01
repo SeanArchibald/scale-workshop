@@ -196,7 +196,7 @@ function parse_tuning_data() {
 
   // check if user pasted a scala file
   // we check if the first character is !
-  if ( user_tuning_data.value.charAt(0) == "!" ) {
+  if ( user_tuning_data.value.startsWith("!") ) {
     alert('Hello, trying to paste a Scala file into this app?' + unix_newline + 'Please use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
     jQuery("#txt_tuning_data").parent().addClass("has-error");
     return false;
@@ -341,12 +341,7 @@ function parse_imported_scala_scl( event ) {
     var lines = scala_file.split(newlineTest);
 
     // determine the first line of scala_file that contains tuning data
-    var first_line = 0;
-    for ( i = 0; i < lines.length; i++ ) {
-      if ( lines[i].charAt(0) == '!' ) {
-        first_line = i + 1;
-      }
-    }
+    const first_line = lines.findIndex(line => !line.startsWith('!'))
 
     let tuning_data_str = lines[first_line].trim();
 
