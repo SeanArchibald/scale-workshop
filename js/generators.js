@@ -48,7 +48,7 @@ function generate_equal_temperament_data(divider, period) {
 
     // add a newline after each note except the last one
     if (i !== divider) {
-      tuning_data += newline;
+      tuning_data += unix_newline;
     }
 
   }
@@ -143,7 +143,7 @@ function generate_rank_2_temperament_data(generator, period, size, up) {
     tuning_data += aa[i].toFixed(6);
 
     if (i < size) {
-      tuning_data += newline;
+      tuning_data += unix_newline;
     }
   }
 
@@ -191,7 +191,7 @@ function generate_harmonic_series_segment_data(lo, hi) {
 
     // add newlines
     if (i < hi) {
-      tuning_data += newline;
+      tuning_data += unix_newline;
     }
 
   }
@@ -240,7 +240,7 @@ function generate_subharmonic_series_segment_data(lo, hi) {
 
     // add newlines
     if (i > lo) {
-      tuning_data += newline;
+      tuning_data += unix_newline;
     }
 
   }

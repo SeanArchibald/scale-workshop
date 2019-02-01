@@ -18,6 +18,7 @@ const APP_TITLE = "Scale Workshop 0.9.4";
 const TUNING_MAX_SIZE = 128;
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
+const unix_newline = '\n'
 var tuning_table = {
   scale_data: [], // an array containing list of intervals input by the user
   tuning_data: [], // an array containing the same list above converted to decimal format
@@ -132,7 +133,7 @@ function parse_url() {
     a = a.filter(line => !line.startsWith('<') && !line.startsWith('{') && !isEmpty(line)); // remove <nowiki> tag, wiki templates and blank lines
     a = a.map(line => line.split('!')[0]); // remove .scl comments
     a = a.slice(2); // remove .scl metadata
-    return a.join(newline);
+    return a.join(unix_newline);
   }
 
   // specially parse inputs from the Xenharmonic Wiki
@@ -196,7 +197,7 @@ function parse_tuning_data() {
   // check if user pasted a scala file
   // we check if the first character is !
   if ( user_tuning_data.value.charAt(0) == "!" ) {
-    alert('Hello, trying to paste a Scala file into this app?' + newline + 'Please use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
+    alert('Hello, trying to paste a Scala file into this app?' + unix_newline + 'Please use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
     jQuery("#txt_tuning_data").parent().addClass("has-error");
     return false;
   }
@@ -351,7 +352,7 @@ function parse_imported_scala_scl( event ) {
 
     // copy tuning data from .scl file
     for ( i = first_line + 1; i < lines.length; i++ ) {
-      tuning_data_str += newline + lines[i].trim();
+      tuning_data_str += unix_newline + lines[i].trim();
     }
 
     jQuery( "#txt_tuning_data" ).val(tuning_data_str)
@@ -450,7 +451,7 @@ function parse_imported_anamark_tun( event ) {
       let tuning_data_str = tuning[0]
 
       for ( i = 1; i < tuning.length; i++ ) {
-        tuning_data_str += newline + tuning[i];
+        tuning_data_str += unix_newline + tuning[i];
       }
 
       jQuery( "#txt_tuning_data" ).val(tuning_data_str)
@@ -514,7 +515,7 @@ function parse_imported_anamark_tun( event ) {
           tuning_data_str += line ;
         }
         else {
-          tuning_data_str += newline + line;
+          tuning_data_str += unix_newline + line;
         }
       }
       jQuery( "#txt_tuning_data" ).val(tuning_data_str)

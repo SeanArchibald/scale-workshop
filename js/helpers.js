@@ -225,7 +225,8 @@ function show_mos(per, gen, ssz, threshold) {
     return false;
   }
 
-  /*threshold = parseFloat(document.getElementById("_threshold").value, 10);
+  /*
+  threshold = parseFloat(document.getElementById("_threshold").value, 10);
   if (isNaN(threshold)) {
       docerr.innerHTML = "unable to parse MOS step size threshold";
       return;
@@ -233,7 +234,8 @@ function show_mos(per, gen, ssz, threshold) {
   if (threshold < 0) {
       docerr.innerHTML = "MOS step size threshold must be at least 0";
       return;
-  }*/
+  }
+  */
 
   var aa = []; // scale
   var bb = []; // intervals

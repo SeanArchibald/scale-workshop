@@ -51,7 +51,7 @@ function modify_stretch() {
 
       // add newline
       if ( i < lines.length -1 ) {
-        new_tuning = new_tuning.toString() + newline;
+        new_tuning = new_tuning.toString() + unix_newline;
       }
 
     }
@@ -110,7 +110,7 @@ function modify_random_variance() {
 
       // add a newline for all lines except the last
       if ( i < lines.length-1 ) {
-        new_tuning = new_tuning + newline;
+        new_tuning += unix_newline;
       }
 
     }
@@ -154,7 +154,7 @@ function modify_mode() {
     mode[i] = parseInt( mode[i] );
 
     if ( isNaN( mode[i] ) || mode[i] < 1 ) {
-      alert( "Your mode should contain a list of positive integers, seperated by spaces. E.g." + newline + "5 5 1 3 1 2" );
+      alert( "Your mode should contain a list of positive integers, seperated by spaces. E.g." + unix_newline + "5 5 1 3 1 2" );
       return false;
     }
 
@@ -168,7 +168,7 @@ function modify_mode() {
 
   // number of notes in the mode should equal the number of lines in the tuning field
   if ( mode_sum != lines.length ) {
-    alert( "Your mode doesn't add up to the same size as the original tuning." + newline + "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
+    alert( "Your mode doesn't add up to the same size as the original tuning." + unix_newline + "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
     return false;
   }
 
@@ -184,7 +184,7 @@ function modify_mode() {
 
       // add a newline for all lines except the last
       if ( i < lines.length-1 ) {
-        new_tuning = new_tuning + newline;
+        new_tuning += newline;
       }
 
       mode_index++;
@@ -253,7 +253,7 @@ function modify_key_transpose() {
 
     // add a newline for all lines except the last
     if ( i < lines.length-1 ) {
-      new_tuning = new_tuning + newline;
+      new_tuning += unix_newline;
     }
 
   }

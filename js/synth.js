@@ -254,14 +254,13 @@ function touch_to_midinote( row, col ) {
 // returns true if focus is in safe area for typing
 // returns false if focus is on an input or textarea element
 function is_qwerty_active() {
+  jQuery( "div#qwerty-indicator" ).empty();
   var focus = document.activeElement.tagName;
   if ( focus == 'TEXTAREA' || focus == 'INPUT' ) {
-    jQuery( "div#qwerty-indicator" ).empty();
     jQuery( "div#qwerty-indicator" ).html('<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-off" aria-hidden="true" style="color:#d9534f"></span> Keyboard disabled</h4><p>Click here to enable QWERTY keyboard playing.</p>');
     return false;
   }
   else {
-    jQuery( "div#qwerty-indicator" ).empty();
     jQuery( "div#qwerty-indicator" ).html('<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-down" aria-hidden="true"></span> Keyboard enabled</h4><p>Press QWERTY keys to play current tuning.</p>');
     return true;
   }

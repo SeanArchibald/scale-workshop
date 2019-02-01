@@ -463,7 +463,9 @@ jQuery( document ).ready( function() {
 
       default:
         // assemble a key colouring for any arbitrary scale size
-        for ( i = 0; i < size; i++ ) { colors += ( i % 2 == 0 ) ? "white " : "black "; }
+        for ( i = 0; i < size; i++ ) {
+          colors += ( i % 2 == 0 ) ? "white " : "black ";
+        }
         // trim ending space
         colors = colors.slice(0, -1);
         break;
@@ -505,8 +507,8 @@ jQuery( document ).ready( function() {
 
   // handle QWERTY key active indicator
   is_qwerty_active();
-  $( "input,textarea" ).focusin( function() { is_qwerty_active(); } );
-  $( "input,textarea" ).focusout( function() { is_qwerty_active(); } );
+  $( "input,textarea" ).focusin( is_qwerty_active );
+  $( "input,textarea" ).focusout( is_qwerty_active );
 
   // Remove splash screen
   $( "div#splash" ).fadeOut();
