@@ -16,7 +16,7 @@ $(window).on('popstate', function() {
 
 const APP_TITLE = "Scale Workshop 0.9.4";
 const TUNING_MAX_SIZE = 128;
-const newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
+let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
 var tuning_table = {
   scale_data: [], // an array containing list of intervals input by the user
