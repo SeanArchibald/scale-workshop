@@ -159,7 +159,7 @@ function ftom(input) {
 // convert an input string into a filename-sanitized version
 // if input is empty, returns "tuning" as a fallback
 function sanitize_filename(input) {
-  if (input.trim() == "") {
+  if (isEmpty(input.trim())) {
     return "tuning";
   }
   return input.replace(/[|&;$%@"<>()+,?]/g, "").replace(/\//g, "_");
@@ -296,7 +296,7 @@ function show_mos(per, gen, ssz, threshold) {
 
 function debug(msg = "") {
   if (debug_enabled) {
-    msg = (msg == "") ? "Debug" : msg;
+    msg = isEmpty(msg) ? "Debug" : msg;
     console.log(msg);
     return true;
   }
@@ -350,4 +350,8 @@ function closePopup(id) {
 
 function setTuningData(tuning) {
   jQuery("#txt_tuning_data").val(tuning)
+}
+
+function isEmpty (string) {
+  return string === ''
 }

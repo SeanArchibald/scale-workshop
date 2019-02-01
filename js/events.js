@@ -420,7 +420,7 @@ jQuery( document ).ready( function() {
     // fall back in some situations
     if ( size < 2 ) {
 
-      if ( $( "#input_key_colors" ).val() == "" ) {
+      if ( isEmpty($( "#input_key_colors" ).val()) ) {
         // field is empty so we'll apply a sensible default key colouring
         $( "#input_key_colors" ).val( "white black white white black white black white white black white black" );
         set_key_colors( $( "#input_key_colors" ).val() );

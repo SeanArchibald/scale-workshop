@@ -257,9 +257,9 @@ function export_kontakt_script() {
 function get_scale_url() {
 
   var url = new URL( window.location.href );
-  var protocol = ( url.protocol !== "" ) ? url.protocol + '//' : 'http://';
+  var protocol = !isEmpty(url.protocol) ? url.protocol + '//' : 'http://';
   var host = url.host;
-  var pathname = ( url.pathname !== "" ) ? url.pathname : '/scaleworkshop/';
+  var pathname = !isEmpty(url.pathname) ? url.pathname : '/scaleworkshop/';
   var domain = ( window.location.href !== undefined ) ? window.location.href : 'http://sevish.com/scaleworkshop';
   var name = encodeURIComponent( jQuery("#txt_name").val() );
   var data = encodeURIComponent( jQuery("#txt_tuning_data").val() );

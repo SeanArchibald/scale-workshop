@@ -8,7 +8,7 @@ function modify_stretch() {
   // remove white space from tuning data field
   jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-  if ( jQuery( "#txt_tuning_data" ).val() == "" ) {
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -27,7 +27,7 @@ function modify_stretch() {
   for ( var i = 0; i < lines.length; i++ ) {
 
     // check that line is not empty
-    if ( lines[i] !== "" ) {
+    if ( !isEmpty(lines[i]) ) {
 
       // evaluate the line first
       try {
@@ -76,7 +76,7 @@ function modify_random_variance() {
   // remove white space from tuning data field
   jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-  if ( jQuery( "#txt_tuning_data" ).val() == "" ) {
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -139,7 +139,7 @@ function modify_mode() {
   // remove white space from tuning data field
   jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-  if ( jQuery( "#txt_tuning_data" ).val() == "" ) {
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -216,7 +216,7 @@ function modify_key_transpose() {
   // remove white space from tuning data field
   jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-  if ( jQuery( "#txt_tuning_data" ).val() == "" ) {
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;

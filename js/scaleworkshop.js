@@ -64,7 +64,7 @@ function generate_tuning_table( tuning ) {
 function set_key_colors( list ) {
 
   // check if the list of colors is empty
-  if ( list == "" ) {
+  if ( isEmpty(list) ) {
     // bail, leaving the previous colors in place
     return false;
   }
@@ -126,13 +126,10 @@ function parse_url() {
   // parses Scala entries from the Xenharmonic Wiki
   function parseWiki(str) {
     var s = decodeHTML(str);
-    s = s.replace(/_/g, ' '); // change underscores to spaces
-    s = s.replace(/ /g, ''); // remove horizontal whitespace
+    s = s.replace(/[_ ]+/g, ''); // remove underscores and spaces
     var a = s.split(/\n/); // split by line into an array
-    a = a.filter(line => line[0] !== '<'); // remove <nowiki> tag
-    a = a.filter(line => line[0] !== '{'); // remove wiki templates
+    a = a.filter(line => !line.startsWith('<') && !line.startsWith('{') && !isEmpty(line)); // remove <nowiki> tag, wiki templates and blank lines
     a = a.map(line => line.split('!')[0]); // remove .scl comments
-    a = a.filter(line => line !== ''); // remove blank lines
     a = a.slice(2); // remove .scl metadata
     return a.join('\n');
   }
@@ -213,7 +210,7 @@ function parse_tuning_data() {
   for ( var i = 0; i < lines.length; i++ ) {
 
     // check that line is not empty
-    if ( lines[i] !== "" ) {
+    if ( !isEmpty(lines[i]) ) {
 
       if ( line_type( lines[i] ) == false ) {
         jQuery("#txt_tuning_data").parent().addClass("has-error");
@@ -529,7 +526,8 @@ function parse_imported_anamark_tun( event ) {
       }
 
       jQuery( "#txt_base_frequency" ).val( 440 / cents_to_decimal(offset) );
-      jQuery( "#txt_base_midi_note" ).val( 0 );*/
+      jQuery( "#txt_base_midi_note" ).val( 0 );
+      */
 
     }
 
