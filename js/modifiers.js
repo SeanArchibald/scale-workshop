@@ -20,7 +20,7 @@ function modify_stretch() {
   var stretch_ratio = parseFloat( jQuery( "#input_stretch_ratio" ).val() ); // amount of stretching, ratio
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split("\n");
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   var new_tuning = "";
@@ -51,7 +51,7 @@ function modify_stretch() {
 
       // add newline
       if ( i < lines.length -1 ) {
-        new_tuning = new_tuning.toString() + "\n";
+        new_tuning = new_tuning.toString() + newline;
       }
 
     }
@@ -87,7 +87,7 @@ function modify_random_variance() {
   var vary_period = document.getElementById( "input_checkbox_vary_period" ).checked;
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split("\n");
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   var new_tuning = "";
@@ -110,7 +110,7 @@ function modify_random_variance() {
 
       // add a newline for all lines except the last
       if ( i < lines.length-1 ) {
-        new_tuning = new_tuning + "\n";
+        new_tuning = new_tuning + newline;
       }
 
     }
@@ -154,7 +154,7 @@ function modify_mode() {
     mode[i] = parseInt( mode[i] );
 
     if ( isNaN( mode[i] ) || mode[i] < 1 ) {
-      alert( "Your mode should contain a list of positive integers, seperated by spaces. E.g.\n5 5 1 3 1 2" );
+      alert( "Your mode should contain a list of positive integers, seperated by spaces. E.g." + newline + "5 5 1 3 1 2" );
       return false;
     }
 
@@ -164,11 +164,11 @@ function modify_mode() {
   var mode_sum = mode.reduce(function(a, b) { return a + b; }, 0);
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split("\n");
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 
   // number of notes in the mode should equal the number of lines in the tuning field
   if ( mode_sum != lines.length ) {
-    alert( "Your mode doesn't add up to the same size as the original tuning.\nE.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
+    alert( "Your mode doesn't add up to the same size as the original tuning." + newline + "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
     return false;
   }
 
@@ -184,7 +184,7 @@ function modify_mode() {
 
       // add a newline for all lines except the last
       if ( i < lines.length-1 ) {
-        new_tuning = new_tuning + "\n";
+        new_tuning = new_tuning + newline;
       }
 
       mode_index++;
@@ -224,7 +224,7 @@ function modify_key_transpose() {
   }
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split("\n");
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 
   // key to transpose to
   var key = parseInt( jQuery( "#input_modify_key_transpose" ).val() );
@@ -253,7 +253,7 @@ function modify_key_transpose() {
 
     // add a newline for all lines except the last
     if ( i < lines.length-1 ) {
-      new_tuning = new_tuning + "\n";
+      new_tuning = new_tuning + newline;
     }
 
   }

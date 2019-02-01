@@ -16,7 +16,8 @@ $(window).on('popstate', function() {
 
 const APP_TITLE = "Scale Workshop 0.9.4";
 const TUNING_MAX_SIZE = 128;
-var newline = "\r\n";
+const newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
+const newlineTest = /\r?\n/;
 var tuning_table = {
   scale_data: [], // an array containing list of intervals input by the user
   tuning_data: [], // an array containing the same list above converted to decimal format
@@ -127,11 +128,11 @@ function parse_url() {
   function parseWiki(str) {
     var s = decodeHTML(str);
     s = s.replace(/[_ ]+/g, ''); // remove underscores and spaces
-    var a = s.split(/\n/); // split by line into an array
+    var a = s.split(newlineTest); // split by line into an array
     a = a.filter(line => !line.startsWith('<') && !line.startsWith('{') && !isEmpty(line)); // remove <nowiki> tag, wiki templates and blank lines
     a = a.map(line => line.split('!')[0]); // remove .scl comments
     a = a.slice(2); // remove .scl metadata
-    return a.join('\n');
+    return a.join(newline);
   }
 
   // specially parse inputs from the Xenharmonic Wiki
@@ -195,13 +196,13 @@ function parse_tuning_data() {
   // check if user pasted a scala file
   // we check if the first character is !
   if ( user_tuning_data.value.charAt(0) == "!" ) {
-    alert('Hello, trying to paste a Scala file into this app?\nPlease use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
+    alert('Hello, trying to paste a Scala file into this app?' + newline + 'Please use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
     jQuery("#txt_tuning_data").parent().addClass("has-error");
     return false;
   }
 
   // split user data into individual lines
-  var lines = user_tuning_data.value.split("\n");
+  var lines = user_tuning_data.value.split(newlineTest);
 
   // strip out the unusable lines, assemble an array of usable tuning data
   tuning_table['tuning_data'] = ['1']; // when initialised the array contains only '1' (unison)
@@ -336,7 +337,7 @@ function parse_imported_scala_scl( event ) {
     scala_file = reader.result;
 
     // split scala_file data into individual lines
-    var lines = scala_file.split("\n");
+    var lines = scala_file.split(newlineTest);
 
     // determine the first line of scala_file that contains tuning data
     var first_line = 0;
@@ -357,7 +358,7 @@ function parse_imported_scala_scl( event ) {
 
       // add newlines
       if ( i < (lines.length-1) ) {
-        tuning_data.val( tuning_data.val() + "\n" );
+        tuning_data.val( tuning_data.val() + newline );
       }
 
     }
@@ -393,7 +394,7 @@ function parse_imported_anamark_tun( event ) {
     tun_file = reader.result;
 
     // split tun_file data into individual lines
-    var lines = tun_file.split("\n");
+    var lines = tun_file.split(newlineTest);
 
     // get tuning name
     var name = false;
