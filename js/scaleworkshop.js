@@ -347,21 +347,14 @@ function parse_imported_scala_scl( event ) {
       }
     }
 
-    // clear existing tuning data from interface
-    var tuning_data = jQuery( "#txt_tuning_data" );
-    tuning_data.val("");
+    let tuning_data_str = lines[first_line].trim();
 
     // copy tuning data from .scl file
-    for ( i = first_line; i < lines.length; i++ ) {
-
-      tuning_data.val( tuning_data.val() + lines[i].trim() );
-
-      // add newlines
-      if ( i < (lines.length-1) ) {
-        tuning_data.val( tuning_data.val() + newline );
-      }
-
+    for ( i = first_line + 1; i < lines.length; i++ ) {
+      tuning_data_str += newline + lines[i].trim();
     }
+
+    jQuery( "#txt_tuning_data" ).val(tuning_data_str)
 
     parse_tuning_data();
 
@@ -454,15 +447,13 @@ function parse_imported_anamark_tun( event ) {
       }
 
       // enter tuning data
-      var tuning_data = jQuery( "#txt_tuning_data" );
-      for ( i = 0; i < tuning.length; i++ ) {
-        if ( i == 0 ) {
-          tuning_data.val( tuning[i] );
-        }
-        else {
-          tuning_data.val( tuning_data.val() + newline + tuning[i] );
-        }
+      let tuning_data_str = tuning[0]
+
+      for ( i = 1; i < tuning.length; i++ ) {
+        tuning_data_str += newline + tuning[i];
       }
+
+      jQuery( "#txt_tuning_data" ).val(tuning_data_str)
 
       // get base MIDI note and base frequency
       for ( i = first_line + 1; i < lines.length; i++ ) {
@@ -507,7 +498,7 @@ function parse_imported_anamark_tun( event ) {
 
       // enter tuning data
       var offset = parseFloat( lines[first_line].replace("note 0=", "") ).toFixed(6); // offset will ensure that note 0 is 1/1
-      var tuning_data = jQuery( "#txt_tuning_data" );
+      let tuning_data_str;
       for ( i = first_line; i < first_line+128; i++ ) {
 
         var n = i - first_line; // n = note number
@@ -516,15 +507,17 @@ function parse_imported_anamark_tun( event ) {
         line = (parseFloat(line) + parseFloat(offset)).toFixed(6);
 
         if ( n == 0 ) {
-          tuning_data.val( "" ); // clear scale field
+          // clear scale field
+          tuning_data_str = ''
         }
         else if ( n == 1 ) {
-          tuning_data.val( tuning_data.val() + line );
+          tuning_data_str += line ;
         }
         else {
-          tuning_data.val( tuning_data.val() + newline + line );
+          tuning_data_str += newline + line;
         }
       }
+      jQuery( "#txt_tuning_data" ).val(tuning_data_str)
 
       jQuery( "#txt_base_frequency" ).val( 440 / cents_to_decimal(offset) );
       jQuery( "#txt_base_midi_note" ).val( 0 );
