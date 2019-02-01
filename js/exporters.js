@@ -26,7 +26,7 @@ function export_anamark_tun() {
 
   // assemble the .tun file contents
   var file = "; VAZ Plus/AnaMark softsynth tuning file" + newline;
-  file += "; " + $( "#txt_name" ).val() + newline;
+  file += "; " + jQuery( "#txt_name" ).val() + newline;
   file += ";" + newline;
   file += "; VAZ Plus section" + newline;
   file += "[Tuning]" + newline;
@@ -88,7 +88,7 @@ function export_scala_scl() {
   var file = "! " + tuning_table['filename'] + ".scl" + newline;
   file += "! Created using " + APP_TITLE + newline;
   file += "!" + newline;
-  file += $( "#txt_name" ).val() + newline + " ";
+  file += jQuery( "#txt_name" ).val() + newline + " ";
 
   file += tuning_table['note_count']-1 + newline;
   file += "!" + newline;
@@ -160,7 +160,7 @@ function export_maxmsp_coll() {
 
   // assemble the coll file contents
   var file = "# Tuning file for Max/MSP coll objects. - Created using " + APP_TITLE + newline;
-  file += "# " + $( "#txt_name" ).val() + newline;
+  file += "# " + jQuery( "#txt_name" ).val() + newline;
   file += "#" + newline;
 
   for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
@@ -201,7 +201,7 @@ function export_kontakt_script() {
 
   // assemble the kontakt script contents
   var file = "{**************************************" + newline;
-  file += $( "#txt_name" ).val() + newline;
+  file += jQuery( "#txt_name" ).val() + newline;
   file += "MIDI note " + tuning_table['base_midi_note'] + " (" + midi_note_number_to_name( tuning_table['base_midi_note'] ) + ") = " + parseFloat(tuning_table['base_frequency']) + " Hz" + newline;
   file += "Created using " + APP_TITLE + newline;
   file += "****************************************}" + newline + newline;
@@ -300,22 +300,22 @@ function export_url() {
   jQuery( "#input_share_url" ).val( export_url );
   debug( "export_url = " + export_url );
 
-  $( "#input_share_url" ).select();
-  $( "#modal_share_url" ).dialog({
+  jQuery( "#input_share_url" ).select();
+  jQuery( "#modal_share_url" ).dialog({
     modal: true,
     buttons: {
       "Copy URL": function() {
-        $( "#input_share_url" ).select();
+        jQuery( "#input_share_url" ).select();
         document.execCommand("Copy");
-        $( this ).dialog( 'close' );
+        jQuery( this ).dialog( 'close' );
       }
     }
   });
 
 
   // url field clicked
-  $( "#input_share_url" ).click( function( event ) {
-    $(this).select();
+  jQuery( "#input_share_url" ).click( function( event ) {
+    jQuery(this).select();
   } );
 
   // success

@@ -99,7 +99,7 @@ var Voice = ( function( audioCtx ) {
     this.vco = audioCtx.createOscillator();
     this.vca = audioCtx.createGain();
 
-    switch ( $( '#input_select_synth_amp_env' ).val() ) {
+    switch ( jQuery( '#input_select_synth_amp_env' ).val() ) {
       case 'organ' :
         this.attackTime = 0.008; this.decayTime = 0.1; this.sustain = 0.8; this.releaseTime = 0.008; break;
       case 'pad' :
@@ -288,19 +288,19 @@ document.addEventListener( "keyup", function(event) {
 });
 
 // TOUCHSTART -- virtual keyboard
-$( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
+jQuery( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
   event.preventDefault();
-  $(event.originalEvent.targetTouches[0].target).addClass('active');
-  var coord = $( event.target ).data('coord');
+  jQuery(event.originalEvent.targetTouches[0].target).addClass('active');
+  var coord = jQuery( event.target ).data('coord');
   debug( coord );
   Synth.noteOn( touch_to_midinote( coord[0], coord[1] ) );
 });
 
 // TOUCHEND -- virtual keyboard
-$( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
+jQuery( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
   event.preventDefault();
-  $(event.originalEvent.changedTouches[0].target).removeClass('active');
-  var coord = $( event.target ).data('coord');
+  jQuery(event.originalEvent.changedTouches[0].target).removeClass('active');
+  var coord = jQuery( event.target ).data('coord');
   debug( coord );
   Synth.noteOff( touch_to_midinote( coord[0], coord[1] ) );
 });

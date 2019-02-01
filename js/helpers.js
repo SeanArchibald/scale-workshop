@@ -169,15 +169,15 @@ function sanitize_filename(input) {
 function clear_all() {
 
   // empty text fields
-  $("#txt_tuning_data").val("");
-  $("#txt_name").val("");
+  jQuery("#txt_tuning_data").val("");
+  jQuery("#txt_name").val("");
 
   // empty any information displayed on page
-  $("#tuning-table").empty();
+  jQuery("#tuning-table").empty();
 
   // restore default base tuning
-  $("#txt_base_frequency").val(440);
-  $("#txt_base_midi_note").val(69);
+  jQuery("#txt_base_frequency").val(440);
+  jQuery("#txt_base_midi_note").val(69);
 
   // re-init tuning_table
   tuning_table = {

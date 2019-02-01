@@ -63,7 +63,7 @@ function modify_stretch() {
 
   parse_tuning_data();
 
-  $( "#modal_modify_stretch" ).dialog( "close" );
+  jQuery( "#modal_modify_stretch" ).dialog( "close" );
 
   // success
   return true;
@@ -126,7 +126,7 @@ function modify_random_variance() {
 
   parse_tuning_data();
 
-  $( "#modal_modify_random_variance" ).dialog( "close" );
+  jQuery( "#modal_modify_random_variance" ).dialog( "close" );
 
   // success
   return true;
@@ -200,7 +200,7 @@ function modify_mode() {
 
   parse_tuning_data();
 
-  $( "#modal_modify_mode" ).dialog( "close" );
+  jQuery( "#modal_modify_mode" ).dialog( "close" );
 
   // success
   return true;
@@ -263,7 +263,7 @@ function modify_key_transpose() {
 
   parse_tuning_data();
 
-  $( "#modal_modify_mode" ).dialog( "close" );
+  jQuery( "#modal_modify_mode" ).dialog( "close" );
 
   // success
   return true;

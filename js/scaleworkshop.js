@@ -4,7 +4,7 @@
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
-$(window).on('popstate', function() {
+jQuery(window).on('popstate', function() {
   debug('Back/Forward navigation detected - reloading page');
   location.reload(true);
 });
@@ -74,14 +74,14 @@ function set_key_colors( list ) {
   key_colors = list.split(" ");
 
   // get all the tuning table key cell elements
-  var ttkeys = $( '#tuning-table td.key-color' );
+  var ttkeys = jQuery( '#tuning-table td.key-color' );
   // for each td.key-color
   for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
     // get the number representing this key color, with the first item being 0
 
     var keynum = ( i - tuning_table['base_midi_note'] ).mod( key_colors.length );
     // set the color of the key
-    $( ttkeys[i] ).attr( "style", "background-color: " + key_colors[keynum] + " !important" );
+    jQuery( ttkeys[i] ).attr( "style", "background-color: " + key_colors[keynum] + " !important" );
     //debug( i + ": " + key_colors[keynum] );
   }
 }
@@ -164,11 +164,11 @@ function parse_url() {
 
     // if there are synth options, apply them
     if ( waveform !== false ) {
-      $( '#input_select_synth_waveform' ).val( waveform );
+      jQuery( '#input_select_synth_waveform' ).val( waveform );
       Synth.waveform = waveform;
 
     }
-    if ( ampenv !== false ) $( '#input_select_synth_amp_env' ).val( ampenv );
+    if ( ampenv !== false ) jQuery( '#input_select_synth_amp_env' ).val( ampenv );
 
     // success
     return true;
@@ -187,9 +187,9 @@ function parse_url() {
 function parse_tuning_data() {
   // http://www.huygens-fokker.org/scala/scl_format.html
 
-  tuning_table['base_midi_note'] = parseInt ( $( "#txt_base_midi_note" ).val() );
-  tuning_table['base_frequency'] = parseFloat ( $( "#txt_base_frequency" ).val() );
-  tuning_table['description'] = $( "#txt_name" ).val();
+  tuning_table['base_midi_note'] = parseInt ( jQuery( "#txt_base_midi_note" ).val() );
+  tuning_table['base_frequency'] = parseFloat ( jQuery( "#txt_base_frequency" ).val() );
+  tuning_table['description'] = jQuery( "#txt_name" ).val();
   tuning_table['filename'] = sanitize_filename( tuning_table['description'] );
 
   var user_tuning_data = document.getElementById("txt_tuning_data");
@@ -242,8 +242,8 @@ function parse_tuning_data() {
   generate_tuning_table( tuning_table['tuning_data'] );
 
   // display generated tuning in a table on the page
-  $( "#tuning-table" ).empty();
-  $( "#tuning-table" ).append("<tbody><tr><th class='key-color'></th><th>#</th><th>Freq.</th><th>Cents</th><th>Ratio</th></tr>");
+  jQuery( "#tuning-table" ).empty();
+  jQuery( "#tuning-table" ).append("<tbody><tr><th class='key-color'></th><th>#</th><th>Freq.</th><th>Cents</th><th>Ratio</th></tr>");
 
   for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
 
@@ -259,20 +259,20 @@ function parse_tuning_data() {
     }
 
     // assemble the HTML for the table row
-    $( "#tuning-table" ).append("<tr id='tuning-table-row-" + i + "' class='" + table_class + "'><td class='key-color'></td><td>" + i + "</td><td>" + parseFloat( tuning_table['freq'][i] ).toFixed(3) + " Hz</td><td>" + tuning_table['cents'][i].toFixed(3) + "</td><td>" + tuning_table['decimal'][i].toFixed(3) + "</td></tr>");
+    jQuery( "#tuning-table" ).append("<tr id='tuning-table-row-" + i + "' class='" + table_class + "'><td class='key-color'></td><td>" + i + "</td><td>" + parseFloat( tuning_table['freq'][i] ).toFixed(3) + " Hz</td><td>" + tuning_table['cents'][i].toFixed(3) + "</td><td>" + tuning_table['decimal'][i].toFixed(3) + "</td></tr>");
 
   }
 
-  $( "#tuning-table" ).append("</tbody>");
+  jQuery( "#tuning-table" ).append("</tbody>");
 
-  set_key_colors( $( "#input_key_colors" ).val() );
+  set_key_colors( jQuery( "#input_key_colors" ).val() );
 
   // scroll to reference note on the table
-  $('#col-tuning-table').animate({
-    scrollTop: $( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top + jQuery('#col-tuning-table').scrollTop()
+  jQuery('#col-tuning-table').animate({
+    scrollTop: jQuery( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top + jQuery('#col-tuning-table').scrollTop()
   }, 600); // 600ms scroll to reference note
 
-  $("#txt_tuning_data").parent().removeClass("has-error");
+  jQuery("#txt_tuning_data").parent().removeClass("has-error");
 
   // if has changed, convert the scale into a URL then add that URL to the browser's Back/Forward navigation
   var url = get_scale_url();
@@ -304,7 +304,7 @@ function import_scala_scl() {
   // check File API is supported
   if ( is_file_api_supported() ) {
     // trigger load file dialog
-    $( "#scala-file" ).trigger('click');
+    jQuery( "#scala-file" ).trigger('click');
   }
 }
 
@@ -312,7 +312,7 @@ function import_anamark_tun() {
   // check File API is supported
   if ( is_file_api_supported() ) {
     // trigger load file dialog
-    $( "#anamark-tun-file" ).trigger('click');
+    jQuery( "#anamark-tun-file" ).trigger('click');
   }
 }
 
@@ -333,7 +333,7 @@ function parse_imported_scala_scl( event ) {
   reader.onload = function(){
 
     // get filename
-    $( "#txt_name" ).val( input.files[0].name.slice(0, -4) );
+    jQuery( "#txt_name" ).val( input.files[0].name.slice(0, -4) );
 
     scala_file = reader.result;
 
@@ -430,7 +430,7 @@ function parse_imported_anamark_tun( event ) {
     // it's best to work from the Functional Tuning if available, since it works much like a Scala scale
     if ( has_functional_tuning ) {
 
-      $( "#txt_name" ).val( name );
+      jQuery( "#txt_name" ).val( name );
       var tuning = [];
 
       // get note values
