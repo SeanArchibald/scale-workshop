@@ -5,10 +5,10 @@
 jQuery( document ).ready( function() {
 
   // automatically load generatal options saved in localStorage (if available)
-  if (typeof(Storage) !== "undefined") {
+  if (!isNil(Storage)) {
 
     // recall newline format
-    if ( localStorage.getItem("newline") !== null ) {
+    if ( !isNil(localStorage.getItem("newline")) ) {
       $( '#input_select_newlines' ).val( localStorage.getItem("newline") );
     } else {
       debug("localStorage: assuming default of windows");
@@ -22,7 +22,7 @@ jQuery( document ).ready( function() {
     }
 
     // recall computer keyboard layout
-    if ( localStorage.getItem( 'keybd_region' ) !== null ) {
+    if ( !isNil(localStorage.getItem( 'keybd_region' )) ) {
       $( "#input_select_keyboard_layout" ).val( localStorage.getItem( 'keybd_region' ) );
       Synth.keymap = eval( 'Keymap.' + localStorage.getItem( 'keybd_region' ) );
     }

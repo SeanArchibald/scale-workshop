@@ -17,10 +17,10 @@ var Synth = {
 
     var frequency = tuning_table.freq[ midinote ];
 
-    if ( frequency !== undefined ) {
+    if ( !isNil(frequency) ) {
 
       // make sure note triggers only on first input (prevent duplicate notes)
-      if ( typeof Synth.active_voices[midinote] === 'undefined' ) {
+      if ( isNil(Synth.active_voices[midinote]) ) {
 
         this.active_voices[midinote] = new Voice( frequency, velocity );
         this.active_voices[midinote].start(0);
@@ -35,7 +35,7 @@ var Synth = {
   },
   noteOff: function( midinote ) {
 
-    if ( typeof Synth.active_voices[midinote] !== 'undefined' ) {
+    if ( !isNil(Synth.active_voices[midinote]) ) {
       Synth.active_voices[midinote].stop();
       delete Synth.active_voices[midinote];
       jQuery( "#tuning-table-row-" + midinote ).removeClass( "bg-playnote" );
@@ -234,7 +234,7 @@ function keycode_to_midinote(keycode) {
   // get row/col vals from the keymap
   var key = Synth['keymap'][keycode];
 
-  if ( key != undefined ) {
+  if ( !isNil(key) ) {
     var row = key[0];
     var col = key[1];
     var midinote = (row * Synth.isomorphicMapping.vertical) + (col * Synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];

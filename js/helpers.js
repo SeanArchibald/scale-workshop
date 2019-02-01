@@ -321,7 +321,7 @@ function getFloat(id, errorMessage) {
 function getString(id, errorMessage) {
   var value = jQuery(id).val();
 
-  if (value === '' || value === null) {
+  if (isEmpty(value) || isNil(value)) {
     alert(errorMessage);
     return false;
   }
@@ -332,7 +332,7 @@ function getString(id, errorMessage) {
 function getLine(id, errorMessage) {
   var value = jQuery(id).val();
 
-  if (value === '' || parseFloat(value) <= 0 || value == null || line_type(value) == false) {
+  if (isEmpty(value) || parseFloat(value) <= 0 || isNil(value) || line_type(value) == false) {
     alert(errorMessage);
     return false;
   }
@@ -352,6 +352,5 @@ function setTuningData(tuning) {
   jQuery("#txt_tuning_data").val(tuning)
 }
 
-function isEmpty (string) {
-  return string === ''
-}
+const isEmpty = string => string === ''
+const isNil = x => typeof x === 'undefined' || x === null

@@ -1,7 +1,7 @@
 function export_error() {
 
   // no tuning data to export
-  if ( tuning_table['freq'][ tuning_table['base_midi_note'] ] === undefined ) {
+  if ( isNil(tuning_table['freq'][ tuning_table['base_midi_note'] ]) ) {
     alert( "No tuning data to export." );
     return true;
   }
@@ -260,7 +260,7 @@ function get_scale_url() {
   var protocol = !isEmpty(url.protocol) ? url.protocol + '//' : 'http://';
   var host = url.host;
   var pathname = !isEmpty(url.pathname) ? url.pathname : '/scaleworkshop/';
-  var domain = ( window.location.href !== undefined ) ? window.location.href : 'http://sevish.com/scaleworkshop';
+  // var domain = !isNil(window.location.href) ? window.location.href : 'http://sevish.com/scaleworkshop';
   var name = encodeURIComponent( jQuery("#txt_name").val() );
   var data = encodeURIComponent( jQuery("#txt_tuning_data").val() );
   var freq = encodeURIComponent( jQuery("#txt_base_frequency").val() );

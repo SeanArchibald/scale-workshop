@@ -321,7 +321,7 @@ function parse_imported_scala_scl( event ) {
   var input = event.target;
 
   // bail if user didn't actually load a file
-  if ( input.files[0] == null ) {
+  if ( isNil(input.files[0]) ) {
     return false;
   }
 
@@ -374,7 +374,7 @@ function parse_imported_anamark_tun( event ) {
   var input = event.target;
 
   // bail if user didn't actually load a file
-  if ( input.files[0] == null ) {
+  if ( isNil(input.files[0]) ) {
     return false;
   }
 
