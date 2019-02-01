@@ -341,7 +341,10 @@ function parse_imported_scala_scl( event ) {
     var lines = scala_file.split(newlineTest);
 
     // determine the first line of scala_file that contains tuning data
-    const first_line = lines.findIndex(line => !line.startsWith('!'))
+    let first_line = lines.findIndex(line => !line.startsWith('!'))
+    if (first_line === -1) {
+      first_line = 0
+    }
 
     let tuning_data_str = lines[first_line].trim();
 
@@ -408,18 +411,15 @@ function parse_imported_anamark_tun( event ) {
       debug("this shouldn't be happening right now");
       name = input.files[0].name.slice(0, -4);
     }
-
-    // line number where tuning starts
-    var first_line = 0;
-
-    // determine if tun file contains 'Functional Tuning' block.
+    
+    // determine if tun file contains 'Functional Tuning' block and get line number where tuning starts
     var has_functional_tuning = false;
-    for ( i = 0; i < lines.length; i++ ) {
-      if ( lines[i].includes("[Functional Tuning]") || lines[i].includes("[Functional tuning]") ) {
-        has_functional_tuning = true;
-        first_line = i + 1;
-        break;
-      }
+    var first_line = lines.findIndex(line => line.includes("[Functional Tuning]") || line.includes("[Functional tuning]"))
+    if (first_line === -1) {
+      first_line = 0
+    } else {
+      first_line += 1
+      has_functional_tuning = true
     }
 
     // it's best to work from the Functional Tuning if available, since it works much like a Scala scale
@@ -442,14 +442,7 @@ function parse_imported_anamark_tun( event ) {
         }
       }
 
-      // enter tuning data
-      let tuning_data_str = tuning[0]
-
-      for ( i = 1; i < tuning.length; i++ ) {
-        tuning_data_str += unix_newline + tuning[i];
-      }
-
-      jQuery( "#txt_tuning_data" ).val(tuning_data_str)
+      jQuery( "#txt_tuning_data" ).val(tuning.join(unix_newline))
 
       // get base MIDI note and base frequency
       for ( i = first_line + 1; i < lines.length; i++ ) {
