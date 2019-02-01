@@ -23,7 +23,7 @@ function modify_stretch() {
   var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-  var new_tuning = "";
+  let new_tuning_lines = [];
   for ( var i = 0; i < lines.length; i++ ) {
 
     // check that line is not empty
@@ -42,16 +42,11 @@ function modify_stretch() {
 
       // line contains a period, so it should be a value in cents
       if ( lines[i].toString().includes('.')) {
-        new_tuning = new_tuning + ( parseFloat( lines[i] ) * stretch_ratio ).toFixed(5);
+        new_tuning_lines.push(( parseFloat( lines[i] ) * stretch_ratio ).toFixed(5));
       }
       // line doesn't contain a period, so it is a ratio
       else {
-        new_tuning = new_tuning + ( ratio_to_cents( lines[i] ) * stretch_ratio ).toFixed(5);
-      }
-
-      // add newline
-      if ( i < lines.length -1 ) {
-        new_tuning = new_tuning.toString() + unix_newline;
+        new_tuning_lines.push(( ratio_to_cents( lines[i] ) * stretch_ratio ).toFixed(5));
       }
 
     }
@@ -59,7 +54,7 @@ function modify_stretch() {
   }
 
   // update tuning input field with new tuning
-  jQuery( "#txt_tuning_data" ).val( new_tuning );
+  jQuery( "#txt_tuning_data" ).val( new_tuning_lines.join(unix_newline) );
 
   parse_tuning_data();
 
@@ -90,7 +85,7 @@ function modify_random_variance() {
   var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-  var new_tuning = "";
+  let new_tuning_lines = [];
   for ( var i = 0; i < lines.length; i++ ) {
 
     // only apply random variance if the line is not the period, or vary_period is true
@@ -101,28 +96,22 @@ function modify_random_variance() {
 
       // line contains a period, so it should be a value in cents
       if ( lines[i].toString().includes('.') ) {
-        new_tuning = new_tuning + ( parseFloat( lines[i] ) + random_variance ).toFixed(5);
+        new_tuning_lines.push(( parseFloat( lines[i] ) + random_variance ).toFixed(5));
       }
       // line doesn't contain a period, so it is a ratio
       else {
-        new_tuning = new_tuning + ( ratio_to_cents( lines[i] ) + random_variance ).toFixed(5);
+        new_tuning_lines.push(( ratio_to_cents( lines[i] ) + random_variance ).toFixed(5));
       }
-
-      // add a newline for all lines except the last
-      if ( i < lines.length-1 ) {
-        new_tuning += unix_newline;
-      }
-
     }
     // last line is a period and we're not applying random variance to it
     else {
-      new_tuning = new_tuning + lines[i];
+      new_tuning_lines.push(lines[i]);
     }
 
   }
 
   // update tuning input field with new tuning
-  jQuery( "#txt_tuning_data" ).val( new_tuning );
+  jQuery( "#txt_tuning_data" ).val( new_tuning_lines.join(unix_newline) );
 
   parse_tuning_data();
 

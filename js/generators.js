@@ -29,10 +29,10 @@ function generate_equal_temperament() {
 
 function generate_equal_temperament_data(divider, period) {
 
-  var tuning_data = ''
-
   // calculate the size of a single step in this tuning
   var step = period / divider;
+
+  let notes = []
 
   for (i = 1; i <= divider; i++) {
 
@@ -43,17 +43,10 @@ function generate_equal_temperament_data(divider, period) {
       note = note.toString() + ".";
     }
 
-    // add cents value to text box
-    tuning_data += note;
-
-    // add a newline after each note except the last one
-    if (i !== divider) {
-      tuning_data += unix_newline;
-    }
-
+    notes.push(note)
   }
 
-  return tuning_data
+  return notes.join(unix_newline)
 }
 
 function generate_rank_2_temperament() {
@@ -139,13 +132,7 @@ function generate_rank_2_temperament_data(generator, period, size, up) {
   // add the period to the scale
   aa.push(period);
 
-  for (i = 1; i <= size; i++) {
-    tuning_data += aa[i].toFixed(6);
-
-    if (i < size) {
-      tuning_data += unix_newline;
-    }
-  }
+  tuning_data += aa.slice(1, size + 1).map(num => num.toFixed(6)).join(unix_newline)
 
   return tuning_data
 }
@@ -182,21 +169,14 @@ function generate_harmonic_series_segment() {
 }
 
 function generate_harmonic_series_segment_data(lo, hi) {
-  var tuning_data = '';
-
+  let ratios = []
+  
   for (i = lo + 1; i <= hi; i++) {
-
     // add ratio to text box
-    tuning_data += i + "/" + lo;
-
-    // add newlines
-    if (i < hi) {
-      tuning_data += unix_newline;
-    }
-
+    ratios.push(i + "/" + lo)
   }
 
-  return tuning_data
+  return ratios.join(unix_newline)
 }
 
 function generate_subharmonic_series_segment() {
@@ -231,19 +211,11 @@ function generate_subharmonic_series_segment() {
 }
 
 function generate_subharmonic_series_segment_data(lo, hi) {
-  var tuning_data = ''
+  let ratios = []
 
   for (i = hi - 1; i >= lo; i--) {
-
-    // add ratio to text box
-    tuning_data += hi + "/" + i;
-
-    // add newlines
-    if (i > lo) {
-      tuning_data += unix_newline;
-    }
-
+    ratios.push(hi + "/" + i)
   }
 
-  return tuning_data
+  return ratios.join(unix_newline)
 }

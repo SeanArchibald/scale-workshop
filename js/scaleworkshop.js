@@ -345,15 +345,8 @@ function parse_imported_scala_scl( event ) {
     if (first_line === -1) {
       first_line = 0
     }
-
-    let tuning_data_str = lines[first_line].trim();
-
-    // copy tuning data from .scl file
-    for ( i = first_line + 1; i < lines.length; i++ ) {
-      tuning_data_str += unix_newline + lines[i].trim();
-    }
-
-    jQuery( "#txt_tuning_data" ).val(tuning_data_str)
+    
+    jQuery( "#txt_tuning_data" ).val(lines.slice(first_line).map(line => line.trim()).join(unix_newline))
 
     parse_tuning_data();
 
