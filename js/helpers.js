@@ -69,7 +69,7 @@ function line_type(input) {
   // line_type("Hello")  -> false
 
   // line contains a period, so it should be a value in cents
-  if (input.toString().indexOf('.') !== -1) {
+  if (input.toString().includes('.')) {
     try {
       eval(input);
     }
@@ -81,12 +81,12 @@ function line_type(input) {
   }
 
   // line contains a backslash, so it should be an n_of_edo
-  else if (input.toString().indexOf('\\') !== -1) {
+  else if (input.toString().includes('\\')) {
     return "n_of_edo";
   }
 
   // line contains a forward slash, so it should be a ratio
-  else if (input.toString().indexOf('/') !== -1) {
+  else if (input.toString().includes('/')) {
     return "ratio";
   }
 
@@ -273,7 +273,7 @@ function show_mos(per, gen, ssz, threshold) {
       // generate array of distinct intervals (cc)
       cc[0] = bb[0]; // gotta start somewhere
       for (j = 1; j < i; j++)
-        if ((cc.indexOf(bb[j])) == -1) // bb[j] not found in cc
+        if (!cc.includes(bb[j])) // bb[j] not found in cc
           cc.push(bb[j]);
       cc.sort(function (a, b) { return a - b }); // sort ascending
       if (cc[0] < threshold) break; // steps too small, stop search

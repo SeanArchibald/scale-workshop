@@ -39,7 +39,7 @@ function generate_equal_temperament_data(divider, period) {
     var note = i * step;
 
     // if returned value is an integer, append a . just to make sure the parser will see it as a cents value later
-    if (note.toString().indexOf('.') == -1) {
+    if (!note.toString().includes('.')) {
       note = note.toString() + ".";
     }
 

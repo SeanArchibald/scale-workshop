@@ -41,7 +41,7 @@ function modify_stretch() {
       // so far so good!
 
       // line contains a period, so it should be a value in cents
-      if ( lines[i].toString().indexOf('.') !== -1 ) {
+      if ( lines[i].toString().includes('.')) {
         new_tuning = new_tuning + ( parseFloat( lines[i] ) * stretch_ratio ).toFixed(5);
       }
       // line doesn't contain a period, so it is a ratio
@@ -100,7 +100,7 @@ function modify_random_variance() {
       var random_variance = ( Math.random() * cents_max_variance * 2 ) - cents_max_variance;
 
       // line contains a period, so it should be a value in cents
-      if ( lines[i].toString().indexOf('.') !== -1 ) {
+      if ( lines[i].toString().includes('.') ) {
         new_tuning = new_tuning + ( parseFloat( lines[i] ) + random_variance ).toFixed(5);
       }
       // line doesn't contain a period, so it is a ratio

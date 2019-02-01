@@ -402,13 +402,13 @@ function parse_imported_anamark_tun( event ) {
     var name = false;
     for ( i = 0; i < lines.length; i++ ) {
       // Check if line is start of [Info] section
-      if ( !name && lines[i].indexOf("[Info]") != -1 ) {
+      if ( !name && lines[i].includes("[Info]") ) {
         // file has [Info] section so we expect to see a name too
         name = true;
       }
       // We saw an [Info] section during a previous loop so now we're looking for the name
       else {
-        if ( lines[i].trim().indexOf("Name") == 0 ) {
+        if ( lines[i].trim().startsWith("Name") ) {
           // the current line contains the name
           var regex = /"(.*?)"/g;
           name = lines[i].match(regex)[0].replace(/"/g, "").replace(/\.tun/g, "");
@@ -428,7 +428,7 @@ function parse_imported_anamark_tun( event ) {
     // determine if tun file contains 'Functional Tuning' block.
     var has_functional_tuning = false;
     for ( i = 0; i < lines.length; i++ ) {
-      if ( lines[i].indexOf("[Functional Tuning]") != -1 || lines[i].indexOf("[Functional tuning]") != -1 ) {
+      if ( lines[i].includes("[Functional Tuning]") || lines[i].includes("[Functional tuning]") ) {
         has_functional_tuning = true;
         first_line = i + 1;
         break;
@@ -444,10 +444,10 @@ function parse_imported_anamark_tun( event ) {
       // get note values
       for ( i = first_line; i < lines.length; i++ ) {
         var n = i - first_line; // note number
-        if ( lines[i].indexOf("#=0") != -1 ) {
+        if ( lines[i].includes("#=0") ) {
           tuning[n] = lines[i].substring( lines[i].indexOf("#=0") + 6, lines[i].length - 2 ).trim();
         }
-        if ( lines[i].indexOf("#>") != -1 ) {
+        if ( lines[i].includes("#>") ) {
           var m = (n + 1).toString();
           var prefix = "note " + m + "=\"#>-" + m;
           tuning[n] = lines[i].replace( prefix, "" );
@@ -468,7 +468,7 @@ function parse_imported_anamark_tun( event ) {
 
       // get base MIDI note and base frequency
       for ( i = first_line + 1; i < lines.length; i++ ) {
-        if ( lines[i].indexOf("!") != -1 ) {
+        if ( lines[i].includes("!") ) {
           jQuery( "#txt_base_frequency" ).val( lines[i].substring( lines[i].indexOf("!") + 2, lines[i].length - 2 ) );
           jQuery( "#txt_base_midi_note" ).val( lines[i].substring( 0, lines[i].indexOf("!") - 2 ).replace( "note ", "" ) );
         }
@@ -489,7 +489,7 @@ function parse_imported_anamark_tun( event ) {
 
       // determine on which line of the tun file that tuning data starts, with preference for 'Exact Tuning' block, followed by 'Tuning' block.
       for ( i = 0; i < lines.length; i++ ) {
-        if ( lines[i].indexOf("[Exact Tuning]") != -1 ) {
+        if ( lines[i].includes("[Exact Tuning]") ) {
           has_functional_tuning = true;
           first_line = i + 1;
           break;
@@ -497,7 +497,7 @@ function parse_imported_anamark_tun( event ) {
       }
       if ( first_line == 0 ) {
         for ( i = 0; i < lines.length; i++ ) {
-          if ( lines[i].indexOf("[Tuning]") != -1 ) {
+          if ( lines[i].includes("[Tuning]") ) {
             has_functional_tuning = true;
             first_line = i + 1;
             break;
