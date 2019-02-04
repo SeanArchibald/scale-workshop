@@ -275,6 +275,11 @@ document.addEventListener( "keydown", function(event) {
     return false;
   }
 
+  // bail, if a modifier is pressed alongside the key
+  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+    return false;
+  }
+
   const midiNote = keycode_to_midinote( event.which ); // midi note number 0-127
   const velocity = 100
 
@@ -286,6 +291,10 @@ document.addEventListener( "keydown", function(event) {
 
 // KEYUP -- capture keyboard input
 document.addEventListener( "keyup", function(event) {
+  // bail, if a modifier is pressed alongside the key
+  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+    return false;
+  }
   const midiNote = keycode_to_midinote( event.which )
   if (midiNote !== false) {
     event.preventDefault();
