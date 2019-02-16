@@ -374,16 +374,9 @@ jQuery( document ).ready( function() {
 
   // Isomorphic Settings - Keyboard Layout
   $( "#input_select_keyboard_layout" ).change( function( event ) {
-    switch( $( '#input_select_keyboard_layout' ).val() ) {
-      case 'EN':
-        Synth.keymap = Keymap.EN;
-        localStorage.setItem( 'keybd_region', 'EN' );
-        break;
-      case 'HU':
-        Synth.keymap = Keymap.HU;
-        localStorage.setItem( 'keybd_region', 'HU' );
-        break;
-    }
+    var id = $( '#input_select_keyboard_layout' ).val();
+    Synth.keymap = Keymap[id];
+    localStorage.setItem( 'keybd_region', id );
   } );
 
 
