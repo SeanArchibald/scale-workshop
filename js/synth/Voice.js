@@ -41,7 +41,7 @@ class Voice {
   
     /* routing */
     this.vco.connect( this.vca );
-    this.vca.connect( Delay.channelL );
+    this.vca.connect( delay.channelL );
     this.vca.connect( synth.masterGain );
   
     this.vco.start(0);

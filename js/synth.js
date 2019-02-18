@@ -5,62 +5,11 @@
  */
 
 const synth = new Synth()
+const delay = new Delay()
 
 const audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
 synth.init(audioCtx)
-
-// DELAY EFFECT
-var Delay = {
-  on: false,
-  channelL: audioCtx.createDelay(5.0),
-  channelR: audioCtx.createDelay(5.0),
-  gainL: audioCtx.createGain(0.8),
-  gainR: audioCtx.createGain(0.8),
-  //lowpassL: audioCtx.createBiquadFilter(),
-  //lowpassR: audioCtx.createBiquadFilter(),
-  //highpassL: audioCtx.createBiquadFilter(),
-  //highpassR: audioCtx.createBiquadFilter(),
-  panL: audioCtx.createPanner(),
-  panR: audioCtx.createPanner(),
-  time: 0.3,
-  gain: 0.4
-};
-// feedback loop with gain stage
-Delay.channelL.connect( Delay.gainL );
-Delay.gainL.connect( Delay.channelR );
-Delay.channelR.connect( Delay.gainR );
-Delay.gainR.connect( Delay.channelL );
-// filters
-//Delay.gainL.connect( Delay.lowpassL );
-//Delay.gainR.connect( Delay.lowpassR );
-//Delay.lowpassL.frequency.value = 6500;
-//Delay.lowpassR.frequency.value = 7000;
-//Delay.lowpassL.Q.value = 0.7;
-//Delay.lowpassR.Q.value = 0.7;
-//Delay.lowpassL.type = 'lowpass';
-//Delay.lowpassR.type = 'lowpass';
-//Delay.lowpassL.connect( Delay.highpassL );
-//Delay.lowpassR.connect( Delay.highpassR );
-//Delay.highpassL.frequency.value = 130;
-//Delay.highpassR.frequency.value = 140;
-//Delay.highpassL.Q.value = 0.7;
-//Delay.highpassR.Q.value = 0.7;
-//Delay.highpassL.type = 'highpass';
-//Delay.highpassR.type = 'highpass';
-//Delay.highpassL.connect( Delay.panL );
-//Delay.highpassR.connect( Delay.panR );
-// panning
-Delay.gainL.connect( Delay.panL ); // if you uncomment the above filters lines, then comment out this line
-Delay.gainR.connect( Delay.panR ); // if you uncomment the above filters lines, then comment out this line
-Delay.panL.setPosition( -1, 0, 0 );
-Delay.panR.setPosition( 1, 0, 0 );
-// setup delay time and gain for delay lines
-const now = synth.now()
-Delay.channelL.delayTime.setValueAtTime(Delay.time, now);
-Delay.channelR.delayTime.setValueAtTime(Delay.time, now);
-Delay.gainL.gain.setValueAtTime(Delay.gain, now);
-Delay.gainR.gain.setValueAtTime(Delay.gain, now);
-
+delay.init(audioCtx)
 
 // keycode_to_midinote()
 // it turns a keycode to a MIDI note based on this reference layout:

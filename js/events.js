@@ -339,34 +339,34 @@ jQuery( document ).ready( function() {
 
   // Synth Settings - Delay
   jQuery( "#input_checkbox_delay_on" ).change( function( event ) {
-    Delay.on = jQuery( "#input_checkbox_delay_on" ).is(':checked');
-    if ( Delay.on ) {
+    delay.on = jQuery( "#input_checkbox_delay_on" ).is(':checked');
+    if ( delay.on ) {
       // turn delay on
       debug("delay ON");
-      Delay.panL.connect( synth.masterGain );
-      Delay.panR.connect( synth.masterGain );
+      delay.panL.connect( synth.masterGain );
+      delay.panR.connect( synth.masterGain );
     }
     else {
       // turn delay off
       debug("delay OFF");
-      Delay.panL.disconnect( synth.masterGain );
-      Delay.panR.disconnect( synth.masterGain );
+      delay.panL.disconnect( synth.masterGain );
+      delay.panR.disconnect( synth.masterGain );
     }
   } );
 
   jQuery(document).on('input', '#input_range_feedback_gain', function() {
-    Delay.gain = jQuery(this).val();
-    debug(Delay.gain);
+    delay.gain = jQuery(this).val();
+    debug(delay.gain);
     const now = synth.now()
-    Delay.gainL.gain.setValueAtTime(Delay.gain, now);
-    Delay.gainR.gain.setValueAtTime(Delay.gain, now);
+    delay.gainL.gain.setValueAtTime(delay.gain, now);
+    delay.gainR.gain.setValueAtTime(delay.gain, now);
   });
 
   jQuery(document).on('change', '#input_range_delay_time', function() {
-    Delay.time = jQuery(this).val() * 0.001;
+    delay.time = jQuery(this).val() * 0.001;
     const now = synth.now()
-    Delay.channelL.delayTime.setValueAtTime( Delay.time, now );
-    Delay.channelR.delayTime.setValueAtTime( Delay.time, now );
+    delay.channelL.delayTime.setValueAtTime( delay.time, now );
+    delay.channelR.delayTime.setValueAtTime( delay.time, now );
   });
   jQuery(document).on('input', '#input_range_delay_time', function() {
     jQuery( "#delay_time_ms" ).text( jQuery(this).val() );

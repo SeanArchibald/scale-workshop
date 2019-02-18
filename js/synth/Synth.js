@@ -69,9 +69,9 @@ class Synth {
 
     // turn down delay gain
     jQuery( "#input_range_feedback_gain" ).val( 0 );
-    Delay.gain = 0;
+    delay.gain = 0;
     const now = this.now()
-    Delay.gainL.gain.setValueAtTime(Delay.gain, now);
-    Delay.gainR.gain.setValueAtTime(Delay.gain, now);
+    delay.gainL.gain.setValueAtTime(delay.gain, now);
+    delay.gainR.gain.setValueAtTime(delay.gain, now);
   }
 }
