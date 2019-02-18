@@ -8,6 +8,8 @@ class Synth {
     this.active_voices = {} // polyphonic voice management
     this.waveform = 'triangle'
     this.inited = false
+
+    this.delay = new Delay(this)
   }
 
   init (audioCtx) {
@@ -25,6 +27,8 @@ class Synth {
       // connect master gain control > filter > master output
       this.masterGain.connect( this.masterLPfilter );
       this.masterLPfilter.connect( audioCtx.destination );
+
+      this.delay.init(audioCtx)
     }
   }
 
@@ -34,8 +38,11 @@ class Synth {
     if ( !isNil(frequency) ) {
       // make sure note triggers only on first input (prevent duplicate notes)
       if ( isNil(this.active_voices[midinote]) ) {
-        this.active_voices[midinote] = new Voice( this.audioCtx, frequency, velocity );
-        this.active_voices[midinote].start();
+        const voice = new Voice( this.audioCtx, frequency, velocity );
+        voice.bindDelay(this.delay)
+        voice.bindSynth(this)
+        voice.start()
+        this.active_voices[midinote] = voice;
         jQuery( "#tuning-table-row-" + midinote ).addClass( "bg-playnote" );
 
         debug( "Play note " + midinote + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
@@ -69,9 +76,9 @@ class Synth {
 
     // turn down delay gain
     jQuery( "#input_range_feedback_gain" ).val( 0 );
-    delay.gain = 0;
+    this.delay.gain = 0;
     const now = this.now()
-    delay.gainL.gain.setValueAtTime(delay.gain, now);
-    delay.gainR.gain.setValueAtTime(delay.gain, now);
+    this.delay.gainL.gain.setValueAtTime(this.delay.gain, now);
+    this.delay.gainR.gain.setValueAtTime(this.delay.gain, now);
   }
 }

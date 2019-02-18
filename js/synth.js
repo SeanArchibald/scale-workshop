@@ -5,11 +5,7 @@
  */
 
 const synth = new Synth()
-const delay = new Delay()
-
-const audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
-synth.init(audioCtx)
-delay.init(audioCtx)
+synth.init(new ( window.AudioContext || window.webkitAudioContext )())
 
 // keycode_to_midinote()
 // it turns a keycode to a MIDI note based on this reference layout:

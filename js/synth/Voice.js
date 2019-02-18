@@ -26,11 +26,18 @@ class Voice {
     this.oscillators = [];
   }
 
+  bindSynth (synth) {
+    this.synth = synth
+  }
+  bindDelay (delay) {
+    this.delay = delay
+  }
+
   start () {
-    const now = synth.now();
+    const now = this.synth.now();
   
     /* VCO */
-    this.vco.type = synth.waveform;
+    this.vco.type = this.synth.waveform;
     this.vco.frequency.value = this.frequency;
   
     /* VCA */
@@ -41,8 +48,8 @@ class Voice {
   
     /* routing */
     this.vco.connect( this.vca );
-    this.vca.connect( delay.channelL );
-    this.vca.connect( synth.masterGain );
+    this.vca.connect( this.delay.channelL );
+    this.vca.connect( this.synth.masterGain );
   
     this.vco.start(0);
   
@@ -51,7 +58,7 @@ class Voice {
   }
 
   stop () {
-    const now = synth.now();
+    const now = this.synth.now();
     const vcaGain = this.vca.gain
     this.oscillators.forEach(oscillator => {
       // Firefox doesn't support cancelAndHoldAtTime.. shame!!
