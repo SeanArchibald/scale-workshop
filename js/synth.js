@@ -4,81 +4,10 @@
  * Web audio synth
  */
 
-class Synth {
-  constructor() {
-    this.keymap = Keymap.EN
-    this.isomorphicMapping = {
-      vertical: 5, // how many scale degrees as you move up/down by rows
-      horizontal: 1  // how many scale degrees as you move left/right by cols
-    }
-    this.active_voices = {} // polyphonic voice management
-    this.waveform = 'triangle'
-  }
-
-  init (audioCtx) {
-    // master gain
-    this.masterGain = audioCtx.createGain(); // create master gain before output
-    this.masterGain.gain.value = 0.8;
-    // master filter
-    this.masterLPfilter = audioCtx.createBiquadFilter();
-    this.masterLPfilter.frequency.value = 5000;
-    this.masterLPfilter.Q.value = 1;
-    this.masterLPfilter.type = 'lowpass';
-    // connect master gain control > filter > master output
-    this.masterGain.connect( this.masterLPfilter );
-    this.masterLPfilter.connect( audioCtx.destination );
-  }
-
-  noteOn ( midinote, velocity = 127 ) {
-    const frequency = tuning_table.freq[ midinote ];
-
-    if ( !isNil(frequency) ) {
-      // make sure note triggers only on first input (prevent duplicate notes)
-      if ( isNil(this.active_voices[midinote]) ) {
-
-        this.active_voices[midinote] = new Voice( frequency, velocity );
-        this.active_voices[midinote].start(0);
-        jQuery( "#tuning-table-row-" + midinote ).addClass( "bg-playnote" );
-
-        debug( "Play note " + midinote + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
-      }
-    }
-  }
-  noteOff ( midinote ) {
-    if ( !isNil(this.active_voices[midinote]) ) {
-      this.active_voices[midinote].stop();
-      delete this.active_voices[midinote];
-      jQuery( "#tuning-table-row-" + midinote ).removeClass( "bg-playnote" );
-
-      debug( "Stop note " + midinote );
-    }
-  }
-
-  // this function stops all active voices and cuts the delay
-  panic () {
-    // show which voices are active (playing)
-    debug( this.active_voices );
-
-    // loop through active voices
-    for ( i=0; i<127; i++ ) {
-      // turn off voice
-      this.noteOff( i );
-    }
-
-    // turn down delay gain
-    jQuery( "#input_range_feedback_gain" ).val( 0 );
-    Delay.gain = 0;
-    Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
-    Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
-  }
-}
-
 const synth = new Synth()
 
 const audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
 synth.init(audioCtx)
-
-// create an audiocontext
 
 var Voice = ( function( audioCtx ) {
 
@@ -113,7 +42,7 @@ var Voice = ( function( audioCtx ) {
   // oscillator start
   Voice.prototype.start = function() {
 
-    const now = audioCtx.currentTime;
+    const now = synth.now();
 
     /* VCO */
     this.vco.type = synth.waveform;
@@ -138,7 +67,7 @@ var Voice = ( function( audioCtx ) {
 
   // oscillator stop
   Voice.prototype.stop = function() {
-    const now = audioCtx.currentTime;
+    const now = synth.now();
     const vcaGain = this.vca.gain
     this.oscillators.forEach(oscillator => {
       // Firefox doesn't support cancelAndHoldAtTime.. shame!!
@@ -202,10 +131,11 @@ Delay.gainR.connect( Delay.panR ); // if you uncomment the above filters lines, 
 Delay.panL.setPosition( -1, 0, 0 );
 Delay.panR.setPosition( 1, 0, 0 );
 // setup delay time and gain for delay lines
-Delay.channelL.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
-Delay.channelR.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
-Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
-Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
+const now = synth.now()
+Delay.channelL.delayTime.setValueAtTime(Delay.time, now);
+Delay.channelR.delayTime.setValueAtTime(Delay.time, now);
+Delay.gainL.gain.setValueAtTime(Delay.gain, now);
+Delay.gainR.gain.setValueAtTime(Delay.gain, now);
 
 
 // keycode_to_midinote()

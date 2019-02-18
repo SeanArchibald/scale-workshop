@@ -322,8 +322,8 @@ jQuery( document ).ready( function() {
 
   // Synth Settings - Main Volume
   jQuery(document).on('input', '#input_range_main_vol', function() {
-    gain = jQuery(this).val();
-    now = audioCtx.currentTime;
+    const gain = jQuery(this).val();
+    const now = synth.now();
     synth.masterGain.gain.value = gain;
     synth.masterGain.gain.setValueAtTime(gain, now);
   });
@@ -357,14 +357,16 @@ jQuery( document ).ready( function() {
   jQuery(document).on('input', '#input_range_feedback_gain', function() {
     Delay.gain = jQuery(this).val();
     debug(Delay.gain);
-    Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
-    Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
+    const now = synth.now()
+    Delay.gainL.gain.setValueAtTime(Delay.gain, now);
+    Delay.gainR.gain.setValueAtTime(Delay.gain, now);
   });
 
   jQuery(document).on('change', '#input_range_delay_time', function() {
     Delay.time = jQuery(this).val() * 0.001;
-    Delay.channelL.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
-    Delay.channelR.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
+    const now = synth.now()
+    Delay.channelL.delayTime.setValueAtTime( Delay.time, now );
+    Delay.channelR.delayTime.setValueAtTime( Delay.time, now );
   });
   jQuery(document).on('input', '#input_range_delay_time', function() {
     jQuery( "#delay_time_ms" ).text( jQuery(this).val() );
