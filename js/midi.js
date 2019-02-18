@@ -196,7 +196,7 @@ function updateStatus(status) {
 
 const midi = new MIDI()
 
-$(() => {
+jQuery(() => {
   midi.on('ready', updateStatus)
   midi.on('update', updateStatus)
 

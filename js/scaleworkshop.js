@@ -4,7 +4,7 @@
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
-$(window).on('popstate', function() {
+jQuery(window).on('popstate', function() {
   debug('Back/Forward navigation detected - reloading page');
   location.reload(true);
 });
@@ -16,7 +16,9 @@ $(window).on('popstate', function() {
 
 const APP_TITLE = "Scale Workshop 0.9.4";
 const TUNING_MAX_SIZE = 128;
-var newline = "\r\n";
+let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
+const newlineTest = /\r?\n/;
+const unix_newline = '\n'
 var tuning_table = {
   scale_data: [], // an array containing list of intervals input by the user
   tuning_data: [], // an array containing the same list above converted to decimal format
@@ -64,7 +66,7 @@ function generate_tuning_table( tuning ) {
 function set_key_colors( list ) {
 
   // check if the list of colors is empty
-  if ( list == "" ) {
+  if ( isEmpty(list) ) {
     // bail, leaving the previous colors in place
     return false;
   }
@@ -72,14 +74,14 @@ function set_key_colors( list ) {
   key_colors = list.split(" ");
 
   // get all the tuning table key cell elements
-  var ttkeys = $( '#tuning-table td.key-color' );
+  var ttkeys = jQuery( '#tuning-table td.key-color' );
   // for each td.key-color
   for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
     // get the number representing this key color, with the first item being 0
 
     var keynum = ( i - tuning_table['base_midi_note'] ).mod( key_colors.length );
     // set the color of the key
-    $( ttkeys[i] ).attr( "style", "background-color: " + key_colors[keynum] + " !important" );
+    jQuery( ttkeys[i] ).attr( "style", "background-color: " + key_colors[keynum] + " !important" );
     //debug( i + ": " + key_colors[keynum] );
   }
 }
@@ -126,15 +128,12 @@ function parse_url() {
   // parses Scala entries from the Xenharmonic Wiki
   function parseWiki(str) {
     var s = decodeHTML(str);
-    s = s.replace(/_/g, ' '); // change underscores to spaces
-    s = s.replace(/ /g, ''); // remove horizontal whitespace
-    var a = s.split(/\n/); // split by line into an array
-    a = a.filter(line => line[0] !== '<'); // remove <nowiki> tag
-    a = a.filter(line => line[0] !== '{'); // remove wiki templates
+    s = s.replace(/[_ ]+/g, ''); // remove underscores and spaces
+    var a = s.split(newlineTest); // split by line into an array
+    a = a.filter(line => !line.startsWith('<') && !line.startsWith('{') && !isEmpty(line)); // remove <nowiki> tag, wiki templates and blank lines
     a = a.map(line => line.split('!')[0]); // remove .scl comments
-    a = a.filter(line => line !== ''); // remove blank lines
     a = a.slice(2); // remove .scl metadata
-    return a.join('\n');
+    return a.join(unix_newline);
   }
 
   // specially parse inputs from the Xenharmonic Wiki
@@ -165,11 +164,11 @@ function parse_url() {
 
     // if there are synth options, apply them
     if ( waveform !== false ) {
-      $( '#input_select_synth_waveform' ).val( waveform );
+      jQuery( '#input_select_synth_waveform' ).val( waveform );
       Synth.waveform = waveform;
 
     }
-    if ( ampenv !== false ) $( '#input_select_synth_amp_env' ).val( ampenv );
+    if ( ampenv !== false ) jQuery( '#input_select_synth_amp_env' ).val( ampenv );
 
     // success
     return true;
@@ -188,23 +187,23 @@ function parse_url() {
 function parse_tuning_data() {
   // http://www.huygens-fokker.org/scala/scl_format.html
 
-  tuning_table['base_midi_note'] = parseInt ( $( "#txt_base_midi_note" ).val() );
-  tuning_table['base_frequency'] = parseFloat ( $( "#txt_base_frequency" ).val() );
-  tuning_table['description'] = $( "#txt_name" ).val();
+  tuning_table['base_midi_note'] = parseInt ( jQuery( "#txt_base_midi_note" ).val() );
+  tuning_table['base_frequency'] = parseFloat ( jQuery( "#txt_base_frequency" ).val() );
+  tuning_table['description'] = jQuery( "#txt_name" ).val();
   tuning_table['filename'] = sanitize_filename( tuning_table['description'] );
 
   var user_tuning_data = document.getElementById("txt_tuning_data");
 
   // check if user pasted a scala file
   // we check if the first character is !
-  if ( user_tuning_data.value.charAt(0) == "!" ) {
-    alert('Hello, trying to paste a Scala file into this app?\nPlease use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
+  if ( user_tuning_data.value.startsWith("!") ) {
+    alert('Hello, trying to paste a Scala file into this app?' + unix_newline + 'Please use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
     jQuery("#txt_tuning_data").parent().addClass("has-error");
     return false;
   }
 
   // split user data into individual lines
-  var lines = user_tuning_data.value.split("\n");
+  var lines = user_tuning_data.value.split(newlineTest);
 
   // strip out the unusable lines, assemble an array of usable tuning data
   tuning_table['tuning_data'] = ['1']; // when initialised the array contains only '1' (unison)
@@ -213,7 +212,7 @@ function parse_tuning_data() {
   for ( var i = 0; i < lines.length; i++ ) {
 
     // check that line is not empty
-    if ( lines[i] !== "" ) {
+    if ( !isEmpty(lines[i]) ) {
 
       if ( line_type( lines[i] ) == false ) {
         jQuery("#txt_tuning_data").parent().addClass("has-error");
@@ -243,8 +242,8 @@ function parse_tuning_data() {
   generate_tuning_table( tuning_table['tuning_data'] );
 
   // display generated tuning in a table on the page
-  $( "#tuning-table" ).empty();
-  $( "#tuning-table" ).append("<tbody><tr><th class='key-color'></th><th>#</th><th>Freq.</th><th>Cents</th><th>Ratio</th></tr>");
+  jQuery( "#tuning-table" ).empty();
+  jQuery( "#tuning-table" ).append("<tbody><tr><th class='key-color'></th><th>#</th><th>Freq.</th><th>Cents</th><th>Ratio</th></tr>");
 
   for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
 
@@ -260,20 +259,20 @@ function parse_tuning_data() {
     }
 
     // assemble the HTML for the table row
-    $( "#tuning-table" ).append("<tr id='tuning-table-row-" + i + "' class='" + table_class + "'><td class='key-color'></td><td>" + i + "</td><td>" + parseFloat( tuning_table['freq'][i] ).toFixed(3) + " Hz</td><td>" + tuning_table['cents'][i].toFixed(3) + "</td><td>" + tuning_table['decimal'][i].toFixed(3) + "</td></tr>");
+    jQuery( "#tuning-table" ).append("<tr id='tuning-table-row-" + i + "' class='" + table_class + "'><td class='key-color'></td><td>" + i + "</td><td>" + parseFloat( tuning_table['freq'][i] ).toFixed(3) + " Hz</td><td>" + tuning_table['cents'][i].toFixed(3) + "</td><td>" + tuning_table['decimal'][i].toFixed(3) + "</td></tr>");
 
   }
 
-  $( "#tuning-table" ).append("</tbody>");
+  jQuery( "#tuning-table" ).append("</tbody>");
 
-  set_key_colors( $( "#input_key_colors" ).val() );
+  set_key_colors( jQuery( "#input_key_colors" ).val() );
 
   // scroll to reference note on the table
-  $('#col-tuning-table').animate({
-    scrollTop: $( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top + jQuery('#col-tuning-table').scrollTop()
+  jQuery('#col-tuning-table').animate({
+    scrollTop: jQuery( "#tuning-table-row-" + tuning_table['base_midi_note'] ).position().top + jQuery('#col-tuning-table').scrollTop()
   }, 600); // 600ms scroll to reference note
 
-  $("#txt_tuning_data").parent().removeClass("has-error");
+  jQuery("#txt_tuning_data").parent().removeClass("has-error");
 
   // if has changed, convert the scale into a URL then add that URL to the browser's Back/Forward navigation
   var url = get_scale_url();
@@ -305,7 +304,7 @@ function import_scala_scl() {
   // check File API is supported
   if ( is_file_api_supported() ) {
     // trigger load file dialog
-    $( "#scala-file" ).trigger('click');
+    jQuery( "#scala-file" ).trigger('click');
   }
 }
 
@@ -313,7 +312,7 @@ function import_anamark_tun() {
   // check File API is supported
   if ( is_file_api_supported() ) {
     // trigger load file dialog
-    $( "#anamark-tun-file" ).trigger('click');
+    jQuery( "#anamark-tun-file" ).trigger('click');
   }
 }
 
@@ -323,7 +322,7 @@ function parse_imported_scala_scl( event ) {
   var input = event.target;
 
   // bail if user didn't actually load a file
-  if ( input.files[0] == null ) {
+  if ( isNil(input.files[0]) ) {
     return false;
   }
 
@@ -334,36 +333,20 @@ function parse_imported_scala_scl( event ) {
   reader.onload = function(){
 
     // get filename
-    $( "#txt_name" ).val( input.files[0].name.slice(0, -4) );
+    jQuery( "#txt_name" ).val( input.files[0].name.slice(0, -4) );
 
     scala_file = reader.result;
 
     // split scala_file data into individual lines
-    var lines = scala_file.split("\n");
+    var lines = scala_file.split(newlineTest);
 
     // determine the first line of scala_file that contains tuning data
-    var first_line = 0;
-    for ( i = 0; i < lines.length; i++ ) {
-      if ( lines[i].charAt(0) == '!' ) {
-        first_line = i + 1;
-      }
+    let first_line = lines.findIndex(line => !line.startsWith('!'))
+    if (first_line === -1) {
+      first_line = 0
     }
-
-    // clear existing tuning data from interface
-    var tuning_data = jQuery( "#txt_tuning_data" );
-    tuning_data.val("");
-
-    // copy tuning data from .scl file
-    for ( i = first_line; i < lines.length; i++ ) {
-
-      tuning_data.val( tuning_data.val() + lines[i].trim() );
-
-      // add newlines
-      if ( i < (lines.length-1) ) {
-        tuning_data.val( tuning_data.val() + "\n" );
-      }
-
-    }
+    
+    jQuery( "#txt_tuning_data" ).val(lines.slice(first_line).map(line => line.trim()).join(unix_newline))
 
     parse_tuning_data();
 
@@ -383,7 +366,7 @@ function parse_imported_anamark_tun( event ) {
   var input = event.target;
 
   // bail if user didn't actually load a file
-  if ( input.files[0] == null ) {
+  if ( isNil(input.files[0]) ) {
     return false;
   }
 
@@ -396,19 +379,19 @@ function parse_imported_anamark_tun( event ) {
     tun_file = reader.result;
 
     // split tun_file data into individual lines
-    var lines = tun_file.split("\n");
+    var lines = tun_file.split(newlineTest);
 
     // get tuning name
     var name = false;
     for ( i = 0; i < lines.length; i++ ) {
       // Check if line is start of [Info] section
-      if ( !name && lines[i].indexOf("[Info]") != -1 ) {
+      if ( !name && lines[i].includes("[Info]") ) {
         // file has [Info] section so we expect to see a name too
         name = true;
       }
       // We saw an [Info] section during a previous loop so now we're looking for the name
       else {
-        if ( lines[i].trim().indexOf("Name") == 0 ) {
+        if ( lines[i].trim().startsWith("Name") ) {
           // the current line contains the name
           var regex = /"(.*?)"/g;
           name = lines[i].match(regex)[0].replace(/"/g, "").replace(/\.tun/g, "");
@@ -421,33 +404,30 @@ function parse_imported_anamark_tun( event ) {
       debug("this shouldn't be happening right now");
       name = input.files[0].name.slice(0, -4);
     }
-
-    // line number where tuning starts
-    var first_line = 0;
-
-    // determine if tun file contains 'Functional Tuning' block.
+    
+    // determine if tun file contains 'Functional Tuning' block and get line number where tuning starts
     var has_functional_tuning = false;
-    for ( i = 0; i < lines.length; i++ ) {
-      if ( lines[i].indexOf("[Functional Tuning]") != -1 || lines[i].indexOf("[Functional tuning]") != -1 ) {
-        has_functional_tuning = true;
-        first_line = i + 1;
-        break;
-      }
+    var first_line = lines.findIndex(line => line.includes("[Functional Tuning]") || line.includes("[Functional tuning]"))
+    if (first_line === -1) {
+      first_line = 0
+    } else {
+      first_line += 1
+      has_functional_tuning = true
     }
 
     // it's best to work from the Functional Tuning if available, since it works much like a Scala scale
     if ( has_functional_tuning ) {
 
-      $( "#txt_name" ).val( name );
+      jQuery( "#txt_name" ).val( name );
       var tuning = [];
 
       // get note values
       for ( i = first_line; i < lines.length; i++ ) {
         var n = i - first_line; // note number
-        if ( lines[i].indexOf("#=0") != -1 ) {
+        if ( lines[i].includes("#=0") ) {
           tuning[n] = lines[i].substring( lines[i].indexOf("#=0") + 6, lines[i].length - 2 ).trim();
         }
-        if ( lines[i].indexOf("#>") != -1 ) {
+        if ( lines[i].includes("#>") ) {
           var m = (n + 1).toString();
           var prefix = "note " + m + "=\"#>-" + m;
           tuning[n] = lines[i].replace( prefix, "" );
@@ -455,20 +435,11 @@ function parse_imported_anamark_tun( event ) {
         }
       }
 
-      // enter tuning data
-      var tuning_data = jQuery( "#txt_tuning_data" );
-      for ( i = 0; i < tuning.length; i++ ) {
-        if ( i == 0 ) {
-          tuning_data.val( tuning[i] );
-        }
-        else {
-          tuning_data.val( tuning_data.val() + newline + tuning[i] );
-        }
-      }
+      jQuery( "#txt_tuning_data" ).val(tuning.join(unix_newline))
 
       // get base MIDI note and base frequency
       for ( i = first_line + 1; i < lines.length; i++ ) {
-        if ( lines[i].indexOf("!") != -1 ) {
+        if ( lines[i].includes("!") ) {
           jQuery( "#txt_base_frequency" ).val( lines[i].substring( lines[i].indexOf("!") + 2, lines[i].length - 2 ) );
           jQuery( "#txt_base_midi_note" ).val( lines[i].substring( 0, lines[i].indexOf("!") - 2 ).replace( "note ", "" ) );
         }
@@ -489,7 +460,7 @@ function parse_imported_anamark_tun( event ) {
 
       // determine on which line of the tun file that tuning data starts, with preference for 'Exact Tuning' block, followed by 'Tuning' block.
       for ( i = 0; i < lines.length; i++ ) {
-        if ( lines[i].indexOf("[Exact Tuning]") != -1 ) {
+        if ( lines[i].includes("[Exact Tuning]") ) {
           has_functional_tuning = true;
           first_line = i + 1;
           break;
@@ -497,7 +468,7 @@ function parse_imported_anamark_tun( event ) {
       }
       if ( first_line == 0 ) {
         for ( i = 0; i < lines.length; i++ ) {
-          if ( lines[i].indexOf("[Tuning]") != -1 ) {
+          if ( lines[i].includes("[Tuning]") ) {
             has_functional_tuning = true;
             first_line = i + 1;
             break;
@@ -509,7 +480,7 @@ function parse_imported_anamark_tun( event ) {
 
       // enter tuning data
       var offset = parseFloat( lines[first_line].replace("note 0=", "") ).toFixed(6); // offset will ensure that note 0 is 1/1
-      var tuning_data = jQuery( "#txt_tuning_data" );
+      let tuning_data_str;
       for ( i = first_line; i < first_line+128; i++ ) {
 
         var n = i - first_line; // n = note number
@@ -518,18 +489,21 @@ function parse_imported_anamark_tun( event ) {
         line = (parseFloat(line) + parseFloat(offset)).toFixed(6);
 
         if ( n == 0 ) {
-          tuning_data.val( "" ); // clear scale field
+          // clear scale field
+          tuning_data_str = ''
         }
         else if ( n == 1 ) {
-          tuning_data.val( tuning_data.val() + line );
+          tuning_data_str += line ;
         }
         else {
-          tuning_data.val( tuning_data.val() + newline + line );
+          tuning_data_str += unix_newline + line;
         }
       }
+      jQuery( "#txt_tuning_data" ).val(tuning_data_str)
 
       jQuery( "#txt_base_frequency" ).val( 440 / cents_to_decimal(offset) );
-      jQuery( "#txt_base_midi_note" ).val( 0 );*/
+      jQuery( "#txt_base_midi_note" ).val( 0 );
+      */
 
     }
 
