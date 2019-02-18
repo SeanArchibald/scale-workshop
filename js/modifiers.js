@@ -8,7 +8,7 @@ function modify_stretch() {
   // remove white space from tuning data field
   jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-  if ( jQuery( "#txt_tuning_data" ).val() == "" ) {
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -20,14 +20,14 @@ function modify_stretch() {
   var stretch_ratio = parseFloat( jQuery( "#input_stretch_ratio" ).val() ); // amount of stretching, ratio
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split("\n");
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-  var new_tuning = "";
+  let new_tuning_lines = [];
   for ( var i = 0; i < lines.length; i++ ) {
 
     // check that line is not empty
-    if ( lines[i] !== "" ) {
+    if ( !isEmpty(lines[i]) ) {
 
       // evaluate the line first
       try {
@@ -41,17 +41,12 @@ function modify_stretch() {
       // so far so good!
 
       // line contains a period, so it should be a value in cents
-      if ( lines[i].toString().indexOf('.') !== -1 ) {
-        new_tuning = new_tuning + ( parseFloat( lines[i] ) * stretch_ratio ).toFixed(5);
+      if ( lines[i].toString().includes('.')) {
+        new_tuning_lines.push(( parseFloat( lines[i] ) * stretch_ratio ).toFixed(5));
       }
       // line doesn't contain a period, so it is a ratio
       else {
-        new_tuning = new_tuning + ( ratio_to_cents( lines[i] ) * stretch_ratio ).toFixed(5);
-      }
-
-      // add newline
-      if ( i < lines.length -1 ) {
-        new_tuning = new_tuning.toString() + "\n";
+        new_tuning_lines.push(( ratio_to_cents( lines[i] ) * stretch_ratio ).toFixed(5));
       }
 
     }
@@ -59,11 +54,11 @@ function modify_stretch() {
   }
 
   // update tuning input field with new tuning
-  jQuery( "#txt_tuning_data" ).val( new_tuning );
+  jQuery( "#txt_tuning_data" ).val( new_tuning_lines.join(unix_newline) );
 
   parse_tuning_data();
 
-  $( "#modal_modify_stretch" ).dialog( "close" );
+  jQuery( "#modal_modify_stretch" ).dialog( "close" );
 
   // success
   return true;
@@ -76,7 +71,7 @@ function modify_random_variance() {
   // remove white space from tuning data field
   jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-  if ( jQuery( "#txt_tuning_data" ).val() == "" ) {
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -87,10 +82,10 @@ function modify_random_variance() {
   var vary_period = document.getElementById( "input_checkbox_vary_period" ).checked;
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split("\n");
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-  var new_tuning = "";
+  let new_tuning_lines = [];
   for ( var i = 0; i < lines.length; i++ ) {
 
     // only apply random variance if the line is not the period, or vary_period is true
@@ -100,33 +95,27 @@ function modify_random_variance() {
       var random_variance = ( Math.random() * cents_max_variance * 2 ) - cents_max_variance;
 
       // line contains a period, so it should be a value in cents
-      if ( lines[i].toString().indexOf('.') !== -1 ) {
-        new_tuning = new_tuning + ( parseFloat( lines[i] ) + random_variance ).toFixed(5);
+      if ( lines[i].toString().includes('.') ) {
+        new_tuning_lines.push(( parseFloat( lines[i] ) + random_variance ).toFixed(5));
       }
       // line doesn't contain a period, so it is a ratio
       else {
-        new_tuning = new_tuning + ( ratio_to_cents( lines[i] ) + random_variance ).toFixed(5);
+        new_tuning_lines.push(( ratio_to_cents( lines[i] ) + random_variance ).toFixed(5));
       }
-
-      // add a newline for all lines except the last
-      if ( i < lines.length-1 ) {
-        new_tuning = new_tuning + "\n";
-      }
-
     }
     // last line is a period and we're not applying random variance to it
     else {
-      new_tuning = new_tuning + lines[i];
+      new_tuning_lines.push(lines[i]);
     }
 
   }
 
   // update tuning input field with new tuning
-  jQuery( "#txt_tuning_data" ).val( new_tuning );
+  jQuery( "#txt_tuning_data" ).val( new_tuning_lines.join(unix_newline) );
 
   parse_tuning_data();
 
-  $( "#modal_modify_random_variance" ).dialog( "close" );
+  jQuery( "#modal_modify_random_variance" ).dialog( "close" );
 
   // success
   return true;
@@ -139,7 +128,7 @@ function modify_mode() {
   // remove white space from tuning data field
   jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-  if ( jQuery( "#txt_tuning_data" ).val() == "" ) {
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -154,7 +143,7 @@ function modify_mode() {
     mode[i] = parseInt( mode[i] );
 
     if ( isNaN( mode[i] ) || mode[i] < 1 ) {
-      alert( "Your mode should contain a list of positive integers, seperated by spaces. E.g.\n5 5 1 3 1 2" );
+      alert( "Your mode should contain a list of positive integers, seperated by spaces. E.g." + unix_newline + "5 5 1 3 1 2" );
       return false;
     }
 
@@ -164,11 +153,11 @@ function modify_mode() {
   var mode_sum = mode.reduce(function(a, b) { return a + b; }, 0);
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split("\n");
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 
   // number of notes in the mode should equal the number of lines in the tuning field
   if ( mode_sum != lines.length ) {
-    alert( "Your mode doesn't add up to the same size as the original tuning.\nE.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
+    alert( "Your mode doesn't add up to the same size as the original tuning." + unix_newline + "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
     return false;
   }
 
@@ -184,7 +173,7 @@ function modify_mode() {
 
       // add a newline for all lines except the last
       if ( i < lines.length-1 ) {
-        new_tuning = new_tuning + "\n";
+        new_tuning += newline;
       }
 
       mode_index++;
@@ -200,7 +189,7 @@ function modify_mode() {
 
   parse_tuning_data();
 
-  $( "#modal_modify_mode" ).dialog( "close" );
+  jQuery( "#modal_modify_mode" ).dialog( "close" );
 
   // success
   return true;
@@ -216,7 +205,7 @@ function modify_key_transpose() {
   // remove white space from tuning data field
   jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-  if ( jQuery( "#txt_tuning_data" ).val() == "" ) {
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -224,7 +213,7 @@ function modify_key_transpose() {
   }
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split("\n");
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 
   // key to transpose to
   var key = parseInt( jQuery( "#input_modify_key_transpose" ).val() );
@@ -253,7 +242,7 @@ function modify_key_transpose() {
 
     // add a newline for all lines except the last
     if ( i < lines.length-1 ) {
-      new_tuning = new_tuning + "\n";
+      new_tuning += unix_newline;
     }
 
   }
@@ -263,7 +252,7 @@ function modify_key_transpose() {
 
   parse_tuning_data();
 
-  $( "#modal_modify_mode" ).dialog( "close" );
+  jQuery( "#modal_modify_mode" ).dialog( "close" );
 
   // success
   return true;

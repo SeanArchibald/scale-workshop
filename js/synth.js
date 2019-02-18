@@ -17,10 +17,10 @@ var Synth = {
 
     var frequency = tuning_table.freq[ midinote ];
 
-    if ( frequency !== undefined ) {
+    if ( !isNil(frequency) ) {
 
       // make sure note triggers only on first input (prevent duplicate notes)
-      if ( typeof Synth.active_voices[midinote] === 'undefined' ) {
+      if ( isNil(Synth.active_voices[midinote]) ) {
 
         this.active_voices[midinote] = new Voice( frequency, velocity );
         this.active_voices[midinote].start(0);
@@ -35,7 +35,7 @@ var Synth = {
   },
   noteOff: function( midinote ) {
 
-    if ( typeof Synth.active_voices[midinote] !== 'undefined' ) {
+    if ( !isNil(Synth.active_voices[midinote]) ) {
       Synth.active_voices[midinote].stop();
       delete Synth.active_voices[midinote];
       jQuery( "#tuning-table-row-" + midinote ).removeClass( "bg-playnote" );
@@ -99,7 +99,7 @@ var Voice = ( function( audioCtx ) {
     this.vco = audioCtx.createOscillator();
     this.vca = audioCtx.createGain();
 
-    switch ( $( '#input_select_synth_amp_env' ).val() ) {
+    switch ( jQuery( '#input_select_synth_amp_env' ).val() ) {
       case 'organ' :
         this.attackTime = 0.008; this.decayTime = 0.1; this.sustain = 0.8; this.releaseTime = 0.008; break;
       case 'pad' :
@@ -234,7 +234,7 @@ function keycode_to_midinote(keycode) {
   // get row/col vals from the keymap
   var key = Synth['keymap'][keycode];
 
-  if ( key != undefined ) {
+  if ( !isNil(key) ) {
     var row = key[0];
     var col = key[1];
     var midinote = (row * Synth.isomorphicMapping.vertical) + (col * Synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
@@ -254,14 +254,13 @@ function touch_to_midinote( row, col ) {
 // returns true if focus is in safe area for typing
 // returns false if focus is on an input or textarea element
 function is_qwerty_active() {
+  jQuery( "div#qwerty-indicator" ).empty();
   var focus = document.activeElement.tagName;
   if ( focus == 'TEXTAREA' || focus == 'INPUT' ) {
-    jQuery( "div#qwerty-indicator" ).empty();
     jQuery( "div#qwerty-indicator" ).html('<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-off" aria-hidden="true" style="color:#d9534f"></span> Keyboard disabled</h4><p>Click here to enable QWERTY keyboard playing.</p>');
     return false;
   }
   else {
-    jQuery( "div#qwerty-indicator" ).empty();
     jQuery( "div#qwerty-indicator" ).html('<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-down" aria-hidden="true"></span> Keyboard enabled</h4><p>Press QWERTY keys to play current tuning.</p>');
     return true;
   }
@@ -275,33 +274,47 @@ document.addEventListener( "keydown", function(event) {
     return false;
   }
 
-  event.preventDefault();
-  Synth.noteOn(
-    keycode_to_midinote( event.which ), // midi note number 0-127
-    100 // note velocity 0-127
-  );
+  // bail, if a modifier is pressed alongside the key
+  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+    return false;
+  }
+
+  const midiNote = keycode_to_midinote( event.which ); // midi note number 0-127
+  const velocity = 100
+
+  if (midiNote !== false)  {
+    event.preventDefault();
+    Synth.noteOn( midiNote, velocity );
+  }
 });
 
 // KEYUP -- capture keyboard input
 document.addEventListener( "keyup", function(event) {
-  event.preventDefault();
-  Synth.noteOff( keycode_to_midinote( event.which ) );
+  // bail, if a modifier is pressed alongside the key
+  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+    return false;
+  }
+  const midiNote = keycode_to_midinote( event.which )
+  if (midiNote !== false) {
+    event.preventDefault();
+    Synth.noteOff( midiNote );
+  }
 });
 
 // TOUCHSTART -- virtual keyboard
-$( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
+jQuery( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
   event.preventDefault();
-  $(event.originalEvent.targetTouches[0].target).addClass('active');
-  var coord = $( event.target ).data('coord');
+  jQuery(event.originalEvent.targetTouches[0].target).addClass('active');
+  var coord = jQuery( event.target ).data('coord');
   debug( coord );
   Synth.noteOn( touch_to_midinote( coord[0], coord[1] ) );
 });
 
 // TOUCHEND -- virtual keyboard
-$( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
+jQuery( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
   event.preventDefault();
-  $(event.originalEvent.changedTouches[0].target).removeClass('active');
-  var coord = $( event.target ).data('coord');
+  jQuery(event.originalEvent.changedTouches[0].target).removeClass('active');
+  var coord = jQuery( event.target ).data('coord');
   debug( coord );
   Synth.noteOff( touch_to_midinote( coord[0], coord[1] ) );
 });
