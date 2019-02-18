@@ -69,7 +69,7 @@ function line_type(input) {
   // line_type("Hello")  -> false
 
   // line contains a period, so it should be a value in cents
-  if (input.toString().indexOf('.') !== -1) {
+  if (input.toString().includes('.')) {
     try {
       eval(input);
     }
@@ -81,12 +81,12 @@ function line_type(input) {
   }
 
   // line contains a backslash, so it should be an n_of_edo
-  else if (input.toString().indexOf('\\') !== -1) {
+  else if (input.toString().includes('\\')) {
     return "n_of_edo";
   }
 
   // line contains a forward slash, so it should be a ratio
-  else if (input.toString().indexOf('/') !== -1) {
+  else if (input.toString().includes('/')) {
     return "ratio";
   }
 
@@ -159,7 +159,7 @@ function ftom(input) {
 // convert an input string into a filename-sanitized version
 // if input is empty, returns "tuning" as a fallback
 function sanitize_filename(input) {
-  if (input.trim() == "") {
+  if (isEmpty(input.trim())) {
     return "tuning";
   }
   return input.replace(/[|&;$%@"<>()+,?]/g, "").replace(/\//g, "_");
@@ -169,15 +169,15 @@ function sanitize_filename(input) {
 function clear_all() {
 
   // empty text fields
-  $("#txt_tuning_data").val("");
-  $("#txt_name").val("");
+  jQuery("#txt_tuning_data").val("");
+  jQuery("#txt_name").val("");
 
   // empty any information displayed on page
-  $("#tuning-table").empty();
+  jQuery("#tuning-table").empty();
 
   // restore default base tuning
-  $("#txt_base_frequency").val(440);
-  $("#txt_base_midi_note").val(69);
+  jQuery("#txt_base_frequency").val(440);
+  jQuery("#txt_base_midi_note").val(69);
 
   // re-init tuning_table
   tuning_table = {
@@ -225,7 +225,8 @@ function show_mos(per, gen, ssz, threshold) {
     return false;
   }
 
-  /*threshold = parseFloat(document.getElementById("_threshold").value, 10);
+  /*
+  threshold = parseFloat(document.getElementById("_threshold").value, 10);
   if (isNaN(threshold)) {
       docerr.innerHTML = "unable to parse MOS step size threshold";
       return;
@@ -233,7 +234,8 @@ function show_mos(per, gen, ssz, threshold) {
   if (threshold < 0) {
       docerr.innerHTML = "MOS step size threshold must be at least 0";
       return;
-  }*/
+  }
+  */
 
   var aa = []; // scale
   var bb = []; // intervals
@@ -273,7 +275,7 @@ function show_mos(per, gen, ssz, threshold) {
       // generate array of distinct intervals (cc)
       cc[0] = bb[0]; // gotta start somewhere
       for (j = 1; j < i; j++)
-        if ((cc.indexOf(bb[j])) == -1) // bb[j] not found in cc
+        if (!cc.includes(bb[j])) // bb[j] not found in cc
           cc.push(bb[j]);
       cc.sort(function (a, b) { return a - b }); // sort ascending
       if (cc[0] < threshold) break; // steps too small, stop search
@@ -296,7 +298,7 @@ function show_mos(per, gen, ssz, threshold) {
 
 function debug(msg = "") {
   if (debug_enabled) {
-    msg = (msg == "") ? "Debug" : msg;
+    msg = isEmpty(msg) ? "Debug" : msg;
     console.log(msg);
     return true;
   }
@@ -321,7 +323,7 @@ function getFloat(id, errorMessage) {
 function getString(id, errorMessage) {
   var value = jQuery(id).val();
 
-  if (value === '' || value === null) {
+  if (isEmpty(value) || isNil(value)) {
     alert(errorMessage);
     return false;
   }
@@ -332,7 +334,7 @@ function getString(id, errorMessage) {
 function getLine(id, errorMessage) {
   var value = jQuery(id).val();
 
-  if (value === '' || parseFloat(value) <= 0 || value == null || line_type(value) == false) {
+  if (isEmpty(value) || parseFloat(value) <= 0 || isNil(value) || line_type(value) == false) {
     alert(errorMessage);
     return false;
   }
@@ -351,3 +353,6 @@ function closePopup(id) {
 function setTuningData(tuning) {
   jQuery("#txt_tuning_data").val(tuning)
 }
+
+const isEmpty = string => string === ''
+const isNil = x => typeof x === 'undefined' || x === null
