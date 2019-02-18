@@ -15,6 +15,20 @@ class Synth {
     this.waveform = 'triangle'
   }
 
+  init (audioCtx) {
+    // master gain
+    this.masterGain = audioCtx.createGain(); // create master gain before output
+    this.masterGain.gain.value = 0.8;
+    // master filter
+    this.masterLPfilter = audioCtx.createBiquadFilter();
+    this.masterLPfilter.frequency.value = 5000;
+    this.masterLPfilter.Q.value = 1;
+    this.masterLPfilter.type = 'lowpass';
+    // connect master gain control > filter > master output
+    this.masterGain.connect( this.masterLPfilter );
+    this.masterLPfilter.connect( audioCtx.destination );
+  }
+
   noteOn ( midinote, velocity = 127 ) {
     const frequency = tuning_table.freq[ midinote ];
 
@@ -61,20 +75,10 @@ class Synth {
 
 const synth = new Synth()
 
-// create an audiocontext
-var audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
+const audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
+synth.init(audioCtx)
 
-// master gain
-synth.masterGain = audioCtx.createGain(); // create master gain before output
-synth.masterGain.gain.value = 0.8;
-// master filter
-synth.masterLPfilter = audioCtx.createBiquadFilter();
-synth.masterLPfilter.frequency.value = 5000;
-synth.masterLPfilter.Q.value = 1;
-synth.masterLPfilter.type = 'lowpass';
-// connect master gain control > filter > master output
-synth.masterGain.connect( synth.masterLPfilter );
-synth.masterLPfilter.connect( audioCtx.destination );
+// create an audiocontext
 
 var Voice = ( function( audioCtx ) {
 
