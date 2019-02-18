@@ -34,8 +34,8 @@ class Synth {
     if ( !isNil(frequency) ) {
       // make sure note triggers only on first input (prevent duplicate notes)
       if ( isNil(this.active_voices[midinote]) ) {
-        this.active_voices[midinote] = new Voice( frequency, velocity );
-        this.active_voices[midinote].start(0);
+        this.active_voices[midinote] = new Voice( this.audioCtx, frequency, velocity );
+        this.active_voices[midinote].start();
         jQuery( "#tuning-table-row-" + midinote ).addClass( "bg-playnote" );
 
         debug( "Play note " + midinote + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
