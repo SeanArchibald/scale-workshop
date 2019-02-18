@@ -12,23 +12,24 @@ class Synth {
     this.delay = new Delay(this)
   }
 
-  init (audioCtx) {
+  init () {
     if (!this.inited) {
       this.inited = true
-      this.audioCtx = audioCtx
+      this.audioCtx = new ( window.AudioContext || window.webkitAudioContext )()
+
       // master gain
-      this.masterGain = audioCtx.createGain(); // create master gain before output
+      this.masterGain = this.audioCtx.createGain(); // create master gain before output
       this.masterGain.gain.value = 0.8;
       // master filter
-      this.masterLPfilter = audioCtx.createBiquadFilter();
+      this.masterLPfilter = this.audioCtx.createBiquadFilter();
       this.masterLPfilter.frequency.value = 5000;
       this.masterLPfilter.Q.value = 1;
       this.masterLPfilter.type = 'lowpass';
       // connect master gain control > filter > master output
       this.masterGain.connect( this.masterLPfilter );
-      this.masterLPfilter.connect( audioCtx.destination );
+      this.masterLPfilter.connect( this.audioCtx.destination );
 
-      this.delay.init(audioCtx)
+      this.delay.init(this.audioCtx)
     }
   }
 
@@ -38,6 +39,8 @@ class Synth {
     if ( !isNil(frequency) ) {
       // make sure note triggers only on first input (prevent duplicate notes)
       if ( isNil(this.active_voices[midinote]) ) {
+        this.init()
+
         const voice = new Voice( this.audioCtx, frequency, velocity );
         voice.bindDelay(this.delay)
         voice.bindSynth(this)

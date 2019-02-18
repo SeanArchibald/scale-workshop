@@ -5,7 +5,6 @@
  */
 
 const synth = new Synth()
-synth.init(new ( window.AudioContext || window.webkitAudioContext )())
 
 // keycode_to_midinote()
 // it turns a keycode to a MIDI note based on this reference layout:
