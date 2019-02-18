@@ -4,55 +4,51 @@
  * Web audio synth
  */
 
-var Synth = {
-  keymap: Keymap.EN,
-  isomorphicMapping: {
-    vertical: 5, // how many scale degrees as you move up/down by rows
-    horizontal: 1  // how many scale degrees as you move left/right by cols
-  },
-  active_voices: {}, // polyphonic voice management
-  waveform: 'triangle',
-  noteOn: function( midinote, velocity = 127 ) {
+class Synth {
+  constructor() {
+    this.keymap = Keymap.EN
+    this.isomorphicMapping = {
+      vertical: 5, // how many scale degrees as you move up/down by rows
+      horizontal: 1  // how many scale degrees as you move left/right by cols
+    }
+    this.active_voices = {} // polyphonic voice management
+    this.waveform = 'triangle'
+  }
 
-    var frequency = tuning_table.freq[ midinote ];
+  noteOn ( midinote, velocity = 127 ) {
+    const frequency = tuning_table.freq[ midinote ];
 
     if ( !isNil(frequency) ) {
-
       // make sure note triggers only on first input (prevent duplicate notes)
-      if ( isNil(Synth.active_voices[midinote]) ) {
+      if ( isNil(this.active_voices[midinote]) ) {
 
         this.active_voices[midinote] = new Voice( frequency, velocity );
         this.active_voices[midinote].start(0);
         jQuery( "#tuning-table-row-" + midinote ).addClass( "bg-playnote" );
 
         debug( "Play note " + midinote + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
-
       }
-
     }
-
-  },
-  noteOff: function( midinote ) {
-
-    if ( !isNil(Synth.active_voices[midinote]) ) {
-      Synth.active_voices[midinote].stop();
-      delete Synth.active_voices[midinote];
+  }
+  noteOff ( midinote ) {
+    if ( !isNil(this.active_voices[midinote]) ) {
+      this.active_voices[midinote].stop();
+      delete this.active_voices[midinote];
       jQuery( "#tuning-table-row-" + midinote ).removeClass( "bg-playnote" );
 
       debug( "Stop note " + midinote );
     }
+  }
 
-  },
-  panic: function() {
-    // this function stops all active voices and cuts the delay
-
+  // this function stops all active voices and cuts the delay
+  panic () {
     // show which voices are active (playing)
-    debug( Synth.active_voices );
+    debug( this.active_voices );
 
     // loop through active voices
     for ( i=0; i<127; i++ ) {
       // turn off voice
-      Synth.noteOff( i );
+      this.noteOff( i );
     }
 
     // turn down delay gain
@@ -61,22 +57,24 @@ var Synth = {
     Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
     Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
   }
-};
+}
+
+const synth = new Synth()
 
 // create an audiocontext
 var audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
 
 // master gain
-Synth.masterGain = audioCtx.createGain(); // create master gain before output
-Synth.masterGain.gain.value = 0.8;
+synth.masterGain = audioCtx.createGain(); // create master gain before output
+synth.masterGain.gain.value = 0.8;
 // master filter
-Synth.masterLPfilter = audioCtx.createBiquadFilter();
-Synth.masterLPfilter.frequency.value = 5000;
-Synth.masterLPfilter.Q.value = 1;
-Synth.masterLPfilter.type = 'lowpass';
+synth.masterLPfilter = audioCtx.createBiquadFilter();
+synth.masterLPfilter.frequency.value = 5000;
+synth.masterLPfilter.Q.value = 1;
+synth.masterLPfilter.type = 'lowpass';
 // connect master gain control > filter > master output
-Synth.masterGain.connect( Synth.masterLPfilter );
-Synth.masterLPfilter.connect( audioCtx.destination );
+synth.masterGain.connect( synth.masterLPfilter );
+synth.masterLPfilter.connect( audioCtx.destination );
 
 var Voice = ( function( audioCtx ) {
 
@@ -114,7 +112,7 @@ var Voice = ( function( audioCtx ) {
     const now = audioCtx.currentTime;
 
     /* VCO */
-    this.vco.type = Synth.waveform;
+    this.vco.type = synth.waveform;
     this.vco.frequency.value = this.frequency;
 
     /* VCA */
@@ -126,7 +124,7 @@ var Voice = ( function( audioCtx ) {
     /* routing */
     this.vco.connect( this.vca );
     this.vca.connect( Delay.channelL );
-    this.vca.connect( Synth.masterGain );
+    this.vca.connect( synth.masterGain );
 
     this.vco.start(0);
 
@@ -216,19 +214,19 @@ Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
 //
 function keycode_to_midinote(keycode) {
   // get row/col vals from the keymap
-  var key = Synth.keymap[keycode];
+  var key = synth.keymap[keycode];
 
   if ( isNil(key) ) {
     // return false if there is no note assigned to this key
     return false;
   } else {
     var [row, col] = key;
-    return (row * Synth.isomorphicMapping.vertical) + (col * Synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
+    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
   }
 }
 
 function touch_to_midinote( row, col ) {
-  return (row * Synth.isomorphicMapping.vertical) + (col * Synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
+  return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
 }
 
 // is_qwerty_active()
@@ -266,7 +264,7 @@ document.addEventListener( "keydown", function(event) {
 
   if (midiNote !== false)  {
     event.preventDefault();
-    Synth.noteOn( midiNote, velocity );
+    synth.noteOn( midiNote, velocity );
   }
 });
 
@@ -279,7 +277,7 @@ document.addEventListener( "keyup", function(event) {
   const midiNote = keycode_to_midinote( event.which )
   if (midiNote !== false) {
     event.preventDefault();
-    Synth.noteOff( midiNote );
+    synth.noteOff( midiNote );
   }
 });
 
@@ -289,7 +287,7 @@ jQuery( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
   jQuery(event.originalEvent.targetTouches[0].target).addClass('active');
   var coord = jQuery( event.target ).data('coord');
   debug( coord );
-  Synth.noteOn( touch_to_midinote( coord[0], coord[1] ) );
+  synth.noteOn( touch_to_midinote( coord[0], coord[1] ) );
 });
 
 // TOUCHEND -- virtual keyboard
@@ -298,5 +296,5 @@ jQuery( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
   jQuery(event.originalEvent.changedTouches[0].target).removeClass('active');
   var coord = jQuery( event.target ).data('coord');
   debug( coord );
-  Synth.noteOff( touch_to_midinote( coord[0], coord[1] ) );
+  synth.noteOff( touch_to_midinote( coord[0], coord[1] ) );
 });

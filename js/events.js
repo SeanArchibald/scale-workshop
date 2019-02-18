@@ -24,7 +24,7 @@ jQuery( document ).ready( function() {
     // recall computer keyboard layout
     if ( !isNil(localStorage.getItem( 'keybd_region' )) ) {
       jQuery( "#input_select_keyboard_layout" ).val( localStorage.getItem( 'keybd_region' ) );
-      Synth.keymap = Keymap[localStorage.getItem( 'keybd_region' )];
+      synth.keymap = Keymap[localStorage.getItem( 'keybd_region' )];
     }
 
   } else {
@@ -290,7 +290,7 @@ jQuery( document ).ready( function() {
   // Panic button
   jQuery( "#btn_panic" ).click( function( event ) {
     event.preventDefault();
-    Synth.panic(); // turns off all playing synth notes
+    synth.panic(); // turns off all playing synth notes
   } );
 
   // General Settings - Line ending format (newlines)
@@ -324,15 +324,15 @@ jQuery( document ).ready( function() {
   jQuery(document).on('input', '#input_range_main_vol', function() {
     gain = jQuery(this).val();
     now = audioCtx.currentTime;
-    Synth.masterGain.gain.value = gain;
-    Synth.masterGain.gain.setValueAtTime(gain, now);
+    synth.masterGain.gain.value = gain;
+    synth.masterGain.gain.setValueAtTime(gain, now);
   });
 
 
 
   // Synth Settings - Waveform
   jQuery( "#input_select_synth_waveform" ).change( function( event ) {
-    Synth.waveform = jQuery( '#input_select_synth_waveform' ).val();
+    synth.waveform = jQuery( '#input_select_synth_waveform' ).val();
   } );
 
 
@@ -343,14 +343,14 @@ jQuery( document ).ready( function() {
     if ( Delay.on ) {
       // turn delay on
       debug("delay ON");
-      Delay.panL.connect( Synth.masterGain );
-      Delay.panR.connect( Synth.masterGain );
+      Delay.panL.connect( synth.masterGain );
+      Delay.panR.connect( synth.masterGain );
     }
     else {
       // turn delay off
       debug("delay OFF");
-      Delay.panL.disconnect( Synth.masterGain );
-      Delay.panR.disconnect( Synth.masterGain );
+      Delay.panL.disconnect( synth.masterGain );
+      Delay.panR.disconnect( synth.masterGain );
     }
   } );
 
@@ -375,7 +375,7 @@ jQuery( document ).ready( function() {
   // Isomorphic Settings - Keyboard Layout
   jQuery( "#input_select_keyboard_layout" ).change( function( event ) {
     var id = jQuery( '#input_select_keyboard_layout' ).val();
-    Synth.keymap = Keymap[id];
+    synth.keymap = Keymap[id];
     localStorage.setItem( 'keybd_region', id );
   } );
 
@@ -383,10 +383,10 @@ jQuery( document ).ready( function() {
 
   // Isomorphic Settings - Isomorphic Mapping
   jQuery( "#input_number_isomorphicmapping_vert" ).change( function( event ) {
-    Synth.isomorphicMapping.vertical = jQuery( '#input_number_isomorphicmapping_vert' ).val();
+    synth.isomorphicMapping.vertical = jQuery( '#input_number_isomorphicmapping_vert' ).val();
   } );
   jQuery( "#input_number_isomorphicmapping_horiz" ).change( function( event ) {
-    Synth.isomorphicMapping.horizontal = jQuery( '#input_number_isomorphicmapping_horiz' ).val();
+    synth.isomorphicMapping.horizontal = jQuery( '#input_number_isomorphicmapping_horiz' ).val();
   } );
 
 

@@ -200,13 +200,8 @@ jQuery(() => {
   midi.on('ready', updateStatus)
   midi.on('update', updateStatus)
 
-  midi.on('note on', (note, velocity, channel) => {
-    Synth.noteOn(note, velocity)
-  })
-
-  midi.on('note off', (note, velocity, channel) => {
-    Synth.noteOff(note, velocity)
-  })
+  midi.on('note on', synth.noteOn.bind(synth))
+  midi.on('note off', synth.noteOff.bind(synth))
 
   midi.init()
 })

@@ -150,8 +150,8 @@ function parse_url() {
   jQuery( "#input_number_isomorphicmapping_horiz" ).val(horizontal);
 
   // if there is isomorphic keyboard mapping data, apply it
-  if ( vertical !== false ) Synth.isomorphicMapping.vertical = vertical;
-  if ( horizontal !== false ) Synth.isomorphicMapping.horizontal = horizontal;
+  if ( vertical !== false ) synth.isomorphicMapping.vertical = vertical;
+  if ( horizontal !== false ) synth.isomorphicMapping.horizontal = horizontal;
 
   // parse the tuning data
   if ( parse_tuning_data() ) {
@@ -165,7 +165,7 @@ function parse_url() {
     // if there are synth options, apply them
     if ( waveform !== false ) {
       jQuery( '#input_select_synth_waveform' ).val( waveform );
-      Synth.waveform = waveform;
+      synth.waveform = waveform;
 
     }
     if ( ampenv !== false ) jQuery( '#input_select_synth_amp_env' ).val( ampenv );
