@@ -274,17 +274,31 @@ document.addEventListener( "keydown", function(event) {
     return false;
   }
 
-  event.preventDefault();
-  Synth.noteOn(
-    keycode_to_midinote( event.which ), // midi note number 0-127
-    100 // note velocity 0-127
-  );
+  // bail, if a modifier is pressed alongside the key
+  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+    return false;
+  }
+
+  const midiNote = keycode_to_midinote( event.which ); // midi note number 0-127
+  const velocity = 100
+
+  if (midiNote !== false)  {
+    event.preventDefault();
+    Synth.noteOn( midiNote, velocity );
+  }
 });
 
 // KEYUP -- capture keyboard input
 document.addEventListener( "keyup", function(event) {
-  event.preventDefault();
-  Synth.noteOff( keycode_to_midinote( event.which ) );
+  // bail, if a modifier is pressed alongside the key
+  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+    return false;
+  }
+  const midiNote = keycode_to_midinote( event.which )
+  if (midiNote !== false) {
+    event.preventDefault();
+    Synth.noteOff( midiNote );
+  }
 });
 
 // TOUCHSTART -- virtual keyboard
