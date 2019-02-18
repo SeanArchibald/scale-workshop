@@ -356,3 +356,4 @@ function setTuningData(tuning) {
 
 const isEmpty = string => string === ''
 const isNil = x => typeof x === 'undefined' || x === null
+const isFunction = x => typeof x === 'function'

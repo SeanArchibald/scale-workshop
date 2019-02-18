@@ -24,7 +24,7 @@ jQuery( document ).ready( function() {
     // recall computer keyboard layout
     if ( !isNil(localStorage.getItem( 'keybd_region' )) ) {
       jQuery( "#input_select_keyboard_layout" ).val( localStorage.getItem( 'keybd_region' ) );
-      Synth.keymap = eval( 'Keymap.' + localStorage.getItem( 'keybd_region' ) );
+      Synth.keymap = Keymap[localStorage.getItem( 'keybd_region' )];
     }
 
   } else {

@@ -5,7 +5,6 @@
  */
 
 var Synth = {
-
   keymap: Keymap.EN,
   isomorphicMapping: {
     vertical: 5, // how many scale degrees as you move up/down by rows
@@ -45,7 +44,6 @@ var Synth = {
 
   },
   panic: function() {
-
     // this function stops all active voices and cuts the delay
 
     // show which voices are active (playing)
@@ -53,10 +51,8 @@ var Synth = {
 
     // loop through active voices
     for ( i=0; i<127; i++ ) {
-
       // turn off voice
       Synth.noteOff( i );
-
     }
 
     // turn down delay gain
@@ -64,13 +60,8 @@ var Synth = {
     Delay.gain = 0;
     Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
     Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
-
   }
 };
-
-
-
-
 
 // create an audiocontext
 var audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
@@ -120,7 +111,7 @@ var Voice = ( function( audioCtx ) {
   // oscillator start
   Voice.prototype.start = function() {
 
-    now = audioCtx.currentTime;
+    const now = audioCtx.currentTime;
 
     /* VCO */
     this.vco.type = Synth.waveform;
@@ -145,22 +136,16 @@ var Voice = ( function( audioCtx ) {
 
   // oscillator stop
   Voice.prototype.stop = function() {
-
-    vca = this.vca;
-    releaseTime = this.releaseTime;
-
-    this.oscillators.forEach(function(oscillator, _) {
-
-      now = audioCtx.currentTime;
-
-      // using try/catch here because Firefox doesn't support cancelAndHoldAtTime.. shame!!
-      try {
-        this.vca.gain.cancelAndHoldAtTime(now);
+    const now = audioCtx.currentTime;
+    const vcaGain = this.vca.gain
+    this.oscillators.forEach(oscillator => {
+      // Firefox doesn't support cancelAndHoldAtTime.. shame!!
+      if (isFunction(vcaGain.cancelAndHoldAtTime)) {
+        vcaGain.cancelAndHoldAtTime(now);
+      } else {
+        vcaGain.cancelScheduledValues(now);
       }
-      catch(err) {
-        //debug(err);
-      }
-      this.vca.gain.exponentialRampToValueAtTime( 0.001, now + this.releaseTime ); // release
+      vcaGain.exponentialRampToValueAtTime( 0.001, now + this.releaseTime ); // release
       oscillator.stop( now + this.releaseTime );
     });
   };
@@ -230,23 +215,20 @@ Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
 //      Z  X  C  V  B  N  M  ,  .  /
 //
 function keycode_to_midinote(keycode) {
-
   // get row/col vals from the keymap
-  var key = Synth['keymap'][keycode];
+  var key = Synth.keymap[keycode];
 
-  if ( !isNil(key) ) {
-    var row = key[0];
-    var col = key[1];
-    var midinote = (row * Synth.isomorphicMapping.vertical) + (col * Synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
-    return midinote;
+  if ( isNil(key) ) {
+    // return false if there is no note assigned to this key
+    return false;
+  } else {
+    var [row, col] = key;
+    return (row * Synth.isomorphicMapping.vertical) + (col * Synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
   }
-  // return false if there is no note assigned to this key
-  return false;
 }
 
 function touch_to_midinote( row, col ) {
-  var midinote = (row * Synth.isomorphicMapping.vertical) + (col * Synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
-  return midinote;
+  return (row * Synth.isomorphicMapping.vertical) + (col * Synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
 }
 
 // is_qwerty_active()
