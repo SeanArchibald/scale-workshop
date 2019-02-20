@@ -265,8 +265,8 @@ function get_scale_url() {
   var data = encodeURIComponent( jQuery("#txt_tuning_data").val() );
   var freq = encodeURIComponent( jQuery("#txt_base_frequency").val() );
   var midi = encodeURIComponent( jQuery("#txt_base_midi_note").val() );
-  var vert = encodeURIComponent( Synth.isomorphicMapping.vertical );
-  var horiz = encodeURIComponent( Synth.isomorphicMapping.horizontal );
+  var vert = encodeURIComponent( synth.isomorphicMapping.vertical );
+  var horiz = encodeURIComponent( synth.isomorphicMapping.horizontal );
   var colors = encodeURIComponent( jQuery("#input_key_colors").val() );
   var waveform = encodeURIComponent( jQuery('#input_select_synth_waveform').val() );
   var ampenv = encodeURIComponent( jQuery('#input_select_synth_amp_env').val() );

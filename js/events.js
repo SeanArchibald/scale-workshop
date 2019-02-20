@@ -24,7 +24,7 @@ jQuery( document ).ready( function() {
     // recall computer keyboard layout
     if ( !isNil(localStorage.getItem( 'keybd_region' )) ) {
       jQuery( "#input_select_keyboard_layout" ).val( localStorage.getItem( 'keybd_region' ) );
-      Synth.keymap = eval( 'Keymap.' + localStorage.getItem( 'keybd_region' ) );
+      synth.keymap = Keymap[localStorage.getItem( 'keybd_region' )];
     }
 
   } else {
@@ -290,7 +290,7 @@ jQuery( document ).ready( function() {
   // Panic button
   jQuery( "#btn_panic" ).click( function( event ) {
     event.preventDefault();
-    Synth.panic(); // turns off all playing synth notes
+    synth.panic(); // turns off all playing synth notes
   } );
 
   // General Settings - Line ending format (newlines)
@@ -322,49 +322,43 @@ jQuery( document ).ready( function() {
 
   // Synth Settings - Main Volume
   jQuery(document).on('input', '#input_range_main_vol', function() {
-    gain = jQuery(this).val();
-    now = audioCtx.currentTime;
-    Synth.masterGain.gain.value = gain;
-    Synth.masterGain.gain.setValueAtTime(gain, now);
+    const gain = jQuery(this).val();
+    const now = synth.now();
+    synth.masterGain.gain.value = gain;
+    synth.masterGain.gain.setValueAtTime(gain, now);
   });
 
 
 
   // Synth Settings - Waveform
   jQuery( "#input_select_synth_waveform" ).change( function( event ) {
-    Synth.waveform = jQuery( '#input_select_synth_waveform' ).val();
+    synth.waveform = jQuery( '#input_select_synth_waveform' ).val();
   } );
 
 
 
   // Synth Settings - Delay
-  jQuery( "#input_checkbox_delay_on" ).change( function( event ) {
-    Delay.on = jQuery( "#input_checkbox_delay_on" ).is(':checked');
-    if ( Delay.on ) {
-      // turn delay on
-      debug("delay ON");
-      Delay.panL.connect( Synth.masterGain );
-      Delay.panR.connect( Synth.masterGain );
-    }
-    else {
-      // turn delay off
-      debug("delay OFF");
-      Delay.panL.disconnect( Synth.masterGain );
-      Delay.panR.disconnect( Synth.masterGain );
+  jQuery( "#input_checkbox_delay_on" ).change( function() {
+    if ($(this).is(':checked')) {
+      synth.delay.enable()
+    } else {
+      synth.delay.disable()
     }
   } );
 
   jQuery(document).on('input', '#input_range_feedback_gain', function() {
-    Delay.gain = jQuery(this).val();
-    debug(Delay.gain);
-    Delay.gainL.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
-    Delay.gainR.gain.setValueAtTime(Delay.gain, audioCtx.currentTime);
+    synth.delay.gain = jQuery(this).val();
+    debug(synth.delay.gain);
+    const now = synth.now()
+    synth.delay.gainL.gain.setValueAtTime(synth.delay.gain, now);
+    synth.delay.gainR.gain.setValueAtTime(synth.delay.gain, now);
   });
 
   jQuery(document).on('change', '#input_range_delay_time', function() {
-    Delay.time = jQuery(this).val() * 0.001;
-    Delay.channelL.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
-    Delay.channelR.delayTime.setValueAtTime( Delay.time, audioCtx.currentTime );
+    synth.delay.time = jQuery(this).val() * 0.001;
+    const now = synth.now()
+    synth.delay.channelL.delayTime.setValueAtTime( synth.delay.time, now );
+    synth.delay.channelR.delayTime.setValueAtTime( synth.delay.time, now );
   });
   jQuery(document).on('input', '#input_range_delay_time', function() {
     jQuery( "#delay_time_ms" ).text( jQuery(this).val() );
@@ -375,7 +369,7 @@ jQuery( document ).ready( function() {
   // Isomorphic Settings - Keyboard Layout
   jQuery( "#input_select_keyboard_layout" ).change( function( event ) {
     var id = jQuery( '#input_select_keyboard_layout' ).val();
-    Synth.keymap = Keymap[id];
+    synth.keymap = Keymap[id];
     localStorage.setItem( 'keybd_region', id );
   } );
 
@@ -383,10 +377,10 @@ jQuery( document ).ready( function() {
 
   // Isomorphic Settings - Isomorphic Mapping
   jQuery( "#input_number_isomorphicmapping_vert" ).change( function( event ) {
-    Synth.isomorphicMapping.vertical = jQuery( '#input_number_isomorphicmapping_vert' ).val();
+    synth.isomorphicMapping.vertical = jQuery( '#input_number_isomorphicmapping_vert' ).val();
   } );
   jQuery( "#input_number_isomorphicmapping_horiz" ).change( function( event ) {
-    Synth.isomorphicMapping.horizontal = jQuery( '#input_number_isomorphicmapping_horiz' ).val();
+    synth.isomorphicMapping.horizontal = jQuery( '#input_number_isomorphicmapping_horiz' ).val();
   } );
 
 
