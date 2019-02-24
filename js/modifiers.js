@@ -204,24 +204,16 @@ function modify_mode() {
 
     // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
     var new_tuning = "";
-    for ( var i = 0; i < lines.length; i++ ) {
+    for ( var i = 0; i < mode.length; i++ ) {
 
-      debug( jQuery.inArray(i, mode) );
+      new_tuning += lines[mode[i]-1];
 
-      if ( jQuery.inArray(i + 1, mode) != -1 ) {
-
-        new_tuning += lines[i];
-
-        // add a newline for all lines except the last
-        if ( i < lines.length-1 ) {
-          new_tuning += newline;
-        }
-
+      // add a newline for all lines except the last
+      if ( i < mode.length-1 ) {
+        new_tuning += unix_newline;
       }
 
     }
-
-    debug(new_tuning);
 
   }
 
