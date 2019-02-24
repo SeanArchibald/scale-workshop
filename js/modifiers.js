@@ -149,38 +149,79 @@ function modify_mode() {
 
   }
 
-  // get the total number of notes in the mode
-  var mode_sum = mode.reduce(function(a, b) { return a + b; }, 0);
-
-  // split user data into individual lines
+  // split user's scale data into individual lines
   var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  debug(lines);
+  debug(mode);
 
-  // number of notes in the mode should equal the number of lines in the tuning field
-  if ( mode_sum != lines.length ) {
-    alert( "Your mode doesn't add up to the same size as the original tuning." + unix_newline + "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
-    return false;
-  }
+  // mode_type will be either intervals (e.g. 2 2 1 2 2 2 1) or from_base (e.g. 2 4 5 7 9 11 12)
+  var mode_type = jQuery("#modal_modify_mode input[type='radio']:checked").val();
 
-  // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-  var new_tuning = "";
-  var note_count = 1;
-  var mode_index = 0;
-  for ( var i = 0; i < lines.length; i++ ) {
+  if ( mode_type == "intervals" ) {
 
-    if ( mode[mode_index] == note_count ) {
+    // get the total number of notes in the mode
+    var mode_sum = mode.reduce(function(a, b) { return a + b; }, 0);
 
-      new_tuning = new_tuning + lines[i];
+    // number of notes in the mode should equal the number of lines in the scale data field
+    if ( mode_sum != lines.length ) {
+      alert( "Your mode doesn't add up to the same size as the current scale." + unix_newline + "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
+      return false;
+    }
 
-      // add a newline for all lines except the last
-      if ( i < lines.length-1 ) {
-        new_tuning += newline;
+    // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
+    var new_tuning = "";
+    var note_count = 1;
+    var mode_index = 0;
+    for ( var i = 0; i < lines.length; i++ ) {
+
+      if ( mode[mode_index] == note_count ) {
+
+        new_tuning = new_tuning + lines[i];
+
+        // add a newline for all lines except the last
+        if ( i < lines.length-1 ) {
+          new_tuning += newline;
+        }
+
+        mode_index++;
+        note_count = 0;
+
       }
-
-      mode_index++;
-      note_count = 0;
+      note_count++;
 
     }
-    note_count++;
+
+  }
+
+  // if ( mode_type == "from_base" ) {
+  else {
+
+    // number of notes in the mode should equal the number of lines in the scale data field
+    if ( mode[mode.length - 1] != lines.length ) {
+      alert( "Your mode isn't the same size as the current scale." + unix_newline + "E.g. if you have a 5 note scale, mode 2 4 5 is valid because the final degree is 5. But mode 2 4 6 is invalid because 6 is greater than 5." );
+      return false;
+    }
+
+    // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
+    var new_tuning = "";
+    for ( var i = 0; i < lines.length; i++ ) {
+
+      debug( jQuery.inArray(i, mode) );
+
+      if ( jQuery.inArray(i + 1, mode) != -1 ) {
+
+        new_tuning += lines[i];
+
+        // add a newline for all lines except the last
+        if ( i < lines.length-1 ) {
+          new_tuning += newline;
+        }
+
+      }
+
+    }
+
+    debug(new_tuning);
 
   }
 
