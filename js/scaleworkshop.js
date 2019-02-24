@@ -14,7 +14,7 @@ jQuery(window).on('popstate', function() {
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 0.9.4";
+const APP_TITLE = "Scale Workshop 0.9.5";
 const TUNING_MAX_SIZE = 128;
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
@@ -345,7 +345,7 @@ function parse_imported_scala_scl( event ) {
     if (first_line === -1) {
       first_line = 0
     }
-    
+
     jQuery( "#txt_tuning_data" ).val(lines.slice(first_line).map(line => line.trim()).join(unix_newline))
 
     parse_tuning_data();
@@ -404,7 +404,7 @@ function parse_imported_anamark_tun( event ) {
       debug("this shouldn't be happening right now");
       name = input.files[0].name.slice(0, -4);
     }
-    
+
     // determine if tun file contains 'Functional Tuning' block and get line number where tuning starts
     var has_functional_tuning = false;
     var first_line = lines.findIndex(line => line.includes("[Functional Tuning]") || line.includes("[Functional tuning]"))

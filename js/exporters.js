@@ -88,7 +88,12 @@ function export_scala_scl() {
   var file = "! " + tuning_table['filename'] + ".scl" + newline;
   file += "! Created using " + APP_TITLE + newline;
   file += "!" + newline;
-  file += jQuery( "#txt_name" ).val() + newline + " ";
+  if ( isEmpty( jQuery( "#txt_name" ).val() ) ) {
+    file += "Untitled tuning" + newline + " ";
+  }
+  else {
+    file += jQuery( "#txt_name" ).val() + newline + " ";
+  }
 
   file += tuning_table['note_count']-1 + newline;
   file += "!" + newline;
