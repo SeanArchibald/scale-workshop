@@ -420,8 +420,16 @@ jQuery( document ).ready( function() {
 
     switch ( size.toString() ) {
 
+      case "9":
+        colors = "white white black black white white black black white";
+        break;
+
       case "10":
         colors = "white black white white white black white white black white";
+        break;
+
+      case "11":
+        colors = "white black white black white black white black white black white";
         break;
 
       case "12":
@@ -432,6 +440,14 @@ jQuery( document ).ready( function() {
         colors = "antiquewhite white black white black white white black white white black white black";
         break;
 
+      case "14":
+        colors = "white black white black white black white white black white black white black white";
+        break;
+
+      case "15":
+        colors = "white black white black white black white black white black white black white black white";
+        break;
+
       case "16":
         colors = "white black white black white black white white black white black white black white black white";
         break;
@@ -440,12 +456,32 @@ jQuery( document ).ready( function() {
         colors = "white black black white white black black white black black white white black black white black black";
         break;
 
+      case "18":
+        colors = "white black black white black white black black white black white black black white black black white black";
+        break;
+
       case "19":
         colors = "white black grey white black grey white black white black grey white black grey white black grey white black white";
         break;
 
+      case "20":
+        colors = "white white black black white white black black white white black black white white black black white white black black";
+        break;
+
+      case "21":
+        colors = "white black black white black black white black black white black black white black black white black black white black black";
+        break;
+
       case "22":
         colors = "white black white black white black white black white black white white black white black white black white black white black white";
+        break;
+
+      case "23":
+        colors = "white black black black white black black white black black white black black white black black white black black black white black black black";
+        break;
+
+      case "24":
+        colors = "white lightgrey black dimgrey white lightgrey white lightgrey black dimgrey white lightgrey black dimgrey white lightgrey white lightgrey black dimgrey white lightgrey black dimgrey";
         break;
 
       default:
@@ -459,7 +495,6 @@ jQuery( document ).ready( function() {
 
     }
 
-    // make it so
     jQuery( "#input_key_colors" ).val( colors );
     set_key_colors( colors );
     // update this change in the browser's Back/Forward navigation
