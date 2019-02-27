@@ -357,3 +357,12 @@ function setTuningData(tuning) {
 const isEmpty = string => string === ''
 const isNil = x => typeof x === 'undefined' || x === null
 const isFunction = x => typeof x === 'function'
+
+function getCoordsFromKey(tdOfKeyboard) {
+  try {
+    const [row, col] = JSON.parse(tdOfKeyboard.getAttribute('data-coord'))
+    return { row, col }
+  } catch (e) {
+    return { row: null, col: null }
+  }
+}

@@ -27,7 +27,7 @@ function keycode_to_midinote(keycode) {
   }
 }
 
-function touch_to_midinote( row, col ) {
+function touch_to_midinote({ row, col }) {
   return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
 }
 
@@ -87,16 +87,14 @@ document.addEventListener( "keyup", function(event) {
 jQuery( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
   event.preventDefault();
   jQuery(event.originalEvent.targetTouches[0].target).addClass('active');
-  var coord = jQuery( event.target ).data('coord');
-  debug( coord );
-  synth.noteOn( touch_to_midinote( coord[0], coord[1] ) );
+  // debug( coord );
+  synth.noteOn(touch_to_midinote(getCoordsFromKey(event.target)));
 });
 
 // TOUCHEND -- virtual keyboard
 jQuery( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
   event.preventDefault();
   jQuery(event.originalEvent.changedTouches[0].target).removeClass('active');
-  var coord = jQuery( event.target ).data('coord');
-  debug( coord );
-  synth.noteOff( touch_to_midinote( coord[0], coord[1] ) );
+  // debug( coord );
+  synth.noteOff(touch_to_midinote(getCoordsFromKey(event.target)));
 });
