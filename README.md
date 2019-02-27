@@ -5,18 +5,28 @@
 
 ## Description
 
-[Scale Workshop](http://sevish.com/scaleworkshop/) is a tool that allows you to create microtonal tunings within your web browser. Your created tunings can be exported and downloaded to your device in the various formats. These tuning files can be loaded into some synthesizers, allowing you to play microtonal music with them.
+[Scale Workshop](http://sevish.com/scaleworkshop/) allows you to design microtonal scales and play them in your web browser. Export your scales for use with VST instruments. Convert Scala files to various tuning formats.
 
 
 ## Frequently Asked Questions
 
-### Is this a replacement for Scala/LMSO?
+### What kinds of microtonal scales are possible with Scale Workshop?
 
-No, those pieces of software are much more sophisticated. The goal of this project is *quick* input/generation/audition of tunings within the web browser. It's just a simple tool you can use conveniently.
+Scale Workshop can play any kind of microtonal scale, such as equal temperaments, just intonation, historical and traditional scales, non-octave scales, and any arbitrary tunings. The application offers a few methods to generate scales automatically based on parameters you set, or otherwise you can enter your scale data manually.
 
-### How do I enter tuning data?
+### Can I play and hear my scale?
 
-Tuning data should be entered in to the text area labeled ‘Tuning Data’. Add each note on its own new line. Cents and ratios are both supported.
+Yes, the built-in synth allows you to play your scales within the web browser. If your browser supports web MIDI then you can use a connected MIDI device to play notes. Otherwise you can use your computer keyboard (e.g. a QWERTY keyboard) as an isomorphic keyboard controller to hear your scales. You can also play on a touch device using the 'Touch Keyboard' feature.
+
+### Can I use Scale Workshop to tune up other synths?
+
+Scale Workshop supports any synth that uses Scala (.scl/.kbm) files or AnaMark TUN (.tun) files. It can also export Native Instruments Kontakt tuning scripts, Max/MSP coll tuning tables and Pure Data text tuning tables.
+
+The Xen Wiki has a [list of microtonal software plugins](https://en.xen.wiki/w/List_of_Microtonal_Software_Plugins) that support Scala and AnaMark files.
+
+### How do I enter scale/tuning data manually?
+
+Scale data should be entered in to the large text field labeled ‘Scale data’. Add each note on its own new line. Cents and ratios are both supported.
 
 * To specify a ratio, simply write it in the format e.g. `3/2`
 * To specify an interval in cents, include a . in the line e.g. `701.9` or `1200.`
@@ -28,36 +38,46 @@ The interval on the final line is assumed to be your interval of equivalence (i.
 
 Don't add any other weird data to a line. Don't try to mix decimals with ratios (e.g. `2/1.5`). Scale Workshop will try to gracefully ignore any rubbish that you put in, but it's very possible that weird stuff will happen.
 
-### Can I copy and paste the contents of a Scala file (.scl) directly into the Tuning Data field?
+### Can I copy and paste the contents of a Scala file (.scl) directly into the 'Scale data' field?
 
 Scala files contain non-tuning related comments at the top of the file, so Scale Workshop will throw an error if you try to paste them in directly. Instead you can use the ‘Load .scl’ function, which automatically removes those comments for you. Or you can paste the Scala file but remove the comments manually.
 
-### Can I play and hear my scales in the browser?
+### Can I convert a TUN file to another format?
 
-Yes, this project now contains a synth that allows you to hear your current scale. New features and documentation coming later.
+Yes, start by clicking New > Import .TUN and then load your TUN file into Scale Workshop. Then click Export and select your desired output format. Note that Scale Workshop is not a fully compliant AnaMark TUN v2 parser, however it should be able to read TUN files exported by Scala and Scale Workshop.
 
-### Are non-octave based scales supported?
-
-Yeah.
-
-### How do I make my own Scala keyboard mapping?
+### How do I make my own keyboard mapping?
 
 Keyboard mappings are not currently supported. You can still export a Scala keyboard mapping file (.kbm) but it will assume a linear mapping.
 However you can always use duplicate lines in your tuning in order to skip any keys that you don't want to include, or write your .kbm file manually.
+
+### Can I undo/redo?
+
+Use your browser's Back/Forward navigation buttons to undo/redo changes to your tuning.
+
+### How can I share my tunings with a collaborator?
+
+Use Export > Share scale as URL. The given URL can be copied and pasted to another person. When they open the link they will see a Scale Workshop page with your scale already tuned in.
+
+### How can I save my work for later?
+
+You can bookmark the current page to save your work for later. This works because your tuning data is stored within the bookmarked URL.
 
 ### When I export a tuning, I get a weird filename, why?
 
 Exporting a file with the correct filename is not supported in Safari (iOS and macOS). You can try to use Firefox, Chrome or Opera instead.
 
+### Can I run this software offline?
+
+Yes, just download the project from GitHub as a zip file and run index.htm from your web browser.
+
 ### Can you add a new feature to Scale Workshop?
 
-Probably! Just add your feature request to the issues tracker on GitHub:
-https://github.com/SeanArchibald/scale-workshop/issues
+Probably! Just add your feature request to the [issue tracker](https://github.com/SeanArchibald/scale-workshop/issues) on GitHub.
 
 ### I found a bug
 
-Please create a bug report with as much info as possible about the issue and how to reproduce it:
-https://github.com/SeanArchibald/scale-workshop/issues
+Please [create a bug report](https://github.com/SeanArchibald/scale-workshop/issues) detailing the steps to reproduce the issue. You should also include which web browser and OS you are using.
 
 
 ## Contributing
@@ -235,7 +255,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## License
 
-Copyright (c) 2017-2018 Sean Archibald
+Copyright (c) 2017-2019 Sean Archibald
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
