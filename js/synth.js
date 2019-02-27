@@ -27,8 +27,12 @@ function keycode_to_midinote(keycode) {
   }
 }
 
-function touch_to_midinote({ row, col }) {
-  return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
+function touch_to_midinote([ row, col ]) {
+  if (isNil(row) || isNil(col)) {
+    return false
+  } else {
+    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
+  }
 }
 
 // is_qwerty_active()

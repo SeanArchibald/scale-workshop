@@ -360,9 +360,8 @@ const isFunction = x => typeof x === 'function'
 
 function getCoordsFromKey(tdOfKeyboard) {
   try {
-    const [row, col] = JSON.parse(tdOfKeyboard.getAttribute('data-coord'))
-    return { row, col }
+    return JSON.parse(tdOfKeyboard.getAttribute('data-coord'))
   } catch (e) {
-    return { row: null, col: null }
+    return []
   }
 }
