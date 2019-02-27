@@ -348,3 +348,20 @@ function getCoordsFromKey(tdOfKeyboard) {
     return []
   }
 }
+
+// Runs the given function with the supplied value, then returns the value
+// This is a great tool for injecting debugging in the middle of expressions
+// Note: fn does not need to return the value, tap will handle that
+//
+// example 1: const result = toString(tap(function(result){ debug(result) }, 3 * 5))
+// example 2: const result = toString(tap(result => debug(result), 3 * 5))
+// example 3: const result = toString(tap(debug, 3 * 5))
+//
+// the above examples are equal to:
+//   let result = 3 * 5
+//   debug(result)
+//   result = toString(result)
+function tap(fn, value) {
+  fn(value)
+  return value
+}
