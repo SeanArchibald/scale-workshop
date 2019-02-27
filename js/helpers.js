@@ -49,7 +49,7 @@ function n_of_edo_to_decimal(rawInput) {
     const [val1, val2] = input.split('/').map(x => parseInt(x))
     return Math.pow(2, val1 / val2);
   } else {
-    alert("Invalid input: " + input);
+    alert("Invalid input: " + rawInput);
     return false
   }
 }
