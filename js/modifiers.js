@@ -25,32 +25,19 @@ function modify_stretch() {
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
   for ( var i = 0; i < lines.length; i++ ) {
-
-    // check that line is not empty
-    if ( !isEmpty(lines[i]) ) {
-
-      // evaluate the line first
-      try {
-        eval( lines[i] );
+    const line = trim(toString(lines[i]))
+    if ( !isEmpty(line) ) {
+      switch (getLineType(line)) {
+        case LINE_TYPE.INVALID:
+          return false
+        case LINE_TYPE.CENT:
+          new_tuning_lines.push(( parseFloat( line ) * stretch_ratio ).toFixed(5));
+          break
+        case LINE_TYPE.N_OF_EDO:
+        case LINE_TYPE.RATIO:
+          new_tuning_lines.push(( ratio_to_cents( line ) * stretch_ratio ).toFixed(5));
       }
-      // if line doesn't evaluate then bail
-      catch(err) {
-        console.log(err);
-        return false;
-      }
-      // so far so good!
-
-      // line contains a period, so it should be a value in cents
-      if ( lines[i].toString().includes('.')) {
-        new_tuning_lines.push(( parseFloat( lines[i] ) * stretch_ratio ).toFixed(5));
-      }
-      // line doesn't contain a period, so it is a ratio
-      else {
-        new_tuning_lines.push(( ratio_to_cents( lines[i] ) * stretch_ratio ).toFixed(5));
-      }
-
     }
-
   }
 
   // update tuning input field with new tuning
@@ -235,6 +222,7 @@ function modify_key_transpose() {
   // I will come back to this later... it's going to require some thinking with regards to just ratios...
   return false;
 
+  /*
   // remove white space from tuning data field
   jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
@@ -289,5 +277,5 @@ function modify_key_transpose() {
 
   // success
   return true;
-
+  */
 }
