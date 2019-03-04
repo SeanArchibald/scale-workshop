@@ -214,7 +214,7 @@ function parse_tuning_data() {
     // check that line is not empty
     if ( !isEmpty(lines[i]) ) {
 
-      if ( line_type( lines[i] ) == false ) {
+      if ( getLineType( lines[i] ) === LINE_TYPE.INVALID ) {
         jQuery("#txt_tuning_data").parent().addClass("has-error");
         return false;
       }

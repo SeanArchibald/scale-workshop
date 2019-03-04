@@ -31,12 +31,9 @@ function touch_kbd_open() {
   }
 
   // display tuning info on virtual keys
-  jQuery('#virtual-keyboard td' ).each( function(index) {
-
+  jQuery('#virtual-keyboard td').each( function() {
     // get the coord data attribute and figure out the midinote
-    var row = eval( jQuery(this).attr('data-coord') )[0];
-    var col = eval( jQuery(this).attr('data-coord') )[1];
-    var midinote = touch_to_midinote( row, col );
+    const midinote = touch_to_midinote(getCoordsFromKey(this));
 
     // add text to key
     //jQuery(this).append("<p><small>midi</small> <strong>" + midinote + "</strong></p>");

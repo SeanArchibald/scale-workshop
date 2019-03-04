@@ -8,141 +8,118 @@ Number.prototype.mod = function (n) {
 };
 
 // convert a cents value to decimal
-function cents_to_decimal(input) {
+function cents_to_decimal(rawInput) {
+  const input = trim(toString(rawInput))
   return Math.pow(2, (parseFloat(input) / 1200.0));
 }
 
 // convert a ratio (string 'x/y') to decimal
-function ratio_to_decimal(input) {
-  try {
-    return eval(input);
-  }
-  catch (err) {
-    console.log(err);
-    alert("Warning: could not parse " + input);
-    return false;
+function ratio_to_decimal(rawInput) {
+  if (isRatio(rawInput)) {
+    const input = trim(toString(rawInput))
+    const [val1, val2] = input.split('/')
+    return val1 / val2
+  } else {
+    alert("Invalid input: " + input);
+    return false
   }
 }
 
-// convert a decimal value to cents
-function decimal_to_cents(input) {
-  input = parseFloat(input);
-  // check input
-  if (input == 0 || isNaN(input)) {
-    // fail
-    return false;
+function decimal_to_cents(rawInput) {
+  if (rawInput === false) {
+    return false
   }
-  else {
-    // success
+  const input = parseFloat(rawInput);
+  if (input === 0 || isNaN(input)) {
+    return false;
+  } else {
     return 1200.0 * Math.log2(input);
   }
 }
 
 // convert a ratio to cents
-function ratio_to_cents(input) {
-  return decimal_to_cents(ratio_to_decimal(input));
+function ratio_to_cents(rawInput) {
+  return decimal_to_cents(ratio_to_decimal(rawInput));
 }
 
 // convert an n-of-m-edo (string 'x\y') to decimal
-function n_of_edo_to_decimal(input) {
-  input = input.split("\\");
-  if (input.length > 2) {
-    alert("Invalid input: " + input);
-    return false;
+function n_of_edo_to_decimal(rawInput) {
+  if (isNOfEdo(rawInput)) {
+    const input = trim(toString(rawInput))
+    const [val1, val2] = input.split('/').map(x => parseInt(x))
+    return Math.pow(2, val1 / val2);
+  } else {
+    alert("Invalid input: " + rawInput);
+    return false
   }
-  return Math.pow(2, parseInt(input[0]) / parseInt(input[1]));
 }
 
 // convert an n-of-m-edo (string 'x\y') to cents
-function n_of_edo_to_cents(input) {
-  return decimal_to_cents(n_of_edo_to_decimal(input));
+function n_of_edo_to_cents(rawInput) {
+  return decimal_to_cents(n_of_edo_to_decimal(rawInput));
 }
 
-// return cents, ratio or n_of_edo depending on the format of inputted value 'line'
-function line_type(input) {
+function isCent(rawInput) {
+  // true, when the input has numbers at the beginning, followed by a dot, ending with any number of numbers
+  // for example: 700.00
+  const input = trim(toString(rawInput))
+  return /^\d+\.\d*$/.test(input)
+}
 
-  // line_type() examples:
-  //
-  // line_type("700.00") -> "cents"
-  // line_type("3/2")    -> "ratio"
-  // line_type("7\12")   -> "n_of_edo"
-  // line_type("Hello")  -> false
+function isNOfEdo(rawInput) {
+  // true, when the input has numbers at the beginning and the end, separated by a single backslash
+  // for example: 7\12
+  const input = trim(toString(rawInput))
+  return /^\d+\\\d+$/.test(input)
+}
 
-  // line contains a period, so it should be a value in cents
-  if (input.toString().includes('.')) {
-    try {
-      eval(input);
-    }
-    catch (err) {
-      console.log(err);
-      return false;
-    }
-    return "cents";
+function isRatio(rawInput) {
+  // true, when the input has numbers at the beginning and the end, separated by a single slash
+  // for example: 3/2
+  const input = trim(toString(rawInput))
+  return /^\d+\/\d+$/.test(input)
+}
+
+function getLineType(rawInput) {
+  if (isCent(rawInput)) {
+    return LINE_TYPE.CENTS
+  } else if (isNOfEdo(rawInput)) {
+    return LINE_TYPE.N_OF_EDO
+  } else if (isRatio(rawInput)) {
+    return LINE_TYPE.RATIO
+  } else {
+    return LINE_TYPE.INVALID
   }
-
-  // line contains a backslash, so it should be an n_of_edo
-  else if (input.toString().includes('\\')) {
-    return "n_of_edo";
-  }
-
-  // line contains a forward slash, so it should be a ratio
-  else if (input.toString().includes('/')) {
-    return "ratio";
-  }
-
-  // line contains something else, if it evaluates then just call it a ratio, otherwise fail
-  else {
-
-    try {
-      eval(input);
-    }
-    catch (err) {
-      console.log(err);
-      return false;
-    }
-
-    return "ratio";
-
-  }
-
 }
 
 // convert any input 'line' to decimal
-function line_to_decimal(input) {
+function line_to_decimal(rawInput) {
+  let converterFn = () => false
 
-  var type = line_type(input);
-
-  switch (type) {
-
-    case false:
-      return false;
-      break;
-
-    case "cents":
-      return cents_to_decimal(input);
-      break;
-
-    case "n_of_edo":
-      return n_of_edo_to_decimal(input);
-      break;
-
-    case "ratio":
-      return ratio_to_decimal(input);
-      break;
-
+  switch (getLineType(rawInput)) {
+    case LINE_TYPE.CENTS:
+      converterFn = cents_to_decimal
+      break
+    case LINE_TYPE.N_OF_EDO:
+      converterFn = n_of_edo_to_decimal
+      break
+    case LINE_TYPE.RATIO:
+      converterFn = ratio_to_decimal
+      break
   }
 
+  return converterFn(rawInput)
 }
 
 // convert any input 'line' to a cents value
-function line_to_cents(input) {
-  return decimal_to_cents(line_to_decimal(input));
+function line_to_cents(rawInput) {
+  return decimal_to_cents(line_to_decimal(rawInput));
 }
 
 // convert a midi note number to a frequency in Hertz
 // assuming 12-edo at 1440Hz (100% organic vanilla)
 function mtof(input) {
-  return 8.17579891564 * Math.pow(1.05946309436, parseInt(input));
+  return 8.17579891564 * Math.pow(SEMITONE_RATIO_IN_12_EDO, parseInt(input));
 }
 
 // convert a frequency to a midi note number and cents offset
@@ -334,7 +311,7 @@ function getString(id, errorMessage) {
 function getLine(id, errorMessage) {
   var value = jQuery(id).val();
 
-  if (isEmpty(value) || parseFloat(value) <= 0 || isNil(value) || line_type(value) == false) {
+  if (isEmpty(value) || parseFloat(value) <= 0 || isNil(value) || getLineType(value) === LINE_TYPE.INVALID) {
     alert(errorMessage);
     return false;
   }
@@ -355,5 +332,36 @@ function setTuningData(tuning) {
 }
 
 const isEmpty = string => string === ''
+
 const isNil = x => typeof x === 'undefined' || x === null
+
 const isFunction = x => typeof x === 'function'
+
+const toString = input => input + ''
+
+const trim = input => input.trim()
+
+function getCoordsFromKey(tdOfKeyboard) {
+  try {
+    return JSON.parse(tdOfKeyboard.getAttribute('data-coord'))
+  } catch (e) {
+    return []
+  }
+}
+
+// Runs the given function with the supplied value, then returns the value
+// This is a great tool for injecting debugging in the middle of expressions
+// Note: fn does not need to return the value, tap will handle that
+//
+// example 1: const result = toString(tap(function(result){ debug(result) }, 3 * 5))
+// example 2: const result = toString(tap(result => debug(result), 3 * 5))
+// example 3: const result = toString(tap(debug, 3 * 5))
+//
+// the above examples are equal to:
+//   let result = 3 * 5
+//   debug(result)
+//   result = toString(result)
+function tap(fn, value) {
+  fn(value)
+  return value
+}
