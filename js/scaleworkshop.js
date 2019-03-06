@@ -14,7 +14,7 @@ jQuery(window).on('popstate', function() {
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 0.9.5";
+const APP_TITLE = "Scale Workshop 0.9.6";
 const TUNING_MAX_SIZE = 128;
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;

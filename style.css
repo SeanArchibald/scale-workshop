@@ -222,6 +222,19 @@ div#splash-center img {
 
 
 
+/*
+ * JQUERY MODAL UI MOBILE-ONLY FIXES
+ */
+@media (max-width: 420px), /* OR */ (max-height: 420px) {
+  .ui-dialog {
+    top: 0px !important;
+    left: 0px !important;
+    width: 100vw !important;
+    max-height: 100vh !important;
+    position: fixed;
+    overflow-x: scroll;
+  }
+}
 
 
 /*

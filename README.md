@@ -87,6 +87,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 0.9.6
+* Improved modal dialogs on mobile
+
 ### 0.9.5
 * Loading the synth is now delayed as much as possible
 * Better compatibility for exported Scala files (placeholder description will be used if user doesn't provide a tuning description)
@@ -230,19 +233,6 @@ Please base any work on develop branch, and pull requests should also be made ag
 ### 0.1
 
 * Initial version
-
-
-## Roadmap
-
-### 0.x.x
-
-* UI improvements
-* More scale modifiers e.g. ‘quantize to BPM’, ‘sort ascending’, ‘octave reduce’
-* What should go here?
-
-### 1.0
-
-* Stable
 
 
 ## Contributors
