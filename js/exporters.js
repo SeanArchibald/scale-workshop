@@ -32,7 +32,7 @@ function export_anamark_tun() {
   file += "[Tuning]" + newline;
 
   for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
-    file += "note " + i + "=" + parseInt( ratio_to_cents( parseFloat( tuning_table['freq'][i] ) / mtof(0) ) ) + newline;
+    file += "note " + i + "=" + parseInt( decimal_to_cents( parseFloat( tuning_table['freq'][i] ) / mtof(0) ) ) + newline;
   }
 
   file += newline + "; AnaMark section" + newline;
@@ -51,7 +51,7 @@ function export_anamark_tun() {
   file += "[Exact Tuning]" + newline;
 
   for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
-    file += "note " + i + "= " + ratio_to_cents( parseFloat( tuning_table['freq'][i] ) / mtof(0) ).toFixed(6) + newline;
+    file += "note " + i + "= " + decimal_to_cents( parseFloat( tuning_table['freq'][i] ) / mtof(0) ).toFixed(6) + newline;
   }
 
   file += newline + "[Functional Tuning]" + newline;

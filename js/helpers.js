@@ -20,7 +20,7 @@ function ratio_to_decimal(rawInput) {
     const [val1, val2] = input.split('/')
     return val1 / val2
   } else {
-    alert("Invalid input: " + input);
+    alert("Invalid input: " + rawInput);
     return false
   }
 }

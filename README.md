@@ -89,6 +89,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ### 0.9.6
 * Improved modal dialogs on mobile
+* Fix regression exporting .tun files
 
 ### 0.9.5
 * Loading the synth is now delayed as much as possible
