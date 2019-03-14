@@ -26,7 +26,20 @@ describe('helpers.js', () => {
     })
   })
   describe('decimal_to_cents', () => {
-    // TODO: add tests
+    // TODO: add tests on what the code does, when given parameter is okay
+    it(`returns false, when given input is not a number`, () => {
+      expect(decimal_to_cents('asdf')).toBe(false)
+      expect(decimal_to_cents([1, 2, 3])).toBe(false) // parseFloat([1, 2, 3]) === parseFloat([1, 2, 3].toString()) -> [1, 2, 3].toString() == "1,2,3"
+    })
+    it(`returns false, when given input string contains more, than a single number`, () => {
+      expect(decimal_to_cents('100.5 // hello')).toBe(false)
+    })
+    it(`returns false, when given input is 0`, () => {
+      expect(decimal_to_cents(0)).toBe(false)
+    })
+    it(`returns false, when given input is false`, () => {
+      expect(decimal_to_cents(false)).toBe(false)
+    })
   })
   describe('ratio_to_cents', () => {
     // TODO: add tests
