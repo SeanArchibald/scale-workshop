@@ -181,19 +181,66 @@ describe(`helpers`, () => {
     // TODO: add tests
   })
   describe('isEmpty', () => {
-    // TODO: add tests
+    it(`returns true, when given string contains no characters`, () => {
+      expect(isEmpty('')).toBe(true)
+    })
+    it(`returns true, when given array contains no elements`, () => {
+      expect(isEmpty([])).toBe(true)
+    })
+    it(`returns false, when given string is not empty`, () => {
+      expect(isEmpty('abcdef')).toBe(false)
+    })
+    it(`returns false, when given array is not empty`, () => {
+      expect(isEmpty([1, 2, 3])).toBe(false)
+    })
+    it(`returns false, when given parameter is not a string or array`, () => {
+      expect(isEmpty(1)).toBe(false)
+      expect(isEmpty(false)).toBe(false)
+      expect(isEmpty({})).toBe(false)
+    })
   })
   describe('isNil', () => {
-    // TODO: add tests
+    it(`returns true, when given parameter is null or undefined`, () => {
+      expect(isNil(null)).toBe(true)
+      expect(isNil(undefined)).toBe(true)
+    })
+    it(`returns false, when given parameter is not null or undefined`, () => {
+      expect(isNil('asdf')).toBe(false)
+      expect(isNil(NaN)).toBe(false)
+      expect(isNil(false)).toBe(false)
+      expect(isNil(0)).toBe(false)
+      expect(isNil([])).toBe(false)
+      expect(isNil({})).toBe(false)
+    })
   })
   describe('isFunction', () => {
-    // TODO: add tests
+    it(`returns true, when given parameter is a function`, () => {
+      expect(isFunction(function(){})).toBe(true)
+      expect(isFunction(() => {})).toBe(true)
+      expect(isFunction(window.addEventListener)).toBe(true)
+    })
+    it(`returns false, when given parameter is not a function`, () => {
+      expect(isFunction(12)).toBe(false)
+      expect(isFunction('asdf')).toBe(false)
+      expect(isFunction(true)).toBe(false)
+      expect(isFunction()).toBe(false)
+      expect(isFunction([1, 2, 3])).toBe(false)
+    })
   })
   describe('toString', () => {
-    // TODO: add tests
+    it(`stringifies the given parameter`, () => {
+      expect(toString(12)).toBe('12')
+      expect(toString(true)).toBe('true')
+    })
   })
   describe('trim', () => {
-    // TODO: add tests
+    it(`cuts of the whitespace from around the given string`, () => {
+      expect(trim('    asdf  ')).toBe('asdf')
+    })
+    it(`should return the input parameter untouched, if it's not a string`, () => {
+      expect(trim(123)).toBe(123)
+      expect(trim([1, 2, 3])).toBe([1, 2, 3])
+    })
   })
   describe('getCoordsFromKey', () => {
     // TODO: add tests
