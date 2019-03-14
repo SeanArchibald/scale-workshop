@@ -43,6 +43,9 @@ describe(`helpers`, () => {
       expect(isNOfEdo('12.1\\4')).toBe(false)
       expect(isNOfEdo('12\\4.')).toBe(false)
     })
+    it(`returns false, when given string has forward slash, instead of backslash`, () => {
+      expect(isNOfEdo('12/4')).toBe(false)
+    })
     it(`returns true, when given string has whitespaces at the beginning and at the end`, () => {
       expect(isNOfEdo('     12\\4')).toBe(true)
       expect(isNOfEdo('12\\4            ')).toBe(true)
@@ -65,6 +68,42 @@ describe(`helpers`, () => {
     it(`returns false, when given parameter is not a string and cannot be stringified to a valid float string`, () => {
       expect(isNOfEdo(true)).toBe(false)
       expect(isNOfEdo(Function.prototype)).toBe(false)
+    })
+  })
+
+  describe(`isRatio()`, () => {
+    it(`returns true, when given string has 2 integers separated by a single forward slash`, () => {
+      expect(isRatio('12/4')).toBe(true)
+    })
+    it(`returns false, when given string has floats instead of integers`, () => {
+      expect(isRatio('12.1/4')).toBe(false)
+      expect(isRatio('12/4.')).toBe(false)
+    })
+    it(`returns false, when given string has backslash, instead of forward slash`, () => {
+      expect(isRatio('12\\4')).toBe(false)
+    })
+    it(`returns true, when given string has whitespaces at the beginning and at the end`, () => {
+      expect(isRatio('     12/4')).toBe(true)
+      expect(isRatio('12/4            ')).toBe(true)
+      expect(isRatio('  \t   12/4      ')).toBe(true)
+    })
+    it(`return false, when given string has whitespaces between the numbers`, () => {
+      expect(isRatio('12 /4')).toBe(false)
+      expect(isRatio('12/   4')).toBe(false)
+    })
+    it(`returns false, when given string contains only 1 number`, () => {
+      expect(isRatio('1000')).toBe(false)
+      expect(isRatio('700.2')).toBe(false)
+    })
+    it(`returns false, when given string contains no numbers`, () => {
+      expect(isRatio('hello')).toBe(false)
+      expect(isRatio('// this is a comment')).toBe(false)
+      expect(isRatio('')).toBe(false)
+      expect(isRatio('      ')).toBe(false)
+    })
+    it(`returns false, when given parameter is not a string and cannot be stringified to a valid float string`, () => {
+      expect(isRatio(true)).toBe(false)
+      expect(isRatio(Function.prototype)).toBe(false)
     })
   })
 })
