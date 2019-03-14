@@ -1,4 +1,26 @@
 describe(`helpers`, () => {
+  describe('Number.prototype.mod', () => {
+    // TODO: add tests
+  })
+  describe('cents_to_decimal', () => {
+    // TODO: add tests
+  })
+  describe('ratio_to_decimal', () => {
+    // TODO: add tests
+  })
+  describe('decimal_to_cents', () => {
+    // TODO: add tests
+  })
+  describe('ratio_to_cents', () => {
+    // TODO: add tests
+  })
+  describe('n_of_edo_to_decimal', () => {
+    // TODO: add tests
+  })
+  describe('n_of_edo_to_cents', () => {
+    // TODO: add tests
+  })
+  
   describe(`isCent()`, () => {
     it(`returns true, when given string is a floating point number`, () => {
       expect(isCent('127.052')).toBe(true)
@@ -105,5 +127,78 @@ describe(`helpers`, () => {
       expect(isRatio(true)).toBe(false)
       expect(isRatio(Function.prototype)).toBe(false)
     })
+  })
+
+  describe('getLineType', () => {
+    // TODO: add tests
+  })
+  describe('line_to_decimal', () => {
+    // TODO: add tests
+  })
+  describe('line_to_cents', () => {
+    // TODO: add tests
+  })
+  describe('mtof', () => {
+    // TODO: add tests
+  })
+  describe('ftom', () => {
+    // TODO: add tests
+  })
+  describe('sanitize_filename', () => {
+    // TODO: add tests
+  })
+  describe('clear_all', () => {
+    // TODO: add tests
+  })
+  describe('midi_note_number_to_name', () => {
+    // TODO: add tests
+  })
+  describe('show_mos', () => {
+    // TODO: add tests
+  })
+  describe('debug', () => {
+    // TODO: add tests
+  })
+  describe('clone', () => {
+    // TODO: add tests
+  })
+  describe('getFloat', () => {
+    // TODO: add tests
+  })
+  describe('getString', () => {
+    // TODO: add tests
+  })
+  describe('getLine', () => {
+    // TODO: add tests
+  })
+  describe('setScaleName', () => {
+    // TODO: add tests
+  })
+  describe('closePopup', () => {
+    // TODO: add tests
+  })
+  describe('setTuningData', () => {
+    // TODO: add tests
+  })
+  describe('isEmpty', () => {
+    // TODO: add tests
+  })
+  describe('isNil', () => {
+    // TODO: add tests
+  })
+  describe('isFunction', () => {
+    // TODO: add tests
+  })
+  describe('toString', () => {
+    // TODO: add tests
+  })
+  describe('trim', () => {
+    // TODO: add tests
+  })
+  describe('getCoordsFromKey', () => {
+    // TODO: add tests
+  })
+  describe('tap', () => {
+    // TODO: add tests
   })
 })
