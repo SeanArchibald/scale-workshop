@@ -177,7 +177,18 @@ describe('helpers.js', () => {
   })
 
   describe('getLineType', () => {
-    // TODO: add tests
+    it(`returns LINE_TYPE.CENTS, if given input is a cents value`, () => {
+      expect(getLineType('300.')).toBe(LINE_TYPE.CENTS)
+    })
+    it(`returns LINE_TYPE.N_OF_EDO, if given input is an n of edo value`, () => {
+      expect(getLineType('4\\12')).toBe(LINE_TYPE.N_OF_EDO)
+    })
+    it(`returns LINE_TYPE.RATIO, if given input is a ratio value`, () => {
+      expect(getLineType('12/3')).toBe(LINE_TYPE.RATIO)
+    })
+    it(`returns LINE_TYPE.INVALID, if given input is not a cents, an n of edo or a ratio value`, () => {
+      expect(getLineType(false)).toBe(LINE_TYPE.INVALID)
+    })
   })
   describe('line_to_decimal', () => {
     // TODO: add tests
