@@ -26,7 +26,11 @@ describe('helpers.js', () => {
     })
   })
   describe('decimal_to_cents', () => {
-    // TODO: add tests on what the code does, when given parameter is okay
+    it(`converts the given input to cents, when it's a number`, () => {
+      expect(Math.round(decimal_to_cents(3))).toBe(1902)
+      expect(decimal_to_cents(2)).toBe(1200)
+      expect(decimal_to_cents(1)).toBe(0)
+    })
     it(`returns false, when given input is not a number`, () => {
       expect(decimal_to_cents('asdf')).toBe(false)
       expect(decimal_to_cents([1, 2, 3])).toBe(false) // parseFloat([1, 2, 3]) === parseFloat([1, 2, 3].toString()) -> [1, 2, 3].toString() == "1,2,3"
@@ -45,7 +49,20 @@ describe('helpers.js', () => {
     // TODO: add tests
   })
   describe('n_of_edo_to_decimal', () => {
-    // TODO: add tests
+    it(`divides given numbers with each other and raises 2 to that power`, () => {
+      expect(n_of_edo_to_decimal('12\\4')).toBe(8)
+      expect(n_of_edo_to_decimal('5\\10')).toBe(Math.sqrt(2))
+    })
+    it(`returns false, when given input contains negative numbers`, () => {
+      expect(n_of_edo_to_decimal('-4\\7')).toBe(false)
+    })
+    it(`returns false, when given input is not an n of edo`, () => {
+      expect(n_of_edo_to_decimal('asdf')).toBe(false)
+      expect(n_of_edo_to_decimal(false)).toBe(false)
+      expect(n_of_edo_to_decimal([])).toBe(false)
+      expect(n_of_edo_to_decimal(NaN)).toBe(false)
+      // alert() halts code execution
+    })
   })
   describe('n_of_edo_to_cents', () => {
     // TODO: add tests
