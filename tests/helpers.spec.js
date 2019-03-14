@@ -1,12 +1,29 @@
-describe(`helpers`, () => {
+describe('helpers.js', () => {
   describe('Number.prototype.mod', () => {
     // TODO: add tests
   })
   describe('cents_to_decimal', () => {
-    // TODO: add tests
+    it(`returns the nth power of 1200th root of 2`, () => {
+      expect(cents_to_decimal(1200)).toBe(2)
+      expect(Math.round(cents_to_decimal(1901.9550008) * 100000) / 100000).toBe(3)
+    })
+    it(`returns NaN, when given parameter is not a number or a string containing a number`, () => {
+      expect(cents_to_decimal('asdf')).toBe(NaN)
+      expect(cents_to_decimal(false)).toBe(NaN)
+      expect(cents_to_decimal([])).toBe(NaN)
+    })
   })
   describe('ratio_to_decimal', () => {
-    // TODO: add tests
+    it(`divides the 2 numbers in the given parameter with each other`, () => {
+      expect(ratio_to_decimal('12/3')).toBe(4)
+    })
+    it(`returns NaN, when given parameter is not a ratio`, () => {
+      expect(ratio_to_decimal('asdf')).toBe(false)
+      expect(ratio_to_decimal(false)).toBe(false)
+      expect(ratio_to_decimal([])).toBe(false)
+      expect(ratio_to_decimal(NaN)).toBe(false)
+      // alert() halts code execution
+    })
   })
   describe('decimal_to_cents', () => {
     // TODO: add tests
@@ -21,7 +38,7 @@ describe(`helpers`, () => {
     // TODO: add tests
   })
   
-  describe(`isCent()`, () => {
+  describe('isCent', () => {
     it(`returns true, when given string is a floating point number`, () => {
       expect(isCent('127.052')).toBe(true)
     })
@@ -57,7 +74,7 @@ describe(`helpers`, () => {
     })
   })
 
-  describe('isNOfEdo()', () => {
+  describe('isNOfEdo', () => {
     it(`returns true, when given string has 2 integers separated by a single backslash`, () => {
       expect(isNOfEdo('12\\4')).toBe(true)
     })
@@ -93,7 +110,7 @@ describe(`helpers`, () => {
     })
   })
 
-  describe(`isRatio()`, () => {
+  describe('isRatio', () => {
     it(`returns true, when given string has 2 integers separated by a single forward slash`, () => {
       expect(isRatio('12/4')).toBe(true)
     })
