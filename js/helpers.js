@@ -46,7 +46,7 @@ function ratio_to_cents(rawInput) {
 function n_of_edo_to_decimal(rawInput) {
   if (isNOfEdo(rawInput)) {
     const input = trim(toString(rawInput))
-    const [val1, val2] = input.split('/').map(x => parseInt(x))
+    const [val1, val2] = input.split('\\').map(x => parseInt(x))
     return Math.pow(2, val1 / val2);
   } else {
     alert("Invalid input: " + rawInput);
