@@ -87,6 +87,10 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 0.9.7
+* Added user guide
+* Fix `n\m` style data input
+
 ### 0.9.6
 * Improved modal dialogs on mobile
 * Fix regression exporting .tun files
