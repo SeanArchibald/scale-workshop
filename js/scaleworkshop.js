@@ -14,7 +14,7 @@ jQuery(window).on('popstate', function() {
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 0.9.7";
+const APP_TITLE = "Scale Workshop 0.9.8";
 const TUNING_MAX_SIZE = 128;
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
@@ -340,11 +340,8 @@ function parse_imported_scala_scl( event ) {
     // split scala_file data into individual lines
     var lines = scala_file.split(newlineTest);
 
-    // determine the first line of scala_file that contains tuning data
-    let first_line = lines.findIndex(line => !line.startsWith('!'))
-    if (first_line === -1) {
-      first_line = 0
-    }
+    // determine the first line of scala file that contains tuning data
+    let first_line = lines.lastIndexOf('!') + 1;
 
     jQuery( "#txt_tuning_data" ).val(lines.slice(first_line).map(line => line.trim()).join(unix_newline))
 

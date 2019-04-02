@@ -87,6 +87,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 0.9.8
+* Fix .scl import bug
+
 ### 0.9.7
 * Added user guide
 * Fix `n\m` style data input
