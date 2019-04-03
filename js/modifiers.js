@@ -28,13 +28,15 @@ function modify_stretch() {
     const line = trim(toString(lines[i]))
     if ( !isEmpty(line) ) {
       switch (getLineType(line)) {
-        case LINE_TYPE.INVALID:
-          return false
-        case LINE_TYPE.CENT:
+        case "invalid":
+          return false;
+        case "cents":
           new_tuning_lines.push(( parseFloat( line ) * stretch_ratio ).toFixed(5));
-          break
-        case LINE_TYPE.N_OF_EDO:
-        case LINE_TYPE.RATIO:
+          break;
+        case "n of edo":
+          new_tuning_lines.push(( n_of_edo_to_cents( line ) * stretch_ratio ).toFixed(5));
+          break;
+        case "ratio":
           new_tuning_lines.push(( ratio_to_cents( line ) * stretch_ratio ).toFixed(5));
       }
     }

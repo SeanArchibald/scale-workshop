@@ -87,6 +87,10 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 0.9.9
+* Fix issue using delay in some situations
+* Fix issue stretching/compressing scales in some situations
+
 ### 0.9.8
 * Fix .scl import bug
 
