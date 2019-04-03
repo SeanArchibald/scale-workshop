@@ -80,6 +80,8 @@
                 <li class="divider"></li>
                 <li><a href="#" id="import-scala-scl"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Import .scl</a></li>
                 <li><a href="#" id="import-anamark-tun"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Import .tun</a></li>
+                <li class="divider"></li>
+                <li><a href="#" id="load-preset"><span class="glyphicon glyphicon-cd" aria-hidden="true"></span> Load preset scale</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -397,6 +399,28 @@
         <label>Highest subharmonic</label>
         <div class="form-group">
           <input id="input_highest_subharmonic" name="" type="number" min="1" max="999999" step="1" class="form-control" value="16"></input>
+        </div>
+      </form>
+    </div>
+
+    <div id="modal_load_preset_scale" class="modal" title="Load preset scale">
+      <form>
+        <label>Choose a scale</label>
+        <div class="form-group">
+          <select id="select_preset_scale" name="" size="10" class="form-control">
+            <option value="12edo">12-tone equal temperament</option>
+            <option value="partch43">Partch 43-tone JI</option>
+            <option value="bohlenpierce">Bohlen-Pierce (equal)</option>
+            <option value="pelog">Pelog</option>
+            <option value="slendro">Slendro</option>
+            <option value="werckmeisteriii">Werckmeister III (1691)</option>
+            <option value="young1799">Young (1799)</option>
+            <option value="snakeoil">Pythagorean 432Hz</option>
+            <option value="313island9">313edo island[9]</option>
+            <option value="17superpyth12">17edo superpyth[12]</option>
+            <option value="15blackwood10">15edo blackwood[10]</option>
+            <option value="26flattone12">26edo flattone[12]</option>
+          </select>
         </div>
       </form>
     </div>

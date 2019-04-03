@@ -175,6 +175,25 @@ jQuery( document ).ready( function() {
 
   } );
 
+  // load-preset option clicked
+  jQuery( "#load-preset" ).click( function( event ) {
+
+    event.preventDefault();
+    jQuery( "#select_preset_scale" ).select();
+    jQuery( "#modal_load_preset_scale" ).dialog({
+      modal: true,
+      buttons: {
+        OK: function() {
+          load_preset_scale( jQuery('#select_preset_scale')[0].value );
+        },
+        Cancel: function() {
+          jQuery( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
   // modify_mode option clicked
   jQuery( "#modify_mode" ).click( function( event ) {
 
