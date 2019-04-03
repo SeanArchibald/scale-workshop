@@ -6,12 +6,16 @@ class Delay {
     this.synth = synth
   }
   enable () {
-    this.panL.connect( this.synth.masterGain );
-    this.panR.connect( this.synth.masterGain );
+    if ( this.inited ) {
+      this.panL.connect( this.synth.masterGain );
+      this.panR.connect( this.synth.masterGain );
+    }
   }
   disable () {
-    this.panL.disconnect( this.synth.masterGain );
-    this.panR.disconnect( this.synth.masterGain );
+    if ( this.inited ) {
+      this.panL.disconnect( this.synth.masterGain );
+      this.panR.disconnect( this.synth.masterGain );
+    }
   }
   init (audioCtx) {
     if (!this.inited) {
@@ -32,7 +36,7 @@ class Delay {
       this.gainL.connect( this.channelR );
       this.channelR.connect( this.gainR );
       this.gainR.connect( this.channelL );
-      
+
       // filters
       // this.gainL.connect( this.lowpassL );
       // this.gainR.connect( this.lowpassR );
@@ -65,6 +69,11 @@ class Delay {
       this.channelR.delayTime.setValueAtTime(this.time, now);
       this.gainL.gain.setValueAtTime(this.gain, now);
       this.gainR.gain.setValueAtTime(this.gain, now);
+
+      // check on init if user has already enabled delay
+      if ( jQuery( "#input_checkbox_delay_on" ).is(':checked') ) {
+        this.enable();
+      }
     }
   }
 }
