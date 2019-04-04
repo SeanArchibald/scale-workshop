@@ -91,6 +91,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 * Added a selection of preset scales
 * Fix issue using delay in some situations
 * Fix issue stretching/compressing scales in some situations
+* Minor interface and user guide improvements
 
 ### 0.9.8
 * Fix .scl import bug
