@@ -92,7 +92,7 @@
                 <!--<li><a href="#" id="modify_extend">Extend/repeat</a></li>-->
                 <li><a href="#" id="modify_stretch"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span> Stretch/compress</a></li>
                 <li><a href="#" id="modify_random_variance"><span class="glyphicon glyphicon-random" aria-hidden="true"></span> Random variance</a></li>
-                <!--<li><a href="#" id="modify_quantize_to_bpm">Quantize to BPM</a></li>-->
+                <li><a href="#" id="modify_sync_beating"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> Tempo-sync beating</a></li>
                 <!--<li><a href="#" id="modify_octave_reduce">Octave reduce</a></li>-->
               </ul>
             </li>
@@ -217,7 +217,6 @@
                           <option value="sawtooth">Sawtooth</option>
                           <option value="square">Square</option>
                           <option value="sine">Sine</option>
-                          <!--<option value="bell">Bell</option>-->
                         </select>
                       </div>
                       <div class="form-group">
@@ -327,6 +326,7 @@
 
     <!-- Generator Modals -->
     <div id="modal_generate_equal_temperament" class="modal" title="Generate equal temperament">
+      <a href="guide.htm#equal-temperaments" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="float:right;"></span></a>
       <form>
         <label>Number of divisions</label>
         <div class="form-group">
@@ -468,17 +468,37 @@
       </form>
     </div>
 
-    <!--<div id="modal_modify_key_transpose" class="modal" title="Key transpose">
-      <p>Set 1/1 to another note of your scale.</p>
+    <div id="modal_modify_sync_beating" class="modal" title="Tempo-sync beating">
+      <a href="guide.htm#tempo-sync-beating" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="float:right;"></span></a>
       <form>
-        <label>Key for 1/1</label>
+        <label>BPM</label>
         <div class="form-group">
-          <input id="input_modify_key_transpose" name="" type="number" class="form-control" min="0" max="99999" step="1"></input>
+          <input id="input_modify_sync_beating_bpm" name="" type="number" class="form-control" value="100" placeholder="100"></input>
+        </div>
+
+        <label>Resolution</label>
+        <div class="form-group">
+          <select id="select_sync_beating_resolution" name="" class="form-control">
+            <option value="16">16 (2^4)</option>
+            <option value="24">24 (2^3 . 3)</option>
+            <option value="27">27 (3^3)</option>
+            <option value="30">30 (2 . 3 . 5)</option>
+            <option value="32">32 (2^5)</option>
+            <option value="48">48 (2^4 . 3)</option>
+            <option value="64" selected>64 (2^6)</option>
+            <option value="96">96 (2^5 . 3)</option>
+            <option value="128">128 (2^7)</option>
+            <option value="144">144 (2^4 . 3^2)</option>
+            <option value="192">192 (2^6 . 3)</option>
+            <option value="256">256 (2^8)</option>
+            <option value="512">512 (2^9)</option>
+            <option value="1024">1024 (2^10)</option>
+            <option value="2048">2048 (2^11)</option>
+            <option value="2310">2310 (2 . 3 . 5 . 7 . 11)</option>
+          </select>
         </div>
       </form>
-    </div>-->
-
-
+    </div>
 
     <!-- Export Modals -->
     <div id="modal_share_url" class="modal" title="Share scale as URL">

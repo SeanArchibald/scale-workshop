@@ -251,15 +251,15 @@ jQuery( document ).ready( function() {
 
   } );
 
-  // modify_mode option clicked
-  jQuery( "#modify_key_transpose" ).click( function( event ) {
+  // modify_sync_beating option clicked
+  jQuery( "#modify_sync_beating" ).click( function( event ) {
 
     event.preventDefault();
-    jQuery( "#modal_modify_key_transpose" ).dialog({
+    jQuery( "#modal_modify_sync_beating" ).dialog({
       modal: true,
       buttons: {
         OK: function() {
-          modify_key_transpose();
+          modify_sync_beating();
         },
         Cancel: function() {
           jQuery( this ).dialog( 'close' );
@@ -352,6 +352,14 @@ jQuery( document ).ready( function() {
   // Synth Settings - Waveform
   jQuery( "#input_select_synth_waveform" ).change( function( event ) {
     synth.waveform = jQuery( '#input_select_synth_waveform' ).val();
+    update_page_url();
+  } );
+
+
+
+  // Synth Settings - Amplitude Envelope
+  jQuery( "#input_select_synth_amp_env" ).change( function( event ) {
+    update_page_url();
   } );
 
 

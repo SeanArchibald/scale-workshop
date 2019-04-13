@@ -194,6 +194,7 @@
                 <li><a href="#mode">Mode</a></li>
                 <li><a href="#stretch-compress">Stretch/compress</a></li>
                 <li><a href="#random-variance">Random variance</a></li>
+                <li><a href="#tempo-sync-beating">Tempo-sync beating</a></li>
               </ul>
             </li>
           </ul>
@@ -367,6 +368,12 @@
       <h3 id="random-variance">Random variance</h3>
       <p>Applies a random detuning of each note in the scale. If the checkbox is ticked, this will also detune the octave. If unticked, the octave will remain unchanged.</p>
       <p class="text-center"><a href="assets/img/guide/random-variance.png" target="_blank"><img src="assets/img/guide/random-variance.png" /></a></p>
+
+      <h3 id="tempo-sync-beating">Tempo-sync beating</h3>
+      <p>This retunes each note of your scale to the nearest harmonic and then tunes the base frequency to match the BPM. This can result in LFO-like pulsations when playing chords.</p>
+      <p>The effect is most effective when using "rich" harmonic sounds (e.g. sawtooth waves) on a synth with excellent intonation accuracy (e.g. almost all digital synths).</p>
+      <p class="text-center"><a href="assets/img/guide/tempo-sync-beating.png" target="_blank"><img src="assets/img/guide/tempo-sync-beating.png" /></a></p>
+      <p>Resolution allows you to control how much retuning is applied. Low values will result in a more drastic retuning of your original scale; in some cases this will result in notes converging on the same note, resulting in duplicates. For more obvious tempo-synced effects, choose a resolution that is a power of 2, e.g. 32, 64, or 128.</p>
 
       <h2 id="synthesizer">Synthesizer</h2>
       <p>Scale Workshop has a built-in synth so that you can play and hear your scales. This is useful for auditioning the scale you're working on, however it is very simple and isn't recommended for live performance.</p>

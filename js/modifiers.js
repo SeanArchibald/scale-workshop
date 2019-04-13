@@ -218,6 +218,66 @@ function modify_mode() {
 
 }
 
+// sync beating
+function modify_sync_beating() {
+
+  // remove white space from tuning data field
+  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+
+  if ( isEmpty( jQuery( "#txt_tuning_data" ).val() ) ) {
+
+    alert( "No tuning data to modify." );
+    return false;
+
+  }
+
+  if ( isEmpty( jQuery( "#input_modify_sync_beating_bpm" ).val() ) ) {
+
+    alert( "Please enter a BPM value." );
+    return false;
+
+  }
+
+  // get the fundamental frequency of the scale
+  var fundamental = jQuery( "#input_modify_sync_beating_bpm" ).val() / 60;
+  debug(fundamental);
+
+  var resolution = jQuery( "#select_sync_beating_resolution" ).val();
+  debug (resolution);
+
+  // loop through all in the scale, convert to ratio, then quantize to fundamental, then convert to cents
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  debug(lines);
+  var new_tuning = "";
+
+  for ( var i = 0; i < lines.length; i++ ) {
+
+    lines[i] = line_to_decimal( lines[i] );
+    new_tuning += toString(Math.round(lines[i] * resolution)) + "/" + toString(resolution) + unix_newline;
+
+  }
+  new_tuning = new_tuning.trim(); // remove final newline
+
+  debug(new_tuning);
+
+  // set tuning base frequency to some multiple of the fundamental, +/- 1 tritone from the old base frequency
+  var basefreq_lowbound = jQuery('#txt_base_frequency').val() * 0.7071067;
+  var basefreq = fundamental;
+  do {
+    basefreq = basefreq * 2;
+  } while ( basefreq < basefreq_lowbound );
+
+  // update fields and parse
+  jQuery( "#txt_tuning_data" ).val( new_tuning );
+  jQuery( "#txt_base_frequency" ).val( basefreq );
+  parse_tuning_data();
+
+  jQuery( "#modal_modify_sync_beating" ).dialog( "close" );
+
+  // success
+  return true;
+}
+
 // key transpose
 function modify_key_transpose() {
 

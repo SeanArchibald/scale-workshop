@@ -87,6 +87,11 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.0.0
+* Stable version
+* New modifier added: tempo-sync beating
+* Minor bug fixes
+
 ### 0.9.9
 * Added a selection of preset scales
 * Fix issue using delay in some situations
