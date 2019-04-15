@@ -1,3 +1,29 @@
+const getEnvelopeByName = name => {
+  const envelope = {
+    attackTime: 0,
+    decayTime: 0,
+    sustain: 1,
+    releaseTime: 0
+  }
+
+  switch ( name ) {
+    case 'organ' :
+      envelope.attackTime = 0.008; envelope.decayTime = 0.1; envelope.sustain = 0.8; envelope.releaseTime = 0.008; break;
+    case 'pad' :
+      envelope.attackTime = 1; envelope.decayTime = 3; envelope.sustain = 0.5; envelope.releaseTime = 3; break;
+    case 'perc-short' :
+      envelope.attackTime = 0.001; envelope.decayTime = 0.2; envelope.sustain = 0.001; envelope.releaseTime = 0.2; break;
+    case 'perc-medium' :
+      envelope.attackTime = 0.001; envelope.decayTime = 1; envelope.sustain = 0.001; envelope.releaseTime = 1; break;
+    case 'perc-long' :
+      envelope.attackTime = 0.001; envelope.decayTime = 5; envelope.sustain = 0.001; envelope.releaseTime = 5; break;
+  }
+
+  return envelope
+}
+
+const getEnvelopeName = () => jQuery( '#input_select_synth_amp_env' ).val()
+
 class Voice {
   constructor (audioCtx, frequency, velocity) {
     this.frequency = frequency;
@@ -9,19 +35,14 @@ class Voice {
     this.vco = audioCtx.createOscillator();
     this.vca = audioCtx.createGain();
 
-    switch ( jQuery( '#input_select_synth_amp_env' ).val() ) {
-      case 'organ' :
-        this.attackTime = 0.008; this.decayTime = 0.1; this.sustain = 0.8; this.releaseTime = 0.008; break;
-      case 'pad' :
-        this.attackTime = 1; this.decayTime = 3; this.sustain = 0.5; this.releaseTime = 3; break;
-      case 'perc-short' :
-        this.attackTime = 0.001; this.decayTime = 0.2; this.sustain = 0.001; this.releaseTime = 0.2; break;
-      case 'perc-medium' :
-        this.attackTime = 0.001; this.decayTime = 1; this.sustain = 0.001; this.releaseTime = 1; break;
-      case 'perc-long' :
-        this.attackTime = 0.001; this.decayTime = 5; this.sustain = 0.001; this.releaseTime = 5; break;
-    }
-    // debug("attack " + this.attackTime); debug("decay " + this.decayTime); debug("sustain " + this.sustain); debug("release " + this.releaseTime);
+    const envelope = getEnvelopeByName(getEnvelopeName())
+
+    this.attackTime = envelope.attackTime
+    this.decayTime = envelope.decayTime
+    this.sustain = envelope.sustain
+    this.releaseTime = envelope.releaseTime
+
+    // debug(envelope);
 
     this.oscillators = [];
   }
