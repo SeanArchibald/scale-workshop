@@ -88,7 +88,8 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 1.0.1
-* Fix stuck notes when playing synth in Firefox/Safari
+* Fix stuck notes during MIDI note input
+* Fix stuck notes when playing pad synth in Firefox/Safari
 
 ### 1.0.0
 * Stable version
