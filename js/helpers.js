@@ -282,10 +282,6 @@ function debug(msg = "") {
   return false;
 }
 
-function clone(src) {
-  return JSON.parse(JSON.stringify(src));
-}
-
 function getFloat(id, errorMessage) {
   var value = parseFloat(jQuery(id).val());
 
