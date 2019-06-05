@@ -123,18 +123,12 @@ jQuery( document ).ready( function() {
   jQuery( '#input_rank-2_size' ).change( function() {
 
     var size = parseInt( jQuery( '#input_rank-2_size' ).val() );
-
-    // check if generators up is larger than or equal to scale size, then update up/down values accordingly
-    if ( parseInt( jQuery( '#input_rank-2_up' ).val() ) >= size ) {
-      // set generators up to be one less than scale size
-      jQuery( '#input_rank-2_up' ).val( size - 1 );
-      // correct the value for generators down
-      jQuery( '#input_rank-2_down' ).val( size - parseInt( jQuery( '#input_rank-2_up' ).val() ) );
-    }
-    // correct the value for generators down
-    jQuery( '#input_rank-2_down' ).val( size - parseInt( jQuery( '#input_rank-2_up' ).val() ) - 1);
+    // set generators up to be one less than scale size
+    jQuery( '#input_rank-2_up' ).val( size - 1 );
     // set generators up input maximum
     jQuery( '#input_rank-2_up' ).attr({ "max" : size - 1 });
+    // zero generators down
+    jQuery( '#input_rank-2_down' ).val( 0 );
   } );
 
   // generate_harmonic_series_segment option clicked

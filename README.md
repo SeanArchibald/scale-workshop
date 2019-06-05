@@ -87,6 +87,10 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.0.2
+* MIDI now waits for user input before initializing (issues #56 #57)
+* Rank-2 temperament generator now assumes you want all positive/up generators by default (issue #58)
+
 ### 1.0.1
 * Fix stuck notes during MIDI note input
 * Fix stuck notes when playing pad synth in Firefox/Safari
