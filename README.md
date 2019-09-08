@@ -87,6 +87,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.0.3
+* New feature: export your tuning as a list of Deflemask 'fine tune' effect parameters. The resulting text file is a reference you can use when manually inputting notes into Deflemask chip music tracker.
+
 ### 1.0.2
 * MIDI now waits for user input before initializing (issues #56 #57)
 * Rank-2 temperament generator now assumes you want all positive/up generators by default (issue #58)
