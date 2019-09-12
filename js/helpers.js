@@ -180,6 +180,191 @@ function midi_note_number_to_name(input) {
   var name = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
   return name[remainder] + quotient;
 }
+      
+// calculate a continued fraction for the given number
+function get_cf(num, sizelimit, roundf) {
+    var cf = [] // the continued fraction
+    var digit;
+    
+    var roundinv = 1.0 / roundf;
+    
+    var iterations = 0;
+    while (iterations < sizelimit)
+    {
+        digit = Math.floor(num);
+        cf.push(digit);
+        
+        num -= digit;
+        
+        if (num == 0 || num <= roundinv)
+        {
+            break;
+        }
+        
+        num = 1.0 / num;
+        iterations++;
+    }
+
+    return cf;
+}
+
+// calculate rational approximations given a continued fraction
+function get_convergents(cf, numarray, denarray, perlimit)
+{
+    var cfdigit; // the continued fraction digit
+    var num; // the convergent numerator
+    var den; // the convergent denominator
+    var tmp; // for easy reciprocation
+    var scnum; // the semiconvergent numerator
+    var scden; // the semiconvergen denominator
+    var cind = []; // tracks indicies of convergents
+    
+    for (var d = 0; d < cf.length; d++)
+    {
+        cfdigit = cf[d];
+        num = cfdigit;
+        den = 1;
+        
+        // calculate the convergent
+        for (var i = d; i > 0; i--)
+        {
+            tmp = den;
+            den = num;
+            num = tmp;
+            num += den * cf[i - 1];
+        }
+        
+        // if there are semiconvergents available, calculate them first
+        // before adding the new convergent
+        if (cfdigit > 1 && d > 1)
+        {
+            // the first one uses the penultimate convergent
+            // and the for-loop uses the last convergent
+            scnum = numarray[cind[d-1]] + numarray[cind[d-2]];
+            scden = denarray[cind[d-1]] + denarray[cind[d-2]];
+            
+            if (scden <= perlimit)
+            {
+                numarray.push(scnum);
+                denarray.push(scden);
+                
+                for (var i = 1; i < cfdigit - 1; i++)
+                {
+                    scnum += numarray[cind[d-1]];
+                    scden += denarray[cind[d-1]];
+                    
+                    if (scden > perlimit)
+                        break;
+                    
+                    numarray.push(scnum);
+                    denarray.push(scden);
+                }
+            }
+        }
+        
+        if (den > perlimit)
+            break;
+            
+        cind.push(numarray.length);
+        numarray.push(num);
+        denarray.push(den);
+    }
+}
+
+// get the large and small step sizes in a MOS scale
+// make sure to use an array for vars large & small to receive values
+// this is slower than I'd like
+function get_Ls_cents(gencents, periodcents, size, large, small) {
+    var scale = [];
+    var val = 0;
+    
+    // generate the rank-2 scale. should this come from "generators.js"?
+    for (var i = 0; i < size; i++)
+    {
+        if (val > periodcents)
+            val -= periodcents;
+        
+        scale.push(val);
+        val += gencents;
+    }
+    scale.push(periodcents);
+    scale.sort(function(a, b) {return a - b});
+    
+    // clear and seed these arrays
+    large.splice(0, large.length);
+    large.push(0);
+    
+    small.splice(0, small.length);
+    small.push(periodcents);
+        
+    for (var i = 0; i < scale.length - 1; i++)
+    {
+        val = scale[i + 1] - scale[i];
+        
+        if (val > large[0])
+        {
+            large.shift();
+            large.push(val);
+        }
+        
+        if (val < small[0])
+        {
+            small.shift();
+            small.push(val);
+        }
+    }
+}
+                         
+// generate and display MOS list
+function show_mos_cf(per, gen, ssz, threshold) {
+    var maxsize = 400; // maximum period size
+    var maxcfsize = 12; // maximum continued fraction length
+    var roundf = 1000; // rounding factor in case continued fraction blows up
+
+    per = line_to_decimal(per);
+    if (per <= 0 || isNaN(per)) {
+    jQuery("#info_rank_2_mos").text("invalid period");
+    return false;
+    }
+
+    gen = line_to_decimal(gen);
+    if (gen <= 0 || isNaN(gen)) {
+    jQuery("#info_rank_2_mos").text("invalid generator");
+    return false;
+    }
+
+    var genlog = Math.log(gen) / Math.log(per); // the logarithmic ratio to generate MOS info
+
+    var cf = []; // continued fraction
+    var nn = []; // MOS generators
+    var dd = []; // MOS periods
+
+    cf = get_cf(genlog, maxcfsize, roundf);
+    get_convergents(cf, nn, dd, maxsize);
+     
+    // the first two periods are trivial
+    dd.shift();
+    dd.shift();
+    
+    // filter by step size threshold
+    var ll = []; // large step
+    var ss = []; // small step
+    var gc = decimal_to_cents(gen);
+    var pc = decimal_to_cents(per);
+    
+    for (var i = 0; i < dd.length; i++)
+    {
+        get_Ls_cents(gc, pc, dd[i], ll, ss);
+        
+        if (ss[0] < threshold)
+        {
+            dd.splice(i, dd.length - i);
+            break;
+        }
+    }
+     
+    jQuery("#info_rank_2_mos").text(dd.join(", "));
+}
 
 // generate and display MOS list
 // slow but works
