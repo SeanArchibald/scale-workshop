@@ -180,6 +180,22 @@ function midi_note_number_to_name(input) {
   var name = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
   return name[remainder] + quotient;
 }
+
+// calculate the sum of the values in a given array given a stopping index
+function sum_array(array, index)
+{
+  var sum = 0;
+
+  if (array.length <= index)
+    index = array.length - 1;
+
+    for (var i = 0; i < index; i ++)
+    {
+      sum += array[i];
+    }
+
+    return sum;
+}
       
 // calculate a continued fraction for the given number
 function get_cf(num, sizelimit, roundf) {
@@ -233,86 +249,115 @@ function get_convergents(cf, numarray, denarray, perlimit)
             num = tmp;
             num += den * cf[i - 1];
         }
-        
-        // if there are semiconvergents available, calculate them first
-        // before adding the new convergent
-        if (cfdigit > 1 && d > 1)
+
+        if (d > 0)
         {
-            // the first one uses the penultimate convergent
-            // and the for-loop uses the last convergent
-            scnum = numarray[cind[d-1]] + numarray[cind[d-2]];
-            scden = denarray[cind[d-1]] + denarray[cind[d-2]];
-            
-            if (scden <= perlimit)
-            {
-                numarray.push(scnum);
-                denarray.push(scden);
+          for (var i = 1; i < cfdigit; i++)
+          {
+              scnum = num - (cfdigit - i) * numarray[cind[d-1]];
+              scden = den - (cfdigit - i) * denarray[cind[d-1]];
+
+              if (scden > perlimit)
+                break;
                 
-                for (var i = 1; i < cfdigit - 1; i++)
-                {
-                    scnum += numarray[cind[d-1]];
-                    scden += denarray[cind[d-1]];
-                    
-                    if (scden > perlimit)
-                        break;
-                    
-                    numarray.push(scnum);
-                    denarray.push(scden);
-                }
-            }
+              numarray.push(scnum);
+              denarray.push(scden);
+          }
         }
-        
+
         if (den > perlimit)
-            break;
-            
+           break;
+                
         cind.push(numarray.length);
         numarray.push(num);
         denarray.push(den);
     }
 }
 
+function get_Ls_mos_decimal(genLogIn, sizeIn, llIn, ssIn)
+{
+  
+  var cf = get_cf(genLogIn);
+  console.log("Gen = " + genLogIn + " | [" + cf + "]");
+  
+  var ip = 1;
+  var lz = genLogIn;
+  var ss = 0;
+  var cfd;
+
+  for (var i = 0; i < cf.size(); i++)
+  {
+    cfd = cf[i];
+
+    for (var d = 0; d < cfd; d++)
+    {
+
+      llIn.length = 0;
+      ssIn.length = 0;
+      llIn.push(lz);
+      ssIn.push();
+    }
+      //swap variables if necessary
+      if (llIn[0] < ssIn[0])
+      {
+        var tmp = llIn.pop();
+        llIn.push(ssIn[0]);
+        ssIn.pop();
+        ssIn.push(tmp);
+      }
+      
+      console.log("L = " + llIn[0] + "\ts = " + ssIn[0] + "\tc = " + llIn[0] - ssIn[0]);
+  }
+
+}
+
 // get the large and small step sizes in a MOS scale
 // make sure to use an array for vars large & small to receive values
-// this is slower than I'd like
 function get_Ls_cents(gencents, periodcents, size, large, small) {
-    var scale = [];
-    var val = 0;
-    
-    // generate the rank-2 scale. should this come from "generators.js"?
-    for (var i = 0; i < size; i++)
+   
+  var scale = [];
+  var note;
+
+  for (var i = 0; i < size; i++)
+  {
+    note = gencents * i;
+
+    if (note > periodcents)
+      note = note - periodcents * Math.floor(note/periodcents);
+
+    else if (note == periodcents)
+      break;
+
+      scale.push(note);
+  }
+  
+  scale.push(periodcents);
+  scale.sort(function(a, b){return a - b})
+
+  large.length = 0;
+  small.length = 0;
+  large.push(0);
+  small.push(periodcents);
+
+  for (var i = 0; i < scale.length - 1; i++)
+  {
+    note = scale[i+1] - scale[i];
+
+    if (note > large[0])
     {
-        if (val > periodcents)
-            val -= periodcents;
-        
-        scale.push(val);
-        val += gencents;
+      large.pop();
+      large.push(note);
     }
-    scale.push(periodcents);
-    scale.sort(function(a, b) {return a - b});
-    
-    // clear and seed these arrays
-    large.splice(0, large.length);
-    large.push(0);
-    
-    small.splice(0, small.length);
-    small.push(periodcents);
-        
-    for (var i = 0; i < scale.length - 1; i++)
+
+    if (note < small[0])
     {
-        val = scale[i + 1] - scale[i];
-        
-        if (val > large[0])
-        {
-            large.shift();
-            large.push(val);
-        }
-        
-        if (val < small[0])
-        {
-            small.shift();
-            small.push(val);
-        }
+      small.pop();
+      small.push(note);
     }
+  }
+  var chroma = large[0]-small[0];
+  console.log("Size: " + size);
+  console.log("L="+large[0]+"\ts="+small[0]+"\tc="+chroma);
 }
                          
 // generate and display MOS list
@@ -340,21 +385,23 @@ function show_mos_cf(per, gen, ssz, threshold) {
     var dd = []; // MOS periods
 
     cf = get_cf(genlog, maxcfsize, roundf);
+    console.log("log_p(g) = " + genlog + " | [" + cf + "]");
     get_convergents(cf, nn, dd, maxsize);
-     
-    // the first two periods are trivial
-    dd.shift();
+    
+    // the first period is trivial
     dd.shift();
     
     // filter by step size threshold
-    var ll = []; // large step
-    var ss = []; // small step
     var gc = decimal_to_cents(gen);
     var pc = decimal_to_cents(per);
-    
+    var size;
     for (var i = 0; i < dd.length; i++)
     {
-        get_Ls_cents(gc, pc, dd[i], ll, ss);
+        var ll = []; // large step
+        var ss = []; // small step
+        size = dd[i];
+        
+        get_Ls_cents(gc, pc, size, ll, ss);
         
         if (ss[0] < threshold)
         {
