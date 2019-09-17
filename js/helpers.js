@@ -273,93 +273,8 @@ function get_convergents(cf, numarray, denarray, perlimit)
         denarray.push(den);
     }
 
-    for (var i = 0; i < denarray.length; i++)
-      console.log(numarray[i]+"/"+denarray[i]);
-}
-
-function get_Ls_mos_decimal(genLogIn, sizeIn, llIn, ssIn)
-{
-  
-  var cf = get_cf(genLogIn);
-  console.log("Gen = " + genLogIn + " | [" + cf + "]");
-  
-  var ip = 1;
-  var lz = genLogIn;
-  var ss = 0;
-  var cfd;
-
-  for (var i = 0; i < cf.size(); i++)
-  {
-    cfd = cf[i];
-
-    for (var d = 0; d < cfd; d++)
-    {
-
-      llIn.length = 0;
-      ssIn.length = 0;
-      llIn.push(lz);
-      ssIn.push();
-    }
-      //swap variables if necessary
-      if (llIn[0] < ssIn[0])
-      {
-        var tmp = llIn.pop();
-        llIn.push(ssIn[0]);
-        ssIn.pop();
-        ssIn.push(tmp);
-      }
-      
-      console.log("L = " + llIn[0] + "\ts = " + ssIn[0] + "\tc = " + llIn[0] - ssIn[0]);
-  }
-
-}
-
-// get the large and small step sizes in a MOS scale
-// make sure to use an array for vars large & small to receive values
-function get_Ls_cents(gencents, periodcents, size, large, small) {
-   
-  var scale = [];
-  var note;
-
-  for (var i = 0; i < size; i++)
-  {
-    note = gencents * i;
-
-    if (note > periodcents)
-      note = note - periodcents * Math.floor(note/periodcents);
-
-    else if (note == periodcents)
-      break;
-
-      scale.push(note);
-  }
-  
-  scale.push(periodcents);
-  scale.sort(function(a, b){return a - b})
-
-  large.length = 0;
-  small.length = 0;
-  large.push(0);
-  small.push(periodcents);
-
-  for (var i = 0; i < scale.length - 1; i++)
-  {
-    note = scale[i+1] - scale[i];
-
-    if (note > large[0])
-    {
-      large.pop();
-      large.push(note);
-    }
-
-    if (note < small[0])
-    {
-      small.pop();
-      small.push(note);
-    }
-  }
-  var chroma = large[0]-small[0];
-  console.log("Size: " + size + "\tL="+large[0]+"\ts="+small[0]+"\tc="+chroma);
+    //for (var i = 0; i < denarray.length; i++)
+    //  console.log(numarray[i]+"/"+denarray[i]);
 }
                          
 // generate and display MOS list
@@ -387,9 +302,7 @@ function show_mos_cf(per, gen, ssz, threshold) {
     var dd = []; // MOS periods
 
     cf = get_cf(genlog, maxcfsize, roundf);
-    console.log("log_p(g) = " + genlog + " | [" + cf + "]");
     get_convergents(cf, nn, dd, maxsize);
-   
     
     // filter by step size threshold
     var gc = decimal_to_cents(gen);
@@ -398,19 +311,19 @@ function show_mos_cf(per, gen, ssz, threshold) {
     var s = pc; // small step
     var c = gc; // chroma (L - s)
 
-    console.log("0 : "+"\tL="+L+"\ts="+s+"\tc="+c);
     for (var i = 1; i < cf.length; i++)
     {
         L -= c * cf[i];
         s = c;
         c = L - s;
-        var size = dd[sum_array(cf, i)+1];
-        console.log(cf[i] + ": "+"size = "+size+"\tL="+L+"\ts="+s+"\tc="+c);
         
         // break if g is some equal division of period
         if (c < 1 / roundf && cf.length < maxcfsize)
         {
-          // not sure if flaw in my algorithm or weird edge case
+          // add size-1 if the degree of the period is
+          // greater than period +/- 1.
+          // ex: true if 3\17 or 5\17, false if 1\17 or 16\17.
+          // not sure if flaw in the algorithm or weird edge case
           if (cf.length > 3)
             dd.splice(dd.length-1, 0, dd[dd.length-1]-1)
           break;
@@ -418,7 +331,8 @@ function show_mos_cf(per, gen, ssz, threshold) {
         
         if (c < threshold)
         {
-            dd.length = sum_array(cf, i+1) + 1;
+            var ind = sum_array(cf, i+1);
+            dd.splice(ind+1, dd.length - ind);
             break;
         }
     }
@@ -428,98 +342,6 @@ function show_mos_cf(per, gen, ssz, threshold) {
     dd.shift();
      
     jQuery("#info_rank_2_mos").text(dd.join(", "));
-}
-
-// generate and display MOS list
-// slow but works
-function show_mos(per, gen, ssz, threshold) {
-
-  var maxsize = 400; // maximum EDO size to search for MOS
-  var roundf = 100000; // rounding factor for interval comparison
-
-  // parsePG(document.getElementById("_per").value); // 'returns' cents in c
-  per = line_to_cents(per);
-  if (per <= 0 || isNaN(per)) {
-    jQuery("#info_rank_2_mos").text("invalid period");
-    return false;
-  }
-
-  // parsePG(document.getElementById("_gen").value);
-  gen = line_to_cents(gen);
-  if (gen <= 0 || isNaN(gen)) {
-    jQuery("#info_rank_2_mos").text("invalid generator");
-    return false;
-  }
-
-  /*
-  threshold = parseFloat(document.getElementById("_threshold").value, 10);
-  if (isNaN(threshold)) {
-      docerr.innerHTML = "unable to parse MOS step size threshold";
-      return;
-  }
-  if (threshold < 0) {
-      docerr.innerHTML = "MOS step size threshold must be at least 0";
-      return;
-  }
-  */
-
-  var aa = []; // scale
-  var bb = []; // intervals
-  var cc = []; // distinct intervals
-  var dd = []; // intervals per class
-  var maxdd;
-  var mos = []; // MOS sizes
-
-  // test each scale from length 2 to maxsize
-  for (i = 2; i <= maxsize; i++) {
-    // clear arrays
-    aa = [];
-    dd = [];
-
-    // generate array of scale pitches (aa)
-    aa[0] = 0.0;
-    for (j = 1; j < i; j++)
-      aa[j] = (aa[j - 1] + gen) % per;
-    aa.sort(function (a, b) { return a - b }); // sort ascending
-
-    // must look at not only adjacent intervals ("seconds"), but also "thirds", "fourths", etc.
-    for (k = 1; k < i; k++) {
-      // clear arrays
-      bb = [];
-      cc = [];
-
-      // generate array of intervals (bb)
-      for (j = 0; j < i; j++) {
-        bb[j] = aa[(j + k) % i] - aa[j];
-        if (j + k >= i) bb[j] += per; // wrap
-      }
-
-      // round intervals (to hopefully avoid false comparisons due to float precision)
-      for (j = 0; j < bb.length; j++)
-        bb[j] = Math.round(bb[j] * roundf) / roundf;
-
-      // generate array of distinct intervals (cc)
-      cc[0] = bb[0]; // gotta start somewhere
-      for (j = 1; j < i; j++)
-        if (!cc.includes(bb[j])) // bb[j] not found in cc
-          cc.push(bb[j]);
-      cc.sort(function (a, b) { return a - b }); // sort ascending
-      if (cc[0] < threshold) break; // steps too small, stop search
-
-      //console.log('i='+i+'  k='+k+'  aa='+aa+'  bb='+bb+'  cc='+cc);
-      dd.push(cc.length);
-    }
-    if (cc[0] < threshold) break; // steps too small, stop search
-
-    maxdd = Math.max.apply(null, dd); // largest value in dd
-    //console.log('dd='+dd+'  maxdd='+maxdd);
-
-    // is it MOS?
-    if (maxdd <= 2) mos.push(i); // including EDO case in list
-    if (maxdd == 1) break; // reached EDO, stop search
-  }
-
-  jQuery("#info_rank_2_mos").text(mos.join(", "));
 }
 
 function debug(msg = "") {
