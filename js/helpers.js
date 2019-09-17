@@ -272,6 +272,9 @@ function get_convergents(cf, numarray, denarray, perlimit)
         numarray.push(num);
         denarray.push(den);
     }
+
+    for (var i = 0; i < denarray.length; i++)
+      console.log(numarray[i]+"/"+denarray[i]);
 }
 
 function get_Ls_mos_decimal(genLogIn, sizeIn, llIn, ssIn)
@@ -356,8 +359,7 @@ function get_Ls_cents(gencents, periodcents, size, large, small) {
     }
   }
   var chroma = large[0]-small[0];
-  console.log("Size: " + size);
-  console.log("L="+large[0]+"\ts="+small[0]+"\tc="+chroma);
+  console.log("Size: " + size + "\tL="+large[0]+"\ts="+small[0]+"\tc="+chroma);
 }
                          
 // generate and display MOS list
@@ -365,7 +367,7 @@ function show_mos_cf(per, gen, ssz, threshold) {
     var maxsize = 400; // maximum period size
     var maxcfsize = 12; // maximum continued fraction length
     var roundf = 1000; // rounding factor in case continued fraction blows up
-
+     
     per = line_to_decimal(per);
     if (per <= 0 || isNaN(per)) {
     jQuery("#info_rank_2_mos").text("invalid period");
@@ -387,28 +389,43 @@ function show_mos_cf(per, gen, ssz, threshold) {
     cf = get_cf(genlog, maxcfsize, roundf);
     console.log("log_p(g) = " + genlog + " | [" + cf + "]");
     get_convergents(cf, nn, dd, maxsize);
-    
-    // the first period is trivial
-    dd.shift();
+   
     
     // filter by step size threshold
     var gc = decimal_to_cents(gen);
     var pc = decimal_to_cents(per);
-    var size;
-    for (var i = 0; i < dd.length; i++)
+    var L = pc + gc; // Large step
+    var s = pc; // small step
+    var c = gc; // chroma (L - s)
+
+    console.log("0 : "+"\tL="+L+"\ts="+s+"\tc="+c);
+    for (var i = 1; i < cf.length; i++)
     {
-        var ll = []; // large step
-        var ss = []; // small step
-        size = dd[i];
+        L -= c * cf[i];
+        s = c;
+        c = L - s;
+        var size = dd[sum_array(cf, i)+1];
+        console.log(cf[i] + ": "+"size = "+size+"\tL="+L+"\ts="+s+"\tc="+c);
         
-        get_Ls_cents(gc, pc, size, ll, ss);
-        
-        if (ss[0] < threshold)
+        // break if g is some equal division of period
+        if (c < 1 / roundf && cf.length < maxcfsize)
         {
-            dd.splice(i, dd.length - i);
+          // not sure if flaw in my algorithm or weird edge case
+          if (cf.length > 3)
+            dd.splice(dd.length-1, 0, dd[dd.length-1]-1)
+          break;
+        }
+        
+        if (c < threshold)
+        {
+            dd.length = sum_array(cf, i+1) + 1;
             break;
         }
     }
+
+    // the first two periods are trivial
+    dd.shift();
+    dd.shift();
      
     jQuery("#info_rank_2_mos").text(dd.join(", "));
 }
