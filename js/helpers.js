@@ -318,14 +318,14 @@ function show_mos_cf(per, gen, ssz, threshold) {
         c = L - s;
         
         // break if g is some equal division of period
-        if (c < 1 / roundf && cf.length < maxcfsize)
+        if (c < (1 / roundf) && cf.length < maxcfsize)
         {
-          // add size-1 if the degree of the period is
-          // greater than period +/- 1.
-          // ex: true if 3\17 or 5\17, false if 1\17 or 16\17.
+          // add size-1 
           // not sure if flaw in the algorithm or weird edge case
-          if (cf.length > 3)
-            dd.splice(dd.length-1, 0, dd[dd.length-1]-1)
+          
+          if (dd[dd.length-2] != dd[dd.length-1]-1)
+            dd.splice(dd.length-1, 0, dd[dd.length-1]-1);
+
           break;
         }
         
