@@ -88,6 +88,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 1.0.3
+* When generating rank-2 temperaments, finding MOS scale sizes is now more efficient.
 * New feature: export your tuning as a list of Deflemask 'fine tune' effect parameters. The resulting text file is a reference you can use when manually inputting notes into Deflemask chip music tracker.
 
 ### 1.0.2
@@ -272,6 +273,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 * Lajos Mészáros
 * Carl Lumma
 * Tobia
+* Vincenzo Sicurella
 
 
 ## License
