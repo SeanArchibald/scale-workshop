@@ -440,3 +440,9 @@ function getSearchParamOr (valueIfMissing, key, url) {
 function getSearchParamAsNumberOr (valueIfMissingOrNan, key, url) {
   return (url.searchParams.has(key) && !isNaN(url.searchParams.get(key))) ? parseFloat(url.searchParams.get(key)) : valueIfMissingOrNan;
 }
+
+function trimSelf (el) {
+  jQuery(el).val(function (idx, val) {
+    return val.trim()
+  })
+}
