@@ -432,3 +432,11 @@ function tap(fn, value) {
   fn(value)
   return value
 }
+
+function getSearchParamOr (valueIfMissing, key, url) {
+  return url.searchParams.has(key) ? url.searchParams.get(key) : valueIfMissing
+}
+
+function getSearchParamAsNumberOr (valueIfMissingOrNan, key, url) {
+  return (url.searchParams.has(key) && !isNaN(url.searchParams.get(key))) ? parseFloat(url.searchParams.get(key)) : valueIfMissingOrNan;
+}

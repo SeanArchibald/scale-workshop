@@ -86,7 +86,6 @@ function set_key_colors( list ) {
   }
 }
 
-
 /**
  * parse_url()
  */
@@ -97,22 +96,22 @@ function parse_url() {
   var url = new URL(window.location.href);
 
   // get data from url params, and use sane defaults for tuning name, base frequency and base midi note number if data missing
-  var name = ( url.searchParams.has("name") ) ? url.searchParams.get("name") : "";
-  var data = ( url.searchParams.has("data") ) ? url.searchParams.get("data") : false;
-  var freq = ( url.searchParams.has("freq") && !isNaN( url.searchParams.get("freq") ) ) ? url.searchParams.get("freq") : 440;
-  var midi = ( url.searchParams.has("midi") && !isNaN( url.searchParams.get("midi") ) ) ? url.searchParams.get("midi") : 69;
-  var source = ( url.searchParams.has("source") ) ? url.searchParams.get("source") : "";
+  var name = getSearchParamOr('', 'name', url);
+  var data = getSearchParamOr(false, 'data', url);
+  var freq = getSearchParamAsNumberOr(440, 'freq', url);
+  var midi = getSearchParamAsNumberOr(69, 'midi', url);
+  var source =  getSearchParamOr('', 'source', url);
 
   // get isomorphic keyboard mapping
-  var vertical = ( url.searchParams.has("vert") && !isNaN( url.searchParams.get("vert") ) ) ? url.searchParams.get("vert") : false;
-  var horizontal = ( url.searchParams.has("horiz") && !isNaN( url.searchParams.get("horiz") ) ) ? url.searchParams.get("horiz") : false;
+  var vertical = getSearchParamAsNumberOr(false, 'vert', url);
+  var horizontal = getSearchParamAsNumberOr(false, 'horiz', url);
 
   // get key colours
-  var colors = ( url.searchParams.has("colors") ) ? url.searchParams.get("colors") : false;
+  var colors = getSearchParamOr(false, 'colors', url);
 
   // get synth options
-  var waveform = ( url.searchParams.has("waveform") ) ? url.searchParams.get("waveform") : false;
-  var ampenv = ( url.searchParams.has("ampenv") ) ? url.searchParams.get("ampenv") : false;
+  var waveform = getSearchParamOr(false, 'waveform', url);
+  var ampenv = getSearchParamOr(false, 'ampenv', url);
 
   // bail if there is no data
   if ( !data ) {
