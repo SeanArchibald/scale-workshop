@@ -443,3 +443,15 @@ function trimSelf (el) {
     return val.trim()
   })
 }
+
+function openDialog (el, onOK) {
+  jQuery(el).dialog({
+    modal: true,
+    buttons: {
+      OK: onOK,
+      Cancel: function() {
+        jQuery( this ).dialog( 'close' );
+      }
+    }
+  })
+}

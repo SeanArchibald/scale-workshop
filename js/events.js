@@ -78,40 +78,16 @@ jQuery( document ).ready( function() {
 
   // generate_equal_temperament option clicked
   jQuery( "#generate_equal_temperament" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_number_of_divisions" ).select();
-    jQuery( "#modal_generate_equal_temperament" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          generate_equal_temperament();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_generate_equal_temperament", generate_equal_temperament)
   } );
 
   // generate_rank_2_temperament option clicked
   jQuery( "#generate_rank_2_temperament" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_rank-2_generator" ).select();
-    jQuery( "#modal_generate_rank_2_temperament" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          generate_rank_2_temperament();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_generate_rank_2_temperament", generate_rank_2_temperament)
   } );
 
   // rank-2 temperament generator - generators up changed
@@ -133,134 +109,52 @@ jQuery( document ).ready( function() {
 
   // generate_harmonic_series_segment option clicked
   jQuery( "#generate_harmonic_series_segment" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_lowest_harmonic" ).select();
-    jQuery( "#modal_generate_harmonic_series_segment" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          generate_harmonic_series_segment();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
-  } );
+    openDialog("#modal_generate_harmonic_series_segment", generate_harmonic_series_segment)
+  });
 
   // generate_subharmonic_series_segment option clicked
   jQuery( "#generate_subharmonic_series_segment" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_lowest_subharmonic" ).select();
-    jQuery( "#modal_generate_subharmonic_series_segment" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          generate_subharmonic_series_segment();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_generate_subharmonic_series_segment", generate_subharmonic_series_segment)
   } );
 
   // load-preset option clicked
   jQuery( "#load-preset" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#select_preset_scale" ).select();
-    jQuery( "#modal_load_preset_scale" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          load_preset_scale( jQuery('#select_preset_scale')[0].value );
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_load_preset_scale", function() {
+      load_preset_scale( jQuery('#select_preset_scale')[0].value );
+    })
   } );
 
   // modify_mode option clicked
   jQuery( "#modify_mode" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_modify_mode" ).select();
-    jQuery( "#modal_modify_mode" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_mode();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_modify_mode", modify_mode)
   } );
 
   // modify_stretch option clicked
   jQuery( "#modify_stretch" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_stretch_ratio" ).select();
-    jQuery( "#modal_modify_stretch" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_stretch();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_modify_stretch", modify_stretch)
   } );
 
   // modify_random_variance option clicked
   jQuery( "#modify_random_variance" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_cents_max_variance" ).select();
-    jQuery( "#modal_modify_random_variance" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_random_variance();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_modify_random_variance", modify_random_variance)
   } );
 
   // modify_sync_beating option clicked
   jQuery( "#modify_sync_beating" ).click( function( event ) {
-
     event.preventDefault();
-    jQuery( "#modal_modify_sync_beating" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_sync_beating();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_modify_sync_beating", modify_sync_beating)
   } );
 
   // Touch keyboard (#nav_play) option clicked
