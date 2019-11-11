@@ -348,9 +348,7 @@ jQuery( document ).ready( function() {
   // data changed, handle programmatic reaction - no jQuery
   model.on('change', (key, newValue) => {
     if (key === 'main volume') {
-      const now = synth.now();
-      synth.masterGain.gain.value = newValue
-      synth.masterGain.gain.setValueAtTime(newValue, now);
+      synth.setMainVolume(gain)
     }
   })
 
