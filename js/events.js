@@ -505,14 +505,18 @@ jQuery( document ).ready( function() {
         colors = "white lightgrey black dimgrey white lightgrey white lightgrey black dimgrey white lightgrey black dimgrey white lightgrey white lightgrey black dimgrey white lightgrey black dimgrey";
         break;
 
-      default:
+      default: {
         // assemble a key colouring for any arbitrary scale size
-        for ( i = 0; i < size; i++ ) {
-          colors += ( i % 2 == 0 ) ? "white " : "black ";
+        let sequenceOfColors = []
+        for (let i = 0; i < Math.floor(size / 2); i++) {
+          sequenceOfColors.push("white", "black")
         }
-        // trim ending space
-        colors = colors.slice(0, -1);
-        break;
+        if (size % 2 === 1) {
+          sequenceOfColors.push("white")
+        }
+        colors = sequenceOfColors.join(' ')
+      }
+      break;
 
     }
 

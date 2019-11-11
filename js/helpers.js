@@ -230,7 +230,6 @@ function get_convergents(cf, numarray, denarray, perlimit)
     var cfdigit; // the continued fraction digit
     var num; // the convergent numerator
     var den; // the convergent denominator
-    var tmp; // for easy reciprocation
     var scnum; // the semiconvergent numerator
     var scden; // the semiconvergen denominator
     var cind = []; // tracks indicies of convergents
@@ -244,10 +243,8 @@ function get_convergents(cf, numarray, denarray, perlimit)
         // calculate the convergent
         for (var i = d; i > 0; i--)
         {
-            tmp = den;
-            den = num;
-            num = tmp;
-            num += den * cf[i - 1];
+          [den, num] = [num, den]
+          num += den * cf[i - 1];
         }
 
         if (d > 0)
