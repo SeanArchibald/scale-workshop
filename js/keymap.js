@@ -1,4 +1,4 @@
-/**
+﻿/**
  * keymap.js
  * International keyboard layouts
  */
@@ -38,6 +38,14 @@ var Layouts = {
     ";,.PYFGCRL/@",
     "AOEUIDHTNS-\\",
     "'QJKXBMWVZ",
+  ],
+
+// Colemak Keyboard
+  CO: [
+    "1234567890-=",
+    "QWFPGJLUY;[]",
+    "ARSTDHNEIO'\\",
+    "ZXCVBKM,./",
   ],
 };
 
