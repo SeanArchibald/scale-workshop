@@ -220,6 +220,57 @@ function generate_subharmonic_series_segment_data(lo, hi) {
   return ratios.join(unix_newline)
 }
 
+function enumerate_chord() {
+
+  var chord = getString('#input_chord', 'Warning: bad input')
+
+  // bail if has invalid characters
+  var inputTest = chord.replace(" ", "");
+  for (var i = 0; i < inputTest.length; i++) {
+  	  var c = inputTest.charCodeAt(i);
+	  if ((c < 46 && c != 44) || c > 58) {
+		alert("Warning: Invalid pitch data.")
+		return false;
+	  }
+  }
+
+  setScaleName("Chord " + chord);
+
+  setTuningData(enumerate_chord_data(chord.split(":")));
+
+  parse_tuning_data();
+
+  closePopup("#modal_enumerate_chord");
+
+  // success
+  return true;
+}
+
+function enumerate_chord_data(pitches) {
+  let ratios = [];
+  var fundamental = 1;
+
+  for (var i = 0; i < pitches.length; i++) {
+    
+	// convert a lone integer to a commadecimal
+	if (/^\d+$/.test(pitches[i]))
+	{
+		pitches[i] = pitches[i] + ',';
+	}
+
+    var parsed = line_to_decimal(pitches[i]);
+
+    if (i > 0) {
+      ratios.push(decimal_to_ratio(parsed / fundamental));
+    }
+    else {
+      fundamental = parsed;
+    }
+  }
+
+  return ratios.join(unix_newline)
+}
+
 function load_preset_scale(a) {
 
   var data = "";
