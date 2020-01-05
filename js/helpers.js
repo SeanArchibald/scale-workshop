@@ -223,14 +223,14 @@ function sum_array(array, index)
 }
       
 // calculate a continued fraction for the given number
-function get_cf(num, sizelimit, roundf) {
+function get_cf(num, maxiterations, roundf) {
     var cf = [] // the continued fraction
     var digit;
     
     var roundinv = 1.0 / roundf;
     
     var iterations = 0;
-    while (iterations < sizelimit)
+    while (iterations < maxiterations)
     {
         digit = Math.floor(num);
         cf.push(digit);
@@ -247,6 +247,53 @@ function get_cf(num, sizelimit, roundf) {
     }
 
     return cf;
+}
+
+// calculate a single convergent for a given continued fraction
+function get_convergent(cf, depth=0) {
+
+    var cfdigit; // the continued fraction digit
+    var num; // the convergent numerator
+    var den; // the convergent denominator
+    var tmp; // for easy reciprocation
+
+	if (depth >= cf.length || depth == 0)
+		depth = cf.length;
+    
+    for (var d = 0; d < depth; d++)
+    {
+        cfdigit = cf[d];
+        num = cfdigit;
+        den = 1;
+        
+        // calculate the convergent
+        for (var i = d; i > 0; i--)
+        {
+            tmp = den;
+            den = num;
+            num = tmp;
+            num += den * cf[i - 1];
+        }
+    }
+
+	return num + '/' + den;
+}
+
+// convert a decimal to ratio (string 'x/y'), may have rounding errors for irrationals
+function decimal_to_ratio(rawInput, iterations=15, depth=0) {
+
+	if (rawInput === false)
+		return false;
+	
+	const input = parseFloat(line_to_decimal(rawInput));
+	
+	if (input === 0 || isNaN(input)) {
+		return false;
+    } 
+	else {
+		var inputcf = get_cf(input, iterations, 100000);
+		return get_convergent(inputcf, depth);
+	}
 }
 
 // calculate rational approximations given a continued fraction
