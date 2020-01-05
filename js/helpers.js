@@ -25,6 +25,19 @@ function ratio_to_decimal(rawInput) {
   }
 }
 
+// convert a comma decimal (1,25) to decimal
+function commadecimal_to_decimal(rawInput) {
+  if (rawInput === false) {
+    return false
+  }
+  const input = parseFloat(rawInput.toString().replace(',', '.'));
+  if (input === 0 || isNaN(input)) {
+    return false;
+  } else {
+    return input;
+  }
+}
+
 function decimal_to_cents(rawInput) {
   if (rawInput === false) {
     return false
@@ -66,6 +79,13 @@ function isCent(rawInput) {
   return /^\d+\.\d*$/.test(input)
 }
 
+function isDecimal(rawInput) {
+  // true, when the input has numbers at the beginning, followed by a comma, ending with any number of numbers
+  // for example: 1,25
+  const input = trim(toString(rawInput))
+  return /^\d+\,\d*$/.test(input);
+}
+
 function isNOfEdo(rawInput) {
   // true, when the input has numbers at the beginning and the end, separated by a single backslash
   // for example: 7\12
@@ -83,6 +103,8 @@ function isRatio(rawInput) {
 function getLineType(rawInput) {
   if (isCent(rawInput)) {
     return LINE_TYPE.CENTS
+  } else if (isDecimal(rawInput)) {
+    return LINE_TYPE.DECIMAL
   } else if (isNOfEdo(rawInput)) {
     return LINE_TYPE.N_OF_EDO
   } else if (isRatio(rawInput)) {
@@ -100,6 +122,9 @@ function line_to_decimal(rawInput) {
     case LINE_TYPE.CENTS:
       converterFn = cents_to_decimal
       break
+	case LINE_TYPE.DECIMAL:
+	  converterFn = commadecimal_to_decimal
+	  break
     case LINE_TYPE.N_OF_EDO:
       converterFn = n_of_edo_to_decimal
       break

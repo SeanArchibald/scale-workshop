@@ -1,5 +1,6 @@
 const LINE_TYPE = {
   CENTS: 'cents',
+  DECIMAL: 'decimal',
   RATIO: 'ratio',
   N_OF_EDO: 'n of edo',
   INVALID: 'invalid'
