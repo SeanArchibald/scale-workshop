@@ -27,15 +27,28 @@ function ratio_to_decimal(rawInput) {
 
 // convert a comma decimal (1,25) to decimal
 function commadecimal_to_decimal(rawInput) {
-  if (rawInput === false) {
-    return false
-  }
-  const input = parseFloat(rawInput.toString().replace(',', '.'));
-  if (input === 0 || isNaN(input)) {
-    return false;
+  if (isCommaDecimal(rawInput)) {
+    const input = parseFloat(rawInput.toString().replace(',', '.'));
+    if (input === 0 || isNaN(input)) {
+      return false;
+    } else {
+      return input;
+	}
   } else {
-    return input;
+  	alert("Invalid input: " + rawInput);
+	return false;
   }
+}
+
+// convert a decimal (1.25) into commadecimal (1,25)
+function decimal_to_commadecimal(rawInput) {
+	if (isCents(rawInput)) { // a bit misleading
+		const input = rawInput.toString().replace('.', ',');
+		return input;
+	} else {
+		alert("Invalid input: " + rawInput);
+		return false;
+	}
 }
 
 function decimal_to_cents(rawInput) {
@@ -79,7 +92,7 @@ function isCent(rawInput) {
   return /^\d+\.\d*$/.test(input)
 }
 
-function isDecimal(rawInput) {
+function isCommaDecimal(rawInput) {
   // true, when the input has numbers at the beginning, followed by a comma, ending with any number of numbers
   // for example: 1,25
   const input = trim(toString(rawInput))
@@ -103,7 +116,7 @@ function isRatio(rawInput) {
 function getLineType(rawInput) {
   if (isCent(rawInput)) {
     return LINE_TYPE.CENTS
-  } else if (isDecimal(rawInput)) {
+  } else if (isCommaDecimal(rawInput)) {
     return LINE_TYPE.DECIMAL
   } else if (isNOfEdo(rawInput)) {
     return LINE_TYPE.N_OF_EDO
@@ -285,7 +298,7 @@ function decimal_to_ratio(rawInput, iterations=15, depth=0) {
 	if (rawInput === false)
 		return false;
 	
-	const input = parseFloat(line_to_decimal(rawInput));
+	const input = parseFloat(rawInput);
 	
 	if (input === 0 || isNaN(input)) {
 		return false;
@@ -294,6 +307,14 @@ function decimal_to_ratio(rawInput, iterations=15, depth=0) {
 		var inputcf = get_cf(input, iterations, 100000);
 		return get_convergent(inputcf, depth);
 	}
+}
+
+function cents_to_ratio(rawInput, iterations=15, depth=0) {
+	return decimal_to_ratio(cents_to_decimal(rawInput), iterations, depth);
+}
+
+function n_of_edo_to_ratio(rawInput, iterations=15, depth=0) {
+	return decimal_to_ratio(n_of_edo_to_decimal(rawInput), iterations, depth);
 }
 
 // calculate rational approximations given a continued fraction
