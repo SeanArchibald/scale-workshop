@@ -222,21 +222,36 @@ function generate_subharmonic_series_segment_data(lo, hi) {
 
 function enumerate_chord() {
 
-  var chord = getString('#input_chord', 'Warning: bad input')
+  var chord = getString('#input_chord', 'Warning: bad input');
+  var preserve_cents = document.getElementById( "input_preserve_cents" ).checked;
+
+  // It doesn't make much sense to mix different values, 
+  // but it's cool to experiment with.
 
   // bail if has invalid characters
-  var inputTest = chord.replace(" ", "");
+  var inputTest = chord.replace(" ", "").split();
   for (var i = 0; i < inputTest.length; i++) {
-  	  var c = inputTest.charCodeAt(i);
-	  if ((c < 46 && c != 44) || c > 58) {
-		alert("Warning: Invalid pitch data.")
+	  if (/^\d+[\.\,\\\/]*\d*$/.test(inputTest[i])) {
+		alert("Warning: Invalid pitch" + inputTest[i])
 		return false;
 	  }
   }
 
+  var pitches = chord.split(":");
+
+  // This next safeguard might make it more user friendy,
+  // but I think it's a bit limiting for certain purposes a more advanced
+  // user might try like using NOfEdo values to build chords.
+
+  // bail if first note is in cents
+  //if (isCent(pitches[0]) || isNOfEdo(pitches[0])) {
+  //	  alert("Warning: first pitch cannot be in cents");
+  //  return false;
+  //}
+
   setScaleName("Chord " + chord);
 
-  setTuningData(enumerate_chord_data(chord.split(":")));
+  setTuningData(enumerate_chord_data(pitches, preserve_cents));
 
   parse_tuning_data();
 
@@ -246,7 +261,7 @@ function enumerate_chord() {
   return true;
 }
 
-function enumerate_chord_data(pitches) {
+function enumerate_chord_data(pitches, preserveCents=true) {
   let ratios = [];
   var fundamental = 1;
 
@@ -258,10 +273,15 @@ function enumerate_chord_data(pitches) {
 		pitches[i] = pitches[i] + ',';
 	}
 
+	var isCentsValue = isCent(pitches[i]) || isNOfEdo(pitches[i]);
     var parsed = line_to_decimal(pitches[i]);
 
     if (i > 0) {
-      ratios.push(decimal_to_ratio(parsed / fundamental));
+	  if (isCentsValue && preserveCents) {
+	  	ratios.push(pitches[i])
+	  } else {
+		ratios.push(decimal_to_ratio(parsed / fundamental));
+	  }
     }
     else {
       fundamental = parsed;
