@@ -341,3 +341,63 @@ function modify_key_transpose() {
   return true;
   */
 }
+
+// approximate rationals
+function modify_approximate_rationals() {
+
+  // remove white space from tuning data field
+  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+
+    alert( "No tuning data to modify." );
+    return false;
+
+  }
+
+  $('#approximation_selection').append("<option> 3/1 </option>");
+
+  var cents_min_variance = parseFloat( jQuery( "#input_min_error" ).val() )
+  var cents_max_variance = parseFloat( jQuery( "#input_max_error" ).val() ); // maximum amount of variance in cents
+  /*
+  // split user data into individual lines
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+
+  // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
+  let new_tuning_lines = [];
+  for ( var i = 0; i < lines.length; i++ ) {
+
+    // only apply random variance if the line is not the period, or vary_period is true
+    if ( vary_period || i < lines.length-1 ) {
+
+      // get a cents offset to add later. ranges from -cents_max_variance to cents_max_variance
+      var random_variance = ( Math.random() * cents_max_variance * 2 ) - cents_max_variance;
+
+      // line contains a period, so it should be a value in cents
+      if ( lines[i].toString().includes('.') ) {
+        new_tuning_lines.push(( parseFloat( lines[i] ) + random_variance ).toFixed(5));
+      }
+      // line doesn't contain a period, so it is a ratio
+      else {
+        new_tuning_lines.push(( ratio_to_cents( lines[i] ) + random_variance ).toFixed(5));
+      }
+    }
+    // last line is a period and we're not applying random variance to it
+    else {
+      new_tuning_lines.push(lines[i]);
+    }
+	
+  }
+
+  // update tuning input field with new tuning
+  jQuery( "#txt_tuning_data" ).val( new_tuning_lines.join(unix_newline) );
+
+  parse_tuning_data();
+
+  jQuery( "#modal_modify_random_variance" ).dialog( "close" );
+  */
+  // success
+  return false;
+
+}
+

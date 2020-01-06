@@ -318,7 +318,7 @@ function n_of_edo_to_ratio(rawInput, iterations=15, depth=0) {
 }
 
 // calculate rational approximations given a continued fraction
-function get_convergents(cf, numarray, denarray, perlimit)
+function get_convergents(cf, numarray, denarray, perlimit, cindOut=null)
 {
     var cfdigit; // the continued fraction digit
     var num; // the convergent numerator
@@ -365,6 +365,14 @@ function get_convergents(cf, numarray, denarray, perlimit)
         numarray.push(num);
         denarray.push(den);
     }
+
+	if (!(cindOut===null)) 
+	{
+		for (var i = 0; i < cind.length; i++)
+		{
+			cindOut.push(cind[i]);
+		}
+	}
 
     //for (var i = 0; i < denarray.length; i++)
     //  console.log(numarray[i]+"/"+denarray[i]);
@@ -435,6 +443,10 @@ function show_mos_cf(per, gen, ssz, threshold) {
     dd.shift();
      
     jQuery("#info_rank_2_mos").text(dd.join(", "));
+}
+
+function get_prime_factors(factorsout, number) {
+
 }
 
 function debug(msg = "") {
