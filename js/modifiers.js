@@ -343,61 +343,92 @@ function modify_key_transpose() {
 }
 
 // approximate rationals
-function modify_approximate_rationals() {
+function modify_replace_with_approximation () {
 
-  // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+    // this shouldn't need to trim whitespace from tuning_data since it's called from a function that does
+    
+    var aprxs = document.getElementById("approximation_selection");
+    var approximation = aprxs.options[aprxs.selectedIndex].text;
+    approximation = approximation.slice(0, approximation.indexOf("|")).trim();
 
-  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+    var degree_selected = parseInt(jQuery( "#input_scale_degree" ).val() - 1);
+    var tuning_data = document.getElementById("txt_tuning_data");
+    var lines = tuning_data.value.split(newlineTest);
+    
+    if (degree_selected < lines.length)
+        lines[degree_selected] = approximation;
+    else
+        lines.push(approximation);
+    
+    var lines_to_text = "";
+    lines.forEach(function(item, index, array) {
+        lines_to_text += lines[index] + newline;
+    })
+    tuning_data.value = lines_to_text;
 
-    alert( "No tuning data to modify." );
-    return false;
+    parse_tuning_data();
 
-  }
-
-  $('#approximation_selection').append("<option> 3/1 </option>");
-
-  var cents_min_variance = parseFloat( jQuery( "#input_min_error" ).val() )
-  var cents_max_variance = parseFloat( jQuery( "#input_max_error" ).val() ); // maximum amount of variance in cents
-  /*
-  // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
-
-  // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-  let new_tuning_lines = [];
-  for ( var i = 0; i < lines.length; i++ ) {
-
-    // only apply random variance if the line is not the period, or vary_period is true
-    if ( vary_period || i < lines.length-1 ) {
-
-      // get a cents offset to add later. ranges from -cents_max_variance to cents_max_variance
-      var random_variance = ( Math.random() * cents_max_variance * 2 ) - cents_max_variance;
-
-      // line contains a period, so it should be a value in cents
-      if ( lines[i].toString().includes('.') ) {
-        new_tuning_lines.push(( parseFloat( lines[i] ) + random_variance ).toFixed(5));
-      }
-      // line doesn't contain a period, so it is a ratio
-      else {
-        new_tuning_lines.push(( ratio_to_cents( lines[i] ) + random_variance ).toFixed(5));
-      }
-    }
-    // last line is a period and we're not applying random variance to it
-    else {
-      new_tuning_lines.push(lines[i]);
-    }
-	
-  }
-
-  // update tuning input field with new tuning
-  jQuery( "#txt_tuning_data" ).val( new_tuning_lines.join(unix_newline) );
-
-  parse_tuning_data();
-
-  jQuery( "#modal_modify_random_variance" ).dialog( "close" );
-  */
-  // success
-  return false;
-
+    jQuery( "#input_scale_degree" ).val(degree_selected + 2);
+    jQuery( "#input_scale_degree" ).trigger("change");
+    
+    // success
+    return true;
 }
 
+// update list of rationals to choose from
+function modify_update_approximations() {
+    
+    $("#approximation_selection").empty();
+
+    if (!(isEmpty(current_approximations))) {
+        
+        var interval = line_to_decimal( jQuery ("#input_interval_to_approximate").val() );
+        var mincentsd = parseFloat( jQuery ( "#input_min_error").val() );
+        var maxcentsd = parseFloat( jQuery ( "#input_max_error").val() );
+        var minprime = parseInt( jQuery (" #input_approx_min_prime").val() );
+        var maxprime = parseInt( jQuery (" #input_approx_max_prime").val() );
+        var semiconvergents = document.getElementById("input_show_semiconvergents").checked;
+        
+        // TODO: check and correct prime values
+    
+        if (mincentsd < 0)
+            mincentsd = 0;
+        
+        if (maxcentsd < 0)
+            maxcentsd = 0;
+        
+        var menulength = (semiconvergents) ? current_approximations.length : convergent_indicies.length;
+        var index;
+
+        for (var i = 0; i < menulength; i++)
+        {
+            index = (semiconvergents) ? i : convergent_indicies[i];
+            var fraction_str = current_approximations[i];
+            var fraction = line_to_decimal(fraction_str);
+            
+            var cents_deviation = decimal_to_cents(fraction) - decimal_to_cents(interval);
+            var centsdabs = Math.abs(cents_deviation);
+            var cents_rounded = Math.round(10e6 * cents_deviation) / 10e6;
+
+            var centsdsgn;
+            if (cents_deviation / centsdabs >= 0)
+                centsdsgn = "+";
+            else
+                centsdsgn = "";
+            
+            var prime_limit = 1; // todo
+
+            if (centsdabs >= mincentsd && centsdabs <= maxcentsd) {
+                $("#approximation_selection").append("<option>"+fraction_str+" | "+ centsdsgn + cents_rounded.toString()+"c</option>");
+            } else {
+                debug("Option excluded: " + fraction_str + " | " + cents_deviation.toString());
+            }
+        }
+                
+        if (document.getElementById("approximation_selection").options.length === 0) {
+            semiconvergents ?
+                $("#approximation_selection").append("<option selected disabled> None found, try to raise error tolerances.</option>") :
+                $("#approximation_selection").append("<option selected disabled> None found, try to  \"Show next best approximations\" or raise error tolerances.</option>")
+        }
+    }
+}

@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   ____            _
  / ___|  ___ __ _| | ___
  \___ \ / __/ _` | |/ _ \
@@ -95,7 +95,7 @@
                 <li><a href="#" id="modify_random_variance"><span class="glyphicon glyphicon-random" aria-hidden="true"></span> Random variance</a></li>
                 <li><a href="#" id="modify_sync_beating"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> Tempo-sync beating</a></li>
                 <!--<li><a href="#" id="modify_octave_reduce">Octave reduce</a></li>-->
-                <li><a href="#" id="modify_approximate"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span> Approximate</a></li>
+                <li><a href="#" id="modify_approximate"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Approximate</a></li>
               </ul>
             </li>
             <li><a href="#" id="nav_play"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> Touch Kbd</a></li>
@@ -534,7 +534,7 @@
                   <label>Approximations</label>
                   <select class="form-control" id="approximation_selection"></select>
               </div>
-              <label><input id="input_show_semiconvergents" type="checkbox">Show next best approximations</input></label></br>
+              <label><input id="input_show_semiconvergents" type="checkbox"> Show next best approximations</input></label></br>
               <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Min Error</label>
@@ -545,8 +545,17 @@
                     <input id="input_max_error" name="" type="number" class="form-control" value="15.0" min="1.0" max="200.0">cents</input>
                  </div>
               </div>
-              <label>Prime Limit</label>
-              <input id="input_approximation_prime_limit" name="" type="number" class="form-control" value="31" min="2.0" max="7919"></input>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Min Prime Limit</label>
+                    <input id="input_approx_min_prime" name="" type="number" class="form-control" value="2" min="2" max="7919"></input>
+                </div>
+                <div class="form-group col-md-6">
+
+                    <label>Max Prime Limit</label>
+                    <input id="input_approx_max_prime" name="" type="number" class="form-control" value="31" min="2" max="7919"></input>
+                </div>
+              </div>
           </div>
       </form>
     </div>

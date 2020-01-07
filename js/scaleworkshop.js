@@ -31,7 +31,9 @@ var tuning_table = {
   description: "",
   filename: ""
 };
-var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ]
+var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ];
+var current_approximations = []; // an array of ratios that approximate a chosen interval
+var convergent_indicies = []; // an array that keeps track of indicies for the best approximations
 var debug_enabled = true;
 
 /**

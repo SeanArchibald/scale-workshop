@@ -288,17 +288,15 @@ jQuery( document ).ready( function() {
     
 	event.preventDefault();
 
-	var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
+    // this needs to be here because a tuning data line needs to be
+    // inserted into the #input_interval_to_approximate field
+                                        
 	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim());
 
 	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 		alert( "No tuning data to modify." );
 		return false;
 	 }
-
-	var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
-	//jQuery ( "#input_interval" ).val(lines[index]);
-	//jQuery ( "#input_interval" ).trigger("change");
 
 	jQuery( "#input_scale_degree" ).select();
 	jQuery( "#input_scale_degree" ).trigger("change");
@@ -307,15 +305,7 @@ jQuery( document ).ready( function() {
       modal: true,
       buttons: {
         Apply: function() {
-		  var aprxs = document.getElementById("approximation_selection");
-		  var approximation = aprxs.options[aprxs.selectedIndex].text;
-		  approximation = approximation.slice(0, approximation.indexOf("|")).trim();
-          
-		  var tuningdata = document.getElementById("txt_tuning_data");
-		  tuningdata.value = tuningdata.value.replace(jQuery("#input_interval_to_approximate").val(), approximation);
-		  parse_tuning_data();
-
-		  jQuery("#input_interval_to_approximate").val(approximation);
+          modify_replace_with_approximation();
         },
         Close: function() {
           jQuery( this ).dialog( 'close' );
@@ -325,57 +315,17 @@ jQuery( document ).ready( function() {
 
   } );
 
-  jQuery( "#input_interval_to_approximate").change( function() {
-		
-		var roundf = 999999;
-
-		var nn = []; // numerators
-		var dd = []; // denominators
-		var cidx = []; // convergent indicies
-		var cf = []; // continued fraction
-
+  // calculate and list rational approximations within user parameters
+  jQuery( "#input_interval_to_approximate" ).change( function() {
 		var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
-		var mincentsd = parseFloat( jQuery ( "#input_min_error").val() );
-		var maxcentsd = parseFloat( jQuery ( "#input_max_error").val() );
-
-		var semiconvergents = document.getElementById("input_show_semiconvergents").checked;
-		debug("Showing semiconvergents" + semiconvergents);
-		cf = get_cf(interval, 15, roundf);
-		get_convergents(cf, nn, dd, roundf, cidx);
-
-		$("#approximation_selection").empty();
-
-		var menulength = (semiconvergents) ? nn.length : cidx.length;
-		var index;
-
-		for (var i = 0; i < menulength; i++)
-		{
-			index = (semiconvergents) ? i : cidx[i];
-			var fraction_str = nn[index].toString() + "/" + dd[index].toString();
-			var fraction = nn[index] / dd[index];
-			
-			var cents_deviation = decimal_to_cents(interval) - decimal_to_cents(fraction);
-			var centsdabs = Math.abs(cents_deviation);
-			var cents_rounded = Math.round(10e6 * cents_deviation) / 10e6;
-
-			var centsdsgn;
-			if (cents_deviation / centsdabs >= 0)
-				centsdsgn = "+";
-			else
-				centsdsgn = "";
-			
-			var prime_limit = 1; // todo
-
-			if (centsdabs >= mincentsd && centsdabs <= maxcentsd)
-				$("#approximation_selection").append("<option>"+fraction_str+" | "+ centsdsgn + cents_rounded.toString()+"c</option>");
-			else
-				console.log("Option excluded: " + fraction_str + " | " + cents_deviation.toString());
-		}
+		
+        convergent_indicies = [];
+        current_approximations = get_rational_approximations(interval, 999999, convergent_indicies);
+        modify_update_approximations();
   });
   
+  // recalculate approximations when scale degree changes
   jQuery( "#input_scale_degree").change( function() {
-	
-	var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
 	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
 	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
@@ -383,22 +333,36 @@ jQuery( document ).ready( function() {
 		return false;
 	 }
 
+    var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
 	var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
 	jQuery ( "#input_interval_to_approximate" ).val(lines[index]);
 	jQuery ( "#input_interval_to_approximate" ).trigger("change");
 
   });
 
+  // refilter approximations when error amount changes
   jQuery( "#input_min_error" ).change( function() {
-  	  jQuery( "#input_interval_to_approximate").trigger("change");
+      modify_update_approximations();
   })
-   
+                                                   
+   // refilter approximations when error amount changes
   jQuery( "#input_max_error" ).change( function() {
-  	  jQuery( "#input_interval_to_approximate").trigger("change");
+      modify_update_approximations();
   })
-
+                                                   
+  // refilter approximations when "show semiconvergents" changes
   jQuery( "#input_show_semiconvergents" ).change( function() {
-  	  jQuery( "#input_interval_to_approximate").trigger("change");
+      modify_update_approximations();
+  })
+                                                   
+  // refilter approximations when prime limit changes
+  jQuery( "#input_approx_max_prime" ).change( function() {
+      modify_update_approximations();
+  })
+                         
+    // refilter approximations when prime limit changes
+  jQuery( "#input_approx_min_prime" ).change( function() {
+      modify_update_approximations();
   })
 
   /*
