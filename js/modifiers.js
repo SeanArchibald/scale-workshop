@@ -347,33 +347,40 @@ function modify_replace_with_approximation () {
 
     // this shouldn't need to trim whitespace from tuning_data since it's called from a function that does
     
-    var aprxs = document.getElementById("approximation_selection");
-    var approximation = aprxs.options[aprxs.selectedIndex].text;
-    approximation = approximation.slice(0, approximation.indexOf("|")).trim();
-
     var degree_selected = parseInt(jQuery( "#input_scale_degree" ).val() - 1);
-    var tuning_data = document.getElementById("txt_tuning_data");
-    var lines = tuning_data.value.split(newlineTest);
     
-    if (degree_selected < lines.length)
-        lines[degree_selected] = approximation;
-    else
-        lines.push(approximation);
-    
-    var lines_to_text = "";
-    lines.forEach(function(item, index, array) {
-        lines_to_text += lines[index] + newline;
-    })
-    tuning_data.value = lines_to_text;
+    if (degree_selected < tuning_table.note_count - 1) {
+        
+        var tuning_data = document.getElementById("txt_tuning_data");
+        var lines = tuning_data.value.split(newlineTest);
+        
+        var aprxs = document.getElementById("approximation_selection");
+        var approximation = aprxs.options[aprxs.selectedIndex].text;
+        approximation = approximation.slice(0, approximation.indexOf("|")).trim();
+        
+        if (degree_selected < lines.length && line_to_decimal(approximation))
+            lines[degree_selected] = approximation;
+        else
+            lines.push(approximation);
+        
+        var lines_to_text = "";
+        lines.forEach(function(item, index, array) {
+            lines_to_text += lines[index] + newline;
+        })
+        tuning_data.value = lines_to_text;
 
-    parse_tuning_data();
-    
-    if (degree_selected < lines.length - 2) {
-        jQuery( "#input_scale_degree" ).val(degree_selected + 2);
-        jQuery( "#input_scale_degree" ).trigger("change");
+        parse_tuning_data();
+        
+        if (degree_selected < tuning_table.note_count - 2) {
+            jQuery( "#input_scale_degree" ).val(degree_selected + 2);
+            jQuery( "#input_scale_degree" ).trigger("change");
+        }
+        // success
+        return true;
     }
-    // success
-    return true;
+    
+    // invalid scale degree
+    return false;
 }
 
 // update list of rationals to choose from
@@ -406,18 +413,18 @@ function modify_update_approximations() {
         if (maxcentsd < 0)
             maxcentsd = 0;
         
-        var menulength = (semiconvergents) ? current_approximations.numerators.length : convergent_indicies.length;
+        var menulength = (semiconvergents) ? current_approximations.ratios.length : current_approximations.convergent_indicies.length;
         var index;
 
         for (var i = 0; i < menulength; i++)
         {
-            index = (semiconvergents) ? i : convergent_indicies[i];
+            index = (semiconvergents) ? i : current_approximations.convergent_indicies[i];
             
-            var n = parseInt(current_approximations.numerators[i]);
-            var d = parseInt(current_approximations.denominators[i]);
-            var prime_limit = current_approximations.ratio_limits[i];
+            var n = parseInt(current_approximations.numerators[index]);
+            var d = parseInt(current_approximations.denominators[index]);
+            var prime_limit = current_approximations.ratio_limits[index];
 
-            var fraction_str = n + "/" + d;
+            var fraction_str = current_approximations.ratios[index];
             var fraction = n / d;
             
             var cents_deviation = decimal_to_cents(fraction) - decimal_to_cents(interval);
@@ -432,7 +439,11 @@ function modify_update_approximations() {
         
             var description = fraction_str+ " | " + centsdsgn + cents_rounded.toString() + "c | " + prime_limit + "-limit";
 
-            if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
+            // for cases like 1200.0 == 2/1
+            if (interval == fraction) {
+                $("#approximation_selection").append("<option>"+description+"</option>");
+                break;
+            } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
                 $("#approximation_selection").append("<option>"+description+"</option>");
             } else {
                 debug("Option excluded: " + description);
@@ -442,7 +453,7 @@ function modify_update_approximations() {
         if (document.getElementById("approximation_selection").options.length === 0) {
             semiconvergents ?
                 $("#approximation_selection").append("<option selected disabled> None found, try to raise error tolerances.</option>") :
-                $("#approximation_selection").append("<option selected disabled> None found, try to  \"Show next best approximations\" or raise error tolerances.</option>")
+                $("#approximation_selection").append("<option selected disabled> Try to  \"Show next best approximations\" or edit filters.</option>")
         }
     }
 }

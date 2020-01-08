@@ -447,18 +447,19 @@ function show_mos_cf(per, gen, ssz, threshold) {
                  
 // helper function to simply pass in an interval and get an array of ratios returned
 function get_rational_approximations(intervalIn, numerators, denominators, roundf=999999,
-                                     cidxOut=null, numlimits=null, denlimits=null, ratiolimits=null) {
+                                     cidxOut=null, ratiosOut=null, numlimits=null, denlimits=null, ratiolimits=null) {
     
     var cf = []; // continued fraction
 
     cf = get_cf(intervalIn, 15, roundf);
     get_convergents(cf, numerators, denominators, roundf, cidxOut);
-                 
+    
+    var doRatios = !(ratiosOut===null);
     var doNumLim = !(numlimits===null);
     var doDenLim = !(denlimits===null);
     var doRatioLim = !(ratiolimits===null);
                  
-    if (doNumLim || doDenLim || doRatioLim) {
+    if (doRatios|| doNumLim || doDenLim || doRatioLim) {
         var nlim;
         var dlim;
         var rlim;
@@ -466,14 +467,15 @@ function get_rational_approximations(intervalIn, numerators, denominators, round
         for (var i = 0; i < numerators.length; i++) {
             numerators[i] == 1 ? nlim = 1 : nlim = get_prime_limit(numerators[i]);
             denominators[i] == 1 ? dlim = 1 : dlim = get_prime_limit(denominators[i]);
-            rlim = Math.max(nlim, dlim);
 
+            if (doRatios)
+                ratiosOut.push(numerators[i]+"/"+denominators[i]);
             if (doNumLim)
                 numlimits.push(nlim);
             if (doDenLim)
                 denlimits.push(dlim);
             if (doRatioLim)
-                ratiolimits.push(rlim);
+                ratiolimits.push(Math.max(nlim, dlim));
         }
     }
 }

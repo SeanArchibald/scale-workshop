@@ -32,8 +32,15 @@ var tuning_table = {
   filename: ""
 };
 var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ];
-var current_approximations = []; // holds two arrays of numerators and denominators, whose quotients approximate a chosen interval
-var convergent_indicies = []; // an array that keeps track of indicies for the best approximations
+var current_approximations = {
+    convergent_indicies: [], // indicies of the convergent ratios
+    numerators: [], // numerators of approximations
+    denominators: [], // denominators of approximations
+    ratios: [], // the ratios combined
+    numerator_limits: [], // the prime limit of each numerator
+    denominator_limits: [], // the prime limit of each denominator
+    ratio_limits: [] // the prime limit of each ratio
+}
 var debug_enabled = true;
 
 /**

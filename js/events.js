@@ -297,7 +297,11 @@ jQuery( document ).ready( function() {
 		alert( "No tuning data to modify." );
 		return false;
 	 }
+    
+    jQuery( "#input_scale_degree" ).val(1);
+    jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 });
 
+    
 	jQuery( "#input_scale_degree" ).select();
 	jQuery( "#input_scale_degree" ).trigger("change");
 
@@ -319,16 +323,20 @@ jQuery( document ).ready( function() {
   jQuery( "#input_interval_to_approximate" ).change( function() {
 		var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
 		
-        convergent_indicies = [];
-        current_approximations = {
-                numerators: [],
-                denominators: [],
-                numerator_limits: [],
-                denominator_limits: [],
-                ratio_limits: []
-                };
-        get_rational_approximations(interval, current_approximations.numerators, current_approximations.denominators, 999999, convergent_indicies,
-                                    current_approximations.numerator_limits, current_approximations.denominator_limits, current_approximations.ratio_limits);
+        current_approximations.convergent_indicies = [];
+        current_approximations.numerators = [];
+        current_approximations.denominators = [];
+        current_approximations.ratios = [];
+        current_approximations.numerator_limits = [];
+        current_approximations.denominator_limits = [];
+        current_approximations.ratio_limits = [];
+
+        get_rational_approximations(interval, current_approximations.numerators, current_approximations.denominators, 999999,
+                                    current_approximations.convergent_indicies,
+                                    current_approximations.ratios,
+                                    current_approximations.numerator_limits,
+                                    current_approximations.denominator_limits,
+                                    current_approximations.ratio_limits);
         modify_update_approximations();
   });
   
