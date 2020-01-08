@@ -320,7 +320,15 @@ jQuery( document ).ready( function() {
 		var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
 		
         convergent_indicies = [];
-        current_approximations = get_rational_approximations(interval, 999999, convergent_indicies);
+        current_approximations = {
+                numerators: [],
+                denominators: [],
+                numerator_limits: [],
+                denominator_limits: [],
+                ratio_limits: []
+                };
+        get_rational_approximations(interval, current_approximations.numerators, current_approximations.denominators, 999999, convergent_indicies,
+                                    current_approximations.numerator_limits, current_approximations.denominator_limits, current_approximations.ratio_limits);
         modify_update_approximations();
   });
   

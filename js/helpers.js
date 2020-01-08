@@ -446,26 +446,104 @@ function show_mos_cf(per, gen, ssz, threshold) {
 }
                  
 // helper function to simply pass in an interval and get an array of ratios returned
-function get_rational_approximations(intervalIn, roundf=999999, cidxOut=null) {
+function get_rational_approximations(intervalIn, numerators, denominators, roundf=999999,
+                                     cidxOut=null, numlimits=null, denlimits=null, ratiolimits=null) {
     
-    var nn = []; // numerators
-    var dd = []; // denominators
     var cf = []; // continued fraction
 
     cf = get_cf(intervalIn, 15, roundf);
-    get_convergents(cf, nn, dd, roundf, cidxOut);
+    get_convergents(cf, numerators, denominators, roundf, cidxOut);
+                 
+    var doNumLim = !(numlimits===null);
+    var doDenLim = !(denlimits===null);
+    var doRatioLim = !(ratiolimits===null);
+                 
+    if (doNumLim || doDenLim || doRatioLim) {
+        var nlim;
+        var dlim;
+        var rlim;
 
-    var ratios = [];
-    for (var i = 0; i < nn.length; i++) {
-        ratios.push(nn[i] + "/" + dd[i]);
+        for (var i = 0; i < numerators.length; i++) {
+            numerators[i] == 1 ? nlim = 1 : nlim = get_prime_limit(numerators[i]);
+            denominators[i] == 1 ? dlim = 1 : dlim = get_prime_limit(denominators[i]);
+            rlim = Math.max(nlim, dlim);
+
+            if (doNumLim)
+                numlimits.push(nlim);
+            if (doDenLim)
+                denlimits.push(dlim);
+            if (doRatioLim)
+                ratiolimits.push(rlim);
+        }
     }
-    
-    return ratios;
 }
 
-function get_prime_factors(factorsout, number) {
-
+// returns an array representing the prime factorization
+// indicies are the 'nth' prime, the value is the powers of each prime
+function get_prime_factors(number) {
+    number = Math.floor(number);
+    if (number == 1) {
+        alert("Warning: 1 has no prime factorization.");
+        return false;
+     }
+             
+    var factorsout = [];
+    var n = number;
+    var q = number;
+    var loop;
+                 
+    for (var i = 0; i < PRIMES.length; i++) {
+        if (PRIMES[i] > n)
+            break;
+                 
+         factorsout.push(0);
+                 
+        if (PRIMES[i] == n) {
+            factorsout[i]++;
+            break;
+        }
+                 
+        loop = true;
+         
+        while (loop) {
+            q = n / PRIMES[i];
+        
+            if (q == Math.floor(q)) {
+                n = q;
+                factorsout[i]++;
+                continue;
+            }
+            loop = false;
+         }
+     }
+                
+    return factorsout;
 }
+                 
+function get_prime_factors_string(number) {
+     var factors = get_prime_factors(number);
+     var str_out = "";
+                 
+     for (var i = 0; i < factors.length; i++) {
+                 
+         if (factors[i] != 0) {
+            str_out += PRIMES[i] + "^" + factors[i];
+                 
+            if (i < factors.length - 1)
+                str_out += " * ";
+         }
+     }
+    return str_out;
+ }
+                 
+function get_prime_limit(number) {
+    var factors = get_prime_factors(number);
+    return PRIMES[factors.length - 1];
+ }
+                 
+ function get_prime_limit_of_ratio(numerator, denominator) {
+    return Math.max(get_prime_limit(numerator), get_prime_limit(denominator));
+ }
 
 function debug(msg = "") {
   if (debug_enabled) {

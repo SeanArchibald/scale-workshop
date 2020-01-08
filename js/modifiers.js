@@ -367,10 +367,11 @@ function modify_replace_with_approximation () {
     tuning_data.value = lines_to_text;
 
     parse_tuning_data();
-
-    jQuery( "#input_scale_degree" ).val(degree_selected + 2);
-    jQuery( "#input_scale_degree" ).trigger("change");
     
+    if (degree_selected < lines.length - 2) {
+        jQuery( "#input_scale_degree" ).val(degree_selected + 2);
+        jQuery( "#input_scale_degree" ).trigger("change");
+    }
     // success
     return true;
 }
@@ -389,7 +390,15 @@ function modify_update_approximations() {
         var maxprime = parseInt( jQuery (" #input_approx_max_prime").val() );
         var semiconvergents = document.getElementById("input_show_semiconvergents").checked;
         
-        // TODO: check and correct prime values
+        if (minprime < 2) {
+            minprime = 2;
+            jQuery("#input_approx_min_prime").val(2);
+        }
+        
+        if (maxprime > 7919) {
+            maxprime = 7919;
+            jQuery("#input_approx_max_prime").val(7919);
+        }
     
         if (mincentsd < 0)
             mincentsd = 0;
@@ -397,14 +406,19 @@ function modify_update_approximations() {
         if (maxcentsd < 0)
             maxcentsd = 0;
         
-        var menulength = (semiconvergents) ? current_approximations.length : convergent_indicies.length;
+        var menulength = (semiconvergents) ? current_approximations.numerators.length : convergent_indicies.length;
         var index;
 
         for (var i = 0; i < menulength; i++)
         {
             index = (semiconvergents) ? i : convergent_indicies[i];
-            var fraction_str = current_approximations[i];
-            var fraction = line_to_decimal(fraction_str);
+            
+            var n = parseInt(current_approximations.numerators[i]);
+            var d = parseInt(current_approximations.denominators[i]);
+            var prime_limit = current_approximations.ratio_limits[i];
+
+            var fraction_str = n + "/" + d;
+            var fraction = n / d;
             
             var cents_deviation = decimal_to_cents(fraction) - decimal_to_cents(interval);
             var centsdabs = Math.abs(cents_deviation);
@@ -415,13 +429,13 @@ function modify_update_approximations() {
                 centsdsgn = "+";
             else
                 centsdsgn = "";
-            
-            var prime_limit = 1; // todo
+        
+            var description = fraction_str+ " | " + centsdsgn + cents_rounded.toString() + "c | " + prime_limit + "-limit";
 
-            if (centsdabs >= mincentsd && centsdabs <= maxcentsd) {
-                $("#approximation_selection").append("<option>"+fraction_str+" | "+ centsdsgn + cents_rounded.toString()+"c</option>");
+            if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
+                $("#approximation_selection").append("<option>"+description+"</option>");
             } else {
-                debug("Option excluded: " + fraction_str + " | " + cents_deviation.toString());
+                debug("Option excluded: " + description);
             }
         }
                 
