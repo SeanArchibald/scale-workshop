@@ -100,8 +100,8 @@ function export_scala_scl() {
 
   for ( i = 1; i < tuning_table['note_count']; i++ ) {
 
-    // if the current interval is n-of-m edo type, output as cents instead
-    if ( getLineType( tuning_table['scale_data'][i] ) === LINE_TYPE.N_OF_EDO  ) {
+    // if the current interval is n-of-m edo or commadecimal linetype, output as cents instead
+    if ( getLineType( tuning_table['scale_data'][i] ) === LINE_TYPE.N_OF_EDO || getLineType( tuning_table['scale_data'][i] ) === LINE_TYPE.DECIMAL ) {
       file += " " + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + newline;
     }
     else {
