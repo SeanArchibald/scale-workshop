@@ -27,30 +27,31 @@ function ratio_to_decimal(rawInput) {
 
 // convert a comma decimal (1,25) to decimal
 function commadecimal_to_decimal(rawInput) {
-    if (isCommaDecimal(rawInput)) {
-      const input = parseFloat(rawInput.toString().replace(',', '.'));
-      if (input === 0 || isNaN(input)) {
-        return false;
-      } else {
-        return input;
-      }
+  if (isCommaDecimal(rawInput)) {
+    const input = parseFloat(rawInput.toString().replace(',', '.'));
+    if (input === 0 || isNaN(input)) {
+      return false;
     } else {
-      alert("Invalid input: " + rawInput);
-      return false;
-    }
- }
-
- // convert a decimal (1.25) into commadecimal (1,25)
-function decimal_to_commadecimal(rawInput) {
-   if (isCents(rawInput)) { // a bit misleading
-       const input = rawInput.toString().replace('.', ',');
-       return input;
-   } else {
-      alert("Invalid input: " + rawInput);
-      return false;
-   }
+      return input;
+	}
+  } else {
+  	alert("Invalid input: " + rawInput);
+	return false;
+  }
 }
-                      
+
+// convert a decimal (1.25) into commadecimal (1,25)
+function decimal_to_commadecimal(rawInput) {
+	if (isCents(rawInput)) { // a bit misleading
+		const input = rawInput.toString().replace('.', ',');
+		return input;
+	} else {
+		alert("Invalid input: " + rawInput);
+		return false;
+	}
+}
+
+// convert a decimal into cents
 function decimal_to_cents(rawInput) {
   if (rawInput === false) {
     return false
@@ -236,14 +237,14 @@ function sum_array(array, index)
 }
       
 // calculate a continued fraction for the given number
-function get_cf(num, sizelimit, roundf) {
+function get_cf(num, maxiterations, roundf) {
     var cf = [] // the continued fraction
     var digit;
     
     var roundinv = 1.0 / roundf;
     
     var iterations = 0;
-    while (iterations < sizelimit)
+    while (iterations < maxiterations)
     {
         digit = Math.floor(num);
         cf.push(digit);
@@ -260,6 +261,61 @@ function get_cf(num, sizelimit, roundf) {
     }
 
     return cf;
+}
+
+// calculate a single convergent for a given continued fraction
+function get_convergent(cf, depth=0) {
+
+    var cfdigit; // the continued fraction digit
+    var num; // the convergent numerator
+    var den; // the convergent denominator
+    var tmp; // for easy reciprocation
+
+	if (depth >= cf.length || depth == 0)
+		depth = cf.length;
+    
+    for (var d = 0; d < depth; d++)
+    {
+        cfdigit = cf[d];
+        num = cfdigit;
+        den = 1;
+        
+        // calculate the convergent
+        for (var i = d; i > 0; i--)
+        {
+            tmp = den;
+            den = num;
+            num = tmp;
+            num += den * cf[i - 1];
+        }
+    }
+
+	return num + '/' + den;
+}
+
+// convert a decimal to ratio (string 'x/y'), may have rounding errors for irrationals
+function decimal_to_ratio(rawInput, iterations=15, depth=0) {
+
+	if (rawInput === false)
+		return false;
+	
+	const input = parseFloat(rawInput);
+	
+	if (input === 0 || isNaN(input)) {
+		return false;
+    } 
+	else {
+		var inputcf = get_cf(input, iterations, 100000);
+		return get_convergent(inputcf, depth);
+	}
+}
+
+function cents_to_ratio(rawInput, iterations=15, depth=0) {
+	return decimal_to_ratio(cents_to_decimal(rawInput), iterations, depth);
+}
+
+function n_of_edo_to_ratio(rawInput, iterations=15, depth=0) {
+	return decimal_to_ratio(n_of_edo_to_decimal(rawInput), iterations, depth);
 }
 
 // calculate rational approximations given a continued fraction

@@ -169,6 +169,25 @@ jQuery( document ).ready( function() {
 
   } );
 
+// enumerate_chord option clicked
+  jQuery( "#enumerate_chord" ).click( function( event ) {
+
+    event.preventDefault();
+    jQuery( "#input_chord" ).select();
+    jQuery( "#modal_enumerate_chord" ).dialog({
+      modal: true,
+      buttons: {
+        OK: function() {
+          enumerate_chord();
+        },
+        Cancel: function() {
+          jQuery( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
   // load-preset option clicked
   jQuery( "#load-preset" ).click( function( event ) {
 
