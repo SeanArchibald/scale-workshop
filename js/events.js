@@ -372,13 +372,34 @@ jQuery( document ).ready( function() {
   })
                                                    
   // refilter approximations when prime limit changes
+  // these prime snapping methods could be better
   jQuery( "#input_approx_max_prime" ).change( function() {
-      modify_update_approximations();
+    var num = jQuery( "#input_approx_max_prime").val();
+    
+    var next;
+    if (parseInt(num) <= prime_counter[1])
+        next = prevPrime(num);
+    else
+        next = nextPrime(num);
+    prime_counter[1] = next;
+                                             
+    jQuery( "#input_approx_max_prime").val(next);
+    modify_update_approximations();
   })
                          
     // refilter approximations when prime limit changes
   jQuery( "#input_approx_min_prime" ).change( function() {
-      modify_update_approximations();
+     var num = jQuery( "#input_approx_min_prime").val();
+     
+     var next;
+     if (parseInt(num) <= prime_counter[0])
+         next = prevPrime(num);
+     else
+         next = nextPrime(num);
+     prime_counter[0] = next;
+                                             
+     jQuery( "#input_approx_min_prime").val(next);
+     modify_update_approximations();
   })
 
   /*

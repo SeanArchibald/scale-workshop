@@ -538,6 +538,43 @@ function get_prime_factors_string(number) {
     return str_out;
  }
                  
+ function isPrime(number) {
+    var sqrtnum = Math.floor(Math.sqrt(number));
+    
+    for (var i = 0; i < PRIMES.length; i++)
+    {
+        if (PRIMES[i] >= sqrtnum)
+            break;
+    
+        if (number % PRIMES[i] == 0) {
+            return false;
+        }
+    }
+    return true;
+ }
+                 
+function prevPrime(number)
+{
+    var i = 0;
+    while (i < PRIMES.length && PRIMES[i++] <= number);
+    return PRIMES[i - 2];
+}
+                 
+function nextPrime(number)
+{
+     var i = 0;
+     while (i < PRIMES.length && PRIMES[i++] <= number);
+     return PRIMES[i - 1];
+}
+                 
+function scrollToPrime(number, scrollDown)
+{
+    if (scrollDown)
+        return prevPrime(number);
+    else
+        return nextPrime(number);
+}
+                 
 function get_prime_limit(number) {
     var factors = get_prime_factors(number);
     return PRIMES[factors.length - 1];

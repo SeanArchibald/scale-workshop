@@ -448,7 +448,7 @@ function modify_update_approximations() {
             } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
                 $("#approximation_selection").append("<option>"+description+"</option>");
             } else {
-                debug("Option excluded: " + description);
+                //debug("Option excluded: " + description);
             }
         }
                 
