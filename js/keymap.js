@@ -39,6 +39,14 @@ var Layouts = {
     "AOEUIDHTNS-\\",
     "'QJKXBMWVZ",
   ],
+
+  // Colemak keyboard
+  CO: [
+  	"1234567890-=",
+	"QWFPGJLUY;[]",
+	"ARSTDHNEIO'\\",
+	"ZXCVBKM,./"
+  ],
 };
 
 // Map of irregular keycodes

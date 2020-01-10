@@ -51,6 +51,7 @@ function decimal_to_commadecimal(rawInput) {
 	}
 }
 
+// convert a decimal into cents
 function decimal_to_cents(rawInput) {
   if (rawInput === false) {
     return false
