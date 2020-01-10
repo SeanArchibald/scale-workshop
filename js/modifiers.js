@@ -439,8 +439,10 @@ function modify_update_approximations() {
         
             var description = fraction_str+ " | " + centsdsgn + cents_rounded.toString() + "c | " + prime_limit + "-limit";
 
-            // for cases like 1200.0 == 2/1
-            if (interval == fraction) {
+            if (!interval) {
+                $("#approximation_selection").append("<option selected disabled>Error: Invalid interval</option>");
+                break;
+            } else if (interval == fraction && interval) {  // for cases like 1200.0 == 2/1
                 $("#approximation_selection").append("<option>"+description+"</option>");
                 break;
             } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
