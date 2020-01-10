@@ -467,9 +467,7 @@ jQuery( document ).ready( function() {
   // Synth Settings - Main Volume
   jQuery(document).on('input', '#input_range_main_vol', function() {
     const gain = jQuery(this).val();
-    const now = synth.now();
-    synth.masterGain.gain.value = gain;
-    synth.masterGain.gain.setValueAtTime(gain, now);
+    synth.setMainVolume(gain)
   });
 
 
