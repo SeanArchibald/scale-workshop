@@ -88,11 +88,12 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 1.0.3
+* New feature: generate scale from 'Enumerate chord' e.g. `4:5:6:7:8` will result in a scale containing intervals 1/1, 5/4, 3/2, 7/4, 2/1
 * New feature: specify an interval in decimal format e.g. `1,5` for a perfect fifth, `2,0` for an octave.
 * New feature: export your tuning as a list of Deflemask 'fine tune' effect parameters. The resulting text file is a reference you can use when manually inputting notes into Deflemask chip music tracker.
-* Added Colemak layout support
-* When generating rank-2 temperaments, finding MOS scale sizes is now more efficient.
-* Fixed error when changing main volume before audio initialised
+* Improvement: Colemak keyboard layout support added
+* Improvement: when generating rank-2 temperaments, finding MOS scale sizes is now more efficient.
+* Bug fix: error when changing main volume before audio initialised
 
 ### 1.0.2
 * MIDI now waits for user input before initializing (issues #56 #57)
