@@ -178,7 +178,7 @@ jQuery( document ).ready( function() {
       modal: true,
       buttons: {
         OK: function() {
-          enumerate_chord();
+          generate_enumerate_chord();
         },
         Cancel: function() {
           jQuery( this ).dialog( 'close' );
