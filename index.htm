@@ -1,4 +1,4 @@
-<!--
+﻿<!--
   ____            _
  / ___|  ___ __ _| | ___
  \___ \ / __/ _` | |/ _ \
@@ -522,41 +522,47 @@
     </div>
 
     <div id="modal_approximate_intervals" class="modal" title="Mode">
-      <p>Select rational ratios that best approximate the scale step intervals.</p>
+      <p>Select a ratio that approximates the interval.</p>
       <form>
-          <label>Rational Approximation</label>
-          <div class="form-group" />
-              <label>Scale Degree</label>
-              <input id="input_scale_degree" name="" type="number" class="form-control" value="1" min="1" max="128"></input>
-              <label>Interval to Approximate</label>
-              <input id="input_interval_to_approximate" name="" tyep="number" class="form-control" value=""></input>
-              <div class="form-group">
-                  <label>Approximations</label>
-                  <select class="form-control" id="approximation_selection"></select>
-              </div>
-              <label><input id="input_show_semiconvergents" type="checkbox" checked> Show next best approximations</input></label></br>
-              <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label>Min Error</label>
-                    <input id="input_min_error" name="" type="number" class="form-control" value="0.0" min="0" max="200.0">cents</input>
+        <div class="form-group" />
+            <label>Scale Degree</label>
+            <div class="form-group">
+            <input id="input_scale_degree" name="" type="number" class="form-control" value="1" min="1" max="128"></input>
+            </div>
+            <label>Interval</label>
+            <div class="form-group">
+            <input id="input_interval_to_approximate" name="" tyep="number" class="form-control" value=""></input>
+            </div>
+            <div class="form-group">
+                <label>Approximation</label>
+                <select class="form-control" id="approximation_selection"></select>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input id="input_show_convergents" type="checkbox"> Only show convergents</input>
+                </label>
+            </div>
+            <div class="form-row">
+            <div class="form-group col-md-6">
+                <label>Min Error</label>
+                <input id="input_min_error" name="" type="number" class="form-control" value="0.0" min="0" max="200.0">cents</input>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Max Error</label>
+                <input id="input_max_error" name="" type="number" class="form-control" value="15.0" min="1.0" max="200.0">cents</input>
                 </div>
-                <div class="form-group col-md-6">
-                    <label>Max Error</label>
-                    <input id="input_max_error" name="" type="number" class="form-control" value="15.0" min="1.0" max="200.0">cents</input>
-                 </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label>Min Prime Limit</label>
-                    <input id="input_approx_min_prime" name="" type="number" class="form-control" value="2" min="2" max="7919"></input>
-                </div>
-                <div class="form-group col-md-6">
+            </div>
+            <div class="form-row">
+            <div class="form-group col-md-6">
+                <label>Min Prime Limit</label>
+                <input id="input_approx_min_prime" name="" type="number" class="form-control" value="2" min="2" max="7919"></input>
+            </div>
+            <div class="form-group col-md-6">
 
-                    <label>Max Prime Limit</label>
-                    <input id="input_approx_max_prime" name="" type="number" class="form-control" value="31" min="2" max="7919"></input>
-                </div>
-              </div>
-          </div>
+                <label>Max Prime Limit</label>
+                <input id="input_approx_max_prime" name="" type="number" class="form-control" value="31" min="2" max="7919"></input>
+            </div>
+        </div>
       </form>
     </div>
 

@@ -367,7 +367,7 @@ jQuery( document ).ready( function() {
   })
                                                    
   // refilter approximations when "show semiconvergents" changes
-  jQuery( "#input_show_semiconvergents" ).change( function() {
+  jQuery( "#input_show_convergents" ).change( function() {
       modify_update_approximations();
   })
 
@@ -382,7 +382,7 @@ jQuery( document ).ready( function() {
 	}
 
     jQuery( "#input_approx_min_prime").val(PRIMES[prime_counter[0]]);
-     modify_update_approximations();
+    modify_update_approximations();
   })
                                                    
   // refilter approximations when prime limit changes

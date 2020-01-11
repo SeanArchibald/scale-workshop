@@ -344,35 +344,35 @@ function modify_key_transpose() {
 
 // approximate rationals
 function modify_replace_with_approximation () {
-
-    // this shouldn't need to trim whitespace from tuning_data since it's called from a function that does
     
-    var degree_selected = parseInt(jQuery( "#input_scale_degree" ).val() - 1);
+    var degree_selected = parseInt(jQuery( "#input_scale_degree" ).val());
     
-    if (degree_selected < tuning_table.note_count - 1) {
-        
+    if (degree_selected < tuning_table.note_count) {
         var tuning_data = document.getElementById("txt_tuning_data");
         var lines = tuning_data.value.split(newlineTest);
-        
+
         var aprxs = document.getElementById("approximation_selection");
         var approximation = aprxs.options[aprxs.selectedIndex].text;
         approximation = approximation.slice(0, approximation.indexOf("|")).trim();
         
-        if (degree_selected < lines.length && line_to_decimal(approximation))
-            lines[degree_selected] = approximation;
-        else
+        if (degree_selected - 1 < lines.length && line_to_decimal(approximation)) {
+            lines[degree_selected-1] = approximation;
+        } else {
             lines.push(approximation);
-        
+		}
+
         var lines_to_text = "";
         lines.forEach(function(item, index, array) {
-            lines_to_text += lines[index] + newline;
+            lines_to_text += lines[index];
+			if (index + 1 < array.length) 
+				lines_to_text += newline;
         })
         tuning_data.value = lines_to_text;
-
+		
         parse_tuning_data();
         
-        if (degree_selected < tuning_table.note_count - 2) {
-            jQuery( "#input_scale_degree" ).val(degree_selected + 2);
+        if (degree_selected < tuning_table.note_count - 1) {
+            jQuery( "#input_scale_degree" ).val(degree_selected + 1);
             jQuery( "#input_scale_degree" ).trigger("change");
         }
         // success
@@ -395,7 +395,7 @@ function modify_update_approximations() {
         var maxcentsd = parseFloat( jQuery ( "#input_max_error").val() );
         var minprime = parseInt( jQuery (" #input_approx_min_prime").val() );
         var maxprime = parseInt( jQuery (" #input_approx_max_prime").val() );
-        var semiconvergents = document.getElementById("input_show_semiconvergents").checked;
+        var semiconvergents = !document.getElementById("input_show_convergents").checked;
         
         if (minprime < 2) {
             minprime = 2;
