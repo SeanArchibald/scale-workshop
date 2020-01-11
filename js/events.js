@@ -370,38 +370,35 @@ jQuery( document ).ready( function() {
   jQuery( "#input_show_semiconvergents" ).change( function() {
       modify_update_approximations();
   })
-                                                   
+
   // refilter approximations when prime limit changes
-  // these prime snapping methods could be better
-  jQuery( "#input_approx_max_prime" ).change( function() {
-    var num = jQuery( "#input_approx_max_prime").val();
-    
-    var next;
-    if (parseInt(num) <= prime_counter[1])
-        next = prevPrime(num);
-    else
-        next = nextPrime(num);
-    prime_counter[1] = next;
-                                             
-    jQuery( "#input_approx_max_prime").val(next);
-    modify_update_approximations();
-  })
-                         
-    // refilter approximations when prime limit changes
   jQuery( "#input_approx_min_prime" ).change( function() {
-     var num = jQuery( "#input_approx_min_prime").val();
-     
-     var next;
-     if (parseInt(num) <= prime_counter[0])
-         next = prevPrime(num);
-     else
-         next = nextPrime(num);
-     prime_counter[0] = next;
-                                             
-     jQuery( "#input_approx_min_prime").val(next);
+    var num = parseInt(jQuery( "#input_approx_min_prime").val());
+
+    if (num < PRIMES[prime_counter[0]]) {
+		prime_counter[0]--;
+    } else {
+        prime_counter[0]++;
+	}
+
+    jQuery( "#input_approx_min_prime").val(PRIMES[prime_counter[0]]);
      modify_update_approximations();
   })
-
+                                                   
+  // refilter approximations when prime limit changes
+  jQuery( "#input_approx_max_prime" ).change( function() {
+    var num = parseInt(jQuery( "#input_approx_max_prime").val());
+    
+    if (num < PRIMES[prime_counter[1]]) {
+		prime_counter[1]--;
+    } else {
+        prime_counter[1]++;
+	}
+    
+    jQuery( "#input_approx_max_prime").val(PRIMES[prime_counter[1]]);
+    modify_update_approximations();
+  })
+                        
   /*
     // rank-2 temperament generator - scale size changed
   jQuery( '#input_rank-2_size' ).change( function() {

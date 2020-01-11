@@ -41,7 +41,7 @@ var current_approximations = {
     denominator_limits: [], // the prime limit of each denominator
     ratio_limits: [] // the prime limit of each ratio
 }
-var prime_counter = [2, 31];
+var prime_counter = [0, 10];
 var debug_enabled = true;
 
 /**
