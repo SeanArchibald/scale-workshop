@@ -288,7 +288,7 @@ function enumerate_chord_data(pitches, preserveCents=true) {
     }
   }
 
-  return ratios.join(unix_newline);
+  return ratios.join(unix_newline)
 }
 
 function load_preset_scale(a) {
