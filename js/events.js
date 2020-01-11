@@ -372,15 +372,20 @@ jQuery( document ).ready( function() {
   })
 
   // refilter approximations when prime limit changes
+  // can be improved, but it's a bit tricky!
   jQuery( "#input_approx_min_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_min_prime").val());
-
-    if (num < PRIMES[prime_counter[0]]) {
-		prime_counter[0]--;
-    } else {
-        prime_counter[0]++;
+    var dif = num - PRIMES[prime_counter[0]];
+	if (Math.abs(dif) == 1) {
+		if (num < PRIMES[prime_counter[0]]) {
+			prime_counter[0]--;
+		} else {
+			prime_counter[0]++;
+		}
+	} else {
+		prime_counter[0] = PRIMES.indexOf(closestPrime(num));
 	}
-
+    
     jQuery( "#input_approx_min_prime").val(PRIMES[prime_counter[0]]);
     modify_update_approximations();
   })
@@ -388,11 +393,15 @@ jQuery( document ).ready( function() {
   // refilter approximations when prime limit changes
   jQuery( "#input_approx_max_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_max_prime").val());
-    
-    if (num < PRIMES[prime_counter[1]]) {
-		prime_counter[1]--;
-    } else {
-        prime_counter[1]++;
+    var dif = num - PRIMES[prime_counter[1]];
+	if (Math.abs(dif) == 1) {
+		if (num < PRIMES[prime_counter[1]]) {
+			prime_counter[1]--;
+		} else {
+			prime_counter[1]++;
+		}
+	} else {
+		prime_counter[1] = PRIMES.indexOf(closestPrime(num));
 	}
     
     jQuery( "#input_approx_max_prime").val(PRIMES[prime_counter[1]]);

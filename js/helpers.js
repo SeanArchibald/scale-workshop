@@ -555,6 +555,8 @@ function get_prime_factors_string(number) {
                  
 function prevPrime(number)
 {
+	if (number < 2)
+		return 2;
     var i = 0;
     while (i < PRIMES.length && PRIMES[i++] <= number);
     return PRIMES[i - 2];
@@ -562,9 +564,29 @@ function prevPrime(number)
                  
 function nextPrime(number)
 {
+	if (number < 2)
+		return 2;
      var i = 0;
      while (i < PRIMES.length && PRIMES[i++] <= number);
      return PRIMES[i - 1];
+}
+
+function closestPrime(number)
+{
+	var thisPrime = isPrime(number);
+	
+	if (number < 2)
+		return 2;
+	else if (thisPrime)
+		return number;
+
+	var np = nextPrime(number);
+	var pp = prevPrime(number);
+
+	if (Math.abs(np - number) < Math.abs(pp - number))
+		return np;
+	else
+		return pp;
 }
                  
 function scrollToPrime(number, scrollDown)
