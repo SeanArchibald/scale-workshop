@@ -223,7 +223,7 @@ function generate_subharmonic_series_segment_data(lo, hi) {
 function generate_enumerate_chord() {
 
   var chord = getString('#input_chord', 'Warning: bad input');
-  var chordStr = chord;
+  let chordStr = chord;
 
   var convert_to_ratios = document.getElementById( "input_convert_to_ratios" ).checked;
 
@@ -249,7 +249,9 @@ function generate_enumerate_chord() {
 
   // check if it's a tonal inversion
   // ex: 1/(A:B:C...)
-  var isInversion = false;
+  var isInversion = document.getElementById("input_invert_chord").checked;
+  if (isInversion)
+	chordStr = "1/(" + chord + ")";
   if (/^\d+\/\(.*$/.test(chord)) {
 	  if (/^1\/\((\d+\:)+\d+\)$/.test(chord)) {
 		  isInversion = true;
@@ -259,7 +261,6 @@ function generate_enumerate_chord() {
 		  return false;
 	  }
   }
-
 
   // This next safeguard might make it more user friendy,
   // but I think it's a bit limiting for certain purposes a more advanced
