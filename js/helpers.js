@@ -481,13 +481,43 @@ function get_rational_approximations(intervalIn, numerators, denominators, round
     }
 }
 
+// rank2 scale algorithm intended for integers, in ET contexts
+// for example, period = 12, gen = 7 : [ 2 2 1 2 2 2 1 ]
+function get_rank2_mode(period, generator, size, numdown=0) {
+	let degrees = [];
+	let modeOut = [];
+	var interval;
+
+	interval = generator * -(numdown + 1);
+	for (var n = 0; n < size; n++) {
+		interval += generator;
+		while (interval < 0) {
+			interval += period;
+		}
+		if (interval >= period) {
+			interval %= period;
+		}
+
+		degrees.push(interval);
+	}
+
+	degrees.sort(function(a, b) { return a-b });
+	for (var n = 1; n < degrees.length; n++) {
+		modeOut.push(degrees[n] - degrees[n-1]);
+	}
+
+	modeOut.push(period - degrees[degrees.length-1]);
+
+	return modeOut;
+}
+
 // returns an array representing the prime factorization
 // indicies are the 'nth' prime, the value is the powers of each prime
 function get_prime_factors(number) {
     number = Math.floor(number);
     if (number == 1) {
-        alert("Warning: 1 has no prime factorization.");
-        return false;
+        //alert("Warning: 1 has no prime factorization.");
+        return 1;
      }
     var factorsout = [];
     var n = number;
@@ -606,6 +636,63 @@ function get_prime_limit(number) {
     return Math.max(get_prime_limit(numerator), get_prime_limit(denominator));
  }
 
+ function isLinearlyIndependent(arrayOfVectors) {
+	var hasnext = true;
+	var isIndependent = true;
+	var i = 0;
+	while(hasnext) {
+		hasnext = false;
+		var sum = 0;
+		for (var v = 0; v < arrayOfVectors.length; v++) {
+			let vector = arrayOfVectors[v];
+			if (i < vector.length) {
+				if (i < vector.length - 1)
+					hasnext = true;
+				if (vector[i] > 0)
+					sum += 1;
+			}
+		}
+		if (sum > 1) {
+			isIndependent = false;
+			break;
+		}
+		i++;
+	}
+	return isIndependent;
+ }
+
+ // returns an array of integers that share no common factors to the given integer
+  function get_coprimes(number) {
+ 	 let coprimes = [1];
+	 var numpf = get_prime_factors(number);
+
+	  // not sure if a recursive based method would be more efficent
+	 for (var n = 2; n < number; n++) {
+	 	 var iscoprime = isLinearlyIndependent([numpf, get_prime_factors(n)]);
+		 if (iscoprime)
+			coprimes.push(n);
+	 }
+	 
+	 return coprimes;
+ }
+
+ // returns an array of integers that can divide evenly into given number
+ function get_factors(number) {
+ 	 let factors = [];
+	 var nsqrt = Math.floor(Math.sqrt(number));
+
+	 for (var n = 2; n <= nsqrt; n++) {
+		var q = number / n;
+	 	if (Math.floor(q) == q) {
+			factors.push(n);
+			if (n != q)
+				factors.push(q);
+		}
+	 }
+
+	 return factors.sort(function(a, b) { return a-b });;
+ }
+
  // returns array of the numerator and denominator of the reduced form of given ratio
  function reduce_ratio(numerator, denominator) { 
 	var num_pf = get_prime_factors(numerator);
@@ -706,6 +793,33 @@ function get_prime_limit(number) {
 	});
 
 	return chord.join(":");
+ }
+
+ function generate_mos_modes_test(period)
+ {
+	var sizefactors = get_factors(period);
+	sizefactors.push(period);
+	debug("Printing all modes of size " + period + " and its factors\' modes:" + sizefactors.join(" "));
+	for (var f = 0; f < sizefactors.length; f++) {
+	var cp = get_coprimes(sizefactors[f]);
+		for (var i = 0; i < cp.length; i++) {
+			var nn = [];
+			var dd = [];
+			var cind = [];
+			get_rational_approximations(cp[i] / sizefactors[f], nn, dd, 99999, cind);
+			debug(cp[i]+"\\"+sizefactors[f]+" modes, with mos sizes of: " + dd.join(" "));
+			var ll = true ? dd.length : cind.length;
+			for (var m = 1; m < ll; m++) {
+				var ddd = ll == dd.length ? dd[m] : dd[cind[m]];
+				var mode = get_rank2_mode(sizefactors[f], cp[i], ddd);
+				var factor = period / sizefactors[f];
+				mode.forEach(function(item, index) {
+					mode[index] = item * factor;
+				});
+				debug(sizefactors[f]+" | "+cp[i]+" | "+ddd+"\t: " + mode.join(" "));
+			}
+		}
+	}
  }
 
 function debug(msg = "") {
