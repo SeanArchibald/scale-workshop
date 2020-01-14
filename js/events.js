@@ -282,6 +282,136 @@ jQuery( document ).ready( function() {
 
   } );
 
+
+  // approximate option clicked
+  jQuery( "#modify_approximate" ).click( function( event ) {
+    
+	event.preventDefault();
+
+    // this needs to be here because a tuning data line needs to be
+    // inserted into the #input_interval_to_approximate field
+                                        
+	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim());
+
+	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+		alert( "No tuning data to modify." );
+		return false;
+	 }
+    
+    jQuery( "#input_scale_degree" ).val(1);
+    jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 });
+
+    
+	jQuery( "#input_scale_degree" ).select();
+	jQuery( "#input_scale_degree" ).trigger("change");
+
+    jQuery( "#modal_approximate_intervals" ).dialog({
+      modal: true,
+      buttons: {
+        Apply: function() {
+          modify_replace_with_approximation();
+        },
+        Close: function() {
+          jQuery( this ).dialog( 'close' );
+        }
+      }
+    });
+
+  } );
+
+  // calculate and list rational approximations within user parameters
+  jQuery( "#input_interval_to_approximate" ).change( function() {
+		var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
+		
+        current_approximations.convergent_indicies = [];
+        current_approximations.numerators = [];
+        current_approximations.denominators = [];
+        current_approximations.ratios = [];
+        current_approximations.numerator_limits = [];
+        current_approximations.denominator_limits = [];
+        current_approximations.ratio_limits = [];
+
+        get_rational_approximations(interval, current_approximations.numerators, current_approximations.denominators, 999999,
+                                    current_approximations.convergent_indicies,
+                                    current_approximations.ratios,
+                                    current_approximations.numerator_limits,
+                                    current_approximations.denominator_limits,
+                                    current_approximations.ratio_limits);
+        modify_update_approximations();
+  });
+  
+  // recalculate approximations when scale degree changes
+  jQuery( "#input_scale_degree").change( function() {
+	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+
+	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+		alert( "No tuning data to modify." );
+		return false;
+	 }
+
+    var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
+	var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+	jQuery ( "#input_interval_to_approximate" ).val(lines[index]);
+	jQuery ( "#input_interval_to_approximate" ).trigger("change");
+
+  });
+
+  // refilter approximations when error amount changes
+  jQuery( "#input_min_error" ).change( function() {
+      modify_update_approximations();
+  })
+                                                   
+   // refilter approximations when error amount changes
+  jQuery( "#input_max_error" ).change( function() {
+      modify_update_approximations();
+  })
+                                                   
+  // refilter approximations when "show semiconvergents" changes
+  jQuery( "#input_show_convergents" ).change( function() {
+      modify_update_approximations();
+  })
+
+  // refilter approximations when prime limit changes
+  jQuery( "#input_approx_min_prime" ).change( function() {
+    var num = parseInt(jQuery( "#input_approx_min_prime").val());
+
+    if (num < PRIMES[prime_counter[0]]) {
+		prime_counter[0]--;
+    } else {
+        prime_counter[0]++;
+	}
+
+    jQuery( "#input_approx_min_prime").val(PRIMES[prime_counter[0]]);
+    modify_update_approximations();
+  })
+                                                   
+  // refilter approximations when prime limit changes
+  jQuery( "#input_approx_max_prime" ).change( function() {
+    var num = parseInt(jQuery( "#input_approx_max_prime").val());
+    
+    if (num < PRIMES[prime_counter[1]]) {
+		prime_counter[1]--;
+    } else {
+        prime_counter[1]++;
+	}
+    
+    jQuery( "#input_approx_max_prime").val(PRIMES[prime_counter[1]]);
+    modify_update_approximations();
+  })
+                        
+  /*
+    // rank-2 temperament generator - scale size changed
+  jQuery( '#input_rank-2_size' ).change( function() {
+
+    var size = parseInt( jQuery( '#input_rank-2_size' ).val() );
+    // set generators up to be one less than scale size
+    jQuery( '#input_rank-2_up' ).val( size - 1 );
+    // set generators up input maximum
+    jQuery( '#input_rank-2_up' ).attr({ "max" : size - 1 });
+    // zero generators down
+    jQuery( '#input_rank-2_down' ).val( 0 );
+  } );
+  */
   // Touch keyboard (#nav_play) option clicked
   jQuery( "#nav_play, #launch-kbd" ).click( function( event ) {
 
