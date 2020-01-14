@@ -25,6 +25,33 @@ function ratio_to_decimal(rawInput) {
   }
 }
 
+// convert a comma decimal (1,25) to decimal
+function commadecimal_to_decimal(rawInput) {
+  if (isCommaDecimal(rawInput)) {
+    const input = parseFloat(rawInput.toString().replace(',', '.'));
+    if (input === 0 || isNaN(input)) {
+      return false;
+    } else {
+      return input;
+	}
+  } else {
+  	alert("Invalid input: " + rawInput);
+	return false;
+  }
+}
+
+// convert a decimal (1.25) into commadecimal (1,25)
+function decimal_to_commadecimal(rawInput) {
+	if (isCents(rawInput)) { // a bit misleading
+		const input = rawInput.toString().replace('.', ',');
+		return input;
+	} else {
+		alert("Invalid input: " + rawInput);
+		return false;
+	}
+}
+
+// convert a decimal into cents
 function decimal_to_cents(rawInput) {
   if (rawInput === false) {
     return false
@@ -66,6 +93,13 @@ function isCent(rawInput) {
   return /^\d+\.\d*$/.test(input)
 }
 
+function isCommaDecimal(rawInput) {
+  // true, when the input has numbers at the beginning, followed by a comma, ending with any number of numbers
+  // for example: 1,25
+  const input = trim(toString(rawInput))
+  return /^\d+\,\d*$/.test(input);
+}
+
 function isNOfEdo(rawInput) {
   // true, when the input has numbers at the beginning and the end, separated by a single backslash
   // for example: 7\12
@@ -83,6 +117,8 @@ function isRatio(rawInput) {
 function getLineType(rawInput) {
   if (isCent(rawInput)) {
     return LINE_TYPE.CENTS
+  } else if (isCommaDecimal(rawInput)) {
+    return LINE_TYPE.DECIMAL
   } else if (isNOfEdo(rawInput)) {
     return LINE_TYPE.N_OF_EDO
   } else if (isRatio(rawInput)) {
@@ -100,6 +136,9 @@ function line_to_decimal(rawInput) {
     case LINE_TYPE.CENTS:
       converterFn = cents_to_decimal
       break
+	case LINE_TYPE.DECIMAL:
+	  converterFn = commadecimal_to_decimal
+	  break
     case LINE_TYPE.N_OF_EDO:
       converterFn = n_of_edo_to_decimal
       break
@@ -198,14 +237,14 @@ function sum_array(array, index)
 }
       
 // calculate a continued fraction for the given number
-function get_cf(num, sizelimit, roundf) {
+function get_cf(num, maxiterations, roundf) {
     var cf = [] // the continued fraction
     var digit;
     
     var roundinv = 1.0 / roundf;
     
     var iterations = 0;
-    while (iterations < sizelimit)
+    while (iterations < maxiterations)
     {
         digit = Math.floor(num);
         cf.push(digit);
@@ -224,8 +263,63 @@ function get_cf(num, sizelimit, roundf) {
     return cf;
 }
 
-// calculate rational approximations given a continued fraction
-function get_convergents(cf, numarray, denarray, perlimit)
+// calculate a single convergent for a given continued fraction
+function get_convergent(cf, depth=0) {
+
+    var cfdigit; // the continued fraction digit
+    var num; // the convergent numerator
+    var den; // the convergent denominator
+    var tmp; // for easy reciprocation
+
+	if (depth >= cf.length || depth == 0)
+		depth = cf.length;
+    
+    for (var d = 0; d < depth; d++)
+    {
+        cfdigit = cf[d];
+        num = cfdigit;
+        den = 1;
+        
+        // calculate the convergent
+        for (var i = d; i > 0; i--)
+        {
+            tmp = den;
+            den = num;
+            num = tmp;
+            num += den * cf[i - 1];
+        }
+    }
+
+	return num + '/' + den;
+}
+
+// convert a decimal to ratio (string 'x/y'), may have rounding errors for irrationals
+function decimal_to_ratio(rawInput, iterations=15, depth=0) {
+
+	if (rawInput === false)
+		return false;
+	
+	const input = parseFloat(rawInput);
+	
+	if (input === 0 || isNaN(input)) {
+		return false;
+    } 
+	else {
+		var inputcf = get_cf(input, iterations, 100000);
+		return get_convergent(inputcf, depth);
+	}
+}
+
+function cents_to_ratio(rawInput, iterations=15, depth=0) {
+	return decimal_to_ratio(cents_to_decimal(rawInput), iterations, depth);
+}
+
+function n_of_edo_to_ratio(rawInput, iterations=15, depth=0) {
+	return decimal_to_ratio(n_of_edo_to_decimal(rawInput), iterations, depth);
+}
+
+// calculate all best rational approximations given a continued fraction
+function get_convergents(cf, numarray, denarray, perlimit, cindOut=null)
 {
     var cfdigit; // the continued fraction digit
     var num; // the convergent numerator
@@ -269,6 +363,14 @@ function get_convergents(cf, numarray, denarray, perlimit)
         numarray.push(num);
         denarray.push(den);
     }
+
+	if (!(cindOut===null)) 
+	{
+		for (var i = 0; i < cind.length; i++)
+		{
+			cindOut.push(cind[i]);
+		}
+	}
 
     //for (var i = 0; i < denarray.length; i++)
     //  console.log(numarray[i]+"/"+denarray[i]);
@@ -340,6 +442,382 @@ function show_mos_cf(per, gen, ssz, threshold) {
      
     jQuery("#info_rank_2_mos").text(dd.join(", "));
 }
+                 
+// helper function to simply pass in an interval and get an array of ratios returned
+function get_rational_approximations(intervalIn, numerators, denominators, roundf=999999,
+                                     cidxOut=null, ratiosOut=null, numlimits=null, denlimits=null, ratiolimits=null) {
+    
+    var cf = []; // continued fraction
+
+    cf = get_cf(intervalIn, 15, roundf);
+    get_convergents(cf, numerators, denominators, roundf, cidxOut);
+    
+    var doRatios = !(ratiosOut===null);
+    var doNumLim = !(numlimits===null);
+    var doDenLim = !(denlimits===null);
+    var doRatioLim = !(ratiolimits===null);
+                 
+    if (doRatios|| doNumLim || doDenLim || doRatioLim) {
+        var nlim;
+        var dlim;
+        var rlim;
+
+        for (var i = 0; i < numerators.length; i++) {
+            numerators[i] == 1 ? nlim = 1 : nlim = get_prime_limit(numerators[i]);
+            denominators[i] == 1 ? dlim = 1 : dlim = get_prime_limit(denominators[i]);
+
+            if (doRatios)
+                ratiosOut.push(numerators[i]+"/"+denominators[i]);
+            if (doNumLim)
+                numlimits.push(nlim);
+            if (doDenLim)
+                denlimits.push(dlim);
+            if (doRatioLim)
+                ratiolimits.push(Math.max(nlim, dlim));
+        }
+    }
+}
+
+// rank2 scale algorithm intended for integers, in ET contexts
+// for example, period = 12, gen = 7 : [ 2 2 1 2 2 2 1 ]
+function get_rank2_mode(period, generator, size, numdown=0) {
+	let degrees = [];
+	let modeOut = [];
+	var interval;
+
+	interval = generator * -(numdown + 1);
+	for (var n = 0; n < size; n++) {
+		interval += generator;
+		while (interval < 0) {
+			interval += period;
+		}
+		if (interval >= period) {
+			interval %= period;
+		}
+
+		degrees.push(interval);
+	}
+
+	degrees.sort(function(a, b) { return a-b });
+	for (var n = 1; n < degrees.length; n++) {
+		modeOut.push(degrees[n] - degrees[n-1]);
+	}
+
+	modeOut.push(period - degrees[degrees.length-1]);
+
+	return modeOut;
+}
+
+// returns an array representing the prime factorization
+// indicies are the 'nth' prime, the value is the powers of each prime
+function get_prime_factors(number) {
+    number = Math.floor(number);
+    if (number == 1) {
+        //alert("Warning: 1 has no prime factorization.");
+        return 1;
+     }
+    var factorsout = [];
+    var n = number;
+    var q = number;
+    var loop;
+                 
+    for (var i = 0; i < PRIMES.length; i++) {
+        if (PRIMES[i] > n)
+            break;
+                 
+         factorsout.push(0);
+                 
+        if (PRIMES[i] == n) {
+            factorsout[i]++;
+            break;
+        }
+                 
+        loop = true;
+         
+        while (loop) {
+            q = n / PRIMES[i];
+        
+            if (q == Math.floor(q)) {
+                n = q;
+                factorsout[i]++;
+                continue;
+            }
+            loop = false;
+         }
+     }
+    
+    return factorsout;
+}
+                 
+function get_prime_factors_string(number) {
+     var factors = get_prime_factors(number);
+     var str_out = "";
+                 
+     for (var i = 0; i < factors.length; i++) {
+                 
+         if (factors[i] != 0) {
+            str_out += PRIMES[i] + "^" + factors[i];
+                 
+            if (i < factors.length - 1)
+                str_out += " * ";
+         }
+     }
+    return str_out;
+ }
+                 
+ function isPrime(number) {
+    var sqrtnum = Math.floor(Math.sqrt(number));
+    
+    for (var i = 0; i < PRIMES.length; i++)
+    {
+        if (PRIMES[i] >= sqrtnum)
+            break;
+    
+        if (number % PRIMES[i] == 0) {
+            return false;
+        }
+    }
+    return true;
+ }
+                 
+function prevPrime(number)
+{
+	if (number < 2)
+		return 2;
+    var i = 0;
+    while (i < PRIMES.length && PRIMES[i++] <= number);
+    return PRIMES[i - 2];
+}
+                 
+function nextPrime(number)
+{
+	if (number < 2)
+		return 2;
+     var i = 0;
+     while (i < PRIMES.length && PRIMES[i++] <= number);
+     return PRIMES[i - 1];
+}
+
+function closestPrime(number)
+{
+	var thisPrime = isPrime(number);
+	
+	if (number < 2)
+		return 2;
+	else if (thisPrime)
+		return number;
+
+	var np = nextPrime(number);
+	var pp = prevPrime(number);
+
+	if (Math.abs(np - number) < Math.abs(pp - number))
+		return np;
+	else
+		return pp;
+}
+                 
+function scrollToPrime(number, scrollDown)
+{
+    if (scrollDown)
+        return prevPrime(number);
+    else
+        return nextPrime(number);
+}
+                 
+function get_prime_limit(number) {
+    var factors = get_prime_factors(number);
+    return PRIMES[factors.length - 1];
+ }
+                 
+ function get_prime_limit_of_ratio(numerator, denominator) {
+    return Math.max(get_prime_limit(numerator), get_prime_limit(denominator));
+ }
+
+ function isLinearlyIndependent(arrayOfVectors) {
+	var hasnext = true;
+	var isIndependent = true;
+	var i = 0;
+	while(hasnext) {
+		hasnext = false;
+		var sum = 0;
+		for (var v = 0; v < arrayOfVectors.length; v++) {
+			let vector = arrayOfVectors[v];
+			if (i < vector.length) {
+				if (i < vector.length - 1)
+					hasnext = true;
+				if (vector[i] > 0)
+					sum += 1;
+			}
+		}
+		if (sum > 1) {
+			isIndependent = false;
+			break;
+		}
+		i++;
+	}
+	return isIndependent;
+ }
+
+ // returns an array of integers that share no common factors to the given integer
+  function get_coprimes(number) {
+ 	 let coprimes = [1];
+	 var numpf = get_prime_factors(number);
+
+	  // not sure if a recursive based method would be more efficent
+	 for (var n = 2; n < number; n++) {
+	 	 var iscoprime = isLinearlyIndependent([numpf, get_prime_factors(n)]);
+		 if (iscoprime)
+			coprimes.push(n);
+	 }
+	 
+	 return coprimes;
+ }
+
+ // returns an array of integers that can divide evenly into given number
+ function get_factors(number) {
+ 	 let factors = [];
+	 var nsqrt = Math.floor(Math.sqrt(number));
+
+	 for (var n = 2; n <= nsqrt; n++) {
+		var q = number / n;
+	 	if (Math.floor(q) == q) {
+			factors.push(n);
+			if (n != q)
+				factors.push(q);
+		}
+	 }
+
+	 return factors.sort(function(a, b) { return a-b });;
+ }
+
+ // returns array of the numerator and denominator of the reduced form of given ratio
+ function reduce_ratio(numerator, denominator) { 
+	var num_pf = get_prime_factors(numerator);
+	var den_pf = get_prime_factors(denominator);
+	let r_pf = [];
+	var maxlength = Math.max(num_pf.length, den_pf.length);
+	for(var i = 0; i < maxlength; i++) {
+		var sum = 0;
+
+		if (i < num_pf.length) {
+			sum = num_pf[i];
+		}
+
+		if (i < den_pf.length) {
+			sum -= den_pf[i];
+		}
+
+		r_pf.push(sum);
+	}
+
+	var nn = 1;
+	var dd = 1;
+
+	for (var i = 0; i < maxlength; i++) {
+		if (r_pf[i] > 0)
+			nn *= Math.pow(PRIMES[i], r_pf[i]);
+		else
+			dd *= Math.pow(PRIMES[i], r_pf[i] * -1);
+	}
+
+	return [nn, dd];
+ }
+
+ function get_lcm(array) {
+ 	 let primecounts = [];
+	 let primefactors = [];
+	 var f;
+	 array.forEach(function(item, index, array) {
+		f = get_prime_factors(item);
+		primefactors.push(f);
+	 });
+	 
+	 var maxlength = 0;
+	 primefactors.forEach(function(item, index, array) {
+		if (item.length > maxlength)
+			maxlength = item.length;
+	 });
+
+	 // find the min power of each primes in numbers' factorization
+	 for (var p = 0; p < maxlength; p++) {
+		primecounts.push(0);
+		 for (var n = 0; n < primefactors.length; n++) {
+			f = primefactors[n];
+			if (p < f.length) {
+				if (primecounts[p] < f[p])
+					primecounts[p] = f[p];
+			}
+		 }	 
+	 }
+
+	 let lcm = 1;
+	 primecounts.forEach(function(item, index) {
+		lcm *= Math.pow(PRIMES[index], item);
+	 });
+
+	 return lcm;
+}
+
+ function invert_chord(chord) {
+	if (!/^(\d+:)+\d+$/.test(chord)) {
+		alert("Warning: invalid chord " + chord);
+		return false;
+	}
+
+	let inverted = chord;
+	let intervals = chord.split(":").map(x => parseInt(x));
+	let steps = [];
+	intervals.forEach(function(item, index, array) {
+		if (index > 0) {
+			steps.push([item, array[index-1]]);
+		}
+	})
+	steps.reverse();
+	intervals = [[1, 1]];
+	
+	let denominators = [];
+	steps.forEach(function(item, index) {
+		var reduced_interval = reduce_ratio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
+		intervals.push(reduced_interval);
+		denominators.push(reduced_interval[1]);
+	});
+	
+	var lcm = get_lcm(denominators);
+
+	chord = [];
+	intervals.forEach(function(x) {
+		chord.push(x[0] * lcm / x[1]);
+	});
+
+	return chord.join(":");
+ }
+
+ function generate_mos_modes_test(period)
+ {
+	var sizefactors = get_factors(period);
+	sizefactors.push(period);
+	debug("Printing all modes of size " + period + " and its factors\' modes:" + sizefactors.join(" "));
+	for (var f = 0; f < sizefactors.length; f++) {
+	var cp = get_coprimes(sizefactors[f]);
+		for (var i = 0; i < cp.length; i++) {
+			var nn = [];
+			var dd = [];
+			var cind = [];
+			get_rational_approximations(cp[i] / sizefactors[f], nn, dd, 99999, cind);
+			debug(cp[i]+"\\"+sizefactors[f]+" modes, with mos sizes of: " + dd.join(" "));
+			var ll = true ? dd.length : cind.length;
+			for (var m = 1; m < ll; m++) {
+				var ddd = ll == dd.length ? dd[m] : dd[cind[m]];
+				var mode = get_rank2_mode(sizefactors[f], cp[i], ddd);
+				var factor = period / sizefactors[f];
+				mode.forEach(function(item, index) {
+					mode[index] = item * factor;
+				});
+				debug(sizefactors[f]+" | "+cp[i]+" | "+ddd+"\t: " + mode.join(" "));
+			}
+		}
+	}
+ }
 
 function debug(msg = "") {
   if (debug_enabled) {

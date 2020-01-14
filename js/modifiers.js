@@ -341,3 +341,121 @@ function modify_key_transpose() {
   return true;
   */
 }
+
+// approximate rationals
+function modify_replace_with_approximation () {
+    
+    var degree_selected = parseInt(jQuery( "#input_scale_degree" ).val());
+    
+    if (degree_selected < tuning_table.note_count) {
+        var tuning_data = document.getElementById("txt_tuning_data");
+        var lines = tuning_data.value.split(newlineTest);
+
+        var aprxs = document.getElementById("approximation_selection");
+        var approximation = aprxs.options[aprxs.selectedIndex].text;
+        approximation = approximation.slice(0, approximation.indexOf("|")).trim();
+        
+        if (degree_selected - 1 < lines.length && line_to_decimal(approximation)) {
+            lines[degree_selected-1] = approximation;
+        } else {
+            lines.push(approximation);
+		}
+
+        var lines_to_text = "";
+        lines.forEach(function(item, index, array) {
+            lines_to_text += lines[index];
+			if (index + 1 < array.length) 
+				lines_to_text += newline;
+        })
+        tuning_data.value = lines_to_text;
+		
+        parse_tuning_data();
+        
+        if (degree_selected < tuning_table.note_count - 1) {
+            jQuery( "#input_scale_degree" ).val(degree_selected + 1);
+            jQuery( "#input_scale_degree" ).trigger("change");
+        }
+        // success
+        return true;
+    }
+    
+    // invalid scale degree
+    return false;
+}
+
+// update list of rationals to choose from
+function modify_update_approximations() {
+    
+    $("#approximation_selection").empty();
+
+    if (!(isEmpty(current_approximations))) {
+        
+        var interval = line_to_decimal( jQuery ("#input_interval_to_approximate").val() );
+        var mincentsd = parseFloat( jQuery ( "#input_min_error").val() );
+        var maxcentsd = parseFloat( jQuery ( "#input_max_error").val() );
+        var minprime = parseInt( jQuery (" #input_approx_min_prime").val() );
+        var maxprime = parseInt( jQuery (" #input_approx_max_prime").val() );
+        var semiconvergents = !document.getElementById("input_show_convergents").checked;
+        
+        if (minprime < 2) {
+            minprime = 2;
+            jQuery("#input_approx_min_prime").val(2);
+        }
+        
+        if (maxprime > 7919) {
+            maxprime = 7919;
+            jQuery("#input_approx_max_prime").val(7919);
+        }
+    
+        if (mincentsd < 0)
+            mincentsd = 0;
+        
+        if (maxcentsd < 0)
+            maxcentsd = 0;
+        
+        var menulength = (semiconvergents) ? current_approximations.ratios.length : current_approximations.convergent_indicies.length;
+        var index;
+
+        for (var i = 0; i < menulength; i++)
+        {
+            index = (semiconvergents) ? i : current_approximations.convergent_indicies[i];
+            
+            var n = parseInt(current_approximations.numerators[index]);
+            var d = parseInt(current_approximations.denominators[index]);
+            var prime_limit = current_approximations.ratio_limits[index];
+
+            var fraction_str = current_approximations.ratios[index];
+            var fraction = n / d;
+            
+            var cents_deviation = decimal_to_cents(fraction) - decimal_to_cents(interval);
+            var centsdabs = Math.abs(cents_deviation);
+            var cents_rounded = Math.round(10e6 * cents_deviation) / 10e6;
+
+            var centsdsgn;
+            if (cents_deviation / centsdabs >= 0)
+                centsdsgn = "+";
+            else
+                centsdsgn = "";
+        
+            var description = fraction_str+ " | " + centsdsgn + cents_rounded.toString() + "c | " + prime_limit + "-limit";
+
+            if (!interval) {
+                $("#approximation_selection").append("<option selected disabled>Error: Invalid interval</option>");
+                break;
+            } else if (interval == fraction && interval) {  // for cases like 1200.0 == 2/1
+                $("#approximation_selection").append("<option>"+description+"</option>");
+                break;
+            } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
+                $("#approximation_selection").append("<option>"+description+"</option>");
+            } else {
+                //debug("Option excluded: " + description);
+            }
+        }
+                
+        if (document.getElementById("approximation_selection").options.length === 0) {
+            semiconvergents ?
+                $("#approximation_selection").append("<option selected disabled> None found, try to raise error tolerances.</option>") :
+                $("#approximation_selection").append("<option selected disabled> Try to  \"Show next best approximations\" or edit filters.</option>")
+        }
+    }
+}
