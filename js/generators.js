@@ -220,24 +220,47 @@ function generate_subharmonic_series_segment_data(lo, hi) {
   return ratios.join(unix_newline)
 }
 
-function enumerate_chord() {
+function generate_enumerate_chord() {
 
   var chord = getString('#input_chord', 'Warning: bad input');
-  var preserve_cents = document.getElementById( "input_preserve_cents" ).checked;
+  let chordStr = chord;
+
+  var convert_to_ratios = document.getElementById( "input_convert_to_ratios" ).checked;
 
   // It doesn't make much sense to mix different values, 
   // but it's cool to experiment with.
 
-  // bail if has invalid characters
-  var inputTest = chord.replace(" ", "").split();
+  // bail if has invalid
+  var inputTest = chord.replace(" ", "").replace("(", "").replace(")", "").split(":");
+  if (inputTest.length < 2) {
+  	  alert("Warning: Chord needs more than one pitch of the form A:B:C...");
+	  return false;
+  }
   for (var i = 0; i < inputTest.length; i++) {
-	  if (/^\d+[\.\,\\\/]*\d*$/.test(inputTest[i])) {
-		alert("Warning: Invalid pitch" + inputTest[i])
+		var eval = inputTest[i];
+		if (/^\d+$/.test(eval))
+			eval += ",";
+		eval = line_to_decimal(eval);
+	  if (eval == 0 || !/(^\d+([\,\.]\d*)?|([\\\/]\d+)?$)*/.test(eval)) {
+		alert("Warning: Invalid pitch " + inputTest[i])
 		return false;
 	  }
   }
 
-  var pitches = chord.split(":");
+  // check if it's a tonal inversion
+  // ex: 1/(A:B:C...)
+  var isInversion = document.getElementById("input_invert_chord").checked;
+  if (isInversion)
+	chordStr = "1/(" + chord + ")";
+  if (/^\d+\/\(.*$/.test(chord)) {
+	  if (/^1\/\((\d+\:)+\d+\)$/.test(chord)) {
+		  isInversion = true;
+		  chord = chord.substring(3, chord.length-1);
+	  } else {
+		  alert("Warning: inversions need to match this syntax: 1/(A:B:C...)");
+		  return false;
+	  }
+  }
 
   // This next safeguard might make it more user friendy,
   // but I think it's a bit limiting for certain purposes a more advanced
@@ -249,9 +272,21 @@ function enumerate_chord() {
   //  return false;
   //}
 
-  setScaleName("Chord " + chord);
+  if (isInversion) {
+  	  debug("This is an inversion. Chord is " + chord);
+  	  chord = invert_chord(chord);
+	  debug("Chord returned: " + chord);
+	  chordStr += (" (" + chord + ") "); 
+	  debug("str = " + chordStr);
+  }
 
-  setTuningData(enumerate_chord_data(pitches, preserve_cents));
+  var pitches = chord.split(":");
+
+  // TODO: if pitches are not harmonics but "convert_to_ratios" is true,
+  // update name with proper harmonics format
+  setScaleName("Chord " + chordStr);
+
+  setTuningData(generate_enumerate_chord_data(pitches, convert_to_ratios));
 
   parse_tuning_data();
 
@@ -261,7 +296,7 @@ function enumerate_chord() {
   return true;
 }
 
-function enumerate_chord_data(pitches, preserveCents=true) {
+function generate_enumerate_chord_data(pitches, convertToRatios=false) {
   let ratios = [];
   var fundamental = 1;
 
@@ -277,7 +312,7 @@ function enumerate_chord_data(pitches, preserveCents=true) {
     var parsed = line_to_decimal(pitches[i]);
 
     if (i > 0) {
-	  if (isCentsValue && preserveCents) {
+	  if (isCentsValue && !convertToRatios) {
 	  	ratios.push(pitches[i])
 	  } else {
 		ratios.push(decimal_to_ratio(parsed / fundamental));

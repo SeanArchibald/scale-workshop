@@ -310,6 +310,10 @@
                         <textarea id="input_key_colors" class="form-control" placeholder="white black white white black white black white white black white black" title="Examples: black grey white red green blue palevioletred antiquewhite steelblue olive">white black white white black white black white white black white black</textarea>
                         <input name="Auto" id="btn_key_colors_auto" type="button" value="Auto" class="btn btn-default pull-right" title="Automatically colour keys based on your scale size. Auto colouring is not optimal but a good starting point."></input>
                       </div>
+		      <div class="form-group">
+			<label> MOS Mode Layouts </label>
+		      	<select id="input_select_key_colors_coprime" class="form-control"></select>
+		      </div> 
                     </form>
                   </div>
                 </div>
@@ -418,8 +422,13 @@
         <div class="form-group">
           <input id="input_chord" name="" type="text" class="form-control" value="4:5:6:7:8"></input>
         </div>
+        <div class="form-group">
+            <label>
+                <input id="input_invert_chord" type="checkbox"></input> Invert chord 
+            </label>
+        </div>
         <label>
-            <input id="input_preserve_cents" type="checkbox" checked="checked"></input> Preserve cents values
+            <input id="input_convert_to_ratios" type="checkbox"></input> Convert all to ratios
         </label>
       </form>
     </div>
@@ -555,12 +564,11 @@
             <div class="form-row">
             <div class="form-group col-md-6">
                 <label>Min Prime Limit</label>
-                <input id="input_approx_min_prime" name="" type="number" class="form-control" value="2" min="2" max="7919"></input>
+                <input id="input_approx_min_prime" name="" type="number" class="form-control" value="2" min="0" max="7919"></input>
             </div>
             <div class="form-group col-md-6">
-
                 <label>Max Prime Limit</label>
-                <input id="input_approx_max_prime" name="" type="number" class="form-control" value="31" min="2" max="7919"></input>
+                <input id="input_approx_max_prime" name="" type="number" class="form-control" value="31" min="0" max="7919"></input>
             </div>
         </div>
       </form>
