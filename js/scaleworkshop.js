@@ -9,6 +9,9 @@ jQuery(window).on('popstate', function() {
   location.reload(true);
 });
 
+if (window.location.hostname.endsWith('.github.com') || window.location.hostname.endsWith('sevish.com')) {
+  redirectToHTTPS()
+}
 
 /**
  * GLOBALS

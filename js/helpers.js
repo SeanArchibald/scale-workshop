@@ -910,3 +910,11 @@ function tap(fn, value) {
   fn(value)
   return value
 }
+
+// redirect all traffic to https, if not there already
+// source: https://stackoverflow.com/a/4723302/1806628
+function redirectToHTTPS() {
+  if (location.protocol !== 'https:') {
+    location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+  }
+}
