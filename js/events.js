@@ -1,4 +1,4 @@
-/*
+﻿/*
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
@@ -437,7 +437,8 @@ jQuery( document ).ready( function() {
          var s = parseInt($("#modal_modify_mos_size").val());
          var r = parseInt($("#modal_modify_mos_rotation").val());
         console.log(p +", "+ g+", " + s+", " + r)
-         let mode = get_rank2_mode(p, g, s, r);
+         let mode = get_rank2_mode(p, g, s, 0);
+	 rotate(mode, r);
          $("#input_modify_mode").val(mode.join(" "));
      }
     

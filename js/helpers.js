@@ -235,6 +235,23 @@ function sum_array(array, index)
 
     return sum;
 }
+
+// rotates the array by given steps
+function rotate(array, steps)
+{
+    var i = Math.abs(steps);
+    while (i > 0) {
+	var x;
+        if (steps < 0) {
+            x = array.shift();
+	    array.push(x);
+	} else if (steps > 0) {
+	    x = array.pop();
+	    array.unshift(x);
+	}
+	i--;
+    }
+} 
       
 // calculate a continued fraction for the given number
 function get_cf(num, maxiterations, roundf) {
