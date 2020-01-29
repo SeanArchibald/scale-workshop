@@ -146,7 +146,7 @@ function modify_mode() {
   // mode_type will be either intervals (e.g. 2 2 1 2 2 2 1) or from_base (e.g. 2 4 5 7 9 11 12)
   var mode_type = jQuery("#modal_modify_mode input[type='radio']:checked").val();
 
-  if ( mode_type == "intervals" ) {
+  if ( mode_type == "intervals" || mode_type == "mos") {
 
     // get the total number of notes in the mode
     var mode_sum = mode.reduce(function(a, b) { return a + b; }, 0);

@@ -497,7 +497,7 @@ function get_rank2_mode(period, generator, size, numdown=0) {
 		if (interval >= period) {
 			interval %= period;
 		}
-
+        console.log('pusshing ' + interval);
 		degrees.push(interval);
 	}
 
@@ -636,44 +636,25 @@ function get_prime_limit(number) {
     return Math.max(get_prime_limit(numerator), get_prime_limit(denominator));
  }
 
- function isLinearlyIndependent(arrayOfVectors) {
-	var hasnext = true;
-	var isIndependent = true;
-	var i = 0;
-	while(hasnext) {
-		hasnext = false;
-		var sum = 0;
-		for (var v = 0; v < arrayOfVectors.length; v++) {
-			let vector = arrayOfVectors[v];
-			if (i < vector.length) {
-				if (i < vector.length - 1)
-					hasnext = true;
-				if (vector[i] > 0)
-					sum += 1;
-			}
-		}
-		if (sum > 1) {
-			isIndependent = false;
-			break;
-		}
-		i++;
-	}
-	return isIndependent;
- }
-
  // returns an array of integers that share no common factors to the given integer
-  function get_coprimes(number) {
- 	 let coprimes = [1];
-	 var numpf = get_prime_factors(number);
-
-	  // not sure if a recursive based method would be more efficent
-	 for (var n = 2; n < number; n++) {
-	 	 var iscoprime = isLinearlyIndependent([numpf, get_prime_factors(n)]);
-		 if (iscoprime)
-			coprimes.push(n);
-	 }
-	 
-	 return coprimes;
+ function get_coprimes(number) {
+    let coprimes = [1];
+    var m, d, t;
+    for (var i = 2; i < number - 1; i++) {
+        m = number;
+        d = i;
+        while (d > 1) {
+            m = m % d;
+            t = d;
+            d = m;
+            m = t;
+        }
+        if (d > 0) {
+            coprimes.push(i);
+        }
+    }
+    coprimes.push(number-1);
+    return coprimes;
  }
 
  // returns an array of integers that can divide evenly into given number

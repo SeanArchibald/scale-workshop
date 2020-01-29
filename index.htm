@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   ____            _
  / ___|  ___ __ _| | ___
  \___ \ / __/ _` | |/ _ \
@@ -493,6 +493,24 @@
           </div>
           <div class="radio">
             <label><input type="radio" name="mode_type" value="frombase">From base note (e.g. 2 4 5 7 9 11 12)</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="mode_type" value="mos">MOS Mode (select a degree to stack)</label>
+          </div>
+          <div id="mos_mode_options">
+           <div class="form-row">
+            <div class="form-group col-md-6">
+              <label> Degree </label>
+              <select class="form-control" id="modal_modify_mos_degree"></select>
+            </div>
+            <div class="form-group col-md-6">
+              <label> Size </label>
+              <select class="form-control" id="modal_modify_mos_size"></select>
+            </div>
+           </div>
+           <div class="form-row">
+               <label>Rotation</label> <input id="modal_modify_mos_rotation" type="number" min="-400" max="400" value="0">
+           </div>
           </div>
         </div>
       </form>

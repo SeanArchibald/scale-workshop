@@ -211,6 +211,9 @@ jQuery( document ).ready( function() {
   jQuery( "#modify_mode" ).click( function( event ) {
 
     event.preventDefault();
+    // setup MOS options, and hide
+    update_modify_mode_mos_generators();
+    show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value);
     jQuery( "#input_modify_mode" ).select();
     jQuery( "#modal_modify_mode" ).dialog({
       modal: true,
@@ -407,6 +410,56 @@ jQuery( document ).ready( function() {
     jQuery( "#input_approx_max_prime").val(PRIMES[prime_counter[1]]);
     modify_update_approximations();
   })
+                                                
+    // shows or hides MOS mode selection boxes
+    function show_modify_mode_mos_options(showOptions) {
+      document.getElementById("mos_mode_options").style.display = showOptions == "mos" ?  'block' : 'none';
+    }
+                         
+    jQuery( "#modal_modify_mode").change( function() {
+        show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+    })
+
+    function update_modify_mode_mos_generators() {
+        show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+        let coprimes = get_coprimes(tuning_table.note_count-1);
+        $("#modal_modify_mos_degree").empty();
+        for (var d=1; d < coprimes.length-1; d++) {
+            var num = coprimes[d];
+           $("#modal_modify_mos_degree").append('<option value="'+num+'">'+num+'</option>');
+        }
+                                            
+     }
+    
+     function modify_mode_update_mos_scale() {
+         var p = tuning_table.note_count-1;
+         var g = parseInt($("#modal_modify_mos_degree").val());
+         var s = parseInt($("#modal_modify_mos_size").val());
+         var r = parseInt($("#modal_modify_mos_rotation").val());
+        console.log(p +", "+ g+", " + s+", " + r)
+         let mode = get_rank2_mode(p, g, s, r);
+         $("#input_modify_mode").val(mode.join(" "));
+     }
+    
+    jQuery( "#modal_modify_mos_degree").change( function() {
+        let nn = [];
+        let dd = [];
+        var gp = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
+        get_rational_approximations(gp, nn, dd);
+        $("#modal_modify_mos_size").empty();
+        for (var d=2; d < dd.length-1; d++) {
+           var num = dd[d];
+           $("#modal_modify_mos_size").append('<option value="'+num+'">'+num+'</option>');
+        }
+    })
+                         
+    jQuery( "#modal_modify_mos_size").change( function() {
+        modify_mode_update_mos_scale();
+    })
+                         
+     jQuery( "#modal_modify_mos_rotation").change( function() {
+        modify_mode_update_mos_scale();
+     })
                         
   /*
     // rank-2 temperament generator - scale size changed
