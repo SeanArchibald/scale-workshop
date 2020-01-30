@@ -792,33 +792,6 @@ function get_prime_limit(number) {
 	return chord.join(":");
  }
 
- function generate_mos_modes_test(period)
- {
-	var sizefactors = get_factors(period);
-	sizefactors.push(period);
-	debug("Printing all modes of size " + period + " and its factors\' modes:" + sizefactors.join(" "));
-	for (var f = 0; f < sizefactors.length; f++) {
-	var cp = get_coprimes(sizefactors[f]);
-		for (var i = 0; i < cp.length; i++) {
-			var nn = [];
-			var dd = [];
-			var cind = [];
-			get_rational_approximations(cp[i] / sizefactors[f], nn, dd, 99999, cind);
-			debug(cp[i]+"\\"+sizefactors[f]+" modes, with mos sizes of: " + dd.join(" "));
-			var ll = true ? dd.length : cind.length;
-			for (var m = 1; m < ll; m++) {
-				var ddd = ll == dd.length ? dd[m] : dd[cind[m]];
-				var mode = get_rank2_mode(sizefactors[f], cp[i], ddd);
-				var factor = period / sizefactors[f];
-				mode.forEach(function(item, index) {
-					mode[index] = item * factor;
-				});
-				debug(sizefactors[f]+" | "+cp[i]+" | "+ddd+"\t: " + mode.join(" "));
-			}
-		}
-	}
- }
-
 function debug(msg = "") {
   if (debug_enabled) {
     msg = isEmpty(msg) ? "Debug" : msg;
