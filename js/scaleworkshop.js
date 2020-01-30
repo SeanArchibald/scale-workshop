@@ -22,7 +22,7 @@ const unix_newline = '\n'
 var tuning_table = {
   scale_data: [], // an array containing list of intervals input by the user
   tuning_data: [], // an array containing the same list above converted to decimal format
-  note_count: 0, // number of values stored in tuning_data
+  note_count: 0, // number of val	ues stored in tuning_data
   freq: [], // an array containing the frequency for each MIDI note
   cents: [], // an array containing the cents value for each MIDI note
   decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
@@ -41,7 +41,7 @@ var current_approximations = {
     denominator_limits: [], // the prime limit of each denominator
     ratio_limits: [] // the prime limit of each ratio
 }
-var prime_counter = [0, 10];
+var prime_counter = [0, 10]; // used for the prime number boxes in Approximate
 var debug_enabled = true;
 
 /**
