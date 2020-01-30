@@ -1,4 +1,4 @@
-﻿/*
+/*
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
@@ -417,22 +417,26 @@ jQuery( document ).ready( function() {
     function show_modify_mode_mos_options(showOptions) {
       document.getElementById("mos_mode_options").style.display = showOptions == "mos" ?  'block' : 'none';
     }
-                         
+    
     jQuery( "#modal_modify_mode").change( function() {
         show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
     })
 
+    // repopulates the available degrees for selection
     function update_modify_mode_mos_generators() {
         show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
         let coprimes = get_coprimes(tuning_table.note_count-1);
         $("#modal_modify_mos_degree").empty();
         for (var d=1; d < coprimes.length-1; d++) {
             var num = coprimes[d];
-           $("#modal_modify_mos_degree").append('<option value="'+num+'">'+num+'</option>');
+            var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
+            var text = num + " (" + cents + "c)";
+           $("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
         }
                                             
      }
     
+     // calculate the MOS mode and insert it in the mode input box
      function modify_mode_update_mos_scale() {
          var p = tuning_table.note_count-1;
          var g = parseInt($("#modal_modify_mos_degree").val());
@@ -441,6 +445,7 @@ jQuery( document ).ready( function() {
          $("#input_modify_mode").val(mode.join(" "));
      }
     
+    // update the available sizes for selection
     jQuery( "#modal_modify_mos_degree").change( function() {
         let nn = [];
         let dd = [];
@@ -453,17 +458,20 @@ jQuery( document ).ready( function() {
         }
     })
                          
+    // update mode when size is selected
     jQuery( "#modal_modify_mos_size").change( function() {
         modify_mode_update_mos_scale();
     })
-                         
-     jQuery( "#input_mode_step_left").click( function() {
+    
+    // move the mode steps back one
+    jQuery( "#input_mode_step_left").click( function() {
 		var mode = jQuery( "#input_modify_mode" ).val().split(" ");
 		rotate(mode, -1);
 		jQuery( "#input_modify_mode" ).val(mode.join(" "));
      })
 
-	 jQuery( "#input_mode_step_right").click( function() {
+    // move the mode steps forward one
+    jQuery( "#input_mode_step_right").click( function() {
 		var mode = jQuery( "#input_modify_mode" ).val().split(" ");
 		rotate(mode, 1);
 		jQuery( "#input_modify_mode" ).val(mode.join(" "));
