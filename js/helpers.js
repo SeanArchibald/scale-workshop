@@ -514,7 +514,6 @@ function get_rank2_mode(period, generator, size, numdown=0) {
 		if (interval >= period) {
 			interval %= period;
 		}
-        console.log('pusshing ' + interval);
 		degrees.push(interval);
 	}
 
