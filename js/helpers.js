@@ -505,9 +505,8 @@ function get_rank2_mode(period, generator, size, numdown=0) {
 	let modeOut = [];
 	var interval;
 
-	interval = generator * -(numdown + 1);
+	interval = generator * -numdown;
 	for (var n = 0; n < size; n++) {
-		interval += generator;
 		while (interval < 0) {
 			interval += period;
 		}
@@ -515,6 +514,7 @@ function get_rank2_mode(period, generator, size, numdown=0) {
 			interval %= period;
 		}
 		degrees.push(interval);
+		interval += generator;
 	}
 
 	degrees.sort(function(a, b) { return a-b });
