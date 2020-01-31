@@ -22,24 +22,24 @@
   <meta property="og:title" content="Scale Workshop" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="http://sevish.com/scaleworkshop/" />
-  <meta property="og:image" content="http://sevish.com/scaleworkshop/assets/img/scale-workshop-og-image.png" />
+  <meta property="og:image" content="http://sevish.com/scaleworkshop/src/assets/img/scale-workshop-og-image.png" />
   <meta property="og:description"
     content="Scale Workshop is a tool that allows you to create microtonal tunings within your web browser. You can export these tunings to your device and use them to tune various synthesizers." />
   <meta property="og:site_name" content="Sevish Music" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="lib/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="lib/jquery-ui-1.12.1/jquery-ui.min.css">
-  <link rel="stylesheet" href="lib/socicon/style.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/style-dark.css">
+  <link rel="stylesheet" href="src/lib/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="src/lib/jquery-ui-1.12.1/jquery-ui.min.css">
+  <link rel="stylesheet" href="src/lib/socicon/style.css">
+  <link rel="stylesheet" href="src/css/style.css">
+  <link rel="stylesheet" href="src/css/style-dark.css">
 
   <!-- Favicon -->
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
-  <link rel="manifest" href="assets/favicon/manifest.json">
-  <link rel="mask-icon" href="assets/favicon/safari-pinned-tab.svg" color="#9bd03b">
+  <link rel="apple-touch-icon" sizes="180x180" href="src/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="src/assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="src/assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="src/assets/favicon/manifest.json">
+  <link rel="mask-icon" href="src/assets/favicon/safari-pinned-tab.svg" color="#9bd03b">
   <meta name="theme-color" content="#ffffff">
 </head>
 
@@ -47,7 +47,7 @@
   <div id="splash">
     <div id="splash-center">
       <noscript>
-        <img src="assets/img/scale-workshop-og-image.png" />
+        <img src="src/assets/img/scale-workshop-og-image.png" />
         <p class="lead" style="padding:1em;">JavaScript is disabled in your browser. Please enable JavaScript to use
           Scale Workshop.</p>
       </noscript>
@@ -152,7 +152,7 @@
             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-info-sign"
                 aria-hidden="true"></span> About <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="#" id="about_scale_workshop"><img src="assets/favicon/android-chrome-192x192.png"
+              <li><a href="#" id="about_scale_workshop"><img src="src/assets/favicon/android-chrome-192x192.png"
                     style="height:1em; width:auto;" /> About Scale Workshop</a></li>
               <li><a href="https://github.com/SeanArchibald/scale-workshop" target="_blank"><span
                     class="glyphicon glyphicon-book" aria-hidden="true"></span> GitHub</a></li>
@@ -689,7 +689,7 @@
 
   <!-- About Scale Workshop modal -->
   <div id="modal_about_scale_workshop" class="modal text-center" title="About Scale Workshop">
-    <img src="assets/favicon/android-chrome-192x192.png" style="margin-top: 2em;" />
+    <img src="src/assets/favicon/android-chrome-192x192.png" style="margin-top: 2em;" />
     <h2 id="about_version"></h2>
     <p><em>Because there are more than 12 notes</em></p>
     <hr />
@@ -794,28 +794,28 @@
 
 
   <!-- Dependencies -->
-  <script src="lib/jquery-3.2.1.min.js"></script>
-  <script src="lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-  <script src="lib/jquery-ui-1.12.1/external/jquery/jquery.js"></script>
-  <script src="lib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
-  <script src="lib/eventemitter3.js"></script>
+  <script src="src/lib/jquery-3.2.1.min.js"></script>
+  <script src="src/lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <script src="src/lib/jquery-ui-1.12.1/external/jquery/jquery.js"></script>
+  <script src="src/lib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+  <script src="src/lib/eventemitter3.js"></script>
 
   <!-- Scale Workshop scripts -->
-  <script src="js/model.js"></script>
-  <script src="js/constants.js"></script>
-  <script src="js/scaleworkshop.js"></script>
-  <script src="js/helpers.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/generators.js"></script>
-  <script src="js/modifiers.js"></script>
-  <script src="js/exporters.js"></script>
-  <script src="js/keymap.js"></script>
-  <script src="js/synth/Voice.js"></script>
-  <script src="js/synth/Delay.js"></script>
-  <script src="js/synth/Synth.js"></script>
-  <script src="js/synth.js"></script>
-  <script src="js/midi.js"></script>
-  <script src="js/events.js"></script>
-  <script src="js/user.js"></script>
+  <script src="src/js/model.js"></script>
+  <script src="src/js/constants.js"></script>
+  <script src="src/js/scaleworkshop.js"></script>
+  <script src="src/js/helpers.js"></script>
+  <script src="src/js/ui.js"></script>
+  <script src="src/js/generators.js"></script>
+  <script src="src/js/modifiers.js"></script>
+  <script src="src/js/exporters.js"></script>
+  <script src="src/js/keymap.js"></script>
+  <script src="src/js/synth/Voice.js"></script>
+  <script src="src/js/synth/Delay.js"></script>
+  <script src="src/js/synth/Synth.js"></script>
+  <script src="src/js/synth.js"></script>
+  <script src="src/js/midi.js"></script>
+  <script src="src/js/events.js"></script>
+  <script src="src/js/user.js"></script>
 </body>
 </html>
