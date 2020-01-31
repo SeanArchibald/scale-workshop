@@ -452,15 +452,40 @@ jQuery( document ).ready( function() {
     }
   } );
 
+  // ------------------------------------
+  // old version
 
-
+  /*
   // Synth Settings - Main Volume
   jQuery(document).on('input', '#input_range_main_vol', function() {
     const gain = jQuery(this).val();
     synth.setMainVolume(gain)
   });
+  */
 
+  // ------------------------------------
+  // new version
 
+  // data changed, handle programmatic reaction - no jQuery
+  model.on('change', (key, newValue) => {
+    if (key === 'main volume') {
+      synth.setMainVolume(gain)
+    }
+  })
+
+  // data changed, sync it with the DOM
+  model.on('change', (key, newValue) => {
+    if (key === 'main volume') {
+      jQuery('#input_range_main_vol').val(newValue)
+    }
+  })
+
+  // DOM changed, need to sync it with model
+  jQuery('#input_range_main_vol').on('input', function() {
+    model.set('main volume', parseFloat(jQuery(this).val()))
+  });
+
+  // ------------------------------------
 
   // Synth Settings - Waveform
   jQuery( "#input_select_synth_waveform" ).change( function( event ) {
@@ -469,12 +494,10 @@ jQuery( document ).ready( function() {
   } );
 
 
-
   // Synth Settings - Amplitude Envelope
   jQuery( "#input_select_synth_amp_env" ).change( function( event ) {
     update_page_url();
   } );
-
 
 
   // Synth Settings - Delay
