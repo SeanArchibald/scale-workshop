@@ -6,7 +6,7 @@
 function modify_stretch() {
 
   // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  trimSelf("#txt_tuning_data")
 
   if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
@@ -58,7 +58,7 @@ function modify_stretch() {
 function modify_random_variance() {
 
   // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  trimSelf("#txt_tuning_data")
 
   if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
@@ -115,7 +115,7 @@ function modify_random_variance() {
 function modify_mode() {
 
   // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  trimSelf("#txt_tuning_data")
 
   if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
@@ -222,7 +222,7 @@ function modify_mode() {
 function modify_sync_beating() {
 
   // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  trimSelf("#txt_tuning_data")
 
   if ( isEmpty( jQuery( "#txt_tuning_data" ).val() ) ) {
 
@@ -286,7 +286,7 @@ function modify_key_transpose() {
 
   /*
   // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  trimSelf("#txt_tuning_data")
 
   if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 

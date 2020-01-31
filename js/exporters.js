@@ -89,25 +89,28 @@ function export_scala_scl() {
   file += "! Created using " + APP_TITLE + newline;
   file += "!" + newline;
   if ( isEmpty( jQuery( "#txt_name" ).val() ) ) {
-    file += "Untitled tuning" + newline + " ";
+    file += "Untitled tuning";
   }
   else {
-    file += jQuery( "#txt_name" ).val() + newline + " ";
+    file += jQuery( "#txt_name" ).val();
   }
+  file += newline + " "
 
   file += tuning_table['note_count']-1 + newline;
   file += "!" + newline;
 
   for ( i = 1; i < tuning_table['note_count']; i++ ) {
+    file += " "
 
     // if the current interval is n-of-m edo or commadecimal linetype, output as cents instead
     if ( getLineType( tuning_table['scale_data'][i] ) === LINE_TYPE.N_OF_EDO || getLineType( tuning_table['scale_data'][i] ) === LINE_TYPE.DECIMAL ) {
-      file += " " + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + newline;
+      file += decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6);
     }
     else {
-      file += " " + tuning_table['scale_data'][i] + newline;
+      file += tuning_table['scale_data'][i];
     }
 
+    file += newline
   }
 
   save_file( tuning_table['filename'] + '.scl', file );

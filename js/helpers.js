@@ -341,7 +341,6 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null)
     var cfdigit; // the continued fraction digit
     var num; // the convergent numerator
     var den; // the convergent denominator
-    var tmp; // for easy reciprocation
     var scnum; // the semiconvergent numerator
     var scden; // the semiconvergen denominator
     var cind = []; // tracks indicies of convergents
@@ -355,10 +354,8 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null)
         // calculate the convergent
         for (var i = d; i > 0; i--)
         {
-            tmp = den;
-            den = num;
-            num = tmp;
-            num += den * cf[i - 1];
+          [den, num] = [num, den]
+          num += den * cf[i - 1];
         }
 
         if (d > 0)
@@ -879,6 +876,33 @@ function getCoordsFromKey(tdOfKeyboard) {
 function tap(fn, value) {
   fn(value)
   return value
+}
+
+
+function getSearchParamOr (valueIfMissing, key, url) {
+  return url.searchParams.has(key) ? url.searchParams.get(key) : valueIfMissing
+}
+
+function getSearchParamAsNumberOr (valueIfMissingOrNan, key, url) {
+  return (url.searchParams.has(key) && !isNaN(url.searchParams.get(key))) ? parseFloat(url.searchParams.get(key)) : valueIfMissingOrNan;
+}
+
+function trimSelf (el) {
+  jQuery(el).val(function (idx, val) {
+    return val.trim()
+  })
+}
+
+function openDialog (el, onOK) {
+  jQuery(el).dialog({
+    modal: true,
+    buttons: {
+      OK: onOK,
+      Cancel: function() {
+        jQuery( this ).dialog( 'close' );
+      }
+    }
+  })
 }
 
 // redirect all traffic to https, if not there already

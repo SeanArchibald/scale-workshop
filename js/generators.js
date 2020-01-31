@@ -151,9 +151,7 @@ function generate_harmonic_series_segment() {
 
   // ensure that lo is lower than hi
   if (lo > hi) {
-    var tmp = lo;
-    lo = hi;
-    hi = tmp;
+    [lo, hi] = [hi, lo]
   }
 
   setScaleName("Harmonics " + lo + "-" + hi);
@@ -193,9 +191,7 @@ function generate_subharmonic_series_segment() {
 
   // ensure that lo is lower than hi
   if (lo > hi) {
-    var tmp = lo;
-    lo = hi;
-    hi = tmp;
+    [lo, hi] = [hi, lo]
   }
 
   setTuningData(generate_subharmonic_series_segment_data(lo, hi));
