@@ -22,7 +22,8 @@ function generate_equal_temperament() {
   parse_tuning_data();
 
   closePopup('#modal_generate_equal_temperament')
-
+	
+	generate_mos_modes_test(divider);
   // success
   return true;
 }

@@ -87,6 +87,10 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.0.4
+* New feature: 'Approximate' method for modifying scales can produce rational approximations of your scale
+* Improvement: Enumerate Chord method of scale generation now allows for inverted chords (e.g. 4:5:6 inverted would give 10:12:15)
+
 ### 1.0.3
 * New feature: generate scale from 'Enumerate chord' e.g. `4:5:6:7:8` will result in a scale containing intervals 1/1, 5/4, 3/2, 7/4, 2/1
 * New feature: specify an interval in decimal format e.g. `1,5` for a perfect fifth, `2,0` for an octave.

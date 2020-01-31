@@ -235,6 +235,23 @@ function sum_array(array, index)
 
     return sum;
 }
+
+// rotates the array by given steps
+function rotate(array, steps)
+{
+    var i = Math.abs(steps);
+    while (i > 0) {
+	var x;
+        if (steps < 0) {
+            x = array.shift();
+	    array.push(x);
+	} else if (steps > 0) {
+	    x = array.pop();
+	    array.unshift(x);
+	}
+	i--;
+    }
+} 
       
 // calculate a continued fraction for the given number
 function get_cf(num, maxiterations, roundf) {
@@ -485,17 +502,16 @@ function get_rank2_mode(period, generator, size, numdown=0) {
 	let modeOut = [];
 	var interval;
 
-	interval = generator * -(numdown + 1);
+	interval = generator * -numdown;
 	for (var n = 0; n < size; n++) {
-		interval += generator;
 		while (interval < 0) {
 			interval += period;
 		}
 		if (interval >= period) {
 			interval %= period;
 		}
-
 		degrees.push(interval);
+		interval += generator;
 	}
 
 	degrees.sort(function(a, b) { return a-b });
@@ -633,44 +649,25 @@ function get_prime_limit(number) {
     return Math.max(get_prime_limit(numerator), get_prime_limit(denominator));
  }
 
- function isLinearlyIndependent(arrayOfVectors) {
-	var hasnext = true;
-	var isIndependent = true;
-	var i = 0;
-	while(hasnext) {
-		hasnext = false;
-		var sum = 0;
-		for (var v = 0; v < arrayOfVectors.length; v++) {
-			let vector = arrayOfVectors[v];
-			if (i < vector.length) {
-				if (i < vector.length - 1)
-					hasnext = true;
-				if (vector[i] > 0)
-					sum += 1;
-			}
-		}
-		if (sum > 1) {
-			isIndependent = false;
-			break;
-		}
-		i++;
-	}
-	return isIndependent;
- }
-
  // returns an array of integers that share no common factors to the given integer
-  function get_coprimes(number) {
- 	 let coprimes = [1];
-	 var numpf = get_prime_factors(number);
-
-	  // not sure if a recursive based method would be more efficent
-	 for (var n = 2; n < number; n++) {
-	 	 var iscoprime = isLinearlyIndependent([numpf, get_prime_factors(n)]);
-		 if (iscoprime)
-			coprimes.push(n);
-	 }
-	 
-	 return coprimes;
+ function get_coprimes(number) {
+    let coprimes = [1];
+    var m, d, t;
+    for (var i = 2; i < number - 1; i++) {
+        m = number;
+        d = i;
+        while (d > 1) {
+            m = m % d;
+            t = d;
+            d = m;
+            m = t;
+        }
+        if (d > 0) {
+            coprimes.push(i);
+        }
+    }
+    coprimes.push(number-1);
+    return coprimes;
  }
 
  // returns an array of integers that can divide evenly into given number
@@ -792,33 +789,6 @@ function get_prime_limit(number) {
 	return chord.join(":");
  }
 
- function generate_mos_modes_test(period)
- {
-	var sizefactors = get_factors(period);
-	sizefactors.push(period);
-	debug("Printing all modes of size " + period + " and its factors\' modes:" + sizefactors.join(" "));
-	for (var f = 0; f < sizefactors.length; f++) {
-	var cp = get_coprimes(sizefactors[f]);
-		for (var i = 0; i < cp.length; i++) {
-			var nn = [];
-			var dd = [];
-			var cind = [];
-			get_rational_approximations(cp[i] / sizefactors[f], nn, dd, 99999, cind);
-			debug(cp[i]+"\\"+sizefactors[f]+" modes, with mos sizes of: " + dd.join(" "));
-			var ll = true ? dd.length : cind.length;
-			for (var m = 1; m < ll; m++) {
-				var ddd = ll == dd.length ? dd[m] : dd[cind[m]];
-				var mode = get_rank2_mode(sizefactors[f], cp[i], ddd);
-				var factor = period / sizefactors[f];
-				mode.forEach(function(item, index) {
-					mode[index] = item * factor;
-				});
-				debug(sizefactors[f]+" | "+cp[i]+" | "+ddd+"\t: " + mode.join(" "));
-			}
-		}
-	}
- }
-
 function debug(msg = "") {
   if (debug_enabled) {
     msg = isEmpty(msg) ? "Debug" : msg;
@@ -908,6 +878,7 @@ function tap(fn, value) {
   return value
 }
 
+
 function getSearchParamOr (valueIfMissing, key, url) {
   return url.searchParams.has(key) ? url.searchParams.get(key) : valueIfMissing
 }
@@ -932,4 +903,12 @@ function openDialog (el, onOK) {
       }
     }
   })
+}
+
+// redirect all traffic to https, if not there already
+// source: https://stackoverflow.com/a/4723302/1806628
+function redirectToHTTPS() {
+  if (location.protocol !== 'https:') {
+    location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+  }
 }

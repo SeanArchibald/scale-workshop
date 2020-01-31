@@ -59,7 +59,7 @@ function export_anamark_tun() {
   for ( i = 1; i < tuning_table['note_count']; i++ ) {
 
     if ( i == tuning_table['note_count']-1 ) {
-      file += "note " + i + '="#>-' + i + ' * ' + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + ' ~999"' + newline;
+      file += "note " + i + '="#>-' + i + ' % ' + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + ' ~999"' + newline;
     }
     else {
       file += "note " + i + '="#=0 % ' + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + '"' + newline;

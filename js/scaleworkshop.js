@@ -9,12 +9,15 @@ jQuery(window).on('popstate', function() {
   location.reload(true);
 });
 
+if (window.location.hostname.endsWith('.github.com') || window.location.hostname.endsWith('sevish.com')) {
+  redirectToHTTPS()
+}
 
 /**
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 1.0.3";
+const APP_TITLE = "Scale Workshop 1.0.4";
 const TUNING_MAX_SIZE = 128;
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
