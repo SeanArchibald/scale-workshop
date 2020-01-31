@@ -320,12 +320,12 @@ jQuery( document ).ready( function() {
     function update_modify_mode_mos_generators() {
         show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
         let coprimes = get_coprimes(tuning_table.note_count-1);
-        $("#modal_modify_mos_degree").empty();
+        jQuery("#modal_modify_mos_degree").empty();
         for (var d=1; d < coprimes.length-1; d++) {
             var num = coprimes[d];
             var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
             var text = num + " (" + cents + "c)";
-           $("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
+           jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
         }
                                             
      }
@@ -333,10 +333,10 @@ jQuery( document ).ready( function() {
      // calculate the MOS mode and insert it in the mode input box
      function modify_mode_update_mos_scale() {
          var p = tuning_table.note_count-1;
-         var g = parseInt($("#modal_modify_mos_degree").val());
-         var s = parseInt($("#modal_modify_mos_size").val());
+         var g = parseInt(jQuery("#modal_modify_mos_degree").val());
+         var s = parseInt(jQuery("#modal_modify_mos_size").val());
          let mode = get_rank2_mode(p, g, s);
-         $("#input_modify_mode").val(mode.join(" "));
+         jQuery("#input_modify_mode").val(mode.join(" "));
      }
     
     // update the available sizes for selection
@@ -345,10 +345,10 @@ jQuery( document ).ready( function() {
         let dd = [];
         var gp = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
         get_rational_approximations(gp, nn, dd);
-        $("#modal_modify_mos_size").empty();
+        jQuery("#modal_modify_mos_size").empty();
         for (var d=2; d < dd.length-1; d++) {
            var num = dd[d];
-           $("#modal_modify_mos_size").append('<option value="'+num+'">'+num+'</option>');
+           jQuery("#modal_modify_mos_size").append('<option value="'+num+'">'+num+'</option>');
         }
     })
                          
@@ -502,7 +502,7 @@ jQuery( document ).ready( function() {
 
   // Synth Settings - Delay
   jQuery( "#input_checkbox_delay_on" ).change( function() {
-    if ($(this).is(':checked')) {
+    if (jQuery(this).is(':checked')) {
       synth.delay.enable()
     } else {
       synth.delay.disable()

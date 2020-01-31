@@ -386,7 +386,7 @@ function modify_replace_with_approximation () {
 // update list of rationals to choose from
 function modify_update_approximations() {
     
-    $("#approximation_selection").empty();
+    jQuery("#approximation_selection").empty();
 
     if (!(isEmpty(current_approximations))) {
         
@@ -440,13 +440,13 @@ function modify_update_approximations() {
             var description = fraction_str+ " | " + centsdsgn + cents_rounded.toString() + "c | " + prime_limit + "-limit";
 
             if (!interval) {
-                $("#approximation_selection").append("<option selected disabled>Error: Invalid interval</option>");
+                jQuery("#approximation_selection").append("<option selected disabled>Error: Invalid interval</option>");
                 break;
             } else if (interval == fraction && interval) {  // for cases like 1200.0 == 2/1
-                $("#approximation_selection").append("<option>"+description+"</option>");
+                jQuery("#approximation_selection").append("<option>"+description+"</option>");
                 break;
             } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
-                $("#approximation_selection").append("<option>"+description+"</option>");
+                jQuery("#approximation_selection").append("<option>"+description+"</option>");
             } else {
                 //debug("Option excluded: " + description);
             }
@@ -454,8 +454,8 @@ function modify_update_approximations() {
                 
         if (document.getElementById("approximation_selection").options.length === 0) {
             semiconvergents ?
-                $("#approximation_selection").append("<option selected disabled> None found, try to raise error tolerances.</option>") :
-                $("#approximation_selection").append("<option selected disabled> Try to  \"Show next best approximations\" or edit filters.</option>")
+                jQuery("#approximation_selection").append("<option selected disabled> None found, try to raise error tolerances.</option>") :
+                jQuery("#approximation_selection").append("<option selected disabled> Try to  \"Show next best approximations\" or edit filters.</option>")
         }
     }
 }

@@ -75,7 +75,7 @@ class MIDI extends EventEmitter {
 const midi = new MIDI()
 
 jQuery(() => {
-  const midiEnablerBtn = $('#midi-enabler')
+  const midiEnablerBtn = jQuery('#midi-enabler')
 
   midi
     .on('blocked', () => {
