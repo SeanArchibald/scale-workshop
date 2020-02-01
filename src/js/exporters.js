@@ -385,4 +385,15 @@ function export_url() {
 
 }
 
-export { get_scale_url, update_page_url }
+export {
+  get_scale_url,
+  update_page_url,
+  export_anamark_tun,
+  export_scala_scl,
+  export_scala_kbm,
+  export_maxmsp_coll,
+  export_pd_text,
+  export_kontakt_script,
+  export_reference_deflemask,
+  export_url
+}

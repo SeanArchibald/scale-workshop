@@ -17,7 +17,18 @@ import {
 } from './helpers.js'
 import { synth } from './synth.js'
 import { LINE_TYPE } from './constants.js'
-import { get_scale_url, update_page_url } from './exporters.js'
+import {
+  get_scale_url,
+  update_page_url,
+  export_anamark_tun,
+  export_scala_scl,
+  export_scala_kbm,
+  export_maxmsp_coll,
+  export_pd_text,
+  export_kontakt_script,
+  export_reference_deflemask,
+  export_url
+} from './exporters.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
@@ -536,6 +547,39 @@ function parse_imported_anamark_tun( event ) {
   };
 
 }
+
+jQuery('#export-buttons').on('click', 'a', e => {
+  e.preventDefault()
+
+  const link = e.target.getAttribute('href').replace(/^#/, '')
+
+  switch(link) {
+    case 'anamark-tun':
+      export_anamark_tun()
+      break
+    case 'scala-scl':
+      export_scala_scl()
+      break
+    case 'scala-kbm':
+      export_scala_kbm()
+      break
+    case 'maxmsp-coll':
+      export_maxmsp_coll()
+      break
+    case 'pd-text':
+      export_pd_text()
+      break
+    case 'kontakt-script':
+      export_kontakt_script()
+      break
+    case 'deflemask-reference':
+      export_reference_deflemask()
+      break
+    case 'url':
+      export_url()
+      break
+  }
+})
 
 export {
   key_colors,
