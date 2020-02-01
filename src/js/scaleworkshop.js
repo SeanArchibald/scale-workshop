@@ -581,6 +581,34 @@ jQuery('#export-buttons').on('click', 'a', e => {
   }
 })
 
+jQuery('#scala-file').on('change', parse_imported_scala_scl)
+jQuery('#anamark-tun-file').on('change', parse_imported_anamark_tun)
+
+jQuery('#show-mos').on('click', () => {
+  show_mos_cf(
+    jQuery('#input_rank-2_period').val(),
+    jQuery('#input_rank-2_generator').val(),
+    jQuery('#input_rank-2_size').val(),
+    jQuery('#input_rank-2_mos_threshold').val()
+  )
+})
+
+const resetTuningTable = () => {
+  // re-init tuning_table
+  tuning_table = {
+    scale_data: [], // an array containing list of intervals input by the user
+    tuning_data: [], // an array containing the same list above converted to decimal format
+    note_count: 0, // number of values stored in tuning_data
+    freq: [], // an array containing the frequency for each MIDI note
+    cents: [], // an array containing the cents value for each MIDI note
+    decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
+    base_frequency: 440, // init val
+    base_midi_note: 69, // init val
+    description: "",
+    filename: ""
+  }
+}
+
 export {
   key_colors,
   tuning_table,
@@ -596,5 +624,6 @@ export {
   set_key_colors,
   parse_url,
   import_scala_scl,
-  import_anamark_tun
+  import_anamark_tun,
+  resetTuningTable
 }

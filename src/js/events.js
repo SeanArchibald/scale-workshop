@@ -13,7 +13,8 @@ import {
   closestPrime,
   isEmpty,
   isNil,
-  openDialog
+  openDialog,
+  clear_all
 } from './helpers.js'
 import {
   tuning_table,
@@ -87,9 +88,9 @@ jQuery( document ).ready( function() {
 
     event.preventDefault();
 
-    var r = confirm( "Are you sure you want to clear the current tuning data?" );
+    var response = confirm( "Are you sure you want to clear the current tuning data?" );
 
-    if ( r ) {
+    if ( response ) {
       clear_all();
     }
 

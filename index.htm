@@ -374,9 +374,8 @@
   </div><!-- /.container-fluid -->
 
   <!-- Hidden by default -->
-  <input type="file" id="scala-file" accept=".scl" style="display:none;" onchange="parse_imported_scala_scl(event)" />
-  <input type="file" id="anamark-tun-file" accept=".tun" style="display:none;"
-    onchange="parse_imported_anamark_tun(event)" />
+  <input type="file" id="scala-file" accept=".scl" style="display:none;" />
+  <input type="file" id="anamark-tun-file" accept=".tun" style="display:none;" />
 
 
 
@@ -431,9 +430,7 @@
       </div>
     </form>
     <hr />
-    <button class="btn btn-default"
-      onclick="show_mos_cf( jQuery('#input_rank-2_period').val(), jQuery('#input_rank-2_generator').val(), jQuery('#input_rank-2_size').val(), jQuery('#input_rank-2_mos_threshold').val() );"
-      style="float:left;">Show MOS</button>
+    <button id="show-mos" class="btn btn-default" style="float:left;">Show MOS</button>
     <p style="text-align:right;">(ignore MOS with steps smaller than <input id="input_rank-2_mos_threshold" name=""
         type="number" min="0.1" max="600" value="2.5" style="width:4em;"></input> cents)</p>
     <span id="info_rank_2_mos" style="display:block;margin-top:10px;"></span>

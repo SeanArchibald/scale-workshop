@@ -4,7 +4,7 @@
 
 /* global alert, location, jQuery */
 import { PRIMES, LINE_TYPE } from './constants.js'
-import { debug_enabled } from './scaleworkshop.js'
+import { debug_enabled, resetTuningTable } from './scaleworkshop.js'
 
 // modulo function
 Number.prototype.mod = function (n) {
@@ -199,20 +199,7 @@ function clear_all() {
   jQuery("#txt_base_frequency").val(440);
   jQuery("#txt_base_midi_note").val(69);
 
-  // re-init tuning_table
-  tuning_table = {
-    scale_data: [], // an array containing list of intervals input by the user
-    tuning_data: [], // an array containing the same list above converted to decimal format
-    note_count: 0, // number of values stored in tuning_data
-    freq: [], // an array containing the frequency for each MIDI note
-    cents: [], // an array containing the cents value for each MIDI note
-    decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
-    base_frequency: 440, // init val
-    base_midi_note: 69, // init val
-    description: "",
-    filename: ""
-  };
-
+  resetTuningTable()
 }
 
 // find MIDI note name from MIDI note number
@@ -952,5 +939,6 @@ export {
   closestPrime,
   isFunction,
   line_to_cents,
-  openDialog
+  openDialog,
+  clear_all
 }
