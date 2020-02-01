@@ -3,9 +3,8 @@
  * Capture MIDI input for synth
  */
 
-import jQuery from 'jquery'
-import EventEmitter from 'eventemitter3'
-import { synth } from './synth'
+/* global jQuery, EventEmitter */
+import { synth } from './synth.js'
 
 // https://www.midi.org/specifications/item/table-1-summary-of-midi-message
 const commands = {

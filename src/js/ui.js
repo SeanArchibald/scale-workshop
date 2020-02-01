@@ -3,11 +3,10 @@
  * User interface
  */
 
-/* global alert */
-import jQuery from 'jquery'
-import { key_colors, tuning_table } from './scaleworkshop'
-import { touch_to_midinote } from './synth'
-import { getCoordsFromKey } from './helpers'
+/* global alert, jQuery */
+import { key_colors, tuning_table } from './scaleworkshop.js'
+import { touch_to_midinote } from './synth.js'
+import { getCoordsFromKey } from './helpers.js'
 
 // use jQuery UI tooltips instead of default browser tooltips
 jQuery( function() {

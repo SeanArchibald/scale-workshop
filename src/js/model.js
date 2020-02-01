@@ -1,4 +1,4 @@
-import EventEmitter from 'eventemitter3'
+/* global EventEmitter */
 
 class Model extends EventEmitter {
   constructor (initialData = {}) {
@@ -23,4 +23,4 @@ const model = new Model({
   'main volume': 0.8
 })
 
-export default { model, Model }
+export { model, Model }

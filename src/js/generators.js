@@ -2,8 +2,7 @@
  * TUNING DATA GENERATORS
  */
 
-/* global alert */
-import jQuery from 'jquery'
+/* global alert, jQuery */
 import {
   isCent,
   isNOfEdo,
@@ -18,8 +17,8 @@ import {
   getFloat,
   getString,
   invert_chord
-} from './helpers'
-import { unix_newline, parse_tuning_data } from './scaleworkshop'
+} from './helpers.js'
+import { unix_newline, parse_tuning_data } from './scaleworkshop.js'
 
 function generate_equal_temperament() {
 
@@ -422,4 +421,12 @@ function load_preset_scale(a) {
   parse_tuning_data();
   closePopup("#modal_load_preset_scale");
 
+}
+
+export {
+  generate_enumerate_chord,
+  generate_equal_temperament,
+  generate_harmonic_series_segment,
+  generate_rank_2_temperament,
+  generate_subharmonic_series_segment
 }

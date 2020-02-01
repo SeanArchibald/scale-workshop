@@ -2,10 +2,9 @@
  * HELPER FUNCTIONS
  */
 
-/* global alert, location */
-import jQuery from 'jquery'
-import { PRIMES, LINE_TYPE } from './constants'
-import { debug_enabled } from './scaleworkshop'
+/* global alert, location, jQuery */
+import { PRIMES, LINE_TYPE } from './constants.js'
+import { debug_enabled } from './scaleworkshop.js'
 
 // modulo function
 Number.prototype.mod = function (n) {
@@ -951,5 +950,7 @@ export {
   get_rational_approximations,
   rotate,
   closestPrime,
-  isFunction
+  isFunction,
+  line_to_cents,
+  openDialog
 }

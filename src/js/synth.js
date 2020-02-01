@@ -4,10 +4,10 @@
  * Web audio synth
  */
 
-import jQuery from 'jquery'
-import { Synth } from './synth/Synth'
-import { isNil, tap, debug, getCoordsFromKey } from './helpers'
-import { tuning_table } from './scaleworkshop'
+/* global jQuery */
+import { Synth } from './synth/Synth.js'
+import { isNil, tap, debug, getCoordsFromKey } from './helpers.js'
+import { tuning_table } from './scaleworkshop.js'
 
 const synth = new Synth()
 

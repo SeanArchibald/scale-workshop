@@ -1,5 +1,5 @@
-import jQuery from 'jquery'
-import { isFunction } from '../helpers'
+/* global jQuery */
+import { isFunction } from '../helpers.js'
 
 const getEnvelopeByName = name => {
   const envelope = {

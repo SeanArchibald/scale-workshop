@@ -1,9 +1,9 @@
-import jQuery from 'jquery'
-import { Keymap } from '../keymap'
-import { Delay } from './Delay'
-import { tuning_table } from '../scaleworkshop'
-import { isNil, debug } from '../helpers'
-import { Voice } from './Voice'
+/* global jQuery */
+import { Keymap } from '../keymap.js'
+import { Delay } from './Delay.js'
+import { tuning_table } from '../scaleworkshop.js'
+import { isNil, debug } from '../helpers.js'
+import { Voice } from './Voice.js'
 
 class Synth {
   constructor() {

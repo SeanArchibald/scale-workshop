@@ -2,8 +2,7 @@
  * TUNING DATA MODIFIERS
  */
 
-/* global alert */
-import jQuery from 'jquery'
+/* global alert, jQuery */
 import {
   unix_newline,
   newlineTest,
@@ -11,7 +10,7 @@ import {
   newline,
   tuning_table,
   current_approximations
-} from './scaleworkshop'
+} from './scaleworkshop.js'
 import {
   ratio_to_cents,
   trimSelf,
@@ -19,7 +18,7 @@ import {
   debug,
   line_to_decimal,
   decimal_to_cents
-} from './helpers'
+} from './helpers.js'
 
 // stretch/compress tuning
 function modify_stretch() {
