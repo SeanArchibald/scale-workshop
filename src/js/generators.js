@@ -2,9 +2,24 @@
  * TUNING DATA GENERATORS
  */
 
-/*
+/* global alert */
 import jQuery from 'jquery'
-*/
+import {
+  isCent,
+  isNOfEdo,
+  line_to_decimal,
+  decimal_to_ratio,
+  closePopup,
+  debug,
+  line_to_cents,
+  getLine,
+  setTuningData,
+  setScaleName,
+  getFloat,
+  getString,
+  invert_chord
+} from './helpers'
+import { unix_newline, parse_tuning_data } from './scaleworkshop'
 
 function generate_equal_temperament() {
 
@@ -38,7 +53,7 @@ function generate_equal_temperament_data(divider, period) {
 
   let notes = []
 
-  for (i = 1; i <= divider; i++) {
+  for (let i = 1; i <= divider; i++) {
 
     var note = i * step;
 
@@ -104,7 +119,7 @@ function generate_rank_2_temperament_data(generator, period, size, up) {
 
   // array aa stores the scale data, starting from 1/1 (0.0 cents)
   var aa = [0.0];
-  for (i = 1; i < size; i++) {
+  for (let i = 1; i < size; i++) {
 
     // calculate generators up
     if (i <= up) {
@@ -173,7 +188,7 @@ function generate_harmonic_series_segment() {
 function generate_harmonic_series_segment_data(lo, hi) {
   let ratios = []
 
-  for (i = lo + 1; i <= hi; i++) {
+  for (let i = lo + 1; i <= hi; i++) {
     // add ratio to text box
     ratios.push(i + "/" + lo)
   }
@@ -213,7 +228,7 @@ function generate_subharmonic_series_segment() {
 function generate_subharmonic_series_segment_data(lo, hi) {
   let ratios = []
 
-  for (i = hi - 1; i >= lo; i--) {
+  for (let i = hi - 1; i >= lo; i--) {
     ratios.push(hi + "/" + i)
   }
 
@@ -236,12 +251,12 @@ function generate_enumerate_chord() {
     alert("Warning: Chord needs more than one pitch of the form A:B:C...");
     return false;
   }
-  for (var i = 0; i < inputTest.length; i++) {
-    var eval = inputTest[i];
-    if (/^\d+$/.test(eval))
-      eval += ",";
-    eval = line_to_decimal(eval);
-    if (eval == 0 || !/(^\d+([\,\.]\d*)?|([\\\/]\d+)?$)*/.test(eval)) {
+  for (let i = 0; i < inputTest.length; i++) {
+    let value = inputTest[i];
+    if (/^\d+$/.test(value))
+      value += ",";
+    value = line_to_decimal(value);
+    if (value == 0 || !/(^\d+([\,\.]\d*)?|([\\\/]\d+)?$)*/.test(value)) {
       alert("Warning: Invalid pitch " + inputTest[i])
       return false;
     }
@@ -300,7 +315,7 @@ function generate_enumerate_chord_data(pitches, convertToRatios = false) {
   let ratios = [];
   var fundamental = 1;
 
-  for (var i = 0; i < pitches.length; i++) {
+  for (let i = 0; i < pitches.length; i++) {
 
     // convert a lone integer to a commadecimal
     if (/^\d+$/.test(pitches[i])) {

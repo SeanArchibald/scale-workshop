@@ -73,19 +73,23 @@ var Keycodes = {
 
 // Build Keymap from Layouts
 var Keymap = {}
-for (var id in Layouts) {
+for (let id in Layouts) {
   Keymap[id] = buildKeymapFromLayout(Layouts[id]);
 }
 
 function buildKeymapFromLayout(rows) {
   var map = {}
-  for (var r = rows.length - 1; r >= 0; r--) {
+  for (let r = rows.length - 1; r >= 0; r--) {
     var row = rows[r];
     var rowId = rows.length - r - 2;
-    for (var c = 0; c < row.length; c++) {
+    for (let c = 0; c < row.length; c++) {
       var keycode = Keycodes[row.charAt(c)] || row.charCodeAt(c);
       map[keycode] = [rowId, c];
     }
   }
   return map;
+}
+
+export {
+  Keymap
 }

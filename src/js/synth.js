@@ -4,9 +4,10 @@
  * Web audio synth
  */
 
-/*
 import jQuery from 'jquery'
-*/
+import { Synth } from './synth/Synth'
+import { isNil, tap, debug, getCoordsFromKey } from './helpers'
+import { tuning_table } from './scaleworkshop'
 
 const synth = new Synth()
 
@@ -104,3 +105,9 @@ jQuery( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
   jQuery(event.originalEvent.changedTouches[0].target).removeClass('active');
   synth.noteOff(tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
 });
+
+export {
+  synth,
+  touch_to_midinote,
+  is_qwerty_active
+}

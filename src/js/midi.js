@@ -3,9 +3,9 @@
  * Capture MIDI input for synth
  */
 
-/*
 import jQuery from 'jquery'
-*/
+import EventEmitter from 'eventemitter3'
+import { synth } from './synth'
 
 // https://www.midi.org/specifications/item/table-1-summary-of-midi-message
 const commands = {
@@ -16,9 +16,9 @@ const commands = {
 
 // https://www.midi.org/specifications/item/table-3-control-change-messages-data-bytes-2
 // http://www.nortonmusic.com/midi_cc.html
-const cc = {
-  sustain: 64
-}
+// const cc = {
+//   sustain: 64
+// }
 
 class MIDI extends EventEmitter {
   onMidiMessage (event) {
@@ -29,16 +29,15 @@ class MIDI extends EventEmitter {
     switch (cmd) {
       case commands.noteOff: {
         const [note, velocity] = params
-        this.emit('note off', note, velocity, channel);
+        this.emit('note off', note, velocity, channel)
       }
         break
       case commands.noteOn: {
         const [note, velocity] = params
-        if ( velocity > 0 ) {
-          this.emit('note on', note, velocity, channel);
-        }
-        else {
-          this.emit('note off', note, velocity, channel);
+        if (velocity > 0) {
+          this.emit('note on', note, velocity, channel)
+        } else {
+          this.emit('note off', note, velocity, channel)
         }
       }
         break
@@ -54,7 +53,7 @@ class MIDI extends EventEmitter {
       }
     }
   }
-  
+
   enableMidiSupport (midiAccess) {
     midiAccess.onstatechange = event => {
       this.initPort(event.port)
@@ -71,7 +70,7 @@ class MIDI extends EventEmitter {
       .catch(() => this.emit('blocked'))
   }
 
-  isSupported() {
+  isSupported () {
     return !!navigator.requestMIDIAccess
   }
 }

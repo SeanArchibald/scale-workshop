@@ -2,9 +2,24 @@
  * TUNING DATA MODIFIERS
  */
 
-/*
+/* global alert */
 import jQuery from 'jquery'
-*/
+import {
+  unix_newline,
+  newlineTest,
+  parse_tuning_data,
+  newline,
+  tuning_table,
+  current_approximations
+} from './scaleworkshop'
+import {
+  ratio_to_cents,
+  trimSelf,
+  isEmpty,
+  debug,
+  line_to_decimal,
+  decimal_to_cents
+} from './helpers'
 
 // stretch/compress tuning
 function modify_stretch() {
@@ -420,7 +435,7 @@ function modify_update_approximations() {
         var menulength = (semiconvergents) ? current_approximations.ratios.length : current_approximations.convergent_indicies.length;
         var index;
 
-        for (var i = 0; i < menulength; i++)
+        for (let i = 0; i < menulength; i++)
         {
             index = (semiconvergents) ? i : current_approximations.convergent_indicies[i];
             
@@ -462,4 +477,8 @@ function modify_update_approximations() {
                 jQuery("#approximation_selection").append("<option selected disabled> Try to  \"Show next best approximations\" or edit filters.</option>")
         }
     }
+}
+
+export {
+  modify_update_approximations
 }

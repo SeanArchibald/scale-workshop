@@ -1,6 +1,18 @@
-/*
+/* global alert, MouseEvent, history */
 import jQuery from 'jquery'
-*/
+import { newline, tuning_table, APP_TITLE, TUNING_MAX_SIZE } from './scaleworkshop'
+import {
+  debug,
+  isNil,
+  decimal_to_cents,
+  mtof,
+  isEmpty,
+  getLineType,
+  midi_note_number_to_name,
+  ftom
+} from './helpers'
+import { LINE_TYPE } from './constants'
+import { synth } from './synth'
 
 function export_error() {
 
@@ -373,3 +385,5 @@ function export_url() {
   return true;
 
 }
+
+export { get_scale_url, update_page_url }
