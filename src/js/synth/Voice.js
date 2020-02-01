@@ -1,6 +1,5 @@
-/*
-import jQuery from 'jquery'
-*/
+/* global jQuery */
+import { isFunction } from '../helpers.js'
 
 const getEnvelopeByName = name => {
   const envelope = {
@@ -152,4 +151,8 @@ class Voice {
       oscillator.stop( now + this.releaseTime );
     });
   }
+}
+
+export {
+  Voice
 }

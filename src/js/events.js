@@ -2,9 +2,43 @@
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
-/*
-import jQuery from 'jquery'
-*/
+/* global localStorage, jQuery */
+import {
+  get_coprimes,
+  decimal_to_cents,
+  get_rank2_mode,
+  get_rational_approximations,
+  rotate,
+  debug,
+  closestPrime,
+  isEmpty,
+  isNil,
+  openDialog
+} from './helpers.js'
+import {
+  tuning_table,
+  APP_TITLE,
+  newline,
+  prime_counter,
+  set_key_colors,
+  parse_tuning_data,
+  parse_url
+} from './scaleworkshop.js'
+import { touch_kbd_open, touch_kbd_close } from './ui.js'
+import { synth, is_qwerty_active } from './synth.js'
+import { model } from './model.js'
+import { PRIMES } from './constants.js'
+import { modify_update_approximations } from './modifiers.js'
+import { update_page_url } from './exporters.js'
+import { Keymap } from './keymap.js'
+import { run_user_scripts_on_document_ready } from './user.js'
+import {
+  generate_enumerate_chord,
+  generate_equal_temperament,
+  generate_harmonic_series_segment,
+  generate_rank_2_temperament,
+  generate_subharmonic_series_segment
+} from './generators.js'
 
 jQuery( document ).ready( function() {
 
@@ -325,7 +359,7 @@ jQuery( document ).ready( function() {
         show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
         let coprimes = get_coprimes(tuning_table.note_count-1);
         jQuery("#modal_modify_mos_degree").empty();
-        for (var d=1; d < coprimes.length-1; d++) {
+        for (let d=1; d < coprimes.length-1; d++) {
             var num = coprimes[d];
             var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
             var text = num + " (" + cents + "c)";
@@ -350,7 +384,7 @@ jQuery( document ).ready( function() {
         var gp = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
         get_rational_approximations(gp, nn, dd);
         jQuery("#modal_modify_mos_size").empty();
-        for (var d=2; d < dd.length-1; d++) {
+        for (let d=2; d < dd.length-1; d++) {
            var num = dd[d];
            jQuery("#modal_modify_mos_size").append('<option value="'+num+'">'+num+'</option>');
         }
@@ -410,7 +444,7 @@ jQuery( document ).ready( function() {
   } );
 
   // About Scale Workshop option clicked
-  jQuery( "#about_scale_workshop" ).click( function() {
+  jQuery( "#about_scale_workshop" ).click( function(event) {
 
     event.preventDefault();
     jQuery('#about_version').text( APP_TITLE );

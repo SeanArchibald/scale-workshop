@@ -1,6 +1,5 @@
-/*
-import jQuery from 'jquery'
-*/
+/* global jQuery */
+import { synth } from '../synth.js'
 
 class Delay {
   constructor (synth) {
@@ -82,6 +81,4 @@ class Delay {
   }
 }
 
-/*
-export default Delay
-*/
+export { Delay }

@@ -1,6 +1,9 @@
-/*
-import jQuery from 'jquery'
-*/
+/* global jQuery */
+import { Keymap } from '../keymap.js'
+import { Delay } from './Delay.js'
+import { tuning_table } from '../scaleworkshop.js'
+import { isNil, debug } from '../helpers.js'
+import { Voice } from './Voice.js'
 
 class Synth {
   constructor() {
@@ -103,6 +106,4 @@ class Synth {
   }
 }
 
-/*
-export default Synth
-*/
+export { Synth }

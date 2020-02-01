@@ -2,9 +2,7 @@
  * INIT
  */
 
-/* global location, localStorage, alert, FileReader, DOMParser */
-/*
-import jQuery from 'jquery'
+/* global location, localStorage, alert, FileReader, DOMParser, jQuery */
 import {
   debug,
   redirectToHTTPS,
@@ -16,11 +14,10 @@ import {
   getLineType,
   line_to_decimal,
   isNil
-} from './helpers'
-import synth from './synth'
-import { LINE_TYPE } from './constants'
-import { get_scale_url, update_page_url } from './exporters'
-*/
+} from './helpers.js'
+import { synth } from './synth.js'
+import { LINE_TYPE } from './constants.js'
+import { get_scale_url, update_page_url } from './exporters.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
@@ -538,4 +535,20 @@ function parse_imported_anamark_tun( event ) {
 
   };
 
+}
+
+export {
+  key_colors,
+  tuning_table,
+  unix_newline,
+  newlineTest,
+  parse_tuning_data,
+  newline,
+  current_approximations,
+  debug_enabled,
+  APP_TITLE,
+  TUNING_MAX_SIZE,
+  prime_counter,
+  set_key_colors,
+  parse_url
 }

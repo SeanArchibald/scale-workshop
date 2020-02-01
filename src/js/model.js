@@ -1,16 +1,16 @@
-/*
-import EventEmitter from 'eventemitter3'
-*/
+/* global EventEmitter */
 
 class Model extends EventEmitter {
-  constructor(initialData = {}) {
+  constructor (initialData = {}) {
     super()
     this.data = initialData
   }
-  get(key) {
+
+  get (key) {
     return this.data[key]
   }
-  set(key, newValue) {
+
+  set (key, newValue) {
     const oldValue = this.data[key]
     if (oldValue !== newValue) {
       this.data[key] = newValue
@@ -23,6 +23,4 @@ const model = new Model({
   'main volume': 0.8
 })
 
-/*
-export default model
-*/
+export { model, Model }

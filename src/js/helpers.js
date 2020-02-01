@@ -2,9 +2,9 @@
  * HELPER FUNCTIONS
  */
 
-/*
-import jQuery from 'jquery'
-*/
+/* global alert, location, jQuery */
+import { PRIMES, LINE_TYPE } from './constants.js'
+import { debug_enabled } from './scaleworkshop.js'
 
 // modulo function
 Number.prototype.mod = function (n) {
@@ -232,7 +232,7 @@ function sum_array(array, index)
   if (array.length <= index)
     index = array.length - 1;
 
-    for (var i = 0; i < index; i ++)
+    for (let i = 0; i < index; i ++)
     {
       sum += array[i];
     }
@@ -295,14 +295,14 @@ function get_convergent(cf, depth=0) {
 	if (depth >= cf.length || depth == 0)
 		depth = cf.length;
     
-    for (var d = 0; d < depth; d++)
+    for (let d = 0; d < depth; d++)
     {
         cfdigit = cf[d];
         num = cfdigit;
         den = 1;
         
         // calculate the convergent
-        for (var i = d; i > 0; i--)
+        for (let i = d; i > 0; i--)
         {
             tmp = den;
             den = num;
@@ -349,14 +349,14 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null)
     var scden; // the semiconvergen denominator
     var cind = []; // tracks indicies of convergents
     
-    for (var d = 0; d < cf.length; d++)
+    for (let d = 0; d < cf.length; d++)
     {
         cfdigit = cf[d];
         num = cfdigit;
         den = 1;
         
         // calculate the convergent
-        for (var i = d; i > 0; i--)
+        for (let i = d; i > 0; i--)
         {
           [den, num] = [num, den]
           num += den * cf[i - 1];
@@ -364,7 +364,7 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null)
 
         if (d > 0)
         {
-          for (var i = 1; i < cfdigit; i++)
+          for (let i = 1; i < cfdigit; i++)
           {
               scnum = num - (cfdigit - i) * numarray[cind[d-1]];
               scden = den - (cfdigit - i) * denarray[cind[d-1]];
@@ -387,13 +387,13 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null)
 
 	if (!(cindOut===null)) 
 	{
-		for (var i = 0; i < cind.length; i++)
+		for (let i = 0; i < cind.length; i++)
 		{
 			cindOut.push(cind[i]);
 		}
 	}
 
-    //for (var i = 0; i < denarray.length; i++)
+    //for (let i = 0; i < denarray.length; i++)
     //  console.log(numarray[i]+"/"+denarray[i]);
 }
                          
@@ -431,7 +431,7 @@ function show_mos_cf(per, gen, ssz, threshold) {
     var s = pc; // small step
     var c = gc; // chroma (L - s)
 
-    for (var i = 1; i < cf.length; i++)
+    for (let i = 1; i < cf.length; i++)
     {
         L -= c * cf[i];
         s = c;
@@ -483,7 +483,7 @@ function get_rational_approximations(intervalIn, numerators, denominators, round
         var dlim;
         var rlim;
 
-        for (var i = 0; i < numerators.length; i++) {
+        for (let i = 0; i < numerators.length; i++) {
             numerators[i] == 1 ? nlim = 1 : nlim = get_prime_limit(numerators[i]);
             denominators[i] == 1 ? dlim = 1 : dlim = get_prime_limit(denominators[i]);
 
@@ -507,7 +507,7 @@ function get_rank2_mode(period, generator, size, numdown=0) {
 	var interval;
 
 	interval = generator * -numdown;
-	for (var n = 0; n < size; n++) {
+	for (let n = 0; n < size; n++) {
 		while (interval < 0) {
 			interval += period;
 		}
@@ -519,7 +519,7 @@ function get_rank2_mode(period, generator, size, numdown=0) {
 	}
 
 	degrees.sort(function(a, b) { return a-b });
-	for (var n = 1; n < degrees.length; n++) {
+	for (let n = 1; n < degrees.length; n++) {
 		modeOut.push(degrees[n] - degrees[n-1]);
 	}
 
@@ -541,7 +541,7 @@ function get_prime_factors(number) {
     var q = number;
     var loop;
                  
-    for (var i = 0; i < PRIMES.length; i++) {
+    for (let i = 0; i < PRIMES.length; i++) {
         if (PRIMES[i] > n)
             break;
                  
@@ -573,7 +573,7 @@ function get_prime_factors_string(number) {
      var factors = get_prime_factors(number);
      var str_out = "";
                  
-     for (var i = 0; i < factors.length; i++) {
+     for (let i = 0; i < factors.length; i++) {
                  
          if (factors[i] != 0) {
             str_out += PRIMES[i] + "^" + factors[i];
@@ -588,7 +588,7 @@ function get_prime_factors_string(number) {
  function isPrime(number) {
     var sqrtnum = Math.floor(Math.sqrt(number));
     
-    for (var i = 0; i < PRIMES.length; i++)
+    for (let i = 0; i < PRIMES.length; i++)
     {
         if (PRIMES[i] >= sqrtnum)
             break;
@@ -657,7 +657,7 @@ function get_prime_limit(number) {
  function get_coprimes(number) {
     let coprimes = [1];
     var m, d, t;
-    for (var i = 2; i < number - 1; i++) {
+    for (let i = 2; i < number - 1; i++) {
         m = number;
         d = i;
         while (d > 1) {
@@ -679,7 +679,7 @@ function get_prime_limit(number) {
  	 let factors = [];
 	 var nsqrt = Math.floor(Math.sqrt(number));
 
-	 for (var n = 2; n <= nsqrt; n++) {
+	 for (let n = 2; n <= nsqrt; n++) {
 		var q = number / n;
 	 	if (Math.floor(q) == q) {
 			factors.push(n);
@@ -714,7 +714,7 @@ function get_prime_limit(number) {
 	var nn = 1;
 	var dd = 1;
 
-	for (var i = 0; i < maxlength; i++) {
+	for (let i = 0; i < maxlength; i++) {
 		if (r_pf[i] > 0)
 			nn *= Math.pow(PRIMES[i], r_pf[i]);
 		else
@@ -740,9 +740,9 @@ function get_prime_limit(number) {
 	 });
 
 	 // find the min power of each primes in numbers' factorization
-	 for (var p = 0; p < maxlength; p++) {
+	 for (let p = 0; p < maxlength; p++) {
 		primecounts.push(0);
-		 for (var n = 0; n < primefactors.length; n++) {
+		 for (let n = 0; n < primefactors.length; n++) {
 			f = primefactors[n];
 			if (p < f.length) {
 				if (primecounts[p] < f[p])
@@ -915,4 +915,42 @@ function redirectToHTTPS() {
   if (location.protocol !== 'https:') {
     location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
   }
+}
+
+export {
+  debug,
+  redirectToHTTPS,
+  decimal_to_cents,
+  isEmpty,
+  getSearchParamOr,
+  getSearchParamAsNumberOr,
+  sanitize_filename,
+  getLineType,
+  line_to_decimal,
+  isNil,
+  getCoordsFromKey,
+  tap,
+  ratio_to_cents,
+  trimSelf,
+  isCent,
+  isNOfEdo,
+  decimal_to_ratio,
+  closePopup,
+  getLine,
+  setTuningData,
+  setScaleName,
+  getFloat,
+  getString,
+  invert_chord,
+  mtof,
+  midi_note_number_to_name,
+  ftom,
+  get_coprimes,
+  get_rank2_mode,
+  get_rational_approximations,
+  rotate,
+  closestPrime,
+  isFunction,
+  line_to_cents,
+  openDialog
 }

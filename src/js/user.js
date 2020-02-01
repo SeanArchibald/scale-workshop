@@ -12,3 +12,7 @@
 function run_user_scripts_on_document_ready() {
 
 }
+
+export {
+  run_user_scripts_on_document_ready
+}

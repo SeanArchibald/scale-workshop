@@ -3,9 +3,10 @@
  * User interface
  */
 
-/*
-import jQuery from 'jquery'
-*/
+/* global alert, jQuery */
+import { key_colors, tuning_table } from './scaleworkshop.js'
+import { touch_to_midinote } from './synth.js'
+import { getCoordsFromKey } from './helpers.js'
 
 // use jQuery UI tooltips instead of default browser tooltips
 jQuery( function() {
@@ -79,4 +80,9 @@ function touch_kbd_close() {
 
   return true;
 
+}
+
+export {
+  touch_kbd_close,
+  touch_kbd_open
 }
