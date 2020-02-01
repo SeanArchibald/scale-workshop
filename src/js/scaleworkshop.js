@@ -2,6 +2,26 @@
  * INIT
  */
 
+/* global location, localStorage, alert, FileReader, DOMParser */
+/*
+import jQuery from 'jquery'
+import {
+  debug,
+  redirectToHTTPS,
+  decimal_to_cents,
+  isEmpty,
+  getSearchParamOr,
+  getSearchParamAsNumberOr,
+  sanitize_filename,
+  getLineType,
+  line_to_decimal,
+  isNil
+} from './helpers'
+import synth from './synth'
+import { LINE_TYPE } from './constants'
+import { get_scale_url, update_page_url } from './exporters'
+*/
+
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
 jQuery(window).on('popstate', function() {
@@ -9,6 +29,9 @@ jQuery(window).on('popstate', function() {
   location.reload(true);
 });
 
+if (window.location.hostname.endsWith('.github.com') || window.location.hostname.endsWith('sevish.com')) {
+  redirectToHTTPS()
+}
 
 /**
  * GLOBALS
@@ -54,7 +77,7 @@ function generate_tuning_table( tuning ) {
   var base_frequency = tuning_table['base_frequency'];
   var base_midi_note = tuning_table['base_midi_note'];
 
-  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+  for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
 
     var offset = i - base_midi_note;
     var quotient = Math.floor( offset / (tuning.length-1) );
@@ -86,7 +109,7 @@ function set_key_colors( list ) {
   // get all the tuning table key cell elements
   var ttkeys = jQuery( '#tuning-table td.key-color' );
   // for each td.key-color
-  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+  for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
     // get the number representing this key color, with the first item being 0
 
     var keynum = ( i - tuning_table['base_midi_note'] ).mod( key_colors.length );
@@ -95,7 +118,6 @@ function set_key_colors( list ) {
     //debug( i + ": " + key_colors[keynum] );
   }
 }
-
 
 /**
  * parse_url()
@@ -107,22 +129,22 @@ function parse_url() {
   var url = new URL(window.location.href);
 
   // get data from url params, and use sane defaults for tuning name, base frequency and base midi note number if data missing
-  var name = ( url.searchParams.has("name") ) ? url.searchParams.get("name") : "";
-  var data = ( url.searchParams.has("data") ) ? url.searchParams.get("data") : false;
-  var freq = ( url.searchParams.has("freq") && !isNaN( url.searchParams.get("freq") ) ) ? url.searchParams.get("freq") : 440;
-  var midi = ( url.searchParams.has("midi") && !isNaN( url.searchParams.get("midi") ) ) ? url.searchParams.get("midi") : 69;
-  var source = ( url.searchParams.has("source") ) ? url.searchParams.get("source") : "";
+  var name = getSearchParamOr('', 'name', url);
+  var data = getSearchParamOr(false, 'data', url);
+  var freq = getSearchParamAsNumberOr(440, 'freq', url);
+  var midi = getSearchParamAsNumberOr(69, 'midi', url);
+  var source =  getSearchParamOr('', 'source', url);
 
   // get isomorphic keyboard mapping
-  var vertical = ( url.searchParams.has("vert") && !isNaN( url.searchParams.get("vert") ) ) ? url.searchParams.get("vert") : false;
-  var horizontal = ( url.searchParams.has("horiz") && !isNaN( url.searchParams.get("horiz") ) ) ? url.searchParams.get("horiz") : false;
+  var vertical = getSearchParamAsNumberOr(false, 'vert', url);
+  var horizontal = getSearchParamAsNumberOr(false, 'horiz', url);
 
   // get key colours
-  var colors = ( url.searchParams.has("colors") ) ? url.searchParams.get("colors") : false;
+  var colors = getSearchParamOr(false, 'colors', url);
 
   // get synth options
-  var waveform = ( url.searchParams.has("waveform") ) ? url.searchParams.get("waveform") : false;
-  var ampenv = ( url.searchParams.has("ampenv") ) ? url.searchParams.get("ampenv") : false;
+  var waveform = getSearchParamOr(false, 'waveform', url);
+  var ampenv = getSearchParamOr(false, 'ampenv', url);
 
   // bail if there is no data
   if ( !data ) {
@@ -219,7 +241,7 @@ function parse_tuning_data() {
   tuning_table['tuning_data'] = ['1']; // when initialised the array contains only '1' (unison)
   tuning_table['note_count'] = 1;
   var empty = true;
-  for ( var i = 0; i < lines.length; i++ ) {
+  for ( let i = 0; i < lines.length; i++ ) {
 
     // check that line is not empty
     if ( !isEmpty(lines[i]) ) {
@@ -255,7 +277,7 @@ function parse_tuning_data() {
   jQuery( "#tuning-table" ).empty();
   jQuery( "#tuning-table" ).append("<tbody><tr><th class='key-color'></th><th>#</th><th>Freq.</th><th>Cents</th><th>Ratio</th></tr>");
 
-  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+  for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
 
     // highlight the row which corresponds to the base MIDI note
     var table_class = "";
@@ -390,7 +412,7 @@ function parse_imported_anamark_tun( event ) {
 
     // get tuning name
     var name = false;
-    for ( i = 0; i < lines.length; i++ ) {
+    for ( let i = 0; i < lines.length; i++ ) {
       // Check if line is start of [Info] section
       if ( !name && lines[i].includes("[Info]") ) {
         // file has [Info] section so we expect to see a name too
@@ -429,7 +451,7 @@ function parse_imported_anamark_tun( event ) {
       var tuning = [];
 
       // get note values
-      for ( i = first_line; i < lines.length; i++ ) {
+      for ( let i = first_line; i < lines.length; i++ ) {
         var n = i - first_line; // note number
         if ( lines[i].includes("#=0") ) {
           tuning[n] = lines[i].substring( lines[i].indexOf("#=0") + 6, lines[i].length - 2 ).trim();
@@ -445,7 +467,7 @@ function parse_imported_anamark_tun( event ) {
       jQuery( "#txt_tuning_data" ).val(tuning.join(unix_newline))
 
       // get base MIDI note and base frequency
-      for ( i = first_line + 1; i < lines.length; i++ ) {
+      for ( let i = first_line + 1; i < lines.length; i++ ) {
         if ( lines[i].includes("!") ) {
           jQuery( "#txt_base_frequency" ).val( lines[i].substring( lines[i].indexOf("!") + 2, lines[i].length - 2 ) );
           jQuery( "#txt_base_midi_note" ).val( lines[i].substring( 0, lines[i].indexOf("!") - 2 ).replace( "note ", "" ) );
@@ -466,7 +488,7 @@ function parse_imported_anamark_tun( event ) {
       var first_line = 0;
 
       // determine on which line of the tun file that tuning data starts, with preference for 'Exact Tuning' block, followed by 'Tuning' block.
-      for ( i = 0; i < lines.length; i++ ) {
+      for ( let i = 0; i < lines.length; i++ ) {
         if ( lines[i].includes("[Exact Tuning]") ) {
           has_functional_tuning = true;
           first_line = i + 1;
@@ -474,7 +496,7 @@ function parse_imported_anamark_tun( event ) {
         }
       }
       if ( first_line == 0 ) {
-        for ( i = 0; i < lines.length; i++ ) {
+        for ( let i = 0; i < lines.length; i++ ) {
           if ( lines[i].includes("[Tuning]") ) {
             has_functional_tuning = true;
             first_line = i + 1;
@@ -488,7 +510,7 @@ function parse_imported_anamark_tun( event ) {
       // enter tuning data
       var offset = parseFloat( lines[first_line].replace("note 0=", "") ).toFixed(6); // offset will ensure that note 0 is 1/1
       let tuning_data_str;
-      for ( i = first_line; i < first_line+128; i++ ) {
+      for ( let i = first_line; i < first_line+128; i++ ) {
 
         var n = i - first_line; // n = note number
         var line = lines[i].replace( "note " + n.toString() + "=", "" ).trim();

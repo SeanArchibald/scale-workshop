@@ -2,6 +2,10 @@
  * TUNING DATA GENERATORS
  */
 
+/*
+import jQuery from 'jquery'
+*/
+
 function generate_equal_temperament() {
 
   var divider = getFloat('#input_number_of_divisions', 'Warning: no divider')
@@ -22,8 +26,7 @@ function generate_equal_temperament() {
   parse_tuning_data();
 
   closePopup('#modal_generate_equal_temperament')
-	
-	generate_mos_modes_test(divider);
+
   // success
   return true;
 }
@@ -151,9 +154,7 @@ function generate_harmonic_series_segment() {
 
   // ensure that lo is lower than hi
   if (lo > hi) {
-    var tmp = lo;
-    lo = hi;
-    hi = tmp;
+    [lo, hi] = [hi, lo]
   }
 
   setScaleName("Harmonics " + lo + "-" + hi);
@@ -193,9 +194,7 @@ function generate_subharmonic_series_segment() {
 
   // ensure that lo is lower than hi
   if (lo > hi) {
-    var tmp = lo;
-    lo = hi;
-    hi = tmp;
+    [lo, hi] = [hi, lo]
   }
 
   setTuningData(generate_subharmonic_series_segment_data(lo, hi));
@@ -226,7 +225,7 @@ function generate_enumerate_chord() {
   var chord = getString('#input_chord', 'Warning: bad input');
   let chordStr = chord;
 
-  var convert_to_ratios = document.getElementById( "input_convert_to_ratios" ).checked;
+  var convert_to_ratios = document.getElementById("input_convert_to_ratios").checked;
 
   // It doesn't make much sense to mix different values, 
   // but it's cool to experiment with.
@@ -234,33 +233,33 @@ function generate_enumerate_chord() {
   // bail if has invalid
   var inputTest = chord.replace(" ", "").replace("(", "").replace(")", "").split(":");
   if (inputTest.length < 2) {
-  	  alert("Warning: Chord needs more than one pitch of the form A:B:C...");
-	  return false;
+    alert("Warning: Chord needs more than one pitch of the form A:B:C...");
+    return false;
   }
   for (var i = 0; i < inputTest.length; i++) {
-		var eval = inputTest[i];
-		if (/^\d+$/.test(eval))
-			eval += ",";
-		eval = line_to_decimal(eval);
-	  if (eval == 0 || !/(^\d+([\,\.]\d*)?|([\\\/]\d+)?$)*/.test(eval)) {
-		alert("Warning: Invalid pitch " + inputTest[i])
-		return false;
-	  }
+    var eval = inputTest[i];
+    if (/^\d+$/.test(eval))
+      eval += ",";
+    eval = line_to_decimal(eval);
+    if (eval == 0 || !/(^\d+([\,\.]\d*)?|([\\\/]\d+)?$)*/.test(eval)) {
+      alert("Warning: Invalid pitch " + inputTest[i])
+      return false;
+    }
   }
 
   // check if it's a tonal inversion
   // ex: 1/(A:B:C...)
   var isInversion = document.getElementById("input_invert_chord").checked;
   if (isInversion)
-	chordStr = "1/(" + chord + ")";
+    chordStr = "1/(" + chord + ")";
   if (/^\d+\/\(.*$/.test(chord)) {
-	  if (/^1\/\((\d+\:)+\d+\)$/.test(chord)) {
-		  isInversion = true;
-		  chord = chord.substring(3, chord.length-1);
-	  } else {
-		  alert("Warning: inversions need to match this syntax: 1/(A:B:C...)");
-		  return false;
-	  }
+    if (/^1\/\((\d+\:)+\d+\)$/.test(chord)) {
+      isInversion = true;
+      chord = chord.substring(3, chord.length - 1);
+    } else {
+      alert("Warning: inversions need to match this syntax: 1/(A:B:C...)");
+      return false;
+    }
   }
 
   // This next safeguard might make it more user friendy,
@@ -274,11 +273,11 @@ function generate_enumerate_chord() {
   //}
 
   if (isInversion) {
-  	  debug("This is an inversion. Chord is " + chord);
-  	  chord = invert_chord(chord);
-	  debug("Chord returned: " + chord);
-	  chordStr += (" (" + chord + ") "); 
-	  debug("str = " + chordStr);
+    debug("This is an inversion. Chord is " + chord);
+    chord = invert_chord(chord);
+    debug("Chord returned: " + chord);
+    chordStr += (" (" + chord + ") ");
+    debug("str = " + chordStr);
   }
 
   var pitches = chord.split(":");
@@ -297,27 +296,26 @@ function generate_enumerate_chord() {
   return true;
 }
 
-function generate_enumerate_chord_data(pitches, convertToRatios=false) {
+function generate_enumerate_chord_data(pitches, convertToRatios = false) {
   let ratios = [];
   var fundamental = 1;
 
   for (var i = 0; i < pitches.length; i++) {
-    
-	// convert a lone integer to a commadecimal
-	if (/^\d+$/.test(pitches[i]))
-	{
-		pitches[i] = pitches[i] + ',';
-	}
 
-	var isCentsValue = isCent(pitches[i]) || isNOfEdo(pitches[i]);
+    // convert a lone integer to a commadecimal
+    if (/^\d+$/.test(pitches[i])) {
+      pitches[i] = pitches[i] + ',';
+    }
+
+    var isCentsValue = isCent(pitches[i]) || isNOfEdo(pitches[i]);
     var parsed = line_to_decimal(pitches[i]);
 
     if (i > 0) {
-	  if (isCentsValue && !convertToRatios) {
-	  	ratios.push(pitches[i])
-	  } else {
-		ratios.push(decimal_to_ratio(parsed / fundamental));
-	  }
+      if (isCentsValue && !convertToRatios) {
+        ratios.push(pitches[i])
+      } else {
+        ratios.push(decimal_to_ratio(parsed / fundamental));
+      }
     }
     else {
       fundamental = parsed;
@@ -334,7 +332,7 @@ function load_preset_scale(a) {
   var freq = 440;
   var midi = 69;
 
-  switch(a) {
+  switch (a) {
 
     case "12edo":
       name = "12-tone equal temperament";

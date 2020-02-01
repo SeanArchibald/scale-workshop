@@ -1,3 +1,7 @@
+/*
+import jQuery from 'jquery'
+*/
+
 class Synth {
   constructor() {
     this.keymap = Keymap.EN
@@ -85,7 +89,7 @@ class Synth {
     debug( this.active_voices );
 
     // loop through active voices
-    for ( i=0; i<127; i++ ) {
+    for ( let i=0; i<127; i++ ) {
       // turn off voice
       this.noteOff( i );
     }
@@ -98,3 +102,7 @@ class Synth {
     this.delay.gainR.gain.setValueAtTime(this.delay.gain, now);
   }
 }
+
+/*
+export default Synth
+*/

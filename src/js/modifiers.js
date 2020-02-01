@@ -2,11 +2,15 @@
  * TUNING DATA MODIFIERS
  */
 
+/*
+import jQuery from 'jquery'
+*/
+
 // stretch/compress tuning
 function modify_stretch() {
 
   // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  trimSelf("#txt_tuning_data")
 
   if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
@@ -24,7 +28,7 @@ function modify_stretch() {
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
-  for ( var i = 0; i < lines.length; i++ ) {
+  for ( let i = 0; i < lines.length; i++ ) {
     const line = trim(toString(lines[i]))
     if ( !isEmpty(line) ) {
       switch (getLineType(line)) {
@@ -58,7 +62,7 @@ function modify_stretch() {
 function modify_random_variance() {
 
   // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  trimSelf("#txt_tuning_data")
 
   if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
@@ -75,7 +79,7 @@ function modify_random_variance() {
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
-  for ( var i = 0; i < lines.length; i++ ) {
+  for ( let i = 0; i < lines.length; i++ ) {
 
     // only apply random variance if the line is not the period, or vary_period is true
     if ( vary_period || i < lines.length-1 ) {
@@ -115,7 +119,7 @@ function modify_random_variance() {
 function modify_mode() {
 
   // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  trimSelf("#txt_tuning_data")
 
   if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
@@ -127,7 +131,7 @@ function modify_mode() {
   var mode = jQuery( "#input_modify_mode" ).val().split(" ");
 
   // check user input for invalid items
-  for ( i = 0; i < mode.length; i++ ) {
+  for ( let i = 0; i < mode.length; i++ ) {
 
     mode[i] = parseInt( mode[i] );
 
@@ -161,7 +165,7 @@ function modify_mode() {
     var new_tuning = "";
     var note_count = 1;
     var mode_index = 0;
-    for ( var i = 0; i < lines.length; i++ ) {
+    for ( let i = 0; i < lines.length; i++ ) {
 
       if ( mode[mode_index] == note_count ) {
 
@@ -193,7 +197,7 @@ function modify_mode() {
 
     // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
     var new_tuning = "";
-    for ( var i = 0; i < mode.length; i++ ) {
+    for ( let i = 0; i < mode.length; i++ ) {
 
       new_tuning += lines[mode[i]-1];
 
@@ -222,7 +226,7 @@ function modify_mode() {
 function modify_sync_beating() {
 
   // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  trimSelf("#txt_tuning_data")
 
   if ( isEmpty( jQuery( "#txt_tuning_data" ).val() ) ) {
 
@@ -250,7 +254,7 @@ function modify_sync_beating() {
   debug(lines);
   var new_tuning = "";
 
-  for ( var i = 0; i < lines.length; i++ ) {
+  for ( let i = 0; i < lines.length; i++ ) {
 
     lines[i] = line_to_decimal( lines[i] );
     new_tuning += toString(Math.round(lines[i] * resolution)) + "/" + toString(resolution) + unix_newline;
@@ -286,7 +290,7 @@ function modify_key_transpose() {
 
   /*
   // remove white space from tuning data field
-  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  trimSelf("#txt_tuning_data")
 
   if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
@@ -317,7 +321,7 @@ function modify_key_transpose() {
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   var new_tuning = "";
-  for ( var i = 0; i < lines.length; i++ ) {
+  for ( let i = 0; i < lines.length; i++ ) {
 
     // TODO
 
@@ -386,7 +390,7 @@ function modify_replace_with_approximation () {
 // update list of rationals to choose from
 function modify_update_approximations() {
     
-    $("#approximation_selection").empty();
+    jQuery("#approximation_selection").empty();
 
     if (!(isEmpty(current_approximations))) {
         
@@ -440,20 +444,20 @@ function modify_update_approximations() {
             var description = fraction_str+ " | " + centsdsgn + cents_rounded.toString() + "c | " + prime_limit + "-limit";
 
             if (!interval) {
-                $("#approximation_selection").append("<option selected disabled>Error: Invalid interval</option>");
+                jQuery("#approximation_selection").append("<option selected disabled>Error: Invalid interval</option>");
                 break;
             } else if (interval == fraction && interval) {  // for cases like 1200.0 == 2/1
-                $("#approximation_selection").append("<option>"+description+"</option>");
+                jQuery("#approximation_selection").append("<option>"+description+"</option>");
                 break;
             } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
-                $("#approximation_selection").append("<option>"+description+"</option>");
+                jQuery("#approximation_selection").append("<option>"+description+"</option>");
             }
         }
                 
         if (document.getElementById("approximation_selection").options.length === 0) {
             semiconvergents ?
-                $("#approximation_selection").append("<option selected disabled> None found, try to raise error tolerances.</option>") :
-                $("#approximation_selection").append("<option selected disabled> Try to  \"Show next best approximations\" or edit filters.</option>")
+                jQuery("#approximation_selection").append("<option selected disabled> None found, try to raise error tolerances.</option>") :
+                jQuery("#approximation_selection").append("<option selected disabled> Try to  \"Show next best approximations\" or edit filters.</option>")
         }
     }
 }
