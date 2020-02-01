@@ -2,6 +2,10 @@
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
+/*
+import jQuery from 'jquery'
+*/
+
 jQuery( document ).ready( function() {
 
   // automatically load generatal options saved in localStorage (if available)

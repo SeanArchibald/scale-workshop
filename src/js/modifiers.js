@@ -2,6 +2,10 @@
  * TUNING DATA MODIFIERS
  */
 
+/*
+import jQuery from 'jquery'
+*/
+
 // stretch/compress tuning
 function modify_stretch() {
 
@@ -24,7 +28,7 @@ function modify_stretch() {
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
-  for ( var i = 0; i < lines.length; i++ ) {
+  for ( let i = 0; i < lines.length; i++ ) {
     const line = trim(toString(lines[i]))
     if ( !isEmpty(line) ) {
       switch (getLineType(line)) {
@@ -75,7 +79,7 @@ function modify_random_variance() {
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
-  for ( var i = 0; i < lines.length; i++ ) {
+  for ( let i = 0; i < lines.length; i++ ) {
 
     // only apply random variance if the line is not the period, or vary_period is true
     if ( vary_period || i < lines.length-1 ) {
@@ -127,7 +131,7 @@ function modify_mode() {
   var mode = jQuery( "#input_modify_mode" ).val().split(" ");
 
   // check user input for invalid items
-  for ( i = 0; i < mode.length; i++ ) {
+  for ( let i = 0; i < mode.length; i++ ) {
 
     mode[i] = parseInt( mode[i] );
 
@@ -161,7 +165,7 @@ function modify_mode() {
     var new_tuning = "";
     var note_count = 1;
     var mode_index = 0;
-    for ( var i = 0; i < lines.length; i++ ) {
+    for ( let i = 0; i < lines.length; i++ ) {
 
       if ( mode[mode_index] == note_count ) {
 
@@ -193,7 +197,7 @@ function modify_mode() {
 
     // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
     var new_tuning = "";
-    for ( var i = 0; i < mode.length; i++ ) {
+    for ( let i = 0; i < mode.length; i++ ) {
 
       new_tuning += lines[mode[i]-1];
 
@@ -250,7 +254,7 @@ function modify_sync_beating() {
   debug(lines);
   var new_tuning = "";
 
-  for ( var i = 0; i < lines.length; i++ ) {
+  for ( let i = 0; i < lines.length; i++ ) {
 
     lines[i] = line_to_decimal( lines[i] );
     new_tuning += toString(Math.round(lines[i] * resolution)) + "/" + toString(resolution) + unix_newline;
@@ -317,7 +321,7 @@ function modify_key_transpose() {
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   var new_tuning = "";
-  for ( var i = 0; i < lines.length; i++ ) {
+  for ( let i = 0; i < lines.length; i++ ) {
 
     // TODO
 
