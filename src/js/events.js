@@ -473,7 +473,7 @@ jQuery( document ).ready( function() {
   // data changed, handle programmatic reaction - no jQuery
   model.on('change', (key, newValue) => {
     if (key === 'main volume') {
-      synth.setMainVolume(gain)
+      synth.setMainVolume(newValue)
     }
   })
 
