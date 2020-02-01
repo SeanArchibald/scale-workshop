@@ -22,7 +22,9 @@ import {
   prime_counter,
   set_key_colors,
   parse_tuning_data,
-  parse_url
+  parse_url,
+  import_scala_scl,
+  import_anamark_tun
 } from './scaleworkshop.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { synth, is_qwerty_active } from './synth.js'

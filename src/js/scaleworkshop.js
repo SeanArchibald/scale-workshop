@@ -550,5 +550,7 @@ export {
   TUNING_MAX_SIZE,
   prime_counter,
   set_key_colors,
-  parse_url
+  parse_url,
+  import_scala_scl,
+  import_anamark_tun
 }
