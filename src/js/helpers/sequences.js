@@ -9,11 +9,9 @@ import { line_to_decimal, decimal_to_cents } from './converters.js'
 import { sum_array, get_prime_limit } from './numbers.js'
 
 // calculate a continued fraction for the given number
-function get_cf(num, maxiterations, roundf) {
+function get_cf(num, maxiterations, roundf=1e-6) {
   var cf = [] // the continued fraction
   var digit;
-
-  var roundinv = 1.0 / roundf;
 
   var iterations = 0;
   while (iterations < maxiterations) {
@@ -22,7 +20,7 @@ function get_cf(num, maxiterations, roundf) {
 
     num -= digit;
 
-    if (num === 0 || num <= roundinv) {
+    if (num === 0 || num <= roundf) {
       break;
     }
 
@@ -111,7 +109,6 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null) {
 function show_mos_cf(per, gen, ssz, threshold) {
   var maxsize = 400; // maximum period size
   var maxcfsize = 12; // maximum continued fraction length
-  var roundf = 1000; // rounding factor in case continued fraction blows up
 
   per = line_to_decimal(per);
   if (per <= 0 || isNaN(per)) {
@@ -131,7 +128,7 @@ function show_mos_cf(per, gen, ssz, threshold) {
   var nn = []; // MOS generators
   var dd = []; // MOS periods
 
-  cf = get_cf(genlog, maxcfsize, roundf);
+  cf = get_cf(genlog, maxcfsize);
   get_convergents(cf, nn, dd, maxsize);
 
   // filter by step size threshold
@@ -147,7 +144,7 @@ function show_mos_cf(per, gen, ssz, threshold) {
     c = L - s;
 
     // break if g is some equal division of period
-    if (c < (1 / roundf) && cf.length < maxcfsize) {
+    if (c < (1e-6) && cf.length < maxcfsize) {
       // add size-1 
       // not sure if flaw in the algorithm or weird edge case
 
@@ -172,12 +169,12 @@ function show_mos_cf(per, gen, ssz, threshold) {
 }
 
 // pass in a decimal interval, and supply empty arrays for the data you want
-function get_rational_approximations(intervalIn, numerators, denominators, roundf=999999,
+function get_rational_approximations(intervalIn, numerators, denominators, maxperiod=999999,
 cidxOut=null, ratiosOut=null, numlimits=null, denlimits=null, ratiolimits=null) {
   var cf = []; // continued fraction
 
-  cf = get_cf(intervalIn, 15, roundf);
-  get_convergents(cf, numerators, denominators, roundf, cidxOut);
+  cf = get_cf(intervalIn, 15);
+  get_convergents(cf, numerators, denominators, maxperiod, cidxOut);
 
   var doRatios = !(ratiosOut===null);
   var doNumLim = !(numlimits===null);
@@ -205,12 +202,12 @@ cidxOut=null, ratiosOut=null, numlimits=null, denlimits=null, ratiolimits=null) 
 }
 
 // pass in a decimal interval and get all the approimation data loaded into the "current_approximations" object
-function load_approximations(intervalIn, roundf=999999){
+function load_approximations(intervalIn, maxperiod=999999){
     get_rational_approximations(
       intervalIn,
       current_approximations.numerators, 
       current_approximations.denominators, 
-      roundf,
+      maxperiod,
       current_approximations.convergent_indicies,
       current_approximations.ratios,
       current_approximations.numerator_limits,
