@@ -2,7 +2,7 @@
 import { Keymap } from '../keymap.js'
 import { Delay } from './Delay.js'
 import { tuning_table } from '../scaleworkshop.js'
-import { isNil, debug } from '../helpers.js'
+import { isNil, debug } from '../helpers/general.js'
 import { Voice } from './Voice.js'
 
 class Synth {

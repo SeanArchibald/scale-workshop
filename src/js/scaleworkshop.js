@@ -6,16 +6,18 @@
 import {
   debug,
   redirectToHTTPS,
-  decimal_to_cents,
   isEmpty,
   getSearchParamOr,
   getSearchParamAsNumberOr,
-  sanitize_filename,
   getLineType,
+  isNil
+} from './helpers/general.js'
+import {
+  decimal_to_cents,
   line_to_decimal,
-  isNil,
-  show_mos_cf
-} from './helpers.js'
+  sanitize_filename,
+} from './helpers/converters.js'
+import { show_mos_cf } from './helpers/sequences.js'
 import { synth } from './synth.js'
 import { LINE_TYPE, TUNING_MAX_SIZE } from './constants.js'
 import {
@@ -36,7 +38,7 @@ import {
 jQuery(window).on('popstate', function() {
   debug('Back/Forward navigation detected - reloading page');
   location.reload(true);
-});
+} );
 
 if (window.location.hostname.endsWith('.github.com') || window.location.hostname.endsWith('sevish.com')) {
   redirectToHTTPS()
@@ -71,7 +73,7 @@ var current_approximations = {
     denominator_limits: [], // the prime limit of each denominator
     ratio_limits: [] // the prime limit of each ratio
 }
-var prime_counter = [0, 10];
+var approx_filter_prime_counter = [0, 10];
 var debug_enabled = true;
 
 /**
@@ -617,7 +619,7 @@ export {
   newline,
   current_approximations,
   debug_enabled,
-  prime_counter,
+  approx_filter_prime_counter,
   set_key_colors,
   parse_url,
   import_scala_scl,

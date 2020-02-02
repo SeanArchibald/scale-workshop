@@ -6,18 +6,20 @@
 import {
   isCent,
   isNOfEdo,
-  line_to_decimal,
-  decimal_to_ratio,
   closePopup,
   debug,
-  line_to_cents,
-  getLine,
   setTuningData,
-  setScaleName,
+  setScaleName
+} from './helpers/general.js'
+import{
+  line_to_decimal,
+  decimal_to_ratio,
+  line_to_cents,
   getFloat,
   getString,
-  invert_chord
-} from './helpers.js'
+  getLine
+} from './helpers/converters.js'
+import { invert_chord } from './helpers/numbers.js'
 import { unix_newline, parse_tuning_data } from './scaleworkshop.js'
 
 function generate_equal_temperament() {
@@ -235,7 +237,6 @@ function generate_subharmonic_series_segment_data(lo, hi) {
 }
 
 function generate_enumerate_chord() {
-
   var chord = getString('#input_chord', 'Warning: bad input');
   let chordStr = chord;
 
@@ -266,6 +267,7 @@ function generate_enumerate_chord() {
   var isInversion = document.getElementById("input_invert_chord").checked;
   if (isInversion)
     chordStr = "1/(" + chord + ")";
+
   if (/^\d+\/\(.*$/.test(chord)) {
     if (/^1\/\((\d+\:)+\d+\)$/.test(chord)) {
       isInversion = true;
@@ -282,7 +284,7 @@ function generate_enumerate_chord() {
 
   // bail if first note is in cents
   //if (isCent(pitches[0]) || isNOfEdo(pitches[0])) {
-  //	  alert("Warning: first pitch cannot be in cents");
+  //  alert("Warning: first pitch cannot be in cents");
   //  return false;
   //}
 
@@ -315,7 +317,6 @@ function generate_enumerate_chord_data(pitches, convertToRatios = false) {
   var fundamental = 1;
 
   for (let i = 0; i < pitches.length; i++) {
-
     // convert a lone integer to a commadecimal
     if (/^\d+$/.test(pitches[i])) {
       pitches[i] = pitches[i] + ',';
