@@ -39,7 +39,7 @@ function get_convergent(cf, depth=0) {
   var tmp; // for easy reciprocation
 
   if (depth >= cf.length || depth === 0)
-  depth = cf.length;
+    depth = cf.length;
 
   for (let d = 0; d < depth; d++) {
     cfdigit = cf[d];
@@ -66,28 +66,24 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null) {
   var scden; // the semiconvergen denominator
   var cind = []; // tracks indicies of convergents
 
-  for (let d = 0; d < cf.length; d++)
-  {
+  for (let d = 0; d < cf.length; d++) {
     cfdigit = cf[d];
     num = cfdigit;
     den = 1;
 
     // calculate the convergent
-    for (let i = d; i > 0; i--)
-    {
+    for (let i = d; i > 0; i--) {
       [den, num] = [num, den]
       num += den * cf[i - 1];
     }
 
-    if (d > 0)
-    {
-      for (let i = 1; i < cfdigit; i++)
-      {
+    if (d > 0) {
+      for (let i = 1; i < cfdigit; i++) {
         scnum = num - (cfdigit - i) * numarray[cind[d-1]];
         scden = den - (cfdigit - i) * denarray[cind[d-1]];
 
         if (scden > perlimit)
-        break;
+          break;
 
         numarray.push(scnum);
         denarray.push(scden);
@@ -102,10 +98,8 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null) {
     denarray.push(den);
   }
 
-  if (!(cindOut===null)) 
-  {
-    for (let i = 0; i < cind.length; i++)
-    {
+  if (!(cindOut===null)) {
+    for (let i = 0; i < cind.length; i++) {
       cindOut.push(cind[i]);
     }
   }
@@ -119,14 +113,14 @@ function show_mos_cf(per, gen, ssz, threshold) {
 
   per = line_to_decimal(per);
   if (per <= 0 || isNaN(per)) {
-  jQuery("#info_rank_2_mos").text("invalid period");
-  return false;
+    jQuery("#info_rank_2_mos").text("invalid period");
+    return false;
   }
 
   gen = line_to_decimal(gen);
   if (gen <= 0 || isNaN(gen)) {
-  jQuery("#info_rank_2_mos").text("invalid generator");
-  return false;
+    jQuery("#info_rank_2_mos").text("invalid generator");
+    return false;
   }
 
   var genlog = Math.log(gen) / Math.log(per); // the logarithmic ratio to generate MOS info
@@ -145,26 +139,23 @@ function show_mos_cf(per, gen, ssz, threshold) {
   var s = pc; // small step
   var c = gc; // chroma (L - s)
 
-  for (let i = 1; i < cf.length; i++)
-  {
+  for (let i = 1; i < cf.length; i++) {
     L -= c * cf[i];
     s = c;
     c = L - s;
 
     // break if g is some equal division of period
-    if (c < (1 / roundf) && cf.length < maxcfsize)
-    {
+    if (c < (1 / roundf) && cf.length < maxcfsize) {
       // add size-1 
       // not sure if flaw in the algorithm or weird edge case
 
       if (dd[dd.length-2] !== dd[dd.length-1]-1)
-      dd.splice(dd.length-1, 0, dd[dd.length-1]-1);
+        dd.splice(dd.length-1, 0, dd[dd.length-1]-1);
 
       break;
     }
 
-    if (c < threshold)
-    {
+    if (c < threshold) {
       var ind = sum_array(cf, i+1);
       dd.splice(ind+1, dd.length - ind);
       break;
@@ -181,7 +172,6 @@ function show_mos_cf(per, gen, ssz, threshold) {
 // helper function to simply pass in an interval and get an array of ratios returned
 function get_rational_approximations(intervalIn, numerators, denominators, roundf=999999,
 cidxOut=null, ratiosOut=null, numlimits=null, denlimits=null, ratiolimits=null) {
-
   var cf = []; // continued fraction
 
   cf = get_cf(intervalIn, 15, roundf);
@@ -197,17 +187,17 @@ cidxOut=null, ratiosOut=null, numlimits=null, denlimits=null, ratiolimits=null) 
     var dlim;
 
     for (let i = 0; i < numerators.length; i++) {
-    numerators[i] === 1 ? nlim = 1 : nlim = get_prime_limit(numerators[i]);
-    denominators[i] === 1 ? dlim = 1 : dlim = get_prime_limit(denominators[i]);
+      numerators[i] === 1 ? nlim = 1 : nlim = get_prime_limit(numerators[i]);
+      denominators[i] === 1 ? dlim = 1 : dlim = get_prime_limit(denominators[i]);
 
-    if (doRatios)
-      ratiosOut.push(numerators[i]+"/"+denominators[i]);
-    if (doNumLim)
-      numlimits.push(nlim);
-    if (doDenLim)
-      denlimits.push(dlim);
-    if (doRatioLim)
-      ratiolimits.push(Math.max(nlim, dlim));
+      if (doRatios)
+        ratiosOut.push(numerators[i]+"/"+denominators[i]);
+      if (doNumLim)
+        numlimits.push(nlim);
+      if (doDenLim)
+        denlimits.push(dlim);
+      if (doRatioLim)
+        ratiolimits.push(Math.max(nlim, dlim));
     }
   }
 }
@@ -258,7 +248,7 @@ function get_prime_factors(number) {
     if (PRIMES[i] > n)
       break;
 
-     factorsout.push(0);
+    factorsout.push(0);
 
     if (PRIMES[i] === n) {
       factorsout[i]++;
@@ -276,8 +266,8 @@ function get_prime_factors(number) {
         continue;
       }
       loop = false;
-     }
-   }
+    }
+  }
 
   return factorsout;
 }

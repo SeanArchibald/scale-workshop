@@ -43,9 +43,7 @@ function rotate(array, steps) {
 
  function isPrime(number) {
   var sqrtnum = Math.floor(Math.sqrt(number));
-
-  for (let i = 0; i < PRIMES.length; i++)
-  {
+  for (let i = 0; i < PRIMES.length; i++) {
     if (PRIMES[i] >= sqrtnum)
       break;
 
@@ -56,26 +54,23 @@ function rotate(array, steps) {
   return true;
  }
 
-function prevPrime(number)
-{
+function prevPrime(number) {
   if (number < 2)
     return 2;
-    var i = 0;
-    while (i < PRIMES.length && PRIMES[i++] <= number);
-    return PRIMES[i - 2];
+  var i = 0;
+  while (i < PRIMES.length && PRIMES[i++] <= number);
+  return PRIMES[i - 2];
 }
 
-function nextPrime(number)
-{
+function nextPrime(number) {
   if (number < 2)
     return 2;
-     var i = 0;
-     while (i < PRIMES.length && PRIMES[i++] <= number);
-     return PRIMES[i - 1];
+  var i = 0;
+  while (i < PRIMES.length && PRIMES[i++] <= number);
+  return PRIMES[i - 1];
 }
 
-function closestPrime(number)
-{
+function closestPrime(number) {
   var thisPrime = isPrime(number);
 
   if (number < 2)
@@ -137,72 +132,73 @@ function get_prime_limit_of_ratio(numerator, denominator) {
  }
 
  function get_lcm(array) {
-    let primecounts = [];
+   let primecounts = [];
    let primefactors = [];
    var f;
    array.forEach(function(item, index, array) {
-    f = get_prime_factors(item);
-    primefactors.push(f);
-   });
+     f = get_prime_factors(item);
+     primefactors.push(f);
+   } );
 
    var maxlength = 0;
    primefactors.forEach(function(item, index, array) {
     if (item.length > maxlength)
       maxlength = item.length;
-   });
+   } );
 
    // find the min power of each primes in numbers' factorization
    for (let p = 0; p < maxlength; p++) {
-    primecounts.push(0);
+     primecounts.push(0);
      for (let n = 0; n < primefactors.length; n++) {
-      f = primefactors[n];
-      if (p < f.length) {
-        if (primecounts[p] < f[p])
-          primecounts[p] = f[p];
-      }
+       f = primefactors[n];
+       if (p < f.length) {
+         if (primecounts[p] < f[p])
+           primecounts[p] = f[p];
+       }
      }	 
    }
 
    let lcm = 1;
    primecounts.forEach(function(item, index) {
-    lcm *= Math.pow(PRIMES[index], item);
-   });
+     lcm *= Math.pow(PRIMES[index], item);
+   } );
 
    return lcm;
 }
 
  function invert_chord(chord) {
-  if (!/^(\d+:)+\d+$/.test(chord)) {
-    alert("Warning: invalid chord " + chord);
-    return false;
-  }
+   if (!/^(\d+:)+\d+$/.test(chord)) {
+     alert("Warning: invalid chord " + chord);
+     return false;
+   }
 
-  let inverted = chord;
-  let intervals = chord.split(":").map(x => parseInt(x));
-  let steps = [];
-  intervals.forEach(function(item, index, array) {
-    if (index > 0) {
-      steps.push([item, array[index-1]]);
-    }
-  })
-  steps.reverse();
-  intervals = [[1, 1]];
+   let inverted = chord;
+   let intervals = chord.split(":").map(x => parseInt(x));
+   let steps = [];
+   intervals.forEach(function(item, index, array) {
+      if (index > 0) {
+        steps.push([item, array[index-1]]);
+      }
+   } );
 
-  let denominators = [];
-  steps.forEach(function(item, index) {
-    var reduced_interval = reduce_ratio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
-    intervals.push(reduced_interval);
-    denominators.push(reduced_interval[1]);
-  });
+   steps.reverse();
+   intervals = [[1, 1]];
 
-  var lcm = get_lcm(denominators);
+   let denominators = [];
+   steps.forEach(function(item, index) {
+      var reduced_interval = reduce_ratio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
+      intervals.push(reduced_interval);
+      denominators.push(reduced_interval[1]);
+   } );
 
-  chord = [];
-  intervals.forEach(function(x) {
-    chord.push(x[0] * lcm / x[1]);
-  });
+   var lcm = get_lcm(denominators);
 
-  return chord.join(":");
+   chord = [];
+   intervals.forEach(function(x) {
+      chord.push(x[0] * lcm / x[1]);
+   } );
+
+   return chord.join(":");
  }
 
 export {

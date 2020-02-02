@@ -377,14 +377,14 @@ function modify_replace_with_approximation () {
       lines[degree_selected-1] = approximation;
     } else {
       lines.push(approximation);
-  }
+    }
 
     var lines_to_text = "";
     lines.forEach(function(item, index, array) {
       lines_to_text += lines[index];
       if (index + 1 < array.length) 
         lines_to_text += newline;
-    })
+    } );
     tuning_data.value = lines_to_text;
 
     parse_tuning_data();

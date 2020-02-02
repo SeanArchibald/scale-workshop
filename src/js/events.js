@@ -193,7 +193,7 @@ jQuery( document ).ready( function() {
           jQuery( this ).dialog( 'close' );
         }
       }
-    });
+    } );
   } );
 
   // load-preset option clicked
@@ -211,8 +211,7 @@ jQuery( document ).ready( function() {
     // setup MOS options, and hide
     update_modify_mode_mos_generators();
     show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value);
-  jQuery( "#modal_modify_mos_degree").change(); // make sizes available
-
+    jQuery( "#modal_modify_mos_degree").change(); // make sizes available
     jQuery( "#input_modify_mode" ).select();
     openDialog("#modal_modify_mode", modify_mode)
   } );
@@ -240,18 +239,8 @@ jQuery( document ).ready( function() {
 
   // approximate option clicked
   jQuery( "#modify_approximate" ).click( function( event ) {
-
     event.preventDefault();
-
-    // this needs to be here because a tuning data line needs to be
-    // inserted into the #input_interval_to_approximate field
-
     jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim());
-
-    if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-        alert( "No tuning data to modify." );
-        return false;
-     }
 
     jQuery( "#input_scale_degree" ).val(1);
     jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 });
@@ -284,15 +273,15 @@ jQuery( document ).ready( function() {
     current_approximations.ratio_limits = [];
 
     get_rational_approximations(
-	interval, 
-	current_approximations.numerators, 
-	current_approximations.denominators, 
-	999999,
-    current_approximations.convergent_indicies,
-    current_approximations.ratios,
-    current_approximations.numerator_limits,
-    current_approximations.denominator_limits,
-    current_approximations.ratio_limits
+	  interval, 
+	  current_approximations.numerators, 
+	  current_approximations.denominators, 
+	  999999,
+      current_approximations.convergent_indicies,
+      current_approximations.ratios,
+      current_approximations.numerator_limits,
+      current_approximations.denominator_limits,
+      current_approximations.ratio_limits
 	);
 
     modify_update_approximations();
@@ -301,12 +290,6 @@ jQuery( document ).ready( function() {
   // recalculate approximations when scale degree changes
   jQuery( "#input_scale_degree").change( function() {
     jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
-
-    if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-        alert( "No tuning data to modify." );
-        return false;
-     }
-
     var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
     var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
     jQuery ( "#input_interval_to_approximate" ).val(lines[index]);
@@ -358,75 +341,75 @@ jQuery( document ).ready( function() {
         prime_counter[1]++;
       }
     } else {
-    prime_counter[1] = PRIMES.indexOf(closestPrime(num));
+      prime_counter[1] = PRIMES.indexOf(closestPrime(num));
     }
 
     jQuery( "#input_approx_max_prime").val(PRIMES[prime_counter[1]]);
     modify_update_approximations();
   } );
 
-    // shows or hides MOS mode selection boxes
-    function show_modify_mode_mos_options(showOptions) {
-      document.getElementById("mos_mode_options").style.display = showOptions === "mos" ?  'block' : 'none';
+  // shows or hides MOS mode selection boxes
+  function show_modify_mode_mos_options(showOptions) {
+    document.getElementById("mos_mode_options").style.display = showOptions === "mos" ?  'block' : 'none';
+  }
+
+  jQuery( "#modal_modify_mode").change( function() {
+    show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+  } );
+
+  // repopulates the available degrees for selection
+  function update_modify_mode_mos_generators() {
+    show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+    let coprimes = get_coprimes(tuning_table.note_count-1);
+    jQuery("#modal_modify_mos_degree").empty();
+    for (let d=1; d < coprimes.length-1; d++) {
+    var num = coprimes[d];
+    var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
+    var text = num + " (" + cents + "c)";
+    jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
     }
+  }
 
-    jQuery( "#modal_modify_mode").change( function() {
-      show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
-    } );
+   // calculate the MOS mode and insert it in the mode input box
+  function modify_mode_update_mos_scale() {
+    var p = tuning_table.note_count-1;
+    var g = parseInt(jQuery("#modal_modify_mos_degree").val());
+    var s = parseInt(jQuery("#modal_modify_mos_size").val());
+    let mode = get_rank2_mode(p, g, s);
+    jQuery("#input_modify_mode").val(mode.join(" "));
+  }
 
-    // repopulates the available degrees for selection
-    function update_modify_mode_mos_generators() {
-      show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
-      let coprimes = get_coprimes(tuning_table.note_count-1);
-      jQuery("#modal_modify_mos_degree").empty();
-      for (let d=1; d < coprimes.length-1; d++) {
-        var num = coprimes[d];
-        var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
-        var text = num + " (" + cents + "c)";
-        jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
-      }
+  // update the available sizes for selection
+  jQuery( "#modal_modify_mos_degree").change( function() {
+    let nn = [];
+    let dd = [];
+    var gp = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
+    get_rational_approximations(gp, nn, dd);
+    jQuery("#modal_modify_mos_size").empty();
+    for (let d=2; d < dd.length-1; d++) {
+      var num = dd[d];
+      jQuery("#modal_modify_mos_size").append('<option value="'+num+'">'+num+'</option>');
     }
+  } );
 
-     // calculate the MOS mode and insert it in the mode input box
-    function modify_mode_update_mos_scale() {
-      var p = tuning_table.note_count-1;
-      var g = parseInt(jQuery("#modal_modify_mos_degree").val());
-      var s = parseInt(jQuery("#modal_modify_mos_size").val());
-      let mode = get_rank2_mode(p, g, s);
-      jQuery("#input_modify_mode").val(mode.join(" "));
-    }
+  // update mode when size is selected
+  jQuery( "#modal_modify_mos_size").change( function() {
+    modify_mode_update_mos_scale();
+  } );
 
-    // update the available sizes for selection
-    jQuery( "#modal_modify_mos_degree").change( function() {
-      let nn = [];
-      let dd = [];
-      var gp = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
-      get_rational_approximations(gp, nn, dd);
-      jQuery("#modal_modify_mos_size").empty();
-      for (let d=2; d < dd.length-1; d++) {
-        var num = dd[d];
-        jQuery("#modal_modify_mos_size").append('<option value="'+num+'">'+num+'</option>');
-      }
-    } );
+  // move the mode steps back one
+  jQuery( "#input_mode_step_left").click( function() {
+    var mode = jQuery( "#input_modify_mode" ).val().split(" ");
+    rotate(mode, -1);
+    jQuery( "#input_modify_mode" ).val(mode.join(" "));
+  } );
 
-    // update mode when size is selected
-    jQuery( "#modal_modify_mos_size").change( function() {
-      modify_mode_update_mos_scale();
-    } );
-
-    // move the mode steps back one
-    jQuery( "#input_mode_step_left").click( function() {
-      var mode = jQuery( "#input_modify_mode" ).val().split(" ");
-      rotate(mode, -1);
-      jQuery( "#input_modify_mode" ).val(mode.join(" "));
-    } );
-
-    // move the mode steps forward one
-    jQuery( "#input_mode_step_right").click( function() {
-      var mode = jQuery( "#input_modify_mode" ).val().split(" ");
-      rotate(mode, 1);
-      jQuery( "#input_modify_mode" ).val(mode.join(" "));
-    } );
+  // move the mode steps forward one
+  jQuery( "#input_mode_step_right").click( function() {
+    var mode = jQuery( "#input_modify_mode" ).val().split(" ");
+    rotate(mode, 1);
+    jQuery( "#input_modify_mode" ).val(mode.join(" "));
+  } );
 
   /*
     // rank-2 temperament generator - scale size changed

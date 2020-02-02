@@ -212,7 +212,6 @@ function midi_note_number_to_name(input) {
 
 // convert a decimal to ratio (string 'x/y'), may have rounding errors for irrationals
 function decimal_to_ratio(rawInput, iterations=15, depth=0) {
-
   if (rawInput === false)
     return false;
 
@@ -220,8 +219,7 @@ function decimal_to_ratio(rawInput, iterations=15, depth=0) {
 
   if (input === 0 || isNaN(input)) {
     return false;
-    } 
-  else {
+  } else {
     var inputcf = get_cf(input, iterations, 100000);
     return get_convergent(inputcf, depth);
   }
