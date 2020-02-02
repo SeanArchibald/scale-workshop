@@ -215,9 +215,9 @@ function decimal_to_ratio(rawInput, iterations=15, depth=0) {
 
   if (rawInput === false)
     return false;
-  
+
   const input = parseFloat(rawInput);
-  
+
   if (input === 0 || isNaN(input)) {
     return false;
     } 

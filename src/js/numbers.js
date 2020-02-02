@@ -12,53 +12,50 @@ Number.prototype.mod = function (n) {
 };
 
 // calculate the sum of the values in a given array given a stopping index
-function sum_array(array, index)
-{
+function sum_array(array, index) {
   var sum = 0;
 
   if (array.length <= index)
     index = array.length - 1;
 
-    for (let i = 0; i < index; i ++)
-    {
-      sum += array[i];
-    }
+  for (let i = 0; i < index; i ++) {
+    sum += array[i];
+  }
 
-    return sum;
+   return sum;
 }
 
 // rotates the array by given steps
-function rotate(array, steps)
-{
-    var i = Math.abs(steps);
-    while (i > 0) {
-  var x;
-        if (steps < 0) {
-            x = array.shift();
+function rotate(array, steps) {
+  var i = Math.abs(steps);
+  while (i > 0) {
+    var x;
+    if (steps < 0) {
+      x = array.shift();
       array.push(x);
-  } else if (steps > 0) {
+    } else if (steps > 0) {
       x = array.pop();
       array.unshift(x);
-  }
-  i--;
     }
+    i--;
+  }
 } 
 
  function isPrime(number) {
-    var sqrtnum = Math.floor(Math.sqrt(number));
-    
-    for (let i = 0; i < PRIMES.length; i++)
-    {
-        if (PRIMES[i] >= sqrtnum)
-            break;
-    
-        if (number % PRIMES[i] === 0) {
-            return false;
-        }
+  var sqrtnum = Math.floor(Math.sqrt(number));
+
+  for (let i = 0; i < PRIMES.length; i++)
+  {
+    if (PRIMES[i] >= sqrtnum)
+      break;
+
+    if (number % PRIMES[i] === 0) {
+      return false;
     }
-    return true;
+  }
+  return true;
  }
-                 
+
 function prevPrime(number)
 {
   if (number < 2)
@@ -67,7 +64,7 @@ function prevPrime(number)
     while (i < PRIMES.length && PRIMES[i++] <= number);
     return PRIMES[i - 2];
 }
-                 
+
 function nextPrime(number)
 {
   if (number < 2)
@@ -80,7 +77,7 @@ function nextPrime(number)
 function closestPrime(number)
 {
   var thisPrime = isPrime(number);
-  
+
   if (number < 2)
     return 2;
   else if (thisPrime)
@@ -147,7 +144,7 @@ function get_prime_limit_of_ratio(numerator, denominator) {
     f = get_prime_factors(item);
     primefactors.push(f);
    });
-   
+
    var maxlength = 0;
    primefactors.forEach(function(item, index, array) {
     if (item.length > maxlength)
@@ -190,14 +187,14 @@ function get_prime_limit_of_ratio(numerator, denominator) {
   })
   steps.reverse();
   intervals = [[1, 1]];
-  
+
   let denominators = [];
   steps.forEach(function(item, index) {
     var reduced_interval = reduce_ratio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
     intervals.push(reduced_interval);
     denominators.push(reduced_interval[1]);
   });
-  
+
   var lcm = get_lcm(denominators);
 
   chord = [];

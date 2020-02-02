@@ -235,7 +235,6 @@ function generate_subharmonic_series_segment_data(lo, hi) {
 }
 
 function generate_enumerate_chord() {
-
   var chord = getString('#input_chord', 'Warning: bad input');
   let chordStr = chord;
 
@@ -316,7 +315,6 @@ function generate_enumerate_chord_data(pitches, convertToRatios = false) {
   var fundamental = 1;
 
   for (let i = 0; i < pitches.length; i++) {
-
     // convert a lone integer to a commadecimal
     if (/^\d+$/.test(pitches[i])) {
       pitches[i] = pitches[i] + ',';
