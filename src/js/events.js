@@ -22,7 +22,8 @@ import {
 import {
   get_coprimes,
   get_rank2_mode,
-  get_rational_approximations
+  get_rational_approximations,
+  load_approximations
 } from './helpers/sequences.js'
 import {
   tuning_table,
@@ -272,17 +273,7 @@ jQuery( document ).ready( function() {
     current_approximations.denominator_limits = [];
     current_approximations.ratio_limits = [];
 
-    get_rational_approximations(
-      interval,
-      current_approximations.numerators, 
-      current_approximations.denominators, 
-      999999,
-      current_approximations.convergent_indicies,
-      current_approximations.ratios,
-      current_approximations.numerator_limits,
-      current_approximations.denominator_limits,
-      current_approximations.ratio_limits
-    );
+    load_approximations(interval);
 
     modify_update_approximations();
   } );

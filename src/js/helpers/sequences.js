@@ -4,6 +4,7 @@
 
 /* global alert, location, jQuery, localStorage, navigator */
 import { PRIMES } from '../constants.js'
+import { current_approximations } from '../scaleworkshop.js'
 import { line_to_decimal, decimal_to_cents } from './converters.js'
 import { sum_array, get_prime_limit } from './numbers.js'
 
@@ -170,7 +171,7 @@ function show_mos_cf(per, gen, ssz, threshold) {
   jQuery("#info_rank_2_mos").text(dd.join(", "));
 }
 
-// helper function to simply pass in an interval and get an array of ratios returned
+// pass in a decimal interval, and supply empty arrays for the data you want
 function get_rational_approximations(intervalIn, numerators, denominators, roundf=999999,
 cidxOut=null, ratiosOut=null, numlimits=null, denlimits=null, ratiolimits=null) {
   var cf = []; // continued fraction
@@ -201,6 +202,21 @@ cidxOut=null, ratiosOut=null, numlimits=null, denlimits=null, ratiolimits=null) 
         ratiolimits.push(Math.max(nlim, dlim));
     }
   }
+}
+
+// pass in a decimal interval and get all the approimation data loaded into the "current_approximations" object
+function load_approximations(intervalIn, roundf=999999){
+    get_rational_approximations(
+      intervalIn,
+      current_approximations.numerators, 
+      current_approximations.denominators, 
+      roundf,
+      current_approximations.convergent_indicies,
+      current_approximations.ratios,
+      current_approximations.numerator_limits,
+      current_approximations.denominator_limits,
+      current_approximations.ratio_limits
+    );
 }
 
 // rank2 scale algorithm intended for integers, in ET contexts
@@ -276,15 +292,13 @@ function get_prime_factors(number) {
  // returns an array of integers that share no common factors to the given integer
  function get_coprimes(number) {
   let coprimes = [1];
-  var m, d, t;
+  var mod, divisor
   for (let i = 2; i < number - 1; i++) {
-    m = number;
+    mod = number;
     d = i;
-    while (d > 1) {
-      m = m % d;
-      t = d;
-      d = m;
-      m = t;
+    while (divisor > 1) {
+      mod = mod % divisor;
+      [mod, divisor] = [divisor, mod];
     }
     if (d > 0) {
       coprimes.push(i);
@@ -300,6 +314,7 @@ export {
   get_convergents,
   show_mos_cf,
   get_rational_approximations,
+  load_approximations,
   get_rank2_mode,
   get_prime_factors,
   get_coprimes
