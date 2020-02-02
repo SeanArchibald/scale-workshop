@@ -73,7 +73,7 @@ var current_approximations = {
     denominator_limits: [], // the prime limit of each denominator
     ratio_limits: [] // the prime limit of each ratio
 }
-var prime_counter = [0, 10]; // used for the prime number boxes in Approximate
+var approx_filter_prime_counter = [0, 10];
 var debug_enabled = true;
 
 /**
@@ -619,7 +619,7 @@ export {
   newline,
   current_approximations,
   debug_enabled,
-  prime_counter,
+  approx_filter_prime_counter,
   set_key_colors,
   parse_url,
   import_scala_scl,

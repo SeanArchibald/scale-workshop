@@ -284,7 +284,7 @@ function generate_enumerate_chord() {
 
   // bail if first note is in cents
   //if (isCent(pitches[0]) || isNOfEdo(pitches[0])) {
-  //	  alert("Warning: first pitch cannot be in cents");
+  //  alert("Warning: first pitch cannot be in cents");
   //  return false;
   //}
 
