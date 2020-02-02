@@ -4,7 +4,7 @@
 
 /* global alert, location, jQuery, localStorage, navigator */
 import { PRIMES } from './constants.js'
-import { line_to_decimal, decimal_to_cents, isNaN } from './helpers.js'
+import { line_to_decimal, decimal_to_cents } from './helpers.js'
 
 // calculate a continued fraction for the given number
 function get_cf(num, maxiterations, roundf) {
