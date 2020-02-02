@@ -415,14 +415,14 @@ function modify_update_approximations() {
     var maxprime = parseInt( jQuery (" #input_approx_max_prime").val() );
     var semiconvergents = !document.getElementById("input_show_convergents").checked;
 
-    if (minprime < 2) {
-      minprime = 2;
-      jQuery("#input_approx_min_prime").val(2);
+    if (minprime < PRIMES[0]) {
+      minprime = PRIMES[0];
+      jQuery("#input_approx_min_prime").val(PRIMES[0]);
     }
 
-    if (maxprime > 7919) {
-      maxprime = 7919;
-      jQuery("#input_approx_max_prime").val(7919);
+    if (maxprime > PRIMES[PRIMES.length-1]) {
+      maxprime = PRIMES[PRIMES.length-1];
+      jQuery("#input_approx_max_prime").val(maxprime);
     }
 
     if (mincentsd < 0)
