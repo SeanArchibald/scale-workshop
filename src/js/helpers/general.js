@@ -18,7 +18,7 @@ function isCommaDecimal(rawInput) {
   // true, when the input has numbers at the beginning, followed by a comma, ending with any number of numbers
   // for example: 1,25
   const input = trim(toString(rawInput))
-  return /^\d+\,\d*$/.test(input);
+  return /^\d+,\d*$/.test(input);
 }
 
 function isNOfEdo(rawInput) {

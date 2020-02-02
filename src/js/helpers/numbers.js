@@ -135,13 +135,13 @@ function get_prime_limit_of_ratio(numerator, denominator) {
    let primecounts = [];
    let primefactors = [];
    var f;
-   array.forEach(function(item, index, array) {
+   array.forEach(function(item) {
      f = get_prime_factors(item);
      primefactors.push(f);
    } );
 
    var maxlength = 0;
-   primefactors.forEach(function(item, index, array) {
+   primefactors.forEach(function(item) {
     if (item.length > maxlength)
       maxlength = item.length;
    } );
@@ -172,7 +172,6 @@ function get_prime_limit_of_ratio(numerator, denominator) {
      return false;
    }
 
-   let inverted = chord;
    let intervals = chord.split(":").map(x => parseInt(x));
    let steps = [];
    intervals.forEach(function(item, index, array) {

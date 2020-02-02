@@ -18,12 +18,13 @@ import {
   trim,
   getLineType,
 } from './helpers/general.js'
-import{
+import {
   ratio_to_cents,
   line_to_decimal,
   decimal_to_cents,
   n_of_edo_to_cents
 } from './helpers/converters.js'
+import { PRIMES } from './constants.js'
 
 // stretch/compress tuning
 function modify_stretch() {
@@ -415,14 +416,14 @@ function modify_update_approximations() {
     var maxprime = parseInt( jQuery (" #input_approx_max_prime").val() );
     var semiconvergents = !document.getElementById("input_show_convergents").checked;
 
-    if (minprime < 2) {
-      minprime = 2;
-      jQuery("#input_approx_min_prime").val(2);
+    if (minprime < PRIMES[0]) {
+      minprime = PRIMES[0];
+      jQuery("#input_approx_min_prime").val(PRIMES[0]);
     }
 
-    if (maxprime > 7919) {
-      maxprime = 7919;
-      jQuery("#input_approx_max_prime").val(7919);
+    if (maxprime > PRIMES[PRIMES.length-1]) {
+      maxprime = PRIMES[PRIMES.length-1];
+      jQuery("#input_approx_max_prime").val(maxprime);
     }
 
     if (mincentsd < 0)
