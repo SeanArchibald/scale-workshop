@@ -206,7 +206,7 @@ jQuery( document ).ready( function() {
     // setup MOS options, and hide
     update_modify_mode_mos_generators();
     show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value);
-	jQuery( "#modal_modify_mos_degree").change(); // make sizes available
+  jQuery( "#modal_modify_mos_degree").change(); // make sizes available
 
     jQuery( "#input_modify_mode" ).select();
     openDialog("#modal_modify_mode", modify_mode)
@@ -236,24 +236,24 @@ jQuery( document ).ready( function() {
   // approximate option clicked
   jQuery( "#modify_approximate" ).click( function( event ) {
     
-	event.preventDefault();
+  event.preventDefault();
 
     // this needs to be here because a tuning data line needs to be
     // inserted into the #input_interval_to_approximate field
                                         
-	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim());
+  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim());
 
-	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-		alert( "No tuning data to modify." );
-		return false;
-	 }
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+    alert( "No tuning data to modify." );
+    return false;
+   }
     
     jQuery( "#input_scale_degree" ).val(1);
     jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 });
 
     
-	jQuery( "#input_scale_degree" ).select();
-	jQuery( "#input_scale_degree" ).trigger("change");
+  jQuery( "#input_scale_degree" ).select();
+  jQuery( "#input_scale_degree" ).trigger("change");
 
     jQuery( "#modal_approximate_intervals" ).dialog({
       modal: true,
@@ -271,8 +271,8 @@ jQuery( document ).ready( function() {
 
   // calculate and list rational approximations within user parameters
   jQuery( "#input_interval_to_approximate" ).change( function() {
-		var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
-		
+    var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
+    
         current_approximations.convergent_indicies = [];
         current_approximations.numerators = [];
         current_approximations.denominators = [];
@@ -292,17 +292,17 @@ jQuery( document ).ready( function() {
   
   // recalculate approximations when scale degree changes
   jQuery( "#input_scale_degree").change( function() {
-	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-		alert( "No tuning data to modify." );
-		return false;
-	 }
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+    alert( "No tuning data to modify." );
+    return false;
+   }
 
     var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
-	var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
-	jQuery ( "#input_interval_to_approximate" ).val(lines[index]);
-	jQuery ( "#input_interval_to_approximate" ).trigger("change");
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  jQuery ( "#input_interval_to_approximate" ).val(lines[index]);
+  jQuery ( "#input_interval_to_approximate" ).trigger("change");
 
   });
 
@@ -326,15 +326,15 @@ jQuery( document ).ready( function() {
   jQuery( "#input_approx_min_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_min_prime").val());
     var dif = num - PRIMES[prime_counter[0]];
-	if (Math.abs(dif) == 1) {
-		if (num < PRIMES[prime_counter[0]]) {
-			prime_counter[0]--;
-		} else {
-			prime_counter[0]++;
-		}
-	} else {
-		prime_counter[0] = PRIMES.indexOf(closestPrime(num));
-	}
+  if (Math.abs(dif) == 1) {
+    if (num < PRIMES[prime_counter[0]]) {
+      prime_counter[0]--;
+    } else {
+      prime_counter[0]++;
+    }
+  } else {
+    prime_counter[0] = PRIMES.indexOf(closestPrime(num));
+  }
     
     jQuery( "#input_approx_min_prime").val(PRIMES[prime_counter[0]]);
     modify_update_approximations();
@@ -344,15 +344,15 @@ jQuery( document ).ready( function() {
   jQuery( "#input_approx_max_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_max_prime").val());
     var dif = num - PRIMES[prime_counter[1]];
-	if (Math.abs(dif) == 1) {
-		if (num < PRIMES[prime_counter[1]]) {
-			prime_counter[1]--;
-		} else {
-			prime_counter[1]++;
-		}
-	} else {
-		prime_counter[1] = PRIMES.indexOf(closestPrime(num));
-	}
+  if (Math.abs(dif) == 1) {
+    if (num < PRIMES[prime_counter[1]]) {
+      prime_counter[1]--;
+    } else {
+      prime_counter[1]++;
+    }
+  } else {
+    prime_counter[1] = PRIMES.indexOf(closestPrime(num));
+  }
     
     jQuery( "#input_approx_max_prime").val(PRIMES[prime_counter[1]]);
     modify_update_approximations();
@@ -410,16 +410,16 @@ jQuery( document ).ready( function() {
     
     // move the mode steps back one
     jQuery( "#input_mode_step_left").click( function() {
-		var mode = jQuery( "#input_modify_mode" ).val().split(" ");
-		rotate(mode, -1);
-		jQuery( "#input_modify_mode" ).val(mode.join(" "));
+    var mode = jQuery( "#input_modify_mode" ).val().split(" ");
+    rotate(mode, -1);
+    jQuery( "#input_modify_mode" ).val(mode.join(" "));
      })
 
     // move the mode steps forward one
     jQuery( "#input_mode_step_right").click( function() {
-		var mode = jQuery( "#input_modify_mode" ).val().split(" ");
-		rotate(mode, 1);
-		jQuery( "#input_modify_mode" ).val(mode.join(" "));
+    var mode = jQuery( "#input_modify_mode" ).val().split(" ");
+    rotate(mode, 1);
+    jQuery( "#input_modify_mode" ).val(mode.join(" "));
      })
                         
   /*
