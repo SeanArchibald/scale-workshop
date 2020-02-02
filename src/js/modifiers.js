@@ -169,13 +169,13 @@ function modify_mode() {
   // mode_type will be either intervals (e.g. 2 2 1 2 2 2 1) or from_base (e.g. 2 4 5 7 9 11 12)
   var mode_type = jQuery("#modal_modify_mode input[type='radio']:checked").val();
 
-  if ( mode_type == "intervals" || mode_type == "mos") {
+  if ( mode_type === "intervals" || mode_type === "mos") {
 
     // get the total number of notes in the mode
     var mode_sum = mode.reduce(function(a, b) { return a + b; }, 0);
 
     // number of notes in the mode should equal the number of lines in the scale data field
-    if ( mode_sum != lines.length ) {
+    if ( mode_sum !== lines.length ) {
       alert( "Your mode doesn't add up to the same size as the current scale." + unix_newline + "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
       return false;
     }
@@ -185,7 +185,7 @@ function modify_mode() {
     var mode_index = 0;
     for ( let i = 0; i < lines.length; i++ ) {
 
-      if ( mode[mode_index] == note_count ) {
+      if ( mode[mode_index] === note_count ) {
 
         new_tuning = new_tuning + lines[i];
 
@@ -204,11 +204,11 @@ function modify_mode() {
 
   }
 
-  // if ( mode_type == "from_base" ) {
+  // if ( mode_type === "from_base" ) {
   else {
 
     // number of notes in the mode should equal the number of lines in the scale data field
-    if ( mode[mode.length - 1] != lines.length ) {
+    if ( mode[mode.length - 1] !== lines.length ) {
       alert( "Your mode isn't the same size as the current scale." + unix_newline + "E.g. if you have a 5 note scale, mode 2 4 5 is valid because the final degree is 5. But mode 2 4 6 is invalid because 6 is greater than 5." );
       return false;
     }
@@ -330,7 +330,7 @@ function modify_key_transpose() {
   key = key % lines.length;
 
   // warn on using 0
-  if ( key == 0 ) {
+  if ( key === 0 ) {
     alert( "1/1 is already on key 0, so no change." );
   }
 
@@ -461,7 +461,7 @@ function modify_update_approximations() {
             if (!interval) {
                 jQuery("#approximation_selection").append("<option selected disabled>Error: Invalid interval</option>");
                 break;
-            } else if (interval == fraction && interval) {  // for cases like 1200.0 == 2/1
+            } else if (interval === fraction && interval) {  // for cases like 1200.0 === 2/1
                 jQuery("#approximation_selection").append("<option>"+description+"</option>");
                 break;
             } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {

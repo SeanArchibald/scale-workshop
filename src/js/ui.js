@@ -28,7 +28,7 @@ jQuery( function() {
 function touch_kbd_open() {
 
   // check if scale already set up - we can't use the touch kbd if there is no scale
-  if ( tuning_table['note_count'] == 0 ) {
+  if ( tuning_table['note_count'] === 0 ) {
 
     alert("Can't open the touch keyboard until you have created or loaded a scale.");
     return false;

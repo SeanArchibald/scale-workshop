@@ -329,7 +329,7 @@ jQuery( document ).ready( function() {
   jQuery( "#input_approx_min_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_min_prime").val());
     var dif = num - PRIMES[prime_counter[0]];
-  if (Math.abs(dif) == 1) {
+  if (Math.abs(dif) === 1) {
     if (num < PRIMES[prime_counter[0]]) {
       prime_counter[0]--;
     } else {
@@ -347,7 +347,7 @@ jQuery( document ).ready( function() {
   jQuery( "#input_approx_max_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_max_prime").val());
     var dif = num - PRIMES[prime_counter[1]];
-  if (Math.abs(dif) == 1) {
+  if (Math.abs(dif) === 1) {
     if (num < PRIMES[prime_counter[1]]) {
       prime_counter[1]--;
     } else {
@@ -363,7 +363,7 @@ jQuery( document ).ready( function() {
                                                 
     // shows or hides MOS mode selection boxes
     function show_modify_mode_mos_options(showOptions) {
-      document.getElementById("mos_mode_options").style.display = showOptions == "mos" ?  'block' : 'none';
+      document.getElementById("mos_mode_options").style.display = showOptions === "mos" ?  'block' : 'none';
     }
     
     jQuery( "#modal_modify_mode").change( function() {
@@ -483,7 +483,7 @@ jQuery( document ).ready( function() {
 
   // General Settings - Line ending format (newlines)
   jQuery( '#input_select_newlines' ).change( function( event ) {
-    if ( jQuery( '#input_select_newlines' ).val() == "windows" ) {
+    if ( jQuery( '#input_select_newlines' ).val() === "windows" ) {
       newline = "\r\n"; // windows
       localStorage.setItem( 'newline', 'windows' );
     }

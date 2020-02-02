@@ -288,11 +288,11 @@ function parse_tuning_data() {
 
     // highlight the row which corresponds to the base MIDI note
     var table_class = "";
-    if ( i == tuning_table['base_midi_note'] ) {
+    if ( i === tuning_table['base_midi_note'] ) {
       table_class = "info";
     }
     else {
-      if ( ( tuning_table['base_midi_note'] - i ) % (tuning_table['note_count']-1) == 0 ) {
+      if ( ( tuning_table['base_midi_note'] - i ) % (tuning_table['note_count']-1) === 0 ) {
         table_class = "warning";
       }
     }
@@ -502,7 +502,7 @@ function parse_imported_anamark_tun( event ) {
           break;
         }
       }
-      if ( first_line == 0 ) {
+      if ( first_line === 0 ) {
         for ( let i = 0; i < lines.length; i++ ) {
           if ( lines[i].includes("[Tuning]") ) {
             has_functional_tuning = true;
@@ -524,11 +524,11 @@ function parse_imported_anamark_tun( event ) {
         line = parseFloat( line ).toFixed(6);
         line = (parseFloat(line) + parseFloat(offset)).toFixed(6);
 
-        if ( n == 0 ) {
+        if ( n === 0 ) {
           // clear scale field
           tuning_data_str = ''
         }
-        else if ( n == 1 ) {
+        else if ( n === 1 ) {
           tuning_data_str += line ;
         }
         else {

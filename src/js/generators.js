@@ -131,7 +131,7 @@ function generate_rank_2_temperament_data(generator, period, size, up) {
     else {
 
       // first down generator
-      if (i == up + 1) {
+      if (i === up + 1) {
         aa[i] = (aa[0] - generator).mod(period);
       }
 
@@ -161,7 +161,7 @@ function generate_harmonic_series_segment() {
   var hi = getFloat('#input_highest_harmonic', 'Warning: highest harmonic should be a positive integer')
 
   // bail if lo = hi
-  if (lo == hi) {
+  if (lo === hi) {
     alert("Warning: Lowest and highest harmonics are the same. Can't generate a scale based on only one harmonic.");
     return false;
   }
@@ -201,7 +201,7 @@ function generate_subharmonic_series_segment() {
   var hi = getFloat('#input_highest_subharmonic', 'Warning: highest subharmonic should be a positive integer')
 
   // bail if lo = hi
-  if (lo == hi) {
+  if (lo === hi) {
     alert("Warning: Lowest and highest subharmonics are the same. Can't generate a scale based on only one subharmonic.");
     return false;
   }
@@ -255,7 +255,7 @@ function generate_enumerate_chord() {
     if (/^\d+$/.test(value))
       value += ",";
     value = line_to_decimal(value);
-    if (value == 0 || !/(^\d+([\,\.]\d*)?|([\\\/]\d+)?$)*/.test(value)) {
+    if (value === 0 || !/(^\d+([\,\.]\d*)?|([\\\/]\d+)?$)*/.test(value)) {
       alert("Warning: Invalid pitch " + inputTest[i])
       return false;
     }

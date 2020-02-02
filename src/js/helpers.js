@@ -262,7 +262,7 @@ function get_cf(num, maxiterations, roundf) {
         
         num -= digit;
         
-        if (num == 0 || num <= roundinv)
+        if (num === 0 || num <= roundinv)
         {
             break;
         }
@@ -282,7 +282,7 @@ function get_convergent(cf, depth=0) {
     var den; // the convergent denominator
     var tmp; // for easy reciprocation
 
-  if (depth >= cf.length || depth == 0)
+  if (depth >= cf.length || depth === 0)
     depth = cf.length;
     
     for (let d = 0; d < depth; d++)
@@ -437,7 +437,7 @@ function show_mos_cf(per, gen, ssz, threshold) {
           // add size-1 
           // not sure if flaw in the algorithm or weird edge case
           
-          if (dd[dd.length-2] != dd[dd.length-1]-1)
+          if (dd[dd.length-2] !== dd[dd.length-1]-1)
             dd.splice(dd.length-1, 0, dd[dd.length-1]-1);
 
           break;
@@ -477,8 +477,8 @@ function get_rational_approximations(intervalIn, numerators, denominators, round
         var dlim;
 
         for (let i = 0; i < numerators.length; i++) {
-            numerators[i] == 1 ? nlim = 1 : nlim = get_prime_limit(numerators[i]);
-            denominators[i] == 1 ? dlim = 1 : dlim = get_prime_limit(denominators[i]);
+            numerators[i] === 1 ? nlim = 1 : nlim = get_prime_limit(numerators[i]);
+            denominators[i] === 1 ? dlim = 1 : dlim = get_prime_limit(denominators[i]);
 
             if (doRatios)
                 ratiosOut.push(numerators[i]+"/"+denominators[i]);
@@ -525,7 +525,7 @@ function get_rank2_mode(period, generator, size, numdown=0) {
 // indicies are the 'nth' prime, the value is the powers of each prime
 function get_prime_factors(number) {
     number = Math.floor(number);
-    if (number == 1) {
+    if (number === 1) {
         //alert("Warning: 1 has no prime factorization.");
         return 1;
      }
@@ -540,7 +540,7 @@ function get_prime_factors(number) {
                  
          factorsout.push(0);
                  
-        if (PRIMES[i] == n) {
+        if (PRIMES[i] === n) {
             factorsout[i]++;
             break;
         }
@@ -550,7 +550,7 @@ function get_prime_factors(number) {
         while (loop) {
             q = n / PRIMES[i];
         
-            if (q == Math.floor(q)) {
+            if (q === Math.floor(q)) {
                 n = q;
                 factorsout[i]++;
                 continue;
@@ -569,7 +569,7 @@ function get_prime_factors_string(number) {
                  
      for (let i = 0; i < factors.length; i++) {
                  
-         if (factors[i] != 0) {
+         if (factors[i] !== 0) {
             str_out += PRIMES[i] + "^" + factors[i];
                  
             if (i < factors.length - 1)
@@ -588,7 +588,7 @@ function get_prime_factors_string(number) {
         if (PRIMES[i] >= sqrtnum)
             break;
     
-        if (number % PRIMES[i] == 0) {
+        if (number % PRIMES[i] === 0) {
             return false;
         }
     }
@@ -681,9 +681,9 @@ function get_factors(number) {
 
   for (let n = 2; n <= nsqrt; n++) {
     let q = number / n;
-    if (Math.floor(q) == q) {
+    if (Math.floor(q) === q) {
       factors.push(n);
-      if (n != q)
+      if (n !== q)
         factors.push(q);
     }
   }
