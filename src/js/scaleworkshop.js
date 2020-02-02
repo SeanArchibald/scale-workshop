@@ -14,8 +14,8 @@ import {
   getLineType,
   line_to_decimal,
   isNil,
-  show_mos_cf
 } from './helpers.js'
+import { show_mos_cf } from './sequences.js'
 import { synth } from './synth.js'
 import { LINE_TYPE, TUNING_MAX_SIZE } from './constants.js'
 import {

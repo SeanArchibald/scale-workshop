@@ -16,8 +16,8 @@ import {
   setScaleName,
   getFloat,
   getString,
-  invert_chord
 } from './helpers.js'
+import { invert_chord } from './numbers.js'
 import { unix_newline, parse_tuning_data } from './scaleworkshop.js'
 
 function generate_equal_temperament() {
@@ -266,6 +266,7 @@ function generate_enumerate_chord() {
   var isInversion = document.getElementById("input_invert_chord").checked;
   if (isInversion)
     chordStr = "1/(" + chord + ")";
+
   if (/^\d+\/\(.*$/.test(chord)) {
     if (/^1\/\((\d+\:)+\d+\)$/.test(chord)) {
       isInversion = true;

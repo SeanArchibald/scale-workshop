@@ -4,13 +4,8 @@
 
 /* global localStorage, jQuery, alert, confirm */
 import {
-  get_coprimes,
   decimal_to_cents,
-  get_rank2_mode,
-  get_rational_approximations,
-  rotate,
   debug,
-  closestPrime,
   isEmpty,
   isNil,
   openDialog,
@@ -21,6 +16,15 @@ import {
   isLocalStorageAvailable,
   isRunningOnWindows
 } from './helpers.js'
+import {
+  rotate,
+  closestPrime,
+} from './numbers.js'
+import {
+  get_coprimes,
+  get_rank2_mode,
+  get_rational_approximations
+} from './sequences.js'
 import {
   tuning_table,
   newline,
