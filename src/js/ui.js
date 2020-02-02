@@ -6,7 +6,7 @@
 /* global alert, jQuery */
 import { key_colors, tuning_table } from './scaleworkshop.js'
 import { touch_to_midinote } from './synth.js'
-import { getCoordsFromKey } from './helpers.js'
+import { getCoordsFromKey } from './helpers/general.js'
 
 // use jQuery UI tooltips instead of default browser tooltips
 jQuery( function() {

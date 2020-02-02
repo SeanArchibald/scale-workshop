@@ -3,13 +3,15 @@ import { newline, tuning_table } from './scaleworkshop.js'
 import {
   debug,
   isNil,
+  isEmpty,
+  getLineType
+} from './helpers/general.js'
+import {
   decimal_to_cents,
   mtof,
-  isEmpty,
-  getLineType,
   midi_note_number_to_name,
   ftom
-} from './helpers.js'
+} from './helpers/converters.js'
 import { LINE_TYPE, APP_TITLE, TUNING_MAX_SIZE } from './constants.js'
 import { synth } from './synth.js'
 

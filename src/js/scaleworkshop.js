@@ -6,16 +6,18 @@
 import {
   debug,
   redirectToHTTPS,
-  decimal_to_cents,
   isEmpty,
   getSearchParamOr,
   getSearchParamAsNumberOr,
-  sanitize_filename,
   getLineType,
-  line_to_decimal,
   isNil
-} from './helpers.js'
-import { show_mos_cf } from './sequences.js'
+} from './helpers/general.js'
+import {
+  decimal_to_cents,
+  line_to_decimal,
+  sanitize_filename,
+} from './helpers/converters.js'
+import { show_mos_cf } from './helpers/sequences.js'
 import { synth } from './synth.js'
 import { LINE_TYPE, TUNING_MAX_SIZE } from './constants.js'
 import {

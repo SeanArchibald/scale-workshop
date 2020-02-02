@@ -12,16 +12,18 @@ import {
   current_approximations
 } from './scaleworkshop.js'
 import {
-  ratio_to_cents,
   trimSelf,
   isEmpty,
   debug,
-  line_to_decimal,
-  decimal_to_cents,
   trim,
   getLineType,
+} from './helpers/general.js'
+import{
+  ratio_to_cents,
+  line_to_decimal,
+  decimal_to_cents,
   n_of_edo_to_cents
-} from './helpers.js'
+} from './helpers/converters.js'
 
 // stretch/compress tuning
 function modify_stretch() {

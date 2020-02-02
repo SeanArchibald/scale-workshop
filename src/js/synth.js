@@ -6,7 +6,7 @@
 
 /* global jQuery */
 import { Synth } from './synth/Synth.js'
-import { isNil, tap, debug, getCoordsFromKey } from './helpers.js'
+import { isNil, tap, debug, getCoordsFromKey } from './helpers/general.js'
 import { tuning_table } from './scaleworkshop.js'
 
 const synth = new Synth()

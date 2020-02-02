@@ -4,23 +4,25 @@
 
 /* global localStorage, jQuery, alert, confirm */
 import {
-  decimal_to_cents,
   debug,
   isEmpty,
   isNil,
   openDialog,
   clear_all,
-  line_to_decimal,
-  mtof,
-  midi_note_number_to_name,
   isLocalStorageAvailable,
   isRunningOnWindows
-} from './helpers.js'
+} from './helpers/general.js'
+import {
+  decimal_to_cents,
+  line_to_decimal,
+  mtof,
+  midi_note_number_to_name
+} from './helpers/converters.js'
 import {
   get_coprimes,
   get_rank2_mode,
   get_rational_approximations
-} from './sequences.js'
+} from './helpers/sequences.js'
 import {
   tuning_table,
   newline,
@@ -33,7 +35,7 @@ import {
   current_approximations,
   newlineTest
 } from './scaleworkshop.js'
-import { rotate,  closestPrime } from './numbers.js'
+import { rotate,  closestPrime } from './helpers/numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { synth, is_qwerty_active } from './synth.js'
 import { model } from './model.js'

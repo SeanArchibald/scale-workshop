@@ -6,18 +6,20 @@
 import {
   isCent,
   isNOfEdo,
-  line_to_decimal,
-  decimal_to_ratio,
   closePopup,
   debug,
-  line_to_cents,
-  getLine,
   setTuningData,
-  setScaleName,
+  setScaleName
+} from './helpers/general.js'
+import{
+  line_to_decimal,
+  decimal_to_ratio,
+  line_to_cents,
   getFloat,
-  getString
-} from './helpers.js'
-import { invert_chord } from './numbers.js'
+  getString,
+  getLine
+} from './helpers/converters.js'
+import { invert_chord } from './helpers/numbers.js'
 import { unix_newline, parse_tuning_data } from './scaleworkshop.js'
 
 function generate_equal_temperament() {

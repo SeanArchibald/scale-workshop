@@ -3,7 +3,7 @@
  */
 
 /* global alert, location, jQuery, localStorage, navigator */
-import { PRIMES } from './constants.js'
+import { PRIMES } from '../constants.js'
 import { get_prime_factors } from './sequences.js'
 
 // modulo function
