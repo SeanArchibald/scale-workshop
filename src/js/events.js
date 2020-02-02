@@ -17,10 +17,6 @@ import {
   isRunningOnWindows
 } from './helpers.js'
 import {
-  rotate,
-  closestPrime,
-} from './numbers.js'
-import {
   get_coprimes,
   get_rank2_mode,
   get_rational_approximations
@@ -37,6 +33,7 @@ import {
   current_approximations,
   newlineTest
 } from './scaleworkshop.js'
+import { rotate,  closestPrime } from './numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { synth, is_qwerty_active } from './synth.js'
 import { model } from './model.js'

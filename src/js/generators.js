@@ -15,7 +15,7 @@ import {
   setTuningData,
   setScaleName,
   getFloat,
-  getString,
+  getString
 } from './helpers.js'
 import { invert_chord } from './numbers.js'
 import { unix_newline, parse_tuning_data } from './scaleworkshop.js'

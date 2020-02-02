@@ -13,7 +13,7 @@ import {
   sanitize_filename,
   getLineType,
   line_to_decimal,
-  isNil,
+  isNil
 } from './helpers.js'
 import { show_mos_cf } from './sequences.js'
 import { synth } from './synth.js'
@@ -36,7 +36,7 @@ import {
 jQuery(window).on('popstate', function() {
   debug('Back/Forward navigation detected - reloading page');
   location.reload(true);
-});
+} );
 
 if (window.location.hostname.endsWith('.github.com') || window.location.hostname.endsWith('sevish.com')) {
   redirectToHTTPS()
@@ -52,7 +52,7 @@ const unix_newline = '\n'
 var tuning_table = {
   scale_data: [], // an array containing list of intervals input by the user
   tuning_data: [], // an array containing the same list above converted to decimal format
-  note_count: 0, // number of val	ues stored in tuning_data
+  note_count: 0, // number of values stored in tuning_data
   freq: [], // an array containing the frequency for each MIDI note
   cents: [], // an array containing the cents value for each MIDI note
   decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note

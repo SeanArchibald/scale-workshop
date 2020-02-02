@@ -176,9 +176,9 @@ function get_prime_limit_of_ratio(numerator, denominator) {
    let intervals = chord.split(":").map(x => parseInt(x));
    let steps = [];
    intervals.forEach(function(item, index, array) {
-      if (index > 0) {
-        steps.push([item, array[index-1]]);
-      }
+     if (index > 0) {
+       steps.push([item, array[index-1]]);
+     }
    } );
 
    steps.reverse();
@@ -186,16 +186,16 @@ function get_prime_limit_of_ratio(numerator, denominator) {
 
    let denominators = [];
    steps.forEach(function(item, index) {
-      var reduced_interval = reduce_ratio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
-      intervals.push(reduced_interval);
-      denominators.push(reduced_interval[1]);
+     var reduced_interval = reduce_ratio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
+     intervals.push(reduced_interval);
+     denominators.push(reduced_interval[1]);
    } );
 
    var lcm = get_lcm(denominators);
 
    chord = [];
    intervals.forEach(function(x) {
-      chord.push(x[0] * lcm / x[1]);
+     chord.push(x[0] * lcm / x[1]);
    } );
 
    return chord.join(":");
@@ -212,5 +212,5 @@ export {
   get_prime_limit,
   reduce_ratio,
   get_lcm,
-  invert_chord,
+  invert_chord
 }

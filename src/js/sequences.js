@@ -301,5 +301,5 @@ export {
   get_rational_approximations,
   get_rank2_mode,
   get_prime_factors,
-  get_coprimes,
+  get_coprimes
 }
