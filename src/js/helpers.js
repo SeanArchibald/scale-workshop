@@ -5,6 +5,7 @@
 /* global alert, location, jQuery, localStorage, navigator */
 import { PRIMES, LINE_TYPE } from './constants.js'
 import { debug_enabled, resetTuningTable } from './scaleworkshop.js'
+import { SEMITONE_RATIO_IN_12_EDO } from './constants.js'
 
 // modulo function
 Number.prototype.mod = function (n) {
@@ -44,6 +45,7 @@ function commadecimal_to_decimal(rawInput) {
   }
 }
 
+/*
 // convert a decimal (1.25) into commadecimal (1,25)
 function decimal_to_commadecimal(rawInput) {
   if (isCents(rawInput)) { // a bit misleading
@@ -54,6 +56,7 @@ function decimal_to_commadecimal(rawInput) {
     return false;
   }
 }
+*/
 
 // convert a decimal into cents
 function decimal_to_cents(rawInput) {
@@ -318,13 +321,17 @@ function decimal_to_ratio(rawInput, iterations=15, depth=0) {
   }
 }
 
+/*
 function cents_to_ratio(rawInput, iterations=15, depth=0) {
   return decimal_to_ratio(cents_to_decimal(rawInput), iterations, depth);
 }
+*/
 
+/*
 function n_of_edo_to_ratio(rawInput, iterations=15, depth=0) {
   return decimal_to_ratio(n_of_edo_to_decimal(rawInput), iterations, depth);
 }
+*/
 
 // calculate all best rational approximations given a continued fraction
 function get_convergents(cf, numarray, denarray, perlimit, cindOut=null)
