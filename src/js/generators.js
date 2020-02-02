@@ -428,5 +428,6 @@ export {
   generate_equal_temperament,
   generate_harmonic_series_segment,
   generate_rank_2_temperament,
-  generate_subharmonic_series_segment
+  generate_subharmonic_series_segment,
+  load_preset_scale
 }

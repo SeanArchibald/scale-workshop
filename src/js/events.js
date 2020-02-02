@@ -2,7 +2,7 @@
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
-/* global localStorage, jQuery */
+/* global localStorage, jQuery, alert */
 import {
   get_coprimes,
   decimal_to_cents,
@@ -14,7 +14,8 @@ import {
   isEmpty,
   isNil,
   openDialog,
-  clear_all
+  clear_all,
+  line_to_decimal
 } from './helpers.js'
 import {
   tuning_table,
@@ -25,13 +26,21 @@ import {
   parse_tuning_data,
   parse_url,
   import_scala_scl,
-  import_anamark_tun
+  import_anamark_tun,
+  current_approximations
 } from './scaleworkshop.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { synth, is_qwerty_active } from './synth.js'
 import { model } from './model.js'
 import { PRIMES } from './constants.js'
-import { modify_update_approximations } from './modifiers.js'
+import {
+  modify_update_approximations,
+  modify_random_variance,
+  modify_mode,
+  modify_sync_beating,
+  modify_stretch,
+  modify_replace_with_approximation
+} from './modifiers.js'
 import { update_page_url } from './exporters.js'
 import { Keymap } from './keymap.js'
 import { run_user_scripts_on_document_ready } from './user.js'
@@ -40,7 +49,8 @@ import {
   generate_equal_temperament,
   generate_harmonic_series_segment,
   generate_rank_2_temperament,
-  generate_subharmonic_series_segment
+  generate_subharmonic_series_segment,
+  load_preset_scale
 } from './generators.js'
 
 jQuery( document ).ready( function() {

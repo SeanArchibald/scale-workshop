@@ -17,7 +17,10 @@ import {
   isEmpty,
   debug,
   line_to_decimal,
-  decimal_to_cents
+  decimal_to_cents,
+  trim,
+  getLineType,
+  n_of_edo_to_cents
 } from './helpers.js'
 
 // stretch/compress tuning
@@ -33,8 +36,8 @@ function modify_stretch() {
 
   }
 
-  var octave_size; // (pseudo)octave size in cents
-  var stretch_size; // size of new pseudo-octave after stretching
+  // var octave_size; // (pseudo)octave size in cents
+  // var stretch_size; // size of new pseudo-octave after stretching
   var stretch_ratio = parseFloat( jQuery( "#input_stretch_ratio" ).val() ); // amount of stretching, ratio
 
   // split user data into individual lines
@@ -161,6 +164,8 @@ function modify_mode() {
   debug(lines);
   debug(mode);
 
+  let new_tuning = "";
+
   // mode_type will be either intervals (e.g. 2 2 1 2 2 2 1) or from_base (e.g. 2 4 5 7 9 11 12)
   var mode_type = jQuery("#modal_modify_mode input[type='radio']:checked").val();
 
@@ -176,7 +181,6 @@ function modify_mode() {
     }
 
     // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-    var new_tuning = "";
     var note_count = 1;
     var mode_index = 0;
     for ( let i = 0; i < lines.length; i++ ) {
@@ -210,7 +214,6 @@ function modify_mode() {
     }
 
     // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-    var new_tuning = "";
     for ( let i = 0; i < mode.length; i++ ) {
 
       new_tuning += lines[mode[i]-1];
@@ -296,13 +299,11 @@ function modify_sync_beating() {
   return true;
 }
 
+/*
 // key transpose
 function modify_key_transpose() {
-
   // I will come back to this later... it's going to require some thinking with regards to just ratios...
-  return false;
 
-  /*
   // remove white space from tuning data field
   trimSelf("#txt_tuning_data")
 
@@ -357,8 +358,8 @@ function modify_key_transpose() {
 
   // success
   return true;
-  */
 }
+*/
 
 // approximate rationals
 function modify_replace_with_approximation () {
@@ -479,5 +480,10 @@ function modify_update_approximations() {
 }
 
 export {
-  modify_update_approximations
+  modify_update_approximations,
+  modify_random_variance,
+  modify_mode,
+  modify_sync_beating,
+  modify_stretch,
+  modify_replace_with_approximation
 }

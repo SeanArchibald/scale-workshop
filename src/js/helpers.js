@@ -468,7 +468,6 @@ function get_rational_approximations(intervalIn, numerators, denominators, round
     if (doRatios|| doNumLim || doDenLim || doRatioLim) {
         var nlim;
         var dlim;
-        var rlim;
 
         for (let i = 0; i < numerators.length; i++) {
             numerators[i] == 1 ? nlim = 1 : nlim = get_prime_limit(numerators[i]);
@@ -555,7 +554,8 @@ function get_prime_factors(number) {
     
     return factorsout;
 }
-                 
+
+/*
 function get_prime_factors_string(number) {
      var factors = get_prime_factors(number);
      var str_out = "";
@@ -571,7 +571,8 @@ function get_prime_factors_string(number) {
      }
     return str_out;
  }
-                 
+ */
+
  function isPrime(number) {
     var sqrtnum = Math.floor(Math.sqrt(number));
     
@@ -622,7 +623,8 @@ function closestPrime(number)
 	else
 		return pp;
 }
-                 
+
+/*
 function scrollToPrime(number, scrollDown)
 {
     if (scrollDown)
@@ -630,15 +632,18 @@ function scrollToPrime(number, scrollDown)
     else
         return nextPrime(number);
 }
-                 
+*/
+
 function get_prime_limit(number) {
-    var factors = get_prime_factors(number);
-    return PRIMES[factors.length - 1];
- }
-                 
- function get_prime_limit_of_ratio(numerator, denominator) {
-    return Math.max(get_prime_limit(numerator), get_prime_limit(denominator));
- }
+  var factors = get_prime_factors(number);
+  return PRIMES[factors.length - 1];
+}
+
+/*
+function get_prime_limit_of_ratio(numerator, denominator) {
+  return Math.max(get_prime_limit(numerator), get_prime_limit(denominator));
+}
+*/
 
  // returns an array of integers that share no common factors to the given integer
  function get_coprimes(number) {
@@ -661,22 +666,24 @@ function get_prime_limit(number) {
     return coprimes;
  }
 
- // returns an array of integers that can divide evenly into given number
- function get_factors(number) {
- 	 let factors = [];
-	 var nsqrt = Math.floor(Math.sqrt(number));
+/*
+// returns an array of integers that can divide evenly into given number
+function get_factors(number) {
+  let factors = [];
+  const nsqrt = Math.floor(Math.sqrt(number));
 
-	 for (let n = 2; n <= nsqrt; n++) {
-		var q = number / n;
-	 	if (Math.floor(q) == q) {
-			factors.push(n);
-			if (n != q)
-				factors.push(q);
-		}
-	 }
+  for (let n = 2; n <= nsqrt; n++) {
+    let q = number / n;
+    if (Math.floor(q) == q) {
+      factors.push(n);
+      if (n != q)
+        factors.push(q);
+    }
+  }
 
-	 return factors.sort(function(a, b) { return a-b });;
- }
+  return factors.sort(function(a, b) { return a-b });;
+}
+*/
 
  // returns array of the numerator and denominator of the reduced form of given ratio
  function reduce_ratio(numerator, denominator) { 
@@ -940,5 +947,7 @@ export {
   isFunction,
   line_to_cents,
   openDialog,
-  clear_all
+  clear_all,
+  trim,
+  n_of_edo_to_cents
 }
