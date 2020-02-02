@@ -202,7 +202,6 @@ function get_prime_limit_of_ratio(numerator, denominator) {
  }
 
 export {
-  Number.prototype.mod,
   sum_array,
   rotate,
   isPrime,
