@@ -968,5 +968,6 @@ export {
   trim,
   n_of_edo_to_cents,
   isLocalStorageAvailable,
-  isRunningOnWindows
+  isRunningOnWindows,
+  show_mos_cf
 }

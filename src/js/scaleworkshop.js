@@ -13,7 +13,8 @@ import {
   sanitize_filename,
   getLineType,
   line_to_decimal,
-  isNil
+  isNil,
+  show_mos_cf
 } from './helpers.js'
 import { synth } from './synth.js'
 import { LINE_TYPE } from './constants.js'
