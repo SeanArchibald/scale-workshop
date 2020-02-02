@@ -2,7 +2,7 @@
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
-/* global localStorage, jQuery, alert */
+/* global localStorage, jQuery, alert, confirm */
 import {
   get_coprimes,
   decimal_to_cents,
@@ -15,7 +15,11 @@ import {
   isNil,
   openDialog,
   clear_all,
-  line_to_decimal
+  line_to_decimal,
+  mtof,
+  midi_note_number_to_name,
+  isLocalStorageAvailable,
+  isRunningOnWindows
 } from './helpers.js'
 import {
   tuning_table,
@@ -27,7 +31,8 @@ import {
   parse_url,
   import_scala_scl,
   import_anamark_tun,
-  current_approximations
+  current_approximations,
+  newlineTest
 } from './scaleworkshop.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { synth, is_qwerty_active } from './synth.js'
@@ -56,14 +61,13 @@ import {
 jQuery( document ).ready( function() {
 
   // automatically load generatal options saved in localStorage (if available)
-  if (!isNil(Storage)) {
+  if (isLocalStorageAvailable()) {
 
     // recall newline format
-    if ( !isNil(localStorage.getItem("newline")) ) {
-      jQuery( '#input_select_newlines' ).val( localStorage.getItem("newline") );
+    if ( isNil(localStorage.getItem("newline")) ) {
+      jQuery( '#input_select_newlines' ).val( localStorage.getItem("newline") )
     } else {
-      debug("localStorage: assuming default of windows");
-      jQuery( '#input_select_newlines' ).val( "windows" );
+      jQuery( '#input_select_newlines' ).val( isRunningOnWindows() ? 'windows' : 'unix' )
     }
 
     // recall night mode

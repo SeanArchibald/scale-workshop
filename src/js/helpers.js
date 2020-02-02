@@ -2,7 +2,7 @@
  * HELPER FUNCTIONS
  */
 
-/* global alert, location, jQuery */
+/* global alert, location, jQuery, localStorage, navigator */
 import { PRIMES, LINE_TYPE } from './constants.js'
 import { debug_enabled, resetTuningTable } from './scaleworkshop.js'
 
@@ -911,6 +911,23 @@ function redirectToHTTPS() {
   }
 }
 
+// source: https://stackoverflow.com/a/16427747/1806628
+const isLocalStorageAvailable = () => {
+  const test = 'test';
+  try {
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+// source: https://stackoverflow.com/a/9514476/1806628
+const isRunningOnWindows = () => {
+  return navigator.userAgent.userAgent.includes('Windows')
+}
+
 export {
   debug,
   redirectToHTTPS,
@@ -949,5 +966,7 @@ export {
   openDialog,
   clear_all,
   trim,
-  n_of_edo_to_cents
+  n_of_edo_to_cents,
+  isLocalStorageAvailable,
+  isRunningOnWindows
 }
