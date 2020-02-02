@@ -18,12 +18,13 @@ import {
   trim,
   getLineType,
 } from './helpers/general.js'
-import{
+import {
   ratio_to_cents,
   line_to_decimal,
   decimal_to_cents,
   n_of_edo_to_cents
 } from './helpers/converters.js'
+import { PRIMES } from './constants.js'
 
 // stretch/compress tuning
 function modify_stretch() {

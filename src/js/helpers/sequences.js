@@ -295,12 +295,12 @@ function get_prime_factors(number) {
   var mod, divisor
   for (let i = 2; i < number - 1; i++) {
     mod = number;
-    d = i;
+    divisor = i;
     while (divisor > 1) {
       mod = mod % divisor;
       [mod, divisor] = [divisor, mod];
     }
-    if (d > 0) {
+    if (divisor > 0) {
       coprimes.push(i);
     }
   }

@@ -283,24 +283,11 @@ jQuery( document ).ready( function() {
     trimSelf();
     var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
     var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
-    jQuery ( "#input_interval_to_approximate" ).val(lines[index]);
-    jQuery ( "#input_interval_to_approximate" ).trigger("change");
+    jQuery ( "#input_interval_to_approximate" ).val(lines[index]).trigger("change");
   } );
 
-  // refilter approximations when error amount changes
-  jQuery( "#input_min_error" ).change( function() {
-    modify_update_approximations();
-  } );
-
-   // refilter approximations when error amount changes
-  jQuery( "#input_max_error" ).change( function() {
-    modify_update_approximations();
-  } );
-
-  // refilter approximations when "show semiconvergents" changes
-  jQuery( "#input_show_convergents" ).change( function() {
-    modify_update_approximations();
-  } );
+  // refilter approximations when fields change
+  jQuery( "#input_min_error, #input_max_error, #input_show_convergents" ).change(modify_update_approximations);
 
   // refilter approximations when prime limit changes
   // can be improved, but it's a bit tricky!

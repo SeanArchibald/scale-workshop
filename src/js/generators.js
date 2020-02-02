@@ -256,7 +256,7 @@ function generate_enumerate_chord() {
     if (/^\d+$/.test(value))
       value += ",";
     value = line_to_decimal(value);
-    if (value === 0 || !/(^\d+([\,\.]\d*)?|([\\\/]\d+)?$)*/.test(value)) {
+    if (value === 0 || !/(^\d+([,.]\d*)?|([\\/]\d+)?$)*/.test(value)) {
       alert("Warning: Invalid pitch " + inputTest[i])
       return false;
     }
@@ -269,7 +269,7 @@ function generate_enumerate_chord() {
     chordStr = "1/(" + chord + ")";
 
   if (/^\d+\/\(.*$/.test(chord)) {
-    if (/^1\/\((\d+\:)+\d+\)$/.test(chord)) {
+    if (/^1\/\((\d+:)+\d+\)$/.test(chord)) {
       isInversion = true;
       chord = chord.substring(3, chord.length - 1);
     } else {
