@@ -2,7 +2,7 @@
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
-/* global localStorage, jQuery */
+/* global localStorage, jQuery, alert, confirm */
 import {
   get_coprimes,
   decimal_to_cents,
@@ -13,22 +13,38 @@ import {
   closestPrime,
   isEmpty,
   isNil,
-  openDialog
+  openDialog,
+  clear_all,
+  line_to_decimal,
+  mtof,
+  midi_note_number_to_name,
+  isLocalStorageAvailable,
+  isRunningOnWindows
 } from './helpers.js'
 import {
   tuning_table,
-  APP_TITLE,
   newline,
   prime_counter,
   set_key_colors,
   parse_tuning_data,
-  parse_url
+  parse_url,
+  import_scala_scl,
+  import_anamark_tun,
+  current_approximations,
+  newlineTest
 } from './scaleworkshop.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { synth, is_qwerty_active } from './synth.js'
 import { model } from './model.js'
-import { PRIMES } from './constants.js'
-import { modify_update_approximations } from './modifiers.js'
+import { PRIMES, APP_TITLE } from './constants.js'
+import {
+  modify_update_approximations,
+  modify_random_variance,
+  modify_mode,
+  modify_sync_beating,
+  modify_stretch,
+  modify_replace_with_approximation
+} from './modifiers.js'
 import { update_page_url } from './exporters.js'
 import { Keymap } from './keymap.js'
 import { run_user_scripts_on_document_ready } from './user.js'
@@ -37,20 +53,20 @@ import {
   generate_equal_temperament,
   generate_harmonic_series_segment,
   generate_rank_2_temperament,
-  generate_subharmonic_series_segment
+  generate_subharmonic_series_segment,
+  load_preset_scale
 } from './generators.js'
 
 jQuery( document ).ready( function() {
 
   // automatically load generatal options saved in localStorage (if available)
-  if (!isNil(Storage)) {
+  if (isLocalStorageAvailable()) {
 
     // recall newline format
-    if ( !isNil(localStorage.getItem("newline")) ) {
-      jQuery( '#input_select_newlines' ).val( localStorage.getItem("newline") );
+    if ( isNil(localStorage.getItem("newline")) ) {
+      jQuery( '#input_select_newlines' ).val( localStorage.getItem("newline") )
     } else {
-      debug("localStorage: assuming default of windows");
-      jQuery( '#input_select_newlines' ).val( "windows" );
+      jQuery( '#input_select_newlines' ).val( isRunningOnWindows() ? 'windows' : 'unix' )
     }
 
     // recall night mode
@@ -85,9 +101,9 @@ jQuery( document ).ready( function() {
 
     event.preventDefault();
 
-    var r = confirm( "Are you sure you want to clear the current tuning data?" );
+    var response = confirm( "Are you sure you want to clear the current tuning data?" );
 
-    if ( r ) {
+    if ( response ) {
       clear_all();
     }
 
@@ -193,7 +209,7 @@ jQuery( document ).ready( function() {
     // setup MOS options, and hide
     update_modify_mode_mos_generators();
     show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value);
-	jQuery( "#modal_modify_mos_degree").change(); // make sizes available
+  jQuery( "#modal_modify_mos_degree").change(); // make sizes available
 
     jQuery( "#input_modify_mode" ).select();
     openDialog("#modal_modify_mode", modify_mode)
@@ -223,24 +239,24 @@ jQuery( document ).ready( function() {
   // approximate option clicked
   jQuery( "#modify_approximate" ).click( function( event ) {
     
-	event.preventDefault();
+  event.preventDefault();
 
     // this needs to be here because a tuning data line needs to be
     // inserted into the #input_interval_to_approximate field
                                         
-	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim());
+  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim());
 
-	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-		alert( "No tuning data to modify." );
-		return false;
-	 }
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+    alert( "No tuning data to modify." );
+    return false;
+   }
     
     jQuery( "#input_scale_degree" ).val(1);
     jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 });
 
     
-	jQuery( "#input_scale_degree" ).select();
-	jQuery( "#input_scale_degree" ).trigger("change");
+  jQuery( "#input_scale_degree" ).select();
+  jQuery( "#input_scale_degree" ).trigger("change");
 
     jQuery( "#modal_approximate_intervals" ).dialog({
       modal: true,
@@ -258,8 +274,8 @@ jQuery( document ).ready( function() {
 
   // calculate and list rational approximations within user parameters
   jQuery( "#input_interval_to_approximate" ).change( function() {
-		var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
-		
+    var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
+    
         current_approximations.convergent_indicies = [];
         current_approximations.numerators = [];
         current_approximations.denominators = [];
@@ -279,17 +295,17 @@ jQuery( document ).ready( function() {
   
   // recalculate approximations when scale degree changes
   jQuery( "#input_scale_degree").change( function() {
-	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+  jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-		alert( "No tuning data to modify." );
-		return false;
-	 }
+  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+    alert( "No tuning data to modify." );
+    return false;
+   }
 
     var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
-	var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
-	jQuery ( "#input_interval_to_approximate" ).val(lines[index]);
-	jQuery ( "#input_interval_to_approximate" ).trigger("change");
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  jQuery ( "#input_interval_to_approximate" ).val(lines[index]);
+  jQuery ( "#input_interval_to_approximate" ).trigger("change");
 
   });
 
@@ -313,15 +329,15 @@ jQuery( document ).ready( function() {
   jQuery( "#input_approx_min_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_min_prime").val());
     var dif = num - PRIMES[prime_counter[0]];
-	if (Math.abs(dif) == 1) {
-		if (num < PRIMES[prime_counter[0]]) {
-			prime_counter[0]--;
-		} else {
-			prime_counter[0]++;
-		}
-	} else {
-		prime_counter[0] = PRIMES.indexOf(closestPrime(num));
-	}
+  if (Math.abs(dif) === 1) {
+    if (num < PRIMES[prime_counter[0]]) {
+      prime_counter[0]--;
+    } else {
+      prime_counter[0]++;
+    }
+  } else {
+    prime_counter[0] = PRIMES.indexOf(closestPrime(num));
+  }
     
     jQuery( "#input_approx_min_prime").val(PRIMES[prime_counter[0]]);
     modify_update_approximations();
@@ -331,15 +347,15 @@ jQuery( document ).ready( function() {
   jQuery( "#input_approx_max_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_max_prime").val());
     var dif = num - PRIMES[prime_counter[1]];
-	if (Math.abs(dif) == 1) {
-		if (num < PRIMES[prime_counter[1]]) {
-			prime_counter[1]--;
-		} else {
-			prime_counter[1]++;
-		}
-	} else {
-		prime_counter[1] = PRIMES.indexOf(closestPrime(num));
-	}
+  if (Math.abs(dif) === 1) {
+    if (num < PRIMES[prime_counter[1]]) {
+      prime_counter[1]--;
+    } else {
+      prime_counter[1]++;
+    }
+  } else {
+    prime_counter[1] = PRIMES.indexOf(closestPrime(num));
+  }
     
     jQuery( "#input_approx_max_prime").val(PRIMES[prime_counter[1]]);
     modify_update_approximations();
@@ -347,7 +363,7 @@ jQuery( document ).ready( function() {
                                                 
     // shows or hides MOS mode selection boxes
     function show_modify_mode_mos_options(showOptions) {
-      document.getElementById("mos_mode_options").style.display = showOptions == "mos" ?  'block' : 'none';
+      document.getElementById("mos_mode_options").style.display = showOptions === "mos" ?  'block' : 'none';
     }
     
     jQuery( "#modal_modify_mode").change( function() {
@@ -397,16 +413,16 @@ jQuery( document ).ready( function() {
     
     // move the mode steps back one
     jQuery( "#input_mode_step_left").click( function() {
-		var mode = jQuery( "#input_modify_mode" ).val().split(" ");
-		rotate(mode, -1);
-		jQuery( "#input_modify_mode" ).val(mode.join(" "));
+    var mode = jQuery( "#input_modify_mode" ).val().split(" ");
+    rotate(mode, -1);
+    jQuery( "#input_modify_mode" ).val(mode.join(" "));
      })
 
     // move the mode steps forward one
     jQuery( "#input_mode_step_right").click( function() {
-		var mode = jQuery( "#input_modify_mode" ).val().split(" ");
-		rotate(mode, 1);
-		jQuery( "#input_modify_mode" ).val(mode.join(" "));
+    var mode = jQuery( "#input_modify_mode" ).val().split(" ");
+    rotate(mode, 1);
+    jQuery( "#input_modify_mode" ).val(mode.join(" "));
      })
                         
   /*
@@ -467,7 +483,7 @@ jQuery( document ).ready( function() {
 
   // General Settings - Line ending format (newlines)
   jQuery( '#input_select_newlines' ).change( function( event ) {
-    if ( jQuery( '#input_select_newlines' ).val() == "windows" ) {
+    if ( jQuery( '#input_select_newlines' ).val() === "windows" ) {
       newline = "\r\n"; // windows
       localStorage.setItem( 'newline', 'windows' );
     }

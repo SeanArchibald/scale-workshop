@@ -13,7 +13,7 @@ var Layouts = {
     "1234567890-=",
     "QWERTYUIOP[]",
     "ASDFGHJKL;'\\",
-    "ZXCVBNM,./",
+    "ZXCVBNM,./"
   ],
 
   // Hungarian QWERTZ layout
@@ -21,7 +21,7 @@ var Layouts = {
     "123456789ñ/=",
     "QWERTZUIOP[]",
     "ASDFGHJKL;'\\",
-    "YXCVBNM,.-",
+    "YXCVBNM,.-"
   ],
 
   // Dvorak keyboard
@@ -29,7 +29,7 @@ var Layouts = {
     "1234567890-=",
     "',.PYFGCRL/@",
     "AOEUIDHTNS-\\",
-    ";QJKXBMWVZ",
+    ";QJKXBMWVZ"
   ],
 
   // Programmer Dvorak keyboard
@@ -37,15 +37,15 @@ var Layouts = {
     "&7531902468#",
     ";,.PYFGCRL/@",
     "AOEUIDHTNS-\\",
-    "'QJKXBMWVZ",
+    "'QJKXBMWVZ"
   ],
 
   // Colemak keyboard
   CO: [
-  	"1234567890-=",
-	"QWFPGJLUY;[]",
-	"ARSTDHNEIO'\\",
-	"ZXCVBKM,./"
+    "1234567890-=",
+    "QWFPGJLUY;[]",
+    "ARSTDHNEIO'\\",
+    "ZXCVBKM,./"
   ],
 };
 
@@ -68,7 +68,7 @@ var Keycodes = {
   "]": 221,
   "'": 222,
   "&": 166,
-  "#": 163,
+  "#": 163
 }
 
 // Build Keymap from Layouts

@@ -13,11 +13,23 @@ import {
   sanitize_filename,
   getLineType,
   line_to_decimal,
-  isNil
+  isNil,
+  show_mos_cf
 } from './helpers.js'
 import { synth } from './synth.js'
-import { LINE_TYPE } from './constants.js'
-import { get_scale_url, update_page_url } from './exporters.js'
+import { LINE_TYPE, TUNING_MAX_SIZE } from './constants.js'
+import {
+  get_scale_url,
+  update_page_url,
+  export_anamark_tun,
+  export_scala_scl,
+  export_scala_kbm,
+  export_maxmsp_coll,
+  export_pd_text,
+  export_kontakt_script,
+  export_reference_deflemask,
+  export_url
+} from './exporters.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
@@ -34,8 +46,6 @@ if (window.location.hostname.endsWith('.github.com') || window.location.hostname
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 1.0.4";
-const TUNING_MAX_SIZE = 128;
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
 const unix_newline = '\n'
@@ -278,11 +288,11 @@ function parse_tuning_data() {
 
     // highlight the row which corresponds to the base MIDI note
     var table_class = "";
-    if ( i == tuning_table['base_midi_note'] ) {
+    if ( i === tuning_table['base_midi_note'] ) {
       table_class = "info";
     }
     else {
-      if ( ( tuning_table['base_midi_note'] - i ) % (tuning_table['note_count']-1) == 0 ) {
+      if ( ( tuning_table['base_midi_note'] - i ) % (tuning_table['note_count']-1) === 0 ) {
         table_class = "warning";
       }
     }
@@ -492,7 +502,7 @@ function parse_imported_anamark_tun( event ) {
           break;
         }
       }
-      if ( first_line == 0 ) {
+      if ( first_line === 0 ) {
         for ( let i = 0; i < lines.length; i++ ) {
           if ( lines[i].includes("[Tuning]") ) {
             has_functional_tuning = true;
@@ -514,11 +524,11 @@ function parse_imported_anamark_tun( event ) {
         line = parseFloat( line ).toFixed(6);
         line = (parseFloat(line) + parseFloat(offset)).toFixed(6);
 
-        if ( n == 0 ) {
+        if ( n === 0 ) {
           // clear scale field
           tuning_data_str = ''
         }
-        else if ( n == 1 ) {
+        else if ( n === 1 ) {
           tuning_data_str += line ;
         }
         else {
@@ -537,6 +547,67 @@ function parse_imported_anamark_tun( event ) {
 
 }
 
+jQuery('#export-buttons').on('click', 'a', e => {
+  e.preventDefault()
+
+  const link = e.target.getAttribute('href').replace(/^#/, '')
+
+  switch(link) {
+    case 'anamark-tun':
+      export_anamark_tun()
+      break
+    case 'scala-scl':
+      export_scala_scl()
+      break
+    case 'scala-kbm':
+      export_scala_kbm()
+      break
+    case 'maxmsp-coll':
+      export_maxmsp_coll()
+      break
+    case 'pd-text':
+      export_pd_text()
+      break
+    case 'kontakt-script':
+      export_kontakt_script()
+      break
+    case 'deflemask-reference':
+      export_reference_deflemask()
+      break
+    case 'url':
+      export_url()
+      break
+  }
+})
+
+jQuery('#scala-file').on('change', parse_imported_scala_scl)
+jQuery('#anamark-tun-file').on('change', parse_imported_anamark_tun)
+
+jQuery('#show-mos').on('click', () => {
+  show_mos_cf(
+    jQuery('#input_rank-2_period').val(),
+    jQuery('#input_rank-2_generator').val(),
+    jQuery('#input_rank-2_size').val(),
+    jQuery('#input_rank-2_mos_threshold').val()
+  )
+})
+
+const resetTuningTable = () => {
+  // re-init tuning_table
+  tuning_table = {
+    scale_data: [], // an array containing list of intervals input by the user
+    tuning_data: [], // an array containing the same list above converted to decimal format
+    note_count: 0, // number of values stored in tuning_data
+    freq: [], // an array containing the frequency for each MIDI note
+    cents: [], // an array containing the cents value for each MIDI note
+    decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
+    base_frequency: 440, // init val
+    base_midi_note: 69, // init val
+    description: "",
+    filename: ""
+  }
+}
+
 export {
   key_colors,
   tuning_table,
@@ -546,9 +617,10 @@ export {
   newline,
   current_approximations,
   debug_enabled,
-  APP_TITLE,
-  TUNING_MAX_SIZE,
   prime_counter,
   set_key_colors,
-  parse_url
+  parse_url,
+  import_scala_scl,
+  import_anamark_tun,
+  resetTuningTable
 }

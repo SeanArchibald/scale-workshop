@@ -1,5 +1,5 @@
 /* global alert, MouseEvent, history, jQuery */
-import { newline, tuning_table, APP_TITLE, TUNING_MAX_SIZE } from './scaleworkshop.js'
+import { newline, tuning_table } from './scaleworkshop.js'
 import {
   debug,
   isNil,
@@ -10,7 +10,7 @@ import {
   midi_note_number_to_name,
   ftom
 } from './helpers.js'
-import { LINE_TYPE } from './constants.js'
+import { LINE_TYPE, APP_TITLE, TUNING_MAX_SIZE } from './constants.js'
 import { synth } from './synth.js'
 
 function export_error() {
@@ -73,7 +73,7 @@ function export_anamark_tun() {
 
   for ( let i = 1; i < tuning_table['note_count']; i++ ) {
 
-    if ( i == tuning_table['note_count']-1 ) {
+    if ( i === tuning_table['note_count']-1 ) {
       file += "note " + i + '="#>-' + i + ' % ' + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + ' ~999"' + newline;
     }
     else {
@@ -295,7 +295,7 @@ function export_reference_deflemask() {
 
     // convert note number to note name
     data[0] = midi_note_number_to_name( data[0] );
-    data[0] = (data[0].length == 2) ? data[0].slice(0,1) + "-" + data[0].slice(1) : data[0];
+    data[0] = (data[0].length === 2) ? data[0].slice(0,1) + "-" + data[0].slice(1) : data[0];
 
     // convert cents offset to hex where -100c=00, 0c=80, 100c=FF
     data[1] = Math.round( 128 + (data[1] * 1.28) ).toString(16).toUpperCase();
@@ -385,4 +385,15 @@ function export_url() {
 
 }
 
-export { get_scale_url, update_page_url }
+export {
+  get_scale_url,
+  update_page_url,
+  export_anamark_tun,
+  export_scala_scl,
+  export_scala_kbm,
+  export_maxmsp_coll,
+  export_pd_text,
+  export_kontakt_script,
+  export_reference_deflemask,
+  export_url
+}

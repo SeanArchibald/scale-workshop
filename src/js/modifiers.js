@@ -17,7 +17,10 @@ import {
   isEmpty,
   debug,
   line_to_decimal,
-  decimal_to_cents
+  decimal_to_cents,
+  trim,
+  getLineType,
+  n_of_edo_to_cents
 } from './helpers.js'
 
 // stretch/compress tuning
@@ -33,8 +36,8 @@ function modify_stretch() {
 
   }
 
-  var octave_size; // (pseudo)octave size in cents
-  var stretch_size; // size of new pseudo-octave after stretching
+  // var octave_size; // (pseudo)octave size in cents
+  // var stretch_size; // size of new pseudo-octave after stretching
   var stretch_ratio = parseFloat( jQuery( "#input_stretch_ratio" ).val() ); // amount of stretching, ratio
 
   // split user data into individual lines
@@ -161,27 +164,28 @@ function modify_mode() {
   debug(lines);
   debug(mode);
 
+  let new_tuning = "";
+
   // mode_type will be either intervals (e.g. 2 2 1 2 2 2 1) or from_base (e.g. 2 4 5 7 9 11 12)
   var mode_type = jQuery("#modal_modify_mode input[type='radio']:checked").val();
 
-  if ( mode_type == "intervals" || mode_type == "mos") {
+  if ( mode_type === "intervals" || mode_type === "mos") {
 
     // get the total number of notes in the mode
     var mode_sum = mode.reduce(function(a, b) { return a + b; }, 0);
 
     // number of notes in the mode should equal the number of lines in the scale data field
-    if ( mode_sum != lines.length ) {
+    if ( mode_sum !== lines.length ) {
       alert( "Your mode doesn't add up to the same size as the current scale." + unix_newline + "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
       return false;
     }
 
     // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-    var new_tuning = "";
     var note_count = 1;
     var mode_index = 0;
     for ( let i = 0; i < lines.length; i++ ) {
 
-      if ( mode[mode_index] == note_count ) {
+      if ( mode[mode_index] === note_count ) {
 
         new_tuning = new_tuning + lines[i];
 
@@ -200,17 +204,16 @@ function modify_mode() {
 
   }
 
-  // if ( mode_type == "from_base" ) {
+  // if ( mode_type === "from_base" ) {
   else {
 
     // number of notes in the mode should equal the number of lines in the scale data field
-    if ( mode[mode.length - 1] != lines.length ) {
+    if ( mode[mode.length - 1] !== lines.length ) {
       alert( "Your mode isn't the same size as the current scale." + unix_newline + "E.g. if you have a 5 note scale, mode 2 4 5 is valid because the final degree is 5. But mode 2 4 6 is invalid because 6 is greater than 5." );
       return false;
     }
 
     // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-    var new_tuning = "";
     for ( let i = 0; i < mode.length; i++ ) {
 
       new_tuning += lines[mode[i]-1];
@@ -296,13 +299,11 @@ function modify_sync_beating() {
   return true;
 }
 
+/*
 // key transpose
 function modify_key_transpose() {
-
   // I will come back to this later... it's going to require some thinking with regards to just ratios...
-  return false;
 
-  /*
   // remove white space from tuning data field
   trimSelf("#txt_tuning_data")
 
@@ -329,7 +330,7 @@ function modify_key_transpose() {
   key = key % lines.length;
 
   // warn on using 0
-  if ( key == 0 ) {
+  if ( key === 0 ) {
     alert( "1/1 is already on key 0, so no change." );
   }
 
@@ -357,8 +358,8 @@ function modify_key_transpose() {
 
   // success
   return true;
-  */
 }
+*/
 
 // approximate rationals
 function modify_replace_with_approximation () {
@@ -377,16 +378,16 @@ function modify_replace_with_approximation () {
             lines[degree_selected-1] = approximation;
         } else {
             lines.push(approximation);
-		}
+    }
 
         var lines_to_text = "";
         lines.forEach(function(item, index, array) {
             lines_to_text += lines[index];
-			if (index + 1 < array.length) 
-				lines_to_text += newline;
+      if (index + 1 < array.length) 
+        lines_to_text += newline;
         })
         tuning_data.value = lines_to_text;
-		
+    
         parse_tuning_data();
         
         if (degree_selected < tuning_table.note_count - 1) {
@@ -460,7 +461,7 @@ function modify_update_approximations() {
             if (!interval) {
                 jQuery("#approximation_selection").append("<option selected disabled>Error: Invalid interval</option>");
                 break;
-            } else if (interval == fraction && interval) {  // for cases like 1200.0 == 2/1
+            } else if (interval === fraction && interval) {  // for cases like 1200.0 === 2/1
                 jQuery("#approximation_selection").append("<option>"+description+"</option>");
                 break;
             } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
@@ -477,5 +478,10 @@ function modify_update_approximations() {
 }
 
 export {
-  modify_update_approximations
+  modify_update_approximations,
+  modify_random_variance,
+  modify_mode,
+  modify_sync_beating,
+  modify_stretch,
+  modify_replace_with_approximation
 }
