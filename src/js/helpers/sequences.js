@@ -8,54 +8,54 @@ import { line_to_decimal, decimal_to_cents } from './converters.js'
 import { sum_array, get_prime_limit } from './numbers.js'
 
 // calculate a continued fraction for the given number
-function get_cf(num, roundf, array=[], maxdepth=20, depth=0) {
-  if (num >= roundf || depth >= maxdepth)
-    return;
-  else if (array.length==0) {
-    depth = maxdepth - depth;
+function get_cf(num, maxiterations, roundf) {
+  var cf = [] // the continued fraction
+  var digit;
+
+  var roundinv = 1.0 / roundf;
+
+  var iterations = 0;
+  while (iterations < maxiterations) {
+    digit = Math.floor(num);
+    cf.push(digit);
+
+    num -= digit;
+
+    if (num === 0 || num <= roundinv) {
+      break;
+    }
+
+    num = 1.0 / num;
+    iterations++;
   }
 
-  let i = Math.floor(num);
-  array.push(i);
-
-  dif = num - i;
-
-  if (dif <= 0)
-    return;
-
-  get_cf(1.0/(num - i), roundf, array, maxdepth, depth+1);
-
-  return array;
+  return cf;
 }
 
 // calculate a single convergent for a given continued fraction
-function get_convergent(cf, depth=0, maxdepth=20) {
-  var cfd; // the continued fraction digit
-  var ind; // the index of the cfd
-  var n; // the convergent numerator
-  var d; // the convergent denominator
+function get_convergent(cf, depth=0) {
+  var cfdigit; // the continued fraction digit
+  var num; // the convergent numerator
+  var den; // the convergent denominator
+  var tmp; // for easy reciprocation
 
-  if (cf.length < 1)
-    return;
-  else if (!array)
-    array = [];
+  if (depth >= cf.length || depth === 0)
+    depth = cf.length;
 
-  var ind = len(cf)-1;
-  var cfd = cf[ind];
-  converge(cf.slice(0, cf.length-2), array);
-  let c = [1, cfd];
+  for (let d = 0; d < depth; d++) {
+    cfdigit = cf[d];
+    num = cfdigit;
+    den = 1;
 
-  [d, n] = c;
-   
-  for (let i = 0; i < ind; i++) {
-    [n, d] = [d, n];
-    n += d * cf[ind-i-1];
+    // calculate the convergent
+    for (let i = d; i > 0; i--) {
+    tmp = den;
+    den = num;
+    num = tmp;
+    num += den * cf[i - 1];
+    }
   }
-
-  c = [n, d];
-  array.push(c);
-  console.log(cfd + ": " + n + "/" + d + n/d);
-  return array;
+  return num + '/' + den;
 }
 
 // calculate all best rational approximations given a continued fraction
