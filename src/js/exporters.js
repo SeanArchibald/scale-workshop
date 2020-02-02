@@ -1,5 +1,5 @@
 /* global alert, MouseEvent, history, jQuery */
-import { newline, tuning_table, APP_TITLE, TUNING_MAX_SIZE } from './scaleworkshop.js'
+import { newline, tuning_table } from './scaleworkshop.js'
 import {
   debug,
   isNil,
@@ -10,7 +10,7 @@ import {
   midi_note_number_to_name,
   ftom
 } from './helpers.js'
-import { LINE_TYPE } from './constants.js'
+import { LINE_TYPE, APP_TITLE, TUNING_MAX_SIZE } from './constants.js'
 import { synth } from './synth.js'
 
 function export_error() {

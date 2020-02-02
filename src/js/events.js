@@ -23,7 +23,6 @@ import {
 } from './helpers.js'
 import {
   tuning_table,
-  APP_TITLE,
   newline,
   prime_counter,
   set_key_colors,
@@ -37,7 +36,7 @@ import {
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { synth, is_qwerty_active } from './synth.js'
 import { model } from './model.js'
-import { PRIMES } from './constants.js'
+import { PRIMES, APP_TITLE } from './constants.js'
 import {
   modify_update_approximations,
   modify_random_variance,

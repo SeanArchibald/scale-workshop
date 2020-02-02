@@ -17,7 +17,7 @@ import {
   show_mos_cf
 } from './helpers.js'
 import { synth } from './synth.js'
-import { LINE_TYPE } from './constants.js'
+import { LINE_TYPE, TUNING_MAX_SIZE } from './constants.js'
 import {
   get_scale_url,
   update_page_url,
@@ -46,8 +46,6 @@ if (window.location.hostname.endsWith('.github.com') || window.location.hostname
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 1.0.4";
-const TUNING_MAX_SIZE = 128;
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
 const unix_newline = '\n'
@@ -619,8 +617,6 @@ export {
   newline,
   current_approximations,
   debug_enabled,
-  APP_TITLE,
-  TUNING_MAX_SIZE,
   prime_counter,
   set_key_colors,
   parse_url,
