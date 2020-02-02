@@ -289,15 +289,15 @@ function get_prime_factors(number) {
  // returns an array of integers that share no common factors to the given integer
  function get_coprimes(number) {
   let coprimes = [1];
-  var mod, divisor
+  var num, mod
   for (let i = 2; i < number - 1; i++) {
-    mod = number;
-    divisor = i;
-    while (divisor > 1) {
-      mod = mod % divisor;
-      [mod, divisor] = [divisor, mod];
+    num = number;
+    mod = i;
+    while (mod > 1) {
+      num = num % mod;
+      [num, mod] = [mod, num];
     }
-    if (divisor > 0) {
+    if (mod > 0) {
       coprimes.push(i);
     }
   }
