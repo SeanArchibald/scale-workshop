@@ -7,8 +7,8 @@ import {
   newlineTest,
   parse_tuning_data,
   newline,
-  tuning_table,
-  current_approximations
+  current_approximations,
+  model
 } from './scaleworkshop.js'
 import {
   trimSelf,
@@ -365,6 +365,8 @@ function modify_key_transpose() {
 
 // approximate rationals
 function modify_replace_with_approximation () {
+  const tuning_table = model.get('tuning table')
+
   var degree_selected = parseInt(jQuery( "#input_scale_degree" ).val());
 
   if (degree_selected < tuning_table.note_count) {

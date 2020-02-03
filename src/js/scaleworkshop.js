@@ -18,7 +18,6 @@ import {
   sanitize_filename,
 } from './helpers/converters.js'
 import { show_mos_cf } from './helpers/sequences.js'
-import { synth } from './synth.js'
 import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE } from './constants.js'
 import {
   get_scale_url,
@@ -32,6 +31,9 @@ import {
   export_reference_deflemask,
   export_url
 } from './exporters.js'
+import Model from './helpers/Model.js'
+import Synth from './synth/Synth.js'
+import MIDI from './helpers/MIDI.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
@@ -44,24 +46,99 @@ if (window.location.hostname.endsWith('.github.com') || window.location.hostname
   redirectToHTTPS()
 }
 
-/**
- * GLOBALS
- */
+const synth = new Synth()
+const midi = new MIDI()
+const model = new Model({
+  'main volume': 0.8,
+  'tuning table': {
+    scale_data: [],      // an array containing list of intervals input by the user
+    tuning_data: [],     // an array containing the same list above converted to decimal format
+    note_count: 0,       // number of values stored in tuning_data
+    freq: [],            // an array containing the frequency for each MIDI note
+    cents: [],           // an array containing the cents value for each MIDI note
+    decimal: [],         // an array containing the frequency ratio expressed as decimal for each MIDI note
+    base_frequency: 440, // init val
+    base_midi_note: 69,  // init val
+    description: "",
+    filename: ""
+  }
+})
+
+// data changed, handle programmatic reaction - no jQuery
+model.on('change', (key, newValue) => {
+  if (key === 'main volume') {
+    synth.setMainVolume(newValue)
+  }
+})
+
+// data changed, sync it with the DOM
+model.on('change', (key, newValue) => {
+  if (key === 'main volume') {
+    jQuery('#input_range_main_vol').val(newValue)
+  }
+})
+
+midi
+  .on('blocked', () => {
+    midiEnablerBtn
+      .prop('disabled', false)
+      .removeClass('btn-success')
+      .addClass('btn-danger')
+      .text('off (blocked)')
+  })
+  .on('note on', synth.noteOn.bind(synth))
+  .on('note off', synth.noteOff.bind(synth))
+
+jQuery(() => {
+  const midiEnablerBtn = jQuery('#midi-enabler')
+
+  midiEnablerBtn.on('click', () => {
+    if (midi.isSupported()) {
+      midiEnablerBtn
+        .prop('disabled', true)
+        .removeClass('btn-danger')
+        .addClass('btn-success')
+        .text('on')
+      midi.init()
+    }
+  })
+})
+
+// clear all inputted scale data
+function clear_all() {
+  // empty text fields
+  jQuery("#txt_tuning_data").val("");
+  jQuery("#txt_name").val("");
+
+  // empty any information displayed on page
+  jQuery("#tuning-table").empty();
+
+  // restore default base tuning
+  jQuery("#txt_base_frequency").val(440);
+  jQuery("#txt_base_midi_note").val(69);
+
+  // reset tuning table
+  model.set('tuning table', {
+    scale_data: [],
+    tuning_data: [],
+    note_count: 0,
+    freq: [],
+    cents: [],
+    decimal: [],
+    base_frequency: 440,
+    base_midi_note: 69,
+    description: "",
+    filename: ""
+  })
+}
+
+// DOM changed, need to sync it with model
+jQuery('#input_range_main_vol').on('input', function() {
+  model.set('main volume', parseFloat(jQuery(this).val()))
+});
 
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
-var tuning_table = {
-  scale_data: [], // an array containing list of intervals input by the user
-  tuning_data: [], // an array containing the same list above converted to decimal format
-  note_count: 0, // number of values stored in tuning_data
-  freq: [], // an array containing the frequency for each MIDI note
-  cents: [], // an array containing the cents value for each MIDI note
-  decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
-  base_frequency: 440, // init val
-  base_midi_note: 69, // init val
-  description: "",
-  filename: ""
-};
 var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ];
 var current_approximations = {
     convergent_indicies: [], // indicies of the convergent ratios
@@ -75,15 +152,12 @@ var current_approximations = {
 var approx_filter_prime_counter = [0, 10];
 var debug_enabled = true;
 
-/**
- * SCALE WORKSHOP FUNCTIONS
- */
-
 // take a tuning, do loads of calculations, then output the data to tuning_table
 function generate_tuning_table( tuning ) {
+  const tuning_table = model.get('tuning table')
 
-  var base_frequency = tuning_table['base_frequency'];
-  var base_midi_note = tuning_table['base_midi_note'];
+  var base_frequency = tuning_table.base_frequency
+  var base_midi_note = tuning_table.base_midi_note
 
   for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
 
@@ -96,15 +170,16 @@ function generate_tuning_table( tuning ) {
     var decimal = tuning[ remainder ] * Math.pow( period, quotient );
 
     // store the data in the tuning_table object
-    tuning_table['freq'][i] = base_frequency * decimal;
-    tuning_table['cents'][i] = decimal_to_cents( decimal );
-    tuning_table['decimal'][i] = decimal;
+    tuning_table.freq[i] = base_frequency * decimal;
+    tuning_table.cents[i] = decimal_to_cents( decimal );
+    tuning_table.decimal[i] = decimal;
 
+    model.set('tuning table', tuning_table)
   }
-
 }
 
 function set_key_colors( list ) {
+  const tuning_table = model.get('tuning table')
 
   // check if the list of colors is empty
   if ( isEmpty(list) ) {
@@ -225,6 +300,8 @@ function parse_url() {
  */
 
 function parse_tuning_data() {
+  const tuning_table = model.get('tuning table')
+
   // http://www.huygens-fokker.org/scala/scl_format.html
 
   tuning_table['base_midi_note'] = parseInt ( jQuery( "#txt_base_midi_note" ).val() );
@@ -266,9 +343,7 @@ function parse_tuning_data() {
 
       // if we got to this point, then the tuning must not be empty
       empty = false;
-
     }
-
   }
 
   if ( empty ) {
@@ -299,8 +374,14 @@ function parse_tuning_data() {
     }
 
     // assemble the HTML for the table row
-    jQuery( "#tuning-table" ).append("<tr id='tuning-table-row-" + i + "' class='" + table_class + "'><td class='key-color'></td><td>" + i + "</td><td>" + parseFloat( tuning_table['freq'][i] ).toFixed(3) + " Hz</td><td>" + tuning_table['cents'][i].toFixed(3) + "</td><td>" + tuning_table['decimal'][i].toFixed(3) + "</td></tr>");
-
+    jQuery( "#tuning-table" ).append(`
+      <tr id="tuning-table-row-${i}" class="${table_class}">
+        <td class="key-color"></td>
+        <td>${i}</td>
+        <td>${parseFloat(tuning_table.freq[i]).toFixed(3)} Hz</td>
+        <td>${tuning_table.cents[i].toFixed(3)}</td>
+        <td>${tuning_table.decimal[i].toFixed(3)}</td>
+      </tr>`);
   }
 
   jQuery( "#tuning-table" ).append("</tbody>");
@@ -320,9 +401,10 @@ function parse_tuning_data() {
     update_page_url( url );
   }
 
+  model.set('tuning table', tuning_table)
+
   // success
   return true;
-
 }
 
 /**
@@ -566,25 +648,8 @@ jQuery('#show-mos').on('click', () => {
   )
 })
 
-const resetTuningTable = () => {
-  // re-init tuning_table
-  tuning_table = {
-    scale_data: [], // an array containing list of intervals input by the user
-    tuning_data: [], // an array containing the same list above converted to decimal format
-    note_count: 0, // number of values stored in tuning_data
-    freq: [], // an array containing the frequency for each MIDI note
-    cents: [], // an array containing the cents value for each MIDI note
-    decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
-    base_frequency: 440, // init val
-    base_midi_note: 69, // init val
-    description: "",
-    filename: ""
-  }
-}
-
 export {
   key_colors,
-  tuning_table,
   newlineTest,
   parse_tuning_data,
   newline,
@@ -593,5 +658,7 @@ export {
   approx_filter_prime_counter,
   set_key_colors,
   parse_url,
-  resetTuningTable
+  clear_all,
+  model,
+  synth
 }

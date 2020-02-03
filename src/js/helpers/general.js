@@ -4,7 +4,7 @@
 
 /* global alert, location, jQuery, localStorage, navigator */
 import { LINE_TYPE } from '../constants.js'
-import { debug_enabled, resetTuningTable } from '../scaleworkshop.js'
+import { debug_enabled } from '../scaleworkshop.js'
 import { toString } from './converters.js'
 
 function isCent(rawInput) {
@@ -47,23 +47,6 @@ function getLineType(rawInput) {
   } else {
     return LINE_TYPE.INVALID
   }
-}
-
-// clear all inputted scale data
-function clear_all() {
-
-  // empty text fields
-  jQuery("#txt_tuning_data").val("");
-  jQuery("#txt_name").val("");
-
-  // empty any information displayed on page
-  jQuery("#tuning-table").empty();
-
-  // restore default base tuning
-  jQuery("#txt_base_frequency").val(440);
-  jQuery("#txt_base_midi_note").val(69);
-
-  resetTuningTable()
 }
 
 function debug(msg = "") {
@@ -178,7 +161,6 @@ export {
   isCommaDecimal,
   isNOfEdo,
   getLineType,
-  clear_all,
   debug,
   setScaleName,
   closePopup,

@@ -4,7 +4,7 @@
  */
 
 /* global alert, jQuery */
-import { key_colors, tuning_table } from './scaleworkshop.js'
+import { key_colors, model } from './scaleworkshop.js'
 import { touch_to_midinote } from './synth.js'
 import { getCoordsFromKey } from './helpers/general.js'
 
@@ -26,7 +26,7 @@ jQuery( function() {
 } );
 
 function touch_kbd_open() {
-
+  const tuning_table = model.get('tuning table')
   // check if scale already set up - we can't use the touch kbd if there is no scale
   if ( tuning_table['note_count'] === 0 ) {
 

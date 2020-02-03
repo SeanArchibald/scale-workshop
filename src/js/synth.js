@@ -5,11 +5,8 @@
  */
 
 /* global jQuery */
-import { Synth } from './synth/Synth.js'
 import { isNil, tap, debug, getCoordsFromKey } from './helpers/general.js'
-import { tuning_table } from './scaleworkshop.js'
-
-const synth = new Synth()
+import { model, synth } from './scaleworkshop.js'
 
 // keycode_to_midinote()
 // it turns a keycode to a MIDI note based on this reference layout:
@@ -20,6 +17,7 @@ const synth = new Synth()
 //      Z  X  C  V  B  N  M  ,  .  /
 //
 function keycode_to_midinote(keycode) {
+  const tuning_table = model.get('tuning table')
   // get row/col vals from the keymap
   var key = synth.keymap[keycode];
 
@@ -27,16 +25,17 @@ function keycode_to_midinote(keycode) {
     // return false if there is no note assigned to this key
     return false;
   } else {
-    var [row, col] = key;
-    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
+    const [row, col] = key
+    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table.base_midi_note
   }
 }
 
 function touch_to_midinote([ row, col ]) {
+  const tuning_table = model.get('tuning table')
   if (isNil(row) || isNil(col)) {
     return false
   } else {
-    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
+    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table.base_midi_note
   }
 }
 
@@ -107,7 +106,6 @@ jQuery( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
 });
 
 export {
-  synth,
   touch_to_midinote,
   is_qwerty_active
 }

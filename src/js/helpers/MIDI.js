@@ -4,7 +4,6 @@
  */
 
 /* global jQuery, EventEmitter */
-import { synth } from './synth.js'
 
 // https://www.midi.org/specifications/item/table-1-summary-of-midi-message
 const commands = {
@@ -74,30 +73,4 @@ class MIDI extends EventEmitter {
   }
 }
 
-const midi = new MIDI()
-
-jQuery(() => {
-  const midiEnablerBtn = jQuery('#midi-enabler')
-
-  midi
-    .on('blocked', () => {
-      midiEnablerBtn
-        .prop('disabled', false)
-        .removeClass('btn-success')
-        .addClass('btn-danger')
-        .text('off (blocked)')
-    })
-    .on('note on', synth.noteOn.bind(synth))
-    .on('note off', synth.noteOff.bind(synth))
-
-  midiEnablerBtn.on('click', () => {
-    if (midi.isSupported()) {
-      midiEnablerBtn
-        .prop('disabled', true)
-        .removeClass('btn-danger')
-        .addClass('btn-success')
-        .text('on')
-      midi.init()
-    }
-  })
-})
+export default MIDI

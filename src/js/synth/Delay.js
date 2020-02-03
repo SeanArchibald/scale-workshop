@@ -1,5 +1,4 @@
 /* global jQuery */
-import { synth } from '../synth.js'
 
 class Delay {
   constructor (synth) {
@@ -67,7 +66,7 @@ class Delay {
       this.panR.setPosition( 1, 0, 0 );
 
       // setup delay time and gain for delay lines
-      const now = synth.now()
+      const now = this.synth.now()
       this.channelL.delayTime.setValueAtTime(this.time, now);
       this.channelR.delayTime.setValueAtTime(this.time, now);
       this.gainL.gain.setValueAtTime(this.gain, now);
@@ -81,4 +80,4 @@ class Delay {
   }
 }
 
-export { Delay }
+export default Delay

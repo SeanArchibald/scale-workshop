@@ -8,7 +8,6 @@ import {
   isEmpty,
   isNil,
   openDialog,
-  clear_all,
   trimSelf,
   isLocalStorageAvailable,
   isRunningOnWindows
@@ -26,14 +25,16 @@ import {
   load_approximations
 } from './helpers/sequences.js'
 import {
-  tuning_table,
   newline,
   approx_filter_prime_counter,
   set_key_colors,
   parse_tuning_data,
   parse_url,
   current_approximations,
-  newlineTest
+  newlineTest,
+  clear_all,
+  model,
+  synth
 } from './scaleworkshop.js'
 import {
   import_scala_scl,
@@ -41,8 +42,7 @@ import {
 } from './helpers/importers.js'
 import { rotate,  closestPrime } from './helpers/numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
-import { synth, is_qwerty_active } from './synth.js'
-import Model from './helpers/Model.js'
+import { is_qwerty_active } from './synth.js'
 import { PRIMES, APP_TITLE } from './constants.js'
 import {
   modify_update_approximations,
@@ -71,43 +71,27 @@ function show_modify_mode_mos_options(showOptions) {
 
 // repopulates the available degrees for selection
 function update_modify_mode_mos_generators() {
+  const tuning_table = model.get('tuning table')
   show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
   let coprimes = get_coprimes(tuning_table.note_count-1);
   jQuery("#modal_modify_mos_degree").empty();
   for (let d=1; d < coprimes.length-1; d++) {
-  var num = coprimes[d];
-  var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
-  var text = num + " (" + cents + "c)";
-  jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
+    var num = coprimes[d];
+    var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
+    var text = num + " (" + cents + "c)";
+    jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
   }
 }
 
  // calculate the MOS mode and insert it in the mode input box
 function modify_mode_update_mos_scale() {
+  const tuning_table = model.get('tuning table')
   var p = tuning_table.note_count-1;
   var g = parseInt(jQuery("#modal_modify_mos_degree").val());
   var s = parseInt(jQuery("#modal_modify_mos_size").val());
   let mode = get_rank2_mode(p, g, s);
   jQuery("#input_modify_mode").val(mode.join(" "));
 }
-
-const model = new Model({
-  'main volume': 0.8
-})
-
-// data changed, handle programmatic reaction - no jQuery
-model.on('change', (key, newValue) => {
-  if (key === 'main volume') {
-    synth.setMainVolume(newValue)
-  }
-})
-
-// data changed, sync it with the DOM
-model.on('change', (key, newValue) => {
-  if (key === 'main volume') {
-    jQuery('#input_range_main_vol').val(newValue)
-  }
-})
 
 jQuery( function() {
   // automatically load generatal options saved in localStorage (if available)
@@ -287,7 +271,7 @@ jQuery( function() {
   // approximate option clicked
   jQuery( "#modify_approximate" ).click( function( event ) {
     event.preventDefault();
-    trimSelf();
+    trimSelf(); // TODO: trim self requires a parameter to apply trim to, otherwise this is just a NOP
 
     jQuery( "#input_scale_degree" ).val(1);
     jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 });
@@ -326,7 +310,7 @@ jQuery( function() {
 
   // recalculate approximations when scale degree changes
   jQuery( "#input_scale_degree").change( function() {
-    trimSelf();
+    trimSelf(); // TODO: trim self requires a parameter to apply trim to, otherwise this is just a NOP
     var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
     var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
     jQuery ( "#input_interval_to_approximate" ).val(lines[index]).trigger("change");
@@ -378,6 +362,7 @@ jQuery( function() {
 
   // update the available sizes for selection
   jQuery( "#modal_modify_mos_degree").change( function() {
+    const tuning_table = model.get('tuning table')
     let nn = [];
     let dd = [];
     var gp = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
@@ -489,11 +474,6 @@ jQuery( function() {
     }
   } );
 
-  // DOM changed, need to sync it with model
-  jQuery('#input_range_main_vol').on('input', function() {
-    model.set('main volume', parseFloat(jQuery(this).val()))
-  });
-
   // Synth Settings - Waveform
   jQuery( "#input_select_synth_waveform" ).change( function( event ) {
     synth.waveform = jQuery( '#input_select_synth_waveform' ).val();
@@ -572,6 +552,7 @@ jQuery( function() {
   jQuery( "#btn_key_colors_auto" ).click( function( event ) {
 
     event.preventDefault();
+    const tuning_table = model.get('tuning table')
     var size = tuning_table['note_count'] - 1;
     var colors = "";
 
@@ -697,10 +678,11 @@ jQuery( function() {
     window.open( 'https://twitter.com/intent/tweet?text=' + text + url );
   } );
 
+  // TODO: need debouncing for these fields before using
   // parse tuning data when changes are made
-  jQuery( "#txt_name, #txt_tuning_data, #txt_base_frequency, #txt_base_midi_note, #input_select_newlines" ).change( function() {
-    parse_tuning_data();
-  } );
+  // jQuery( "#txt_name, #txt_tuning_data, #txt_base_frequency, #txt_base_midi_note, #input_select_newlines" ).change( function() {
+  //   parse_tuning_data();
+  // } );
 
   // handle QWERTY key active indicator
   is_qwerty_active();
