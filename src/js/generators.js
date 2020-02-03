@@ -20,7 +20,8 @@ import{
   getLine
 } from './helpers/converters.js'
 import { invert_chord } from './helpers/numbers.js'
-import { unix_newline, parse_tuning_data } from './scaleworkshop.js'
+import { UNIX_NEWLINE } from './constants.js'
+import { parse_tuning_data } from './scaleworkshop.js'
 
 function generate_equal_temperament() {
 
@@ -66,7 +67,7 @@ function generate_equal_temperament_data(divider, period) {
     notes.push(note)
   }
 
-  return notes.join(unix_newline)
+  return notes.join(UNIX_NEWLINE)
 }
 
 function generate_rank_2_temperament() {
@@ -152,7 +153,7 @@ function generate_rank_2_temperament_data(generator, period, size, up) {
   // add the period to the scale
   aa.push(period);
 
-  tuning_data += aa.slice(1, size + 1).map(num => num.toFixed(6)).join(unix_newline)
+  tuning_data += aa.slice(1, size + 1).map(num => num.toFixed(6)).join(UNIX_NEWLINE)
 
   return tuning_data
 }
@@ -194,7 +195,7 @@ function generate_harmonic_series_segment_data(lo, hi) {
     ratios.push(i + "/" + lo)
   }
 
-  return ratios.join(unix_newline)
+  return ratios.join(UNIX_NEWLINE)
 }
 
 function generate_subharmonic_series_segment() {
@@ -233,7 +234,7 @@ function generate_subharmonic_series_segment_data(lo, hi) {
     ratios.push(hi + "/" + i)
   }
 
-  return ratios.join(unix_newline)
+  return ratios.join(UNIX_NEWLINE)
 }
 
 function generate_enumerate_chord() {
@@ -337,7 +338,7 @@ function generate_enumerate_chord_data(pitches, convertToRatios = false) {
     }
   }
 
-  return ratios.join(unix_newline)
+  return ratios.join(UNIX_NEWLINE)
 }
 
 function load_preset_scale(a) {
@@ -351,63 +352,63 @@ function load_preset_scale(a) {
 
     case "12edo":
       name = "12-tone equal temperament";
-      data = "100." + unix_newline + "200." + unix_newline + "300." + unix_newline + "400." + unix_newline + "500." + unix_newline + "600." + unix_newline + "700." + unix_newline + "800." + unix_newline + "900." + unix_newline + "1000." + unix_newline + "1100." + unix_newline + "1200.";
+      data = "100." + UNIX_NEWLINE + "200." + UNIX_NEWLINE + "300." + UNIX_NEWLINE + "400." + UNIX_NEWLINE + "500." + UNIX_NEWLINE + "600." + UNIX_NEWLINE + "700." + UNIX_NEWLINE + "800." + UNIX_NEWLINE + "900." + UNIX_NEWLINE + "1000." + UNIX_NEWLINE + "1100." + UNIX_NEWLINE + "1200.";
       break;
 
     case "partch43":
       name = "Partch 43-tone JI";
-      data = "81/80" + unix_newline + "33/32" + unix_newline + "21/20" + unix_newline + "16/15" + unix_newline + "12/11" + unix_newline + "11/10" + unix_newline + "10/9" + unix_newline + "9/8" + unix_newline + "8/7" + unix_newline + "7/6" + unix_newline + "32/27" + unix_newline + "6/5" + unix_newline + "11/9" + unix_newline + "5/4" + unix_newline + "14/11" + unix_newline + "9/7" + unix_newline + "21/16" + unix_newline + "4/3" + unix_newline + "27/20" + unix_newline + "11/8" + unix_newline + "7/5" + unix_newline + "10/7" + unix_newline + "16/11" + unix_newline + "40/27" + unix_newline + "3/2" + unix_newline + "32/21" + unix_newline + "14/9" + unix_newline + "11/7" + unix_newline + "8/5" + unix_newline + "18/11" + unix_newline + "5/3" + unix_newline + "27/16" + unix_newline + "12/7" + unix_newline + "7/4" + unix_newline + "16/9" + unix_newline + "9/5" + unix_newline + "20/11" + unix_newline + "11/6" + unix_newline + "15/8" + unix_newline + "40/21" + unix_newline + "64/33" + unix_newline + "160/81" + unix_newline + "2/1";
+      data = "81/80" + UNIX_NEWLINE + "33/32" + UNIX_NEWLINE + "21/20" + UNIX_NEWLINE + "16/15" + UNIX_NEWLINE + "12/11" + UNIX_NEWLINE + "11/10" + UNIX_NEWLINE + "10/9" + UNIX_NEWLINE + "9/8" + UNIX_NEWLINE + "8/7" + UNIX_NEWLINE + "7/6" + UNIX_NEWLINE + "32/27" + UNIX_NEWLINE + "6/5" + UNIX_NEWLINE + "11/9" + UNIX_NEWLINE + "5/4" + UNIX_NEWLINE + "14/11" + UNIX_NEWLINE + "9/7" + UNIX_NEWLINE + "21/16" + UNIX_NEWLINE + "4/3" + UNIX_NEWLINE + "27/20" + UNIX_NEWLINE + "11/8" + UNIX_NEWLINE + "7/5" + UNIX_NEWLINE + "10/7" + UNIX_NEWLINE + "16/11" + UNIX_NEWLINE + "40/27" + UNIX_NEWLINE + "3/2" + UNIX_NEWLINE + "32/21" + UNIX_NEWLINE + "14/9" + UNIX_NEWLINE + "11/7" + UNIX_NEWLINE + "8/5" + UNIX_NEWLINE + "18/11" + UNIX_NEWLINE + "5/3" + UNIX_NEWLINE + "27/16" + UNIX_NEWLINE + "12/7" + UNIX_NEWLINE + "7/4" + UNIX_NEWLINE + "16/9" + UNIX_NEWLINE + "9/5" + UNIX_NEWLINE + "20/11" + UNIX_NEWLINE + "11/6" + UNIX_NEWLINE + "15/8" + UNIX_NEWLINE + "40/21" + UNIX_NEWLINE + "64/33" + UNIX_NEWLINE + "160/81" + UNIX_NEWLINE + "2/1";
       break;
 
     case "bohlenpierce":
       name = "Bohlen-Pierce";
-      data = "146.304" + unix_newline + "292.608" + unix_newline + "438.913" + unix_newline + "585.217" + unix_newline + "731.521" + unix_newline + "877.825" + unix_newline + "1024.130" + unix_newline + "1170.434" + unix_newline + "1316.738" + unix_newline + "1463.042" + unix_newline + "1609.347" + unix_newline + "1755.651" + unix_newline + "1901.955";
+      data = "146.304" + UNIX_NEWLINE + "292.608" + UNIX_NEWLINE + "438.913" + UNIX_NEWLINE + "585.217" + UNIX_NEWLINE + "731.521" + UNIX_NEWLINE + "877.825" + UNIX_NEWLINE + "1024.130" + UNIX_NEWLINE + "1170.434" + UNIX_NEWLINE + "1316.738" + UNIX_NEWLINE + "1463.042" + UNIX_NEWLINE + "1609.347" + UNIX_NEWLINE + "1755.651" + UNIX_NEWLINE + "1901.955";
       break;
 
     case "pelog":
       name = "Normalised Pelog, Kunst, 1949. Average of 39 Javanese gamelans";
-      data = "120." + unix_newline + "270." + unix_newline + "540." + unix_newline + "670." + unix_newline + "785." + unix_newline + "950." + unix_newline + "1215.";
+      data = "120." + UNIX_NEWLINE + "270." + UNIX_NEWLINE + "540." + UNIX_NEWLINE + "670." + UNIX_NEWLINE + "785." + UNIX_NEWLINE + "950." + UNIX_NEWLINE + "1215.";
       break;
 
     case "slendro":
       name = "Average of 30 measured slendro gamelans, W. Surjodiningrat et al., 1993.";
-      data = "231." + unix_newline + "474." + unix_newline + "717." + unix_newline + "955." + unix_newline + "1208.";
+      data = "231." + UNIX_NEWLINE + "474." + UNIX_NEWLINE + "717." + UNIX_NEWLINE + "955." + UNIX_NEWLINE + "1208.";
       break;
 
     case "werckmeisteriii":
       name = "Werckmeister III (1691)";
-      data = "107.82" + unix_newline + "203.91" + unix_newline + "311.72" + unix_newline + "401.955" + unix_newline + "503.91" + unix_newline + "605.865" + unix_newline + "701.955" + unix_newline + "809.775" + unix_newline + "900." + unix_newline + "1007.82" + unix_newline + "1103.91" + unix_newline + "1200.";
+      data = "107.82" + UNIX_NEWLINE + "203.91" + UNIX_NEWLINE + "311.72" + UNIX_NEWLINE + "401.955" + UNIX_NEWLINE + "503.91" + UNIX_NEWLINE + "605.865" + UNIX_NEWLINE + "701.955" + UNIX_NEWLINE + "809.775" + UNIX_NEWLINE + "900." + UNIX_NEWLINE + "1007.82" + UNIX_NEWLINE + "1103.91" + UNIX_NEWLINE + "1200.";
       break;
 
     case "young1799":
       name = "Young (1799)";
-      data = "106." + unix_newline + "198." + unix_newline + "306.2" + unix_newline + "400.1" + unix_newline + "502." + unix_newline + "604." + unix_newline + "697.9" + unix_newline + "806.1" + unix_newline + "898.1" + unix_newline + "1004.1" + unix_newline + "1102." + unix_newline + "1200.";
+      data = "106." + UNIX_NEWLINE + "198." + UNIX_NEWLINE + "306.2" + UNIX_NEWLINE + "400.1" + UNIX_NEWLINE + "502." + UNIX_NEWLINE + "604." + UNIX_NEWLINE + "697.9" + UNIX_NEWLINE + "806.1" + UNIX_NEWLINE + "898.1" + UNIX_NEWLINE + "1004.1" + UNIX_NEWLINE + "1102." + UNIX_NEWLINE + "1200.";
       break;
 
     case "snakeoil":
       name = "Pythagorean 432Hz";
-      data = "256/243" + unix_newline + "9/8" + unix_newline + "32/27" + unix_newline + "81/64" + unix_newline + "4/3" + unix_newline + "1024/729" + unix_newline + "3/2" + unix_newline + "128/81" + unix_newline + "27/16" + unix_newline + "16/9" + unix_newline + "4096/2187" + unix_newline + "2/1";
+      data = "256/243" + UNIX_NEWLINE + "9/8" + UNIX_NEWLINE + "32/27" + UNIX_NEWLINE + "81/64" + UNIX_NEWLINE + "4/3" + UNIX_NEWLINE + "1024/729" + UNIX_NEWLINE + "3/2" + UNIX_NEWLINE + "128/81" + UNIX_NEWLINE + "27/16" + UNIX_NEWLINE + "16/9" + UNIX_NEWLINE + "4096/2187" + UNIX_NEWLINE + "2/1";
       freq = 432;
       break;
 
     case "313island9":
       name = "313edo island[9]";
-      data = "203.19489" + unix_newline + "249.20128" + unix_newline + "452.39617" + unix_newline + "498.40256" + unix_newline + "701.59744" + unix_newline + "747.60383" + unix_newline + "950.79872" + unix_newline + "996.80511" + unix_newline + "2/1";
+      data = "203.19489" + UNIX_NEWLINE + "249.20128" + UNIX_NEWLINE + "452.39617" + UNIX_NEWLINE + "498.40256" + UNIX_NEWLINE + "701.59744" + UNIX_NEWLINE + "747.60383" + UNIX_NEWLINE + "950.79872" + UNIX_NEWLINE + "996.80511" + UNIX_NEWLINE + "2/1";
       break;
 
     case "17superpyth12":
       name = "17edo superpyth[12]";
-      data = "70.58824" + unix_newline + "141.17647" + unix_newline + "282.35294" + unix_newline + "352.94118" + unix_newline + "494.11765" + unix_newline + "564.70588" + unix_newline + "635.29412" + unix_newline + "776.47059" + unix_newline + "847.05882" + unix_newline + "988.23529" + unix_newline + "1058.82353" + unix_newline + "2/1";
+      data = "70.58824" + UNIX_NEWLINE + "141.17647" + UNIX_NEWLINE + "282.35294" + UNIX_NEWLINE + "352.94118" + UNIX_NEWLINE + "494.11765" + UNIX_NEWLINE + "564.70588" + UNIX_NEWLINE + "635.29412" + UNIX_NEWLINE + "776.47059" + UNIX_NEWLINE + "847.05882" + UNIX_NEWLINE + "988.23529" + UNIX_NEWLINE + "1058.82353" + UNIX_NEWLINE + "2/1";
       break;
 
     case "15blackwood10":
       name = "15edo blackwood[10]";
-      data = "160." + unix_newline + "240." + unix_newline + "400." + unix_newline + "480." + unix_newline + "640." + unix_newline + "720." + unix_newline + "880." + unix_newline + "960." + unix_newline + "1120." + unix_newline + "2/1";
+      data = "160." + UNIX_NEWLINE + "240." + UNIX_NEWLINE + "400." + UNIX_NEWLINE + "480." + UNIX_NEWLINE + "640." + UNIX_NEWLINE + "720." + UNIX_NEWLINE + "880." + UNIX_NEWLINE + "960." + UNIX_NEWLINE + "1120." + UNIX_NEWLINE + "2/1";
       break;
 
     case "26flattone12":
       name = "26edo flattone[12]";
-      data = "46.15385" + unix_newline + "184.61538" + unix_newline + "230.76923" + unix_newline + "369.23077" + unix_newline + "507.69231" + unix_newline + "553.84615" + unix_newline + "692.30769" + unix_newline + "738.46154" + unix_newline + "876.92308" + unix_newline + "923.07692" + unix_newline + "1061.53846" + unix_newline + "2/1";
+      data = "46.15385" + UNIX_NEWLINE + "184.61538" + UNIX_NEWLINE + "230.76923" + UNIX_NEWLINE + "369.23077" + UNIX_NEWLINE + "507.69231" + UNIX_NEWLINE + "553.84615" + UNIX_NEWLINE + "692.30769" + UNIX_NEWLINE + "738.46154" + UNIX_NEWLINE + "876.92308" + UNIX_NEWLINE + "923.07692" + UNIX_NEWLINE + "1061.53846" + UNIX_NEWLINE + "2/1";
       break;
 
     default:

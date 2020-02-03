@@ -19,7 +19,7 @@ import {
 } from './helpers/converters.js'
 import { show_mos_cf } from './helpers/sequences.js'
 import { synth } from './synth.js'
-import { LINE_TYPE, TUNING_MAX_SIZE } from './constants.js'
+import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE } from './constants.js'
 import {
   get_scale_url,
   update_page_url,
@@ -50,7 +50,6 @@ if (window.location.hostname.endsWith('.github.com') || window.location.hostname
 
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
-const unix_newline = '\n'
 var tuning_table = {
   scale_data: [], // an array containing list of intervals input by the user
   tuning_data: [], // an array containing the same list above converted to decimal format
@@ -124,7 +123,7 @@ function set_key_colors( list ) {
     var keynum = ( i - tuning_table['base_midi_note'] ).mod( key_colors.length );
     // set the color of the key
     jQuery( ttkeys[i] ).attr( "style", "background-color: " + key_colors[keynum] + " !important" );
-    //debug( i + ": " + key_colors[keynum] );
+    // debug( i + ": " + key_colors[keynum] );
   }
 }
 
@@ -174,7 +173,7 @@ function parse_url() {
     a = a.filter(line => !line.startsWith('<') && !line.startsWith('{') && !isEmpty(line)); // remove <nowiki> tag, wiki templates and blank lines
     a = a.map(line => line.split('!')[0]); // remove .scl comments
     a = a.slice(2); // remove .scl metadata
-    return a.join(unix_newline);
+    return a.join(UNIX_NEWLINE);
   }
 
   // specially parse inputs from the Xenharmonic Wiki
@@ -238,7 +237,7 @@ function parse_tuning_data() {
   // check if user pasted a scala file
   // we check if the first character is !
   if ( user_tuning_data.value.startsWith("!") ) {
-    alert('Hello, trying to paste a Scala file into this app?' + unix_newline + 'Please use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
+    alert('Hello, trying to paste a Scala file into this app?' + UNIX_NEWLINE + 'Please use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
     jQuery("#txt_tuning_data").parent().addClass("has-error");
     return false;
   }
@@ -384,7 +383,7 @@ function parse_imported_scala_scl( event ) {
     // determine the first line of scala file that contains tuning data
     let first_line = lines.lastIndexOf('!') + 1;
 
-    jQuery( "#txt_tuning_data" ).val(lines.slice(first_line).map(line => line.trim()).join(unix_newline))
+    jQuery( "#txt_tuning_data" ).val(lines.slice(first_line).map(line => line.trim()).join(UNIX_NEWLINE))
 
     parse_tuning_data();
 
@@ -473,7 +472,7 @@ function parse_imported_anamark_tun( event ) {
         }
       }
 
-      jQuery( "#txt_tuning_data" ).val(tuning.join(unix_newline))
+      jQuery( "#txt_tuning_data" ).val(tuning.join(UNIX_NEWLINE))
 
       // get base MIDI note and base frequency
       for ( let i = first_line + 1; i < lines.length; i++ ) {
@@ -534,7 +533,7 @@ function parse_imported_anamark_tun( event ) {
           tuning_data_str += line ;
         }
         else {
-          tuning_data_str += unix_newline + line;
+          tuning_data_str += UNIX_NEWLINE + line;
         }
       }
       jQuery( "#txt_tuning_data" ).val(tuning_data_str)
@@ -613,7 +612,7 @@ const resetTuningTable = () => {
 export {
   key_colors,
   tuning_table,
-  unix_newline,
+  UNIX_NEWLINE,
   newlineTest,
   parse_tuning_data,
   newline,
