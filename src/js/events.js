@@ -32,11 +32,13 @@ import {
   set_key_colors,
   parse_tuning_data,
   parse_url,
-  import_scala_scl,
-  import_anamark_tun,
   current_approximations,
   newlineTest
 } from './scaleworkshop.js'
+import {
+  import_scala_scl,
+  import_anamark_tun
+} from './helpers/importers.js'
 import { rotate,  closestPrime } from './helpers/numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { synth, is_qwerty_active } from './synth.js'
