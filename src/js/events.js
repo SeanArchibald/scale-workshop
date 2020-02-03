@@ -42,7 +42,7 @@ import {
 import { rotate,  closestPrime } from './helpers/numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { synth, is_qwerty_active } from './synth.js'
-import { model } from './model.js'
+import Model from './helpers/Model.js'
 import { PRIMES, APP_TITLE } from './constants.js'
 import {
   modify_update_approximations,
@@ -64,8 +64,52 @@ import {
   load_preset_scale
 } from './generators.js'
 
-jQuery( document ).ready( function() {
+// shows or hides MOS mode selection boxes
+function show_modify_mode_mos_options(showOptions) {
+  document.getElementById("mos_mode_options").style.display = showOptions === "mos" ?  'block' : 'none';
+}
 
+// repopulates the available degrees for selection
+function update_modify_mode_mos_generators() {
+  show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+  let coprimes = get_coprimes(tuning_table.note_count-1);
+  jQuery("#modal_modify_mos_degree").empty();
+  for (let d=1; d < coprimes.length-1; d++) {
+  var num = coprimes[d];
+  var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
+  var text = num + " (" + cents + "c)";
+  jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
+  }
+}
+
+ // calculate the MOS mode and insert it in the mode input box
+function modify_mode_update_mos_scale() {
+  var p = tuning_table.note_count-1;
+  var g = parseInt(jQuery("#modal_modify_mos_degree").val());
+  var s = parseInt(jQuery("#modal_modify_mos_size").val());
+  let mode = get_rank2_mode(p, g, s);
+  jQuery("#input_modify_mode").val(mode.join(" "));
+}
+
+const model = new Model({
+  'main volume': 0.8
+})
+
+// data changed, handle programmatic reaction - no jQuery
+model.on('change', (key, newValue) => {
+  if (key === 'main volume') {
+    synth.setMainVolume(newValue)
+  }
+})
+
+// data changed, sync it with the DOM
+model.on('change', (key, newValue) => {
+  if (key === 'main volume') {
+    jQuery('#input_range_main_vol').val(newValue)
+  }
+})
+
+jQuery( function() {
   // automatically load generatal options saved in localStorage (if available)
   if (isLocalStorageAvailable()) {
 
@@ -328,36 +372,9 @@ jQuery( document ).ready( function() {
     modify_update_approximations();
   } );
 
-  // shows or hides MOS mode selection boxes
-  function show_modify_mode_mos_options(showOptions) {
-    document.getElementById("mos_mode_options").style.display = showOptions === "mos" ?  'block' : 'none';
-  }
-
   jQuery( "#modal_modify_mode").change( function() {
     show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
   } );
-
-  // repopulates the available degrees for selection
-  function update_modify_mode_mos_generators() {
-    show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
-    let coprimes = get_coprimes(tuning_table.note_count-1);
-    jQuery("#modal_modify_mos_degree").empty();
-    for (let d=1; d < coprimes.length-1; d++) {
-    var num = coprimes[d];
-    var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
-    var text = num + " (" + cents + "c)";
-    jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
-    }
-  }
-
-   // calculate the MOS mode and insert it in the mode input box
-  function modify_mode_update_mos_scale() {
-    var p = tuning_table.note_count-1;
-    var g = parseInt(jQuery("#modal_modify_mos_degree").val());
-    var s = parseInt(jQuery("#modal_modify_mos_size").val());
-    let mode = get_rank2_mode(p, g, s);
-    jQuery("#input_modify_mode").val(mode.join(" "));
-  }
 
   // update the available sizes for selection
   jQuery( "#modal_modify_mos_degree").change( function() {
@@ -472,40 +489,10 @@ jQuery( document ).ready( function() {
     }
   } );
 
-  // ------------------------------------
-  // old version
-
-  /*
-  // Synth Settings - Main Volume
-  jQuery(document).on('input', '#input_range_main_vol', function() {
-    const gain = jQuery(this).val();
-    synth.setMainVolume(gain)
-  });
-  */
-
-  // ------------------------------------
-  // new version
-
-  // data changed, handle programmatic reaction - no jQuery
-  model.on('change', (key, newValue) => {
-    if (key === 'main volume') {
-      synth.setMainVolume(newValue)
-    }
-  })
-
-  // data changed, sync it with the DOM
-  model.on('change', (key, newValue) => {
-    if (key === 'main volume') {
-      jQuery('#input_range_main_vol').val(newValue)
-    }
-  })
-
   // DOM changed, need to sync it with model
   jQuery('#input_range_main_vol').on('input', function() {
     model.set('main volume', parseFloat(jQuery(this).val()))
   });
-
-  // ------------------------------------
 
   // Synth Settings - Waveform
   jQuery( "#input_select_synth_waveform" ).change( function( event ) {
@@ -575,6 +562,7 @@ jQuery( document ).ready( function() {
     update_page_url();
 
   } );
+
   // initialise key colors. defaults to Halberstadt layout on A
   set_key_colors( jQuery( "#input_key_colors" ).val() );
 
