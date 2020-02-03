@@ -3,58 +3,50 @@
  */
 
 /* global alert, location, jQuery, localStorage, navigator */
+import { 
+  line_to_decimal, 
+  decimal_to_cents,
+  steps_to_degrees 
+} from './converters.js'
 import { PRIMES } from '../constants.js'
 import { current_approximations } from '../scaleworkshop.js'
-import { line_to_decimal, decimal_to_cents } from './converters.js'
 import { sum_array, get_prime_limit } from './numbers.js'
 
 // calculate a continued fraction for the given number
-function get_cf(num, maxiterations, roundf=1e-6) {
-  var cf = [] // the continued fraction
-  var digit;
+function get_cf(num, maxdepth=20, roundf=1e-6) {
+  let cf = [] // the continued fraction
+  let i = 0;
 
-  var iterations = 0;
-  while (iterations < maxiterations) {
-    digit = Math.floor(num);
-    cf.push(digit);
+  while (i < maxdepth) {
+    var integer = Math.floor(num);
+    cf.push(integer);
 
-    num -= digit;
-
-    if (num === 0 || num <= roundf) {
+    num -= integer;
+    if (num <= roundf)
       break;
-    }
 
     num = 1.0 / num;
-    iterations++;
+    i++;
   }
 
   return cf;
 }
 
 // calculate a single convergent for a given continued fraction
-function get_convergent(cf, depth=0) {
-  var cfdigit; // the continued fraction digit
+function get_convergent(cf, depth=-1) {
   var num; // the convergent numerator
   var den; // the convergent denominator
-  var tmp; // for easy reciprocation
 
-  if (depth >= cf.length || depth === 0)
-    depth = cf.length;
+  if (depth >= cf.length || depth < 0)
+    depth = cf.length - 1;
 
-  for (let d = 0; d < depth; d++) {
-    cfdigit = cf[d];
-    num = cfdigit;
-    den = 1;
+  [num, den] = [1, cf[depth]];
 
-    // calculate the convergent
-    for (let i = d; i > 0; i--) {
-    tmp = den;
-    den = num;
-    num = tmp;
-    num += den * cf[i - 1];
-    }
+  for (let d = depth; d > 0; d--) {
+    num += cf[d - 1] * den;
+    [num, den] = [den, num];
   }
-  return num + '/' + den;
+  return den + "/" + num;
 }
 
 // calculate all best rational approximations given a continued fraction
@@ -103,6 +95,58 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null) {
       cindOut.push(cind[i]);
     }
   }
+}
+
+// pass in a number, can represent the logarithmic ratio of the generator / period
+// recieve an object with rational approximation properties
+function get_ratio_structure(num, maxperiod=1e6){
+  if (isNaN(num))
+  alert("Error in get_ratio_structure(): num is " + num);
+  
+  var ratio_structure = {
+      // x and y vectors are an array of number pairs that add up to the rational of the same index,
+	  // can describe vectors of generator & period, such that [x[0],y[0]] = g(x, y), [x[1],y[1]] = p(x, y)
+	  x_vectors = [], 
+	  y_vectors = [],
+  	  numerators = [], // the numerator of the approximation, degree of generator in MOS size
+	  denominators = [], // the denominator of the approximation, MOS sizes
+	  rationals = [], // the decimal of the approximation
+	  ratio_strings = [], // the ratio of the approximation
+	  cf = [], // the continued fraction of the number
+	  convergents = [] // indicies of convergents
+  };
+
+  num = Math.abs(parseInt(num));
+  cf = get_cf(num);
+
+  // pushes each elements of a packet its respective structure property
+  function push_pack(pack) {
+    pack.forEach(function(item, index) {
+      ratio_structure[index].push(item)
+    } );
+  }
+
+  // the seed of the sequence
+  let packet = { [-1+cf[0], 1], [1,0], cf[0], 1, cf[0], cf[0]+"/"+1 };
+  push_pack(packet);
+  console.log(ratio_structure); // debug
+  packet = zig(packet);  
+
+  for (let depth = 1; depth < cf.length; depth++) {
+    for (let i = 0; i < cf[depth]; i++) {
+      push_pack(packet);
+	  [x, y, num, den, ratio] = packet;
+      cf[depth] % 2 ? y = [num, den] : x = [num, den];
+	  num =  x[0] + y[0];
+	  den = x[1] + y[1];
+	  ratio = num / den;
+	  packet = [ x, y, num, den, ratio, num+"/"+den ];
+    }
+  }
+
+  ratio_structure.convergents = steps_to_degrees(ratio_structure.cf);
+
+  return ratio_structure;
 }
 
 // generate and display MOS list

@@ -168,6 +168,17 @@ function ftom(input) {
   return [midi_note_number, cents_offset];
 }
 
+// convert an array of step values into absolute degree values
+function steps_to_degrees(steps) {
+  let degrees = [0];
+  if (!isEmpty(steps)) {
+    steps.forEach(function(item, index){
+      degrees.append(item + degrees[index])
+    } );
+  }
+  return degrees;
+}
+
 // convert an input string into a filename-sanitized version
 // if input is empty, returns "tuning" as a fallback
 function sanitize_filename(input) {
@@ -234,6 +245,7 @@ export {
   line_to_cents,
   mtof,
   ftom,
+  steps_to_degrees,
   sanitize_filename,
   midi_note_number_to_name,
   getFloat,
