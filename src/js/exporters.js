@@ -309,10 +309,6 @@ function export_reference_deflemask() {
 
 }
 
-/**
- * get_export_url()
- */
-
 function get_scale_url() {
 
   var url = new URL( window.location.href );
@@ -334,19 +330,11 @@ function get_scale_url() {
 
 }
 
-/**
- * update_page_url()
- */
-
 function update_page_url( url = get_scale_url() ) {
   const tuning_table = model.get('tuning table')
   // update this change in the browser's Back/Forward navigation
   history.pushState( { }, tuning_table['description'], url );
 }
-
-/**
- * export_url()
- */
 
 function export_url() {
 

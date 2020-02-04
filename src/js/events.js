@@ -31,7 +31,6 @@ import {
   parse_tuning_data,
   parse_url,
   current_approximations,
-  newlineTest,
   clear_all,
   model,
   synth,
@@ -44,7 +43,7 @@ import {
 import { rotate,  closestPrime } from './helpers/numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { is_qwerty_active } from './synth.js'
-import { PRIMES, APP_TITLE } from './constants.js'
+import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, NEWLINE_REGEX } from './constants.js'
 import {
   modify_update_approximations,
   modify_random_variance,
@@ -315,7 +314,7 @@ function initEvents(){
   jQuery( "#input_scale_degree").change( function() {
     trimSelf(); // TODO: trim self requires a parameter to apply trim to, otherwise this is just a NOP
     var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
-    var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+    var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
     jQuery ( "#input_interval_to_approximate" ).val(lines[index]).trigger("change");
   } );
 
@@ -455,11 +454,11 @@ function initEvents(){
   // General Settings - Line ending format (newlines)
   jQuery( '#input_select_newlines' ).change( function( event ) {
     if ( jQuery( '#input_select_newlines' ).val() === "windows" ) {
-      setNewline('\r\n')
+      setNewline(WINDOWS_NEWLINE)
       localStorage.setItem( 'newline', 'windows' );
     }
     else {
-      setNewline('\n')
+      setNewline(UNIX_NEWLINE)
       localStorage.setItem( 'newline', 'unix' );
     }
     debug( jQuery( '#input_select_newlines' ).val() + ' line endings selected' );

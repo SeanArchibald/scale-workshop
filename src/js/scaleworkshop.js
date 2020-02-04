@@ -18,7 +18,7 @@ import {
   sanitize_filename,
 } from './helpers/converters.js'
 import { show_mos_cf } from './helpers/sequences.js'
-import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE } from './constants.js'
+import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE, WINDOWS_NEWLINE, NEWLINE_REGEX } from './constants.js'
 import {
   get_scale_url,
   update_page_url,
@@ -140,8 +140,7 @@ jQuery('#input_range_main_vol').on('input', function() {
   model.set('main volume', parseFloat(jQuery(this).val()))
 });
 
-let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
-const newlineTest = /\r?\n/;
+let newline = localStorage && localStorage.getItem('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ];
 var current_approximations = {
     convergent_indicies: [], // indicies of the convergent ratios
@@ -205,10 +204,6 @@ function set_key_colors( list ) {
   }
 }
 
-/**
- * parse_url()
- */
-
 function parse_url() {
 
   // ?name=16%20equal%20divisions%20of%202%2F1&data=75.%0A150.%0A225.%0A300.%0A375.%0A450.%0A525.%0A600.%0A675.%0A750.%0A825.%0A900.%0A975.%0A1050.%0A1125.%0A1200.&freq=440&midi=69&vert=5&horiz=1&colors=white%20black%20white%20black%20white%20black%20white%20white%20black%20white%20black%20white%20black%20white%20black%20white&waveform=sine&ampenv=pad
@@ -247,7 +242,7 @@ function parse_url() {
   function parseWiki(str) {
     var s = decodeHTML(str);
     s = s.replace(/[_ ]+/g, ''); // remove underscores and spaces
-    var a = s.split(newlineTest); // split by line into an array
+    var a = s.split(NEWLINE_REGEX); // split by line into an array
     a = a.filter(line => !line.startsWith('<') && !line.startsWith('{') && !isEmpty(line)); // remove <nowiki> tag, wiki templates and blank lines
     a = a.map(line => line.split('!')[0]); // remove .scl comments
     a = a.slice(2); // remove .scl metadata
@@ -298,10 +293,6 @@ function parse_url() {
 
 }
 
-/**
- * parse_tuning_data()
- */
-
 function parse_tuning_data() {
   const tuning_table = model.get('tuning table')
 
@@ -323,7 +314,7 @@ function parse_tuning_data() {
   }
 
   // split user data into individual lines
-  var lines = user_tuning_data.value.split(newlineTest);
+  var lines = user_tuning_data.value.split(NEWLINE_REGEX);
 
   // strip out the unusable lines, assemble an array of usable tuning data
   tuning_table['tuning_data'] = ['1']; // when initialised the array contains only '1' (unison)
@@ -436,7 +427,7 @@ function parse_imported_scala_scl( event ) {
     scala_file = reader.result;
 
     // split scala_file data into individual lines
-    var lines = scala_file.split(newlineTest);
+    var lines = scala_file.split(NEWLINE_REGEX);
 
     // determine the first line of scala file that contains tuning data
     let first_line = lines.lastIndexOf('!') + 1;
@@ -474,7 +465,7 @@ function parse_imported_anamark_tun( event ) {
     tun_file = reader.result;
 
     // split tun_file data into individual lines
-    var lines = tun_file.split(newlineTest);
+    var lines = tun_file.split(NEWLINE_REGEX);
 
     // get tuning name
     var name = false;
@@ -663,7 +654,6 @@ jQuery(() => {
 
 export {
   key_colors,
-  newlineTest,
   parse_tuning_data,
   newline,
   setNewline,

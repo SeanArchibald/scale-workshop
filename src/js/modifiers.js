@@ -4,7 +4,6 @@
 
 /* global alert, jQuery */
 import {
-  newlineTest,
   parse_tuning_data,
   newline,
   current_approximations,
@@ -23,7 +22,7 @@ import {
   decimal_to_cents,
   n_of_edo_to_cents
 } from './helpers/converters.js'
-import { PRIMES, UNIX_NEWLINE } from './constants.js'
+import { PRIMES, UNIX_NEWLINE, NEWLINE_REGEX } from './constants.js'
 
 // stretch/compress tuning
 function modify_stretch() {
@@ -43,7 +42,7 @@ function modify_stretch() {
   var stretch_ratio = parseFloat( jQuery( "#input_stretch_ratio" ).val() ); // amount of stretching, ratio
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
@@ -94,7 +93,7 @@ function modify_random_variance() {
   var vary_period = document.getElementById( "input_checkbox_vary_period" ).checked;
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
@@ -162,7 +161,7 @@ function modify_mode() {
   }
 
   // split user's scale data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
   debug(lines);
   debug(mode);
 
@@ -269,7 +268,7 @@ function modify_sync_beating() {
   debug(resolution);
 
   // loop through all in the scale, convert to ratio, then quantize to fundamental, then convert to cents
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
   debug(lines);
   var new_tuning = "";
 
@@ -317,7 +316,7 @@ function modify_key_transpose() {
   }
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
 
   // key to transpose to
   var key = parseInt( jQuery( "#input_modify_key_transpose" ).val() );
@@ -371,7 +370,7 @@ function modify_replace_with_approximation () {
 
   if (degree_selected < tuning_table.note_count) {
     var tuning_data = document.getElementById("txt_tuning_data");
-    var lines = tuning_data.value.split(newlineTest);
+    var lines = tuning_data.value.split(NEWLINE_REGEX);
 
     var aprxs = document.getElementById("approximation_selection");
     var approximation = aprxs.options[aprxs.selectedIndex].text;
