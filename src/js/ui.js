@@ -8,13 +8,11 @@ import { key_colors, model } from './scaleworkshop.js'
 import { touch_to_midinote } from './synth.js'
 import { getCoordsFromKey } from './helpers/general.js'
 
-// use jQuery UI tooltips instead of default browser tooltips
-jQuery( function() {
+function initUI () {
+  // use jQuery UI tooltips instead of default browser tooltips
   jQuery( document ).tooltip();
-} );
 
-// set "accordion" settings UI
-jQuery( function() {
+  // set "accordion" settings UI
   jQuery( "#settings-accordion" )
     .accordion({
       collapsible: true, // allow all tabs to be closed
@@ -23,7 +21,8 @@ jQuery( function() {
       icons: null, // turn off triangle icons
       header: "> div > h3"
     });
-} );
+}
+
 
 function touch_kbd_open() {
   const tuning_table = model.get('tuning table')
@@ -84,5 +83,6 @@ function touch_kbd_close() {
 
 export {
   touch_kbd_close,
-  touch_kbd_open
+  touch_kbd_open,
+  initUI
 }

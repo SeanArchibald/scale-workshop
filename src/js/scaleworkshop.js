@@ -34,6 +34,9 @@ import {
 import Model from './helpers/Model.js'
 import Synth from './synth/Synth.js'
 import MIDI from './helpers/MIDI.js'
+import { initUI } from './ui.js'
+import { initSynth } from './synth.js'
+import { initEvents } from './events.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
@@ -603,6 +606,10 @@ function parse_imported_anamark_tun( event ) {
 
 }
 
+function setNewline(newValue) {
+  newline = newValue
+}
+
 jQuery('#export-buttons').on('click', 'a', e => {
   e.preventDefault()
 
@@ -648,11 +655,18 @@ jQuery('#show-mos').on('click', () => {
   )
 })
 
+jQuery(() => {
+  initUI()
+  initSynth()
+  initEvents()
+})
+
 export {
   key_colors,
   newlineTest,
   parse_tuning_data,
   newline,
+  setNewline,
   current_approximations,
   debug_enabled,
   approx_filter_prime_counter,

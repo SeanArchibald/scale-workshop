@@ -2,7 +2,7 @@
  * SEQUENCING GENERATING FUNCTIONS
  */
 
-/* global alert, location, jQuery, localStorage, navigator */
+/* global jQuery */
 import { PRIMES } from '../constants.js'
 import { current_approximations } from '../scaleworkshop.js'
 import { line_to_decimal, decimal_to_cents } from './converters.js'
@@ -250,7 +250,6 @@ function get_rank2_mode(period, generator, size, numdown=0) {
 function get_prime_factors(number) {
   number = Math.floor(number);
   if (number === 1) {
-    //alert("Warning: 1 has no prime factorization.");
     return 1;
    }
   var factorsout = [];

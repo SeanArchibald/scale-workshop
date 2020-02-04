@@ -2,7 +2,7 @@
  * DATA CONVERSION FUNCTIONS
  */
 
-/* global alert, location, jQuery, localStorage, navigator */
+/* global alert, jQuery */
 import { 
   isEmpty, 
   isNil, 

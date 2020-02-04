@@ -1,3 +1,5 @@
+/* global alert, jQuery */
+
 function is_file_api_supported() {
   // Check for the various File API support.
   if (window.File && window.FileReader && window.FileList && window.Blob) {

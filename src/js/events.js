@@ -34,7 +34,8 @@ import {
   newlineTest,
   clear_all,
   model,
-  synth
+  synth,
+  setNewline
 } from './scaleworkshop.js'
 import {
   import_scala_scl,
@@ -93,16 +94,18 @@ function modify_mode_update_mos_scale() {
   jQuery("#input_modify_mode").val(mode.join(" "));
 }
 
-jQuery( function() {
+function initEvents(){
   // automatically load generatal options saved in localStorage (if available)
   if (isLocalStorageAvailable()) {
-
     // recall newline format
-    if ( isNil(localStorage.getItem("newline")) ) {
-      jQuery( '#input_select_newlines' ).val( localStorage.getItem("newline") )
+
+    let currentValueOfNewline = null
+    if (isNil(localStorage.getItem("newline"))) {
+      currentValueOfNewline = isRunningOnWindows() ? 'windows' : 'unix'
     } else {
-      jQuery( '#input_select_newlines' ).val( isRunningOnWindows() ? 'windows' : 'unix' )
+      currentValueOfNewline = localStorage.getItem("newline")
     }
+    jQuery( '#input_select_newlines' ).val(currentValueOfNewline)
 
     // recall night mode
     if ( localStorage.getItem( 'night_mode' ) === "true" ) {
@@ -210,7 +213,7 @@ jQuery( function() {
     openDialog("#modal_generate_subharmonic_series_segment", generate_subharmonic_series_segment)
   } );
 
-// enumerate_chord option clicked
+  // enumerate_chord option clicked
   jQuery( "#enumerate_chord" ).click( function( event ) {
     event.preventDefault();
     jQuery( "#input_chord" ).select();
@@ -452,11 +455,11 @@ jQuery( function() {
   // General Settings - Line ending format (newlines)
   jQuery( '#input_select_newlines' ).change( function( event ) {
     if ( jQuery( '#input_select_newlines' ).val() === "windows" ) {
-      newline = "\r\n"; // windows
+      setNewline('\r\n')
       localStorage.setItem( 'newline', 'windows' );
     }
     else {
-      newline = "\n"; // unix
+      setNewline('\n')
       localStorage.setItem( 'newline', 'unix' );
     }
     debug( jQuery( '#input_select_newlines' ).val() + ' line endings selected' );
@@ -694,4 +697,8 @@ jQuery( function() {
 
   // now everything is initialised we finally run any custom user scripts
   run_user_scripts_on_document_ready();
-} ); // end of document ready block
+}
+
+export {
+  initEvents
+}

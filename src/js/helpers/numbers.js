@@ -2,7 +2,7 @@
  * NUMBER OPERATIONS
  */
 
-/* global alert, location, jQuery, localStorage, navigator */
+/* global alert */
 import { PRIMES } from '../constants.js'
 import { get_prime_factors } from './sequences.js'
 

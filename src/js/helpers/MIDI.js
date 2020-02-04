@@ -3,7 +3,7 @@
  * Capture MIDI input for synth
  */
 
-/* global jQuery, EventEmitter */
+/* global EventEmitter */
 
 // https://www.midi.org/specifications/item/table-1-summary-of-midi-message
 const commands = {

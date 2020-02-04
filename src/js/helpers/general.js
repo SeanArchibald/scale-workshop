@@ -2,7 +2,7 @@
  * HELPER FUNCTIONS
  */
 
-/* global alert, location, jQuery, localStorage, navigator */
+/* global location, jQuery, localStorage, navigator */
 import { LINE_TYPE } from '../constants.js'
 import { debug_enabled } from '../scaleworkshop.js'
 import { toString } from './converters.js'
@@ -152,7 +152,7 @@ const isLocalStorageAvailable = () => {
 
 // source: https://stackoverflow.com/a/9514476/1806628
 const isRunningOnWindows = () => {
-  return navigator.userAgent.userAgent.includes('Windows')
+  return navigator.userAgent.includes('Windows')
 }
 
 export {
