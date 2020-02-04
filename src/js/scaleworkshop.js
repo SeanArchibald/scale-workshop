@@ -71,6 +71,7 @@ const model = new Model({
 
 // data changed, handle programmatic reaction - no jQuery
 model.on('change', (key, newValue) => {
+  console.log('model:change', key, newValue)
   switch(key){
     case 'main volume':
       synth.setMainVolume(newValue)
@@ -92,6 +93,13 @@ model.on('change', (key, newValue) => {
       jQuery('#input_select_newlines').val(newValue)
       break
   }
+})
+
+// set initial values of the UI based on the values in model
+jQuery(() => {
+  jQuery('#input_range_main_vol').val(model.get('main volume'))
+  jQuery('#input_select_newlines').val(model.get('newline'))
+  // TODO: set inputs for tuning table
 })
 
 midi
