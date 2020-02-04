@@ -17,7 +17,7 @@ import { LINE_TYPE, APP_TITLE, TUNING_MAX_SIZE } from './constants.js'
 function export_error() {
   const tuning_table = model.get('tuning table')
   // no tuning data to export
-  if ( isNil(tuning_table['freq'][ tuning_table['base_midi_note'] ]) ) {
+  if ( isNil(tuning_table.freq[ tuning_table.base_midi_note ]) ) {
     alert( "No tuning data to export." );
     return true;
   }

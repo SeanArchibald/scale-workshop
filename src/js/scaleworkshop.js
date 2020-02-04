@@ -140,7 +140,7 @@ jQuery('#input_range_main_vol').on('input', function() {
   model.set('main volume', parseFloat(jQuery(this).val()))
 });
 
-let newline = localStorage && localStorage.getItem('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
+let newline = localStorage && localStorage.getItem(`${LOCALSTORAGE_PREFIX}newline`) === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ];
 var current_approximations = {
     convergent_indicies: [], // indicies of the convergent ratios

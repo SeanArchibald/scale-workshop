@@ -43,7 +43,7 @@ import {
 import { rotate,  closestPrime } from './helpers/numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { is_qwerty_active } from './synth.js'
-import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, NEWLINE_REGEX } from './constants.js'
+import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, NEWLINE_REGEX, LOCALSTORAGE_PREFIX } from './constants.js'
 import {
   modify_update_approximations,
   modify_random_variance,
@@ -99,23 +99,23 @@ function initEvents(){
     // recall newline format
 
     let currentValueOfNewline = null
-    if (isNil(localStorage.getItem("newline"))) {
+    if (isNil(localStorage.getItem(`${LOCALSTORAGE_PREFIX}newline`))) {
       currentValueOfNewline = isRunningOnWindows() ? 'windows' : 'unix'
     } else {
-      currentValueOfNewline = localStorage.getItem("newline")
+      currentValueOfNewline = localStorage.getItem(`${LOCALSTORAGE_PREFIX}newline`)
     }
     jQuery( '#input_select_newlines' ).val(currentValueOfNewline)
 
     // recall night mode
-    if ( localStorage.getItem( 'night_mode' ) === "true" ) {
+    if ( localStorage.getItem(`${LOCALSTORAGE_PREFIX}night mode`) === "true" ) {
       jQuery( "#input_checkbox_night_mode" ).trigger( "click" );
       jQuery('body').addClass('dark');
     }
 
     // recall computer keyboard layout
-    if ( !isNil(localStorage.getItem( 'keybd_region' )) ) {
-      jQuery( "#input_select_keyboard_layout" ).val( localStorage.getItem( 'keybd_region' ) );
-      synth.keymap = Keymap[localStorage.getItem( 'keybd_region' )];
+    if ( !isNil(localStorage.getItem(`${LOCALSTORAGE_PREFIX}keyboard region`)) ) {
+      jQuery( "#input_select_keyboard_layout" ).val( localStorage.getItem( `${LOCALSTORAGE_PREFIX}keyboard region` ) );
+      synth.keymap = Keymap[localStorage.getItem( `${LOCALSTORAGE_PREFIX}keyboard region` )];
     }
 
   } else {
@@ -455,11 +455,11 @@ function initEvents(){
   jQuery( '#input_select_newlines' ).change( function( event ) {
     if ( jQuery( '#input_select_newlines' ).val() === "windows" ) {
       setNewline(WINDOWS_NEWLINE)
-      localStorage.setItem( 'newline', 'windows' );
+      localStorage.setItem( `${LOCALSTORAGE_PREFIX}newline`, 'windows' );
     }
     else {
       setNewline(UNIX_NEWLINE)
-      localStorage.setItem( 'newline', 'unix' );
+      localStorage.setItem( `${LOCALSTORAGE_PREFIX}newline`, 'unix' );
     }
     debug( jQuery( '#input_select_newlines' ).val() + ' line endings selected' );
   } );
@@ -468,11 +468,11 @@ function initEvents(){
   jQuery( "#input_checkbox_night_mode" ).change( function( event ) {
     if ( jQuery( "#input_checkbox_night_mode" ).is(':checked') ) {
       jQuery('body').addClass('dark');
-      localStorage.setItem( 'night_mode', true );
+      localStorage.setItem( `${LOCALSTORAGE_PREFIX}night mode`, true );
     }
     else {
       jQuery('body').removeClass('dark');
-      localStorage.setItem( 'night_mode', false );
+      localStorage.setItem( `${LOCALSTORAGE_PREFIX}night mode`, false );
     }
   } );
 
@@ -522,7 +522,7 @@ function initEvents(){
   jQuery( "#input_select_keyboard_layout" ).change( function( event ) {
     var id = jQuery( '#input_select_keyboard_layout' ).val();
     synth.keymap = Keymap[id];
-    localStorage.setItem( 'keybd_region', id );
+    localStorage.setItem( `${LOCALSTORAGE_PREFIX}keyboard region`, id );
   } );
 
 

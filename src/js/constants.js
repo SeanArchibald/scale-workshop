@@ -17,6 +17,8 @@ const UNIX_NEWLINE = '\n'
 const WINDOWS_NEWLINE = '\r\n'
 const NEWLINE_REGEX = /\r?\n/
 
+const LOCALSTORAGE_PREFIX = 'scaleworkshop:'
+
 export {
   LINE_TYPE,
   SEMITONE_RATIO_IN_12_EDO,
@@ -25,5 +27,6 @@ export {
   TUNING_MAX_SIZE,
   UNIX_NEWLINE,
   WINDOWS_NEWLINE,
-  NEWLINE_REGEX
+  NEWLINE_REGEX,
+  LOCALSTORAGE_PREFIX
 }
