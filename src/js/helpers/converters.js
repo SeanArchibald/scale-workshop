@@ -6,7 +6,7 @@
 import { 
   isEmpty, 
   isNil, 
-  isCent,
+  // isCent,
   isCommaDecimal,
   isNOfEdo,
   isRatio,
