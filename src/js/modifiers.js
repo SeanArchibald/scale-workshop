@@ -5,7 +5,6 @@
 /* global alert, jQuery */
 import {
   parse_tuning_data,
-  newline,
   current_approximations,
   model
 } from './scaleworkshop.js'
@@ -22,7 +21,7 @@ import {
   decimal_to_cents,
   n_of_edo_to_cents
 } from './helpers/converters.js'
-import { PRIMES, UNIX_NEWLINE, NEWLINE_REGEX } from './constants.js'
+import { PRIMES, UNIX_NEWLINE, NEWLINE_REGEX, WINDOWS_NEWLINE } from './constants.js'
 
 // stretch/compress tuning
 function modify_stretch() {
@@ -184,6 +183,7 @@ function modify_mode() {
     // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
     var note_count = 1;
     var mode_index = 0;
+    const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
     for ( let i = 0; i < lines.length; i++ ) {
 
       if ( mode[mode_index] === note_count ) {
@@ -365,6 +365,7 @@ function modify_key_transpose() {
 // approximate rationals
 function modify_replace_with_approximation () {
   const tuning_table = model.get('tuning table')
+  const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
   var degree_selected = parseInt(jQuery( "#input_scale_degree" ).val());
 

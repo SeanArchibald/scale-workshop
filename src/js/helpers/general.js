@@ -1,9 +1,5 @@
-/**
- * HELPER FUNCTIONS
- */
-
 /* global location, jQuery, localStorage, navigator */
-import { LINE_TYPE } from '../constants.js'
+import { LINE_TYPE, LOCALSTORAGE_PREFIX } from '../constants.js'
 import { debug_enabled } from '../scaleworkshop.js'
 import { toString } from './converters.js'
 
@@ -155,6 +151,22 @@ const isRunningOnWindows = () => {
   return navigator.userAgent.includes('Windows')
 }
 
+function getNewlineSettingsFromBrowser() {
+  let value = isRunningOnWindows() ? 'windows' : 'unix'
+
+  if (isLocalStorageAvailable()){
+    const valueInLocalStorage = localStorage.getItem(`${LOCALSTORAGE_PREFIX}newline`)
+    if (valueInLocalStorage === 'windows' || valueInLocalStorage === 'unix') {
+      value = valueInLocalStorage
+    } else {
+      // newline settings in localStorage has invalid value, this is the time to do some cleanup
+      localStorage.removeItem(`${LOCALSTORAGE_PREFIX}newline`)
+    }
+  }
+
+  return value
+}
+
 export {
   isCent,
   isRatio,
@@ -177,5 +189,6 @@ export {
   openDialog,
   redirectToHTTPS,
   isLocalStorageAvailable,
-  isRunningOnWindows
+  isRunningOnWindows,
+  getNewlineSettingsFromBrowser
 }

@@ -10,7 +10,8 @@ import {
   getSearchParamOr,
   getSearchParamAsNumberOr,
   getLineType,
-  isNil
+  isNil,
+  getNewlineSettingsFromBrowser
 } from './helpers/general.js'
 import {
   decimal_to_cents,
@@ -53,6 +54,7 @@ const synth = new Synth()
 const midi = new MIDI()
 const model = new Model({
   'main volume': 0.8,
+  'newline': getNewlineSettingsFromBrowser(),
   'tuning table': {
     scale_data: [],      // an array containing list of intervals input by the user
     tuning_data: [],     // an array containing the same list above converted to decimal format
@@ -69,15 +71,26 @@ const model = new Model({
 
 // data changed, handle programmatic reaction - no jQuery
 model.on('change', (key, newValue) => {
-  if (key === 'main volume') {
-    synth.setMainVolume(newValue)
+  switch(key){
+    case 'main volume':
+      synth.setMainVolume(newValue)
+      break
+    case 'newline':
+      localStorage.setItem(`${LOCALSTORAGE_PREFIX}newline`, newValue)
+      console.log('line ending changed to', newValue)
+      break
   }
 })
 
 // data changed, sync it with the DOM
 model.on('change', (key, newValue) => {
-  if (key === 'main volume') {
-    jQuery('#input_range_main_vol').val(newValue)
+  switch(key) {
+    case 'main volume':
+      jQuery('#input_range_main_vol').val(newValue)
+      break
+    case 'newline':
+      jQuery('#input_select_newlines').val(newValue)
+      break
   }
 })
 
@@ -140,7 +153,6 @@ jQuery('#input_range_main_vol').on('input', function() {
   model.set('main volume', parseFloat(jQuery(this).val()))
 });
 
-let newline = localStorage && localStorage.getItem(`${LOCALSTORAGE_PREFIX}newline`) === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ];
 var current_approximations = {
     convergent_indicies: [], // indicies of the convergent ratios
@@ -597,10 +609,6 @@ function parse_imported_anamark_tun( event ) {
 
 }
 
-function setNewline(newValue) {
-  newline = newValue
-}
-
 jQuery('#export-buttons').on('click', 'a', e => {
   e.preventDefault()
 
@@ -655,8 +663,6 @@ jQuery(() => {
 export {
   key_colors,
   parse_tuning_data,
-  newline,
-  setNewline,
   current_approximations,
   debug_enabled,
   approx_filter_prime_counter,

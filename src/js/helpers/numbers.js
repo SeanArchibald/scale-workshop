@@ -22,7 +22,7 @@ function sum_array(array, index) {
     sum += array[i];
   }
 
-   return sum;
+  return sum;
 }
 
 // rotates the array by given steps
@@ -166,39 +166,39 @@ function get_prime_limit_of_ratio(numerator, denominator) {
    return lcm;
 }
 
- function invert_chord(chord) {
-   if (!/^(\d+:)+\d+$/.test(chord)) {
-     alert("Warning: invalid chord " + chord);
-     return false;
-   }
+function invert_chord(chord) {
+  if (!/^(\d+:)+\d+$/.test(chord)) {
+    alert("Warning: invalid chord " + chord);
+    return false;
+  }
 
-   let intervals = chord.split(":").map(x => parseInt(x));
-   let steps = [];
-   intervals.forEach(function(item, index, array) {
-     if (index > 0) {
-       steps.push([item, array[index-1]]);
-     }
-   } );
+  let intervals = chord.split(":").map(x => parseInt(x));
+  let steps = [];
+  intervals.forEach(function(item, index, array) {
+    if (index > 0) {
+      steps.push([item, array[index-1]]);
+    }
+  } );
 
-   steps.reverse();
-   intervals = [[1, 1]];
+  steps.reverse();
+  intervals = [[1, 1]];
 
-   let denominators = [];
-   steps.forEach(function(item, index) {
-     var reduced_interval = reduce_ratio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
-     intervals.push(reduced_interval);
-     denominators.push(reduced_interval[1]);
-   } );
+  let denominators = [];
+  steps.forEach(function(item, index) {
+    var reduced_interval = reduce_ratio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
+    intervals.push(reduced_interval);
+    denominators.push(reduced_interval[1]);
+  } );
 
-   var lcm = get_lcm(denominators);
+  var lcm = get_lcm(denominators);
 
-   chord = [];
-   intervals.forEach(function(x) {
-     chord.push(x[0] * lcm / x[1]);
-   } );
+  chord = [];
+  intervals.forEach(function(x) {
+    chord.push(x[0] * lcm / x[1]);
+  } );
 
-   return chord.join(":");
- }
+  return chord.join(":");
+}
 
 export {
   sum_array,

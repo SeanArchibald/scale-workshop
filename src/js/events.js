@@ -25,7 +25,6 @@ import {
   load_approximations
 } from './helpers/sequences.js'
 import {
-  newline,
   approx_filter_prime_counter,
   set_key_colors,
   parse_tuning_data,
@@ -33,8 +32,7 @@ import {
   current_approximations,
   clear_all,
   model,
-  synth,
-  setNewline
+  synth
 } from './scaleworkshop.js'
 import {
   import_scala_scl,
@@ -96,16 +94,6 @@ function modify_mode_update_mos_scale() {
 function initEvents(){
   // automatically load generatal options saved in localStorage (if available)
   if (isLocalStorageAvailable()) {
-    // recall newline format
-
-    let currentValueOfNewline = null
-    if (isNil(localStorage.getItem(`${LOCALSTORAGE_PREFIX}newline`))) {
-      currentValueOfNewline = isRunningOnWindows() ? 'windows' : 'unix'
-    } else {
-      currentValueOfNewline = localStorage.getItem(`${LOCALSTORAGE_PREFIX}newline`)
-    }
-    jQuery( '#input_select_newlines' ).val(currentValueOfNewline)
-
     // recall night mode
     if ( localStorage.getItem(`${LOCALSTORAGE_PREFIX}night mode`) === "true" ) {
       jQuery( "#input_checkbox_night_mode" ).trigger( "click" );
@@ -452,17 +440,12 @@ function initEvents(){
   } );
 
   // General Settings - Line ending format (newlines)
-  jQuery( '#input_select_newlines' ).change( function( event ) {
-    if ( jQuery( '#input_select_newlines' ).val() === "windows" ) {
-      setNewline(WINDOWS_NEWLINE)
-      localStorage.setItem( `${LOCALSTORAGE_PREFIX}newline`, 'windows' );
+  jQuery('#input_select_newlines').on('input', function(event) {
+    const newValue = event.target.value
+    if (newValue === 'windows' || newValue === 'unix') {
+      model.set('newline', newValue)
     }
-    else {
-      setNewline(UNIX_NEWLINE)
-      localStorage.setItem( `${LOCALSTORAGE_PREFIX}newline`, 'unix' );
-    }
-    debug( jQuery( '#input_select_newlines' ).val() + ' line endings selected' );
-  } );
+  })
 
   // General Settings - Night mode
   jQuery( "#input_checkbox_night_mode" ).change( function( event ) {
@@ -667,6 +650,7 @@ function initEvents(){
   // Email
   jQuery( "a.social-icons-email" ).click( function( event ) {
     event.preventDefault();
+    const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
     var email = '';
     var subject = encodeURIComponent( 'Scale Workshop - ' + jQuery( '#txt_name' ).val() );
     var emailBody = encodeURIComponent( "Sending you this musical scale:" + newline + jQuery( '#txt_name' ).val() + newline + newline + "The link below has more info:" + newline + newline + jQuery( '#input_share_url' ).val() );
