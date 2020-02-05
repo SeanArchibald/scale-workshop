@@ -2,55 +2,50 @@
  * SEQUENCING GENERATING FUNCTIONS
  */
 
-/* global alert, location, jQuery, localStorage, navigator */
-import { 
-  line_to_decimal, 
-  decimal_to_cents,
-  steps_to_degrees 
-} from './converters.js'
+/* global jQuery */
 import { PRIMES } from '../constants.js'
 import { current_approximations } from '../scaleworkshop.js'
 import { sum_array, get_prime_limit } from './numbers.js'
 
 // calculate a continued fraction for the given number
-function get_cf(num, maxdepth=20, roundf=1e-6) {
+function getCF(num, maxdepth=20, roundErr=1e-6) {
   let cf = [] // the continued fraction
-  let i = 0;
+  let i = 0
 
   while (i < maxdepth) {
-    var integer = Math.floor(num);
-    cf.push(integer);
+    var integer = Math.floor(num)
+    cf.push(integer)
 
-    num -= integer;
-    if (num <= roundf)
-      break;
+    num -= integer
+    if (num <= roundErr)
+      break
 
-    num = 1.0 / num;
-    i++;
+    num = 1.0 / num
+    i++
   }
 
-  return cf;
+  return cf
 }
 
 // calculate a single convergent for a given continued fraction
-function get_convergent(cf, depth=-1) {
+function getConvergent(cf, depth=-1) {
   var num; // the convergent numerator
   var den; // the convergent denominator
 
   if (depth >= cf.length || depth < 0)
     depth = cf.length - 1;
 
-  [num, den] = [1, cf[depth]];
+  [num, den] = [1, cf[depth]]
 
   for (let d = depth; d > 0; d--) {
     num += cf[d - 1] * den;
     [num, den] = [den, num];
   }
-  return den + "/" + num;
+  return den + "/" + num
 }
 
 // calculate all best rational approximations given a continued fraction
-function get_convergents(cf, numarray, denarray, perlimit, cindOut=null) {
+function getConvergents(cf, numArray, denArray, maxPeriod, cnvgtIdxOut=null) {
   var cfdigit; // the continued fraction digit
   var num; // the convergent numerator
   var den; // the convergent denominator
@@ -59,9 +54,9 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null) {
   var cind = []; // tracks indicies of convergents
 
   for (let d = 0; d < cf.length; d++) {
-    cfdigit = cf[d];
-    num = cfdigit;
-    den = 1;
+    cfdigit = cf[d]
+    num = cfdigit
+    den = 1
 
     // calculate the convergent
     for (let i = d; i > 0; i--) {
@@ -71,82 +66,123 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut=null) {
 
     if (d > 0) {
       for (let i = 1; i < cfdigit; i++) {
-        scnum = num - (cfdigit - i) * numarray[cind[d-1]];
-        scden = den - (cfdigit - i) * denarray[cind[d-1]];
+        scnum = num - (cfdigit - i) * numArray[cind[d-1]]
+        scden = den - (cfdigit - i) * denArray[cind[d-1]]
 
-        if (scden > perlimit)
-          break;
+        if (scden > maxPeriod)
+          break
 
-        numarray.push(scnum);
-        denarray.push(scden);
+        numArray.push(scnum)
+        denArray.push(scden)
       }
     }
 
-    if (den > perlimit)
-      break;
+    if (den > maxPeriod)
+      break
 
-    cind.push(numarray.length);
-    numarray.push(num);
-    denarray.push(den);
+    cind.push(numArray.length)
+    numArray.push(num)
+    denArray.push(den)
   }
 
-  if (!(cindOut===null)) {
+  if (!(cnvgtIdxOut===null)) {
     for (let i = 0; i < cind.length; i++) {
-      cindOut.push(cind[i]);
+      cnvgtIdxOut.push(cind[i])
     }
   }
 }
 
 // pass in a number, can represent the logarithmic ratio of the generator / period
 // recieve an object with rational approximation properties
-function get_ratio_structure(num, maxperiod=1e6){
+function getRatioStructure(num, maxPeriod=1e6) {
   if (isNaN(num))
-  alert("Error in get_ratio_structure(): num is " + num);
+    alert("Error in getRatioStructure(): num is " + num)
   
-  var ratio_structure = {
+  var ratioStructure = {
       // x and y vectors are an array of number pairs that add up to the rational of the same index,
 	  // can describe vectors of generator & period, such that [x[0],y[0]] = g(x, y), [x[1],y[1]] = p(x, y)
-	  x_vectors = [], 
-	  y_vectors = [],
-  	  numerators = [], // the numerator of the approximation, degree of generator in MOS size
-	  denominators = [], // the denominator of the approximation, MOS sizes
-	  rationals = [], // the decimal of the approximation
-	  ratio_strings = [], // the ratio of the approximation
-	  cf = [], // the continued fraction of the number
-	  convergents = [] // indicies of convergents
+	  xVectors: [], 
+	  yVectors: [],
+  	numerators: [], // the numerator of the approximation, degree of generator in MOS size
+	  denominators: [], // the denominator of the approximation, MOS sizes
+	  rationals: [], // the decimal of the approximation
+	  ratioStrings: [], // the ratio of the approximation
+	  cf: [], // the continued fraction of the number
+	  convergentIndicies: [] // indicies of convergents
   };
 
-  num = Math.abs(parseInt(num));
-  cf = get_cf(num);
+  num = Math.abs(parseFloat(num))
+  ratioStructure.cf = getCF(num)
+  cf = ratioStructure.cf
+
+  let structureLegend = [
+    ratioStructure.x_vectors,
+    ratioStructure.y_vectors,
+    ratioStructure.numerators,
+    ratioStructure.denominators,
+    ratioStructure.rationals,
+    ratioStructure.ratio_strings
+  ]
 
   // pushes each elements of a packet its respective structure property
   function push_pack(pack) {
     pack.forEach(function(item, index) {
-      ratio_structure[index].push(item)
-    } );
+      structureLegend[index].push(item)
+    } )
+  }
+
+  // calculates the next packet based off of previous packet and cf index eveness
+  function zigzag(lastPacket, cfidx) {
+    [x, y, num, den, ratio] = lastPacket;
+    cfidx % 2 ? y = [num, den] : x = [num, den];
+    num =  x[0] + y[0];
+    den = x[1] + y[1];
+    ratio = num / den;
+    p = [ x, y, num, den, ratio, num+"/"+den ];
+    return p
   }
 
   // the seed of the sequence
-  let packet = { [-1+cf[0], 1], [1,0], cf[0], 1, cf[0], cf[0]+"/"+1 };
+  let packet = [ [-1+cf[0], 1], [1,0], cf[0], 1, cf[0], cf[0]+"/"+1 ];
   push_pack(packet);
-  console.log(ratio_structure); // debug
-  packet = zig(packet);  
+  packet = zigzag(packet)
 
   for (let depth = 1; depth < cf.length; depth++) {
     for (let i = 0; i < cf[depth]; i++) {
       push_pack(packet);
-	  [x, y, num, den, ratio] = packet;
-      cf[depth] % 2 ? y = [num, den] : x = [num, den];
-	  num =  x[0] + y[0];
-	  den = x[1] + y[1];
-	  ratio = num / den;
-	  packet = [ x, y, num, den, ratio, num+"/"+den ];
+      packet = zigzag(packet, depth);
     }
   }
 
-  ratio_structure.convergents = steps_to_degrees(ratio_structure.cf);
+  ratioStructure.convergents = stepsToDegrees(ratioStructure.cf.slice(1));
 
-  return ratio_structure;
+  return ratioStructure;
+}
+
+// calculates all possible rational numbers, "underOne" if true is between all, if false only [0 .. 1]
+function ratioGenerate(array, maxPeriod=500, underOne=false, seed=[1,1]){
+
+  if (seed[0] > maxPeriod || seed[1] > maxPeriod)
+    return seed;
+
+  let r0 = [seed[0], seed[0]+seed[1]]
+  let r1 = [seed[0]+seed[1], seed[1]];
+
+  if (seed[0] - seed[1] != 0 || !underOne) {
+    r = ratioGenerate(array, maxPeriod, underOne, r1);
+    if (r[0]/r[1] > 1) {
+      r = [r[1], r[0]];
+    }
+    array.push(r);
+  }
+
+  r = ratioGenerate(array, maxPeriod, underOne, r0);
+  if (r[0]/r[1] > 1) {
+    r = [r[1], r[0]];
+  }
+  array.push(r);
+
+  return seed
 }
 
 // generate and display MOS list
@@ -294,7 +330,6 @@ function get_rank2_mode(period, generator, size, numdown=0) {
 function get_prime_factors(number) {
   number = Math.floor(number);
   if (number === 1) {
-    //alert("Warning: 1 has no prime factorization.");
     return 1;
    }
   var factorsout = [];
@@ -350,9 +385,10 @@ function get_prime_factors(number) {
  }
 
 export {
-  get_cf,
-  get_convergent,
-  get_convergents,
+  getCF,
+  getConvergent,
+  getConvergents,
+  getRatioStructure,
   show_mos_cf,
   get_rational_approximations,
   load_approximations,
