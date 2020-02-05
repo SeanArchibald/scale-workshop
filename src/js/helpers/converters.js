@@ -14,7 +14,43 @@ import {
   trim 
   } from './general.js'
 import { LINE_TYPE, SEMITONE_RATIO_IN_12_EDO } from '../constants.js'
-import { get_cf, get_convergent } from './sequences.js'
+import { getCf, getConvergent, getRatioStructure } from './sequences.js'
+import { getLCM } from './numbers.js'
+
+function getFloat(id, errorMessage) {
+  var value = parseFloat(jQuery(id).val());
+
+  if (isNaN(value) || value === 0) {
+    alert(errorMessage);
+    return false;
+  }
+
+  return value
+}
+
+function getString(id, errorMessage) {
+  var value = jQuery(id).val();
+
+  if (isEmpty(value) || isNil(value)) {
+    alert(errorMessage);
+    return false;
+  }
+
+  return value
+}
+
+function getLine(id, errorMessage) {
+  var value = jQuery(id).val();
+
+  if (isEmpty(value) || parseFloat(value) <= 0 || isNil(value) || getLineType(value) === LINE_TYPE.INVALID) {
+    alert(errorMessage);
+    return false;
+  }
+
+  return value
+}
+
+const toString = input => input + ''
 
 // convert a cents value to decimal
 function cents_to_decimal(rawInput) {
@@ -169,12 +205,12 @@ function ftom(input) {
 }
 
 // convert an array of step values into absolute degree values
-function steps_to_degrees(steps) {
+function stepsToDegrees(steps) {
   let degrees = [0];
-  if (!isEmpty(steps)) {
-    steps.forEach(function(item, index){
-      degrees.append(item + degrees[index])
-    } );
+  if (steps.length > 0) {
+    for (let i = 1; i < steps.length; i++) {
+      degrees.push(degrees[i-1] + degrees[i]);
+    }
   }
   return degrees;
 }
@@ -197,42 +233,34 @@ function midi_note_number_to_name(input) {
   return name[remainder] + quotient;
 }
 
-function getFloat(id, errorMessage) {
-  var value = parseFloat(jQuery(id).val());
+function getLsFromStructure(structIn, index, periodTarget, generatorTarget) {
+  let Ls = [0, 0]
+	let periodPoint = [structIn.xVectors[index][1], structIn.yVectors[index][1]];
+  let generatorPoint = [structIn.xVectors[index][0], structIn.yVectors[index][0]];
+  
+  let periodScale = periodTarget / structIn.denominators[index];
+  let generatorScale = generatorTarget / structIn.numerators[index];
 
-  if (isNaN(value) || value === 0) {
-    alert(errorMessage);
-    return false;
-  }
+	// find L, delta x
+	let lcmY = getLCM([periodPoint[1], generatorPoint[1]]);
+	var gFactor = (lcmY / generatorPoint[1]) * structIn.numerators[index] * generatorScale;
+	var pFactor = (lcmY / periodPoint[1]) * structIn.denominators[index] * periodScale;
+	Ls[0] = Math.max(pFactor, gFactor) - Math.min(pFactor, gFactor);
 
-  return value
+	// find s, delta y
+	let lcmX = getLCM([periodPoint[0], generatorPoint[0]]);
+	gFactor = (lcmX / generatorPoint[0]) * structIn.numerators[index]* generatorScale;
+	pFactor = (lcmX / periodPoint[0]) * structIn.denominators[index]* periodScale;
+	Ls[1]  = Math.max(pFactor, gFactor) - Math.min(pFactor, gFactor);
+
+	return Ls;
 }
-
-function getString(id, errorMessage) {
-  var value = jQuery(id).val();
-
-  if (isEmpty(value) || isNil(value)) {
-    alert(errorMessage);
-    return false;
-  }
-
-  return value
-}
-
-function getLine(id, errorMessage) {
-  var value = jQuery(id).val();
-
-  if (isEmpty(value) || parseFloat(value) <= 0 || isNil(value) || getLineType(value) === LINE_TYPE.INVALID) {
-    alert(errorMessage);
-    return false;
-  }
-
-  return value
-}
-
-const toString = input => input + ''
 
 export {
+  getFloat,
+  getString,
+  getLine,
+  toString,
   cents_to_decimal,
   ratio_to_decimal,
   commadecimal_to_decimal,
@@ -245,11 +273,8 @@ export {
   line_to_cents,
   mtof,
   ftom,
-  steps_to_degrees,
+  stepsToDegrees,
   sanitize_filename,
   midi_note_number_to_name,
-  getFloat,
-  getString,
-  getLine,
-  toString
+  getLsFromStructure
 }

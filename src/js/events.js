@@ -20,7 +20,9 @@ import {
   midi_note_number_to_name
 } from './helpers/converters.js'
 import {
-  get_coprimes,
+  getCF,
+  getConvergents,
+  getCoprimes,
   get_rank2_mode,
   get_rational_approximations,
   load_approximations
@@ -61,6 +63,70 @@ import {
   generate_subharmonic_series_segment,
   load_preset_scale
 } from './generators.js'
+
+// generate and display MOS list
+// TODO: revise and improve algorithm, refactor
+function show_mos_cf(per, gen, ssz, threshold) {
+  var maxsize = 400; // maximum period size
+  var maxcfsize = 12; // maximum continued fraction length
+
+  per = line_to_decimal(per);
+  if (per <= 0 || isNaN(per)) {
+    jQuery("#info_rank_2_mos").text("invalid period");
+    return false;
+  }
+
+  gen = line_to_decimal(gen);
+  if (gen <= 0 || isNaN(gen)) {
+    jQuery("#info_rank_2_mos").text("invalid generator");
+    return false;
+  }
+
+  var genlog = Math.log(gen) / Math.log(per); // the logarithmic ratio to generate MOS info
+
+  var cf = []; // continued fraction
+  var nn = []; // MOS generators
+  var dd = []; // MOS periods
+
+  cf = getCF(genlog, maxcfsize);
+  getConvergents(cf, nn, dd, maxsize);
+
+  // filter by step size threshold
+  var gc = decimal_to_cents(gen);
+  var pc = decimal_to_cents(per);
+  var L = pc + gc; // Large step
+  var s = pc; // small step
+  var c = gc; // chroma (L - s)
+
+  for (let i = 1; i < cf.length; i++) {
+    L -= c * cf[i];
+    s = c;
+    c = L - s;
+
+    // break if g is some equal division of period
+    if (c < (1e-6) && cf.length < maxcfsize) {
+      // add size-1 
+      // not sure if flaw in the algorithm or weird edge case
+
+      if (dd[dd.length-2] !== dd[dd.length-1]-1)
+        dd.splice(dd.length-1, 0, dd[dd.length-1]-1);
+
+      break;
+    }
+
+    if (c < threshold) {
+      var ind = sum_array(cf, i+1);
+      dd.splice(ind+1, dd.length - ind);
+      break;
+    }
+  }
+
+  // the first two periods are trivial
+  dd.shift();
+  dd.shift();
+
+  jQuery("#info_rank_2_mos").text(dd.join(", "));
+}
 
 jQuery( document ).ready( function() {
 

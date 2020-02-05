@@ -17,7 +17,7 @@ import {
   line_to_decimal,
   sanitize_filename,
 } from './helpers/converters.js'
-import { show_mos_cf } from './helpers/sequences.js'
+import { show_mos_cf } from './helpers/events.js'
 import { synth } from './synth.js'
 import { LINE_TYPE, TUNING_MAX_SIZE } from './constants.js'
 import {

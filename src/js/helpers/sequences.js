@@ -100,7 +100,7 @@ function getRatioStructure(num, maxPeriod=1e6) {
   
   var ratioStructure = {
       // x and y vectors are an array of number pairs that add up to the rational of the same index,
-	  // can describe vectors of generator & period, such that [x[0],y[0]] = g(x, y), [x[1],y[1]] = p(x, y)
+	  // can describe vectors of generator & period, such that [xV[0],yV[0]] = g(x, y), [xV[1],yV[1]] = p(x, y)
 	  xVectors: [], 
 	  yVectors: [],
   	numerators: [], // the numerator of the approximation, degree of generator in MOS size
@@ -125,7 +125,7 @@ function getRatioStructure(num, maxPeriod=1e6) {
   ]
 
   // pushes each elements of a packet its respective structure property
-  function push_pack(pack) {
+  function pushPack(pack) {
     pack.forEach(function(item, index) {
       structureLegend[index].push(item)
     } )
@@ -143,13 +143,13 @@ function getRatioStructure(num, maxPeriod=1e6) {
   }
 
   // the seed of the sequence
-  let packet = [ [-1+cf[0], 1], [1,0], cf[0], 1, cf[0], cf[0]+"/"+1 ];
-  push_pack(packet);
+  let packet = [[-1 + cf[0], 1], [1,0], cf[0], 1, cf[0], cf[0] + "/" + 1 ];
+  pushPack(packet);
   packet = zigzag(packet)
 
   for (let depth = 1; depth < cf.length; depth++) {
     for (let i = 0; i < cf[depth]; i++) {
-      push_pack(packet);
+      pushPack(packet);
       packet = zigzag(packet, depth);
     }
   }
@@ -159,25 +159,25 @@ function getRatioStructure(num, maxPeriod=1e6) {
   return ratioStructure;
 }
 
-// calculates all possible rational numbers, "underOne" if true is between all, if false only [0 .. 1]
+// calculates all possible rational numbers, not sorted. until stack overflow.
+// if "underOne" true calculates all, if false only [0 .. 1]
 function ratioGenerate(array, maxPeriod=500, underOne=false, seed=[1,1]){
-
   if (seed[0] > maxPeriod || seed[1] > maxPeriod)
     return seed;
 
-  let r0 = [seed[0], seed[0]+seed[1]]
-  let r1 = [seed[0]+seed[1], seed[1]];
+  let r0 = [seed[0], seed[0] + seed[1]]
+  let r1 = [seed[0] + seed[1], seed[1]];
 
   if (seed[0] - seed[1] != 0 || !underOne) {
     r = ratioGenerate(array, maxPeriod, underOne, r1);
-    if (r[0]/r[1] > 1) {
+    if (r[0] / r[1] > 1) {
       r = [r[1], r[0]];
     }
     array.push(r);
   }
 
   r = ratioGenerate(array, maxPeriod, underOne, r0);
-  if (r[0]/r[1] > 1) {
+  if (r[0] / r[1] > 1) {
     r = [r[1], r[0]];
   }
   array.push(r);
@@ -185,76 +185,15 @@ function ratioGenerate(array, maxPeriod=500, underOne=false, seed=[1,1]){
   return seed
 }
 
-// generate and display MOS list
-function show_mos_cf(per, gen, ssz, threshold) {
-  var maxsize = 400; // maximum period size
-  var maxcfsize = 12; // maximum continued fraction length
 
-  per = line_to_decimal(per);
-  if (per <= 0 || isNaN(per)) {
-    jQuery("#info_rank_2_mos").text("invalid period");
-    return false;
-  }
-
-  gen = line_to_decimal(gen);
-  if (gen <= 0 || isNaN(gen)) {
-    jQuery("#info_rank_2_mos").text("invalid generator");
-    return false;
-  }
-
-  var genlog = Math.log(gen) / Math.log(per); // the logarithmic ratio to generate MOS info
-
-  var cf = []; // continued fraction
-  var nn = []; // MOS generators
-  var dd = []; // MOS periods
-
-  cf = get_cf(genlog, maxcfsize);
-  get_convergents(cf, nn, dd, maxsize);
-
-  // filter by step size threshold
-  var gc = decimal_to_cents(gen);
-  var pc = decimal_to_cents(per);
-  var L = pc + gc; // Large step
-  var s = pc; // small step
-  var c = gc; // chroma (L - s)
-
-  for (let i = 1; i < cf.length; i++) {
-    L -= c * cf[i];
-    s = c;
-    c = L - s;
-
-    // break if g is some equal division of period
-    if (c < (1e-6) && cf.length < maxcfsize) {
-      // add size-1 
-      // not sure if flaw in the algorithm or weird edge case
-
-      if (dd[dd.length-2] !== dd[dd.length-1]-1)
-        dd.splice(dd.length-1, 0, dd[dd.length-1]-1);
-
-      break;
-    }
-
-    if (c < threshold) {
-      var ind = sum_array(cf, i+1);
-      dd.splice(ind+1, dd.length - ind);
-      break;
-    }
-  }
-
-  // the first two periods are trivial
-  dd.shift();
-  dd.shift();
-
-  jQuery("#info_rank_2_mos").text(dd.join(", "));
-}
 
 // pass in a decimal interval, and supply empty arrays for the data you want
-function get_rational_approximations(intervalIn, numerators, denominators, maxperiod=999999,
+function get_rational_approximations(intervalIn, numerators, denominators, maxPeriod=999999,
 cidxOut=null, ratiosOut=null, numlimits=null, denlimits=null, ratiolimits=null) {
   var cf = []; // continued fraction
 
   cf = get_cf(intervalIn, 15);
-  get_convergents(cf, numerators, denominators, maxperiod, cidxOut);
+  get_convergents(cf, numerators, denominators, maxPeriod, cidxOut);
 
   var doRatios = !(ratiosOut===null);
   var doNumLim = !(numlimits===null);
@@ -366,7 +305,7 @@ function get_prime_factors(number) {
 }
 
  // returns an array of integers that share no common factors to the given integer
- function get_coprimes(number) {
+ function getCoprimes(number) {
   let coprimes = [1];
   var num, mod
   for (let i = 2; i < number - 1; i++) {
@@ -389,10 +328,9 @@ export {
   getConvergent,
   getConvergents,
   getRatioStructure,
-  show_mos_cf,
   get_rational_approximations,
   load_approximations,
   get_rank2_mode,
   get_prime_factors,
-  get_coprimes
+  getCoprimes
 }
