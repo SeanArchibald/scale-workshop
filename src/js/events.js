@@ -19,6 +19,8 @@ import {
   midi_note_number_to_name
 } from './helpers/converters.js'
 import {
+  rotate,
+  rotated,
   getCF,
   getConvergents,
   getCoprimes,
@@ -26,17 +28,12 @@ import {
   getRatioStructure
 } from './helpers/sequences.js'
 import {
-  tuning_table,
-  newline,
-  newlineTest,
   set_key_colors,
   approximationFilterPrimeCount,
   currentRatioStructure,
   currentRatioPrimeLimits,
   parse_tuning_data,
   parse_url,
-  import_scala_scl,
-  import_anamark_tun,
   stagedRank2Structure,
   clear_all,
   model,
@@ -46,7 +43,7 @@ import {
   import_scala_scl,
   import_anamark_tun
 } from './helpers/importers.js'
-import { rotate,  closestPrime } from './helpers/numbers.js'
+import { closestPrime } from './helpers/numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { is_qwerty_active } from './synth.js'
 import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, NEWLINE_REGEX, LOCALSTORAGE_PREFIX } from './constants.js'
@@ -269,22 +266,23 @@ function initEvents(){
   // approximate option clicked
   jQuery( "#modify_approximate" ).click( function( event ) {
     event.preventDefault();
-    trimSelf("#txt_tuning_data");
+    const tuning_table = model.get('tuning table')
+    trimSelf("#txt_tuning_data")
 
-    jQuery( "#input_scale_degree" ).val(1);
-    jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 });
+    jQuery( "#input_scale_degree" ).val(1)
+    jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 })
 
-    jQuery( "#input_scale_degree" ).select();
-    jQuery( "#input_scale_degree" ).trigger("change");
+    jQuery( "#input_scale_degree" ).select()
+    jQuery( "#input_scale_degree" ).trigger("change")
 
     jQuery( "#modal_approximate_intervals" ).dialog({
       modal: true,
       buttons: {
         Apply: function() {
-          modify_replace_with_approximation();
+          modify_replace_with_approximation()
         },
         Close: function() {
-          jQuery( this ).dialog( 'close' );
+          jQuery( this ).dialog( 'close' )
         }
       }
     } );

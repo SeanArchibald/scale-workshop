@@ -18,7 +18,6 @@ import {
   line_to_decimal,
   sanitize_filename,
 } from './helpers/converters.js'
-import { synth } from './synth.js'
 import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE, WINDOWS_NEWLINE, NEWLINE_REGEX } from './constants.js'
 import {
   get_scale_url,
@@ -667,7 +666,6 @@ jQuery(() => {
 export {
   key_colors,
   parse_tuning_data,
-  newline,
   debug_enabled,
   stagedRank2Structure,
   currentRatioStructure,
