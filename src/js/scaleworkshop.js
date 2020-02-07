@@ -10,16 +10,16 @@ import {
   getSearchParamOr,
   getSearchParamAsNumberOr,
   getLineType,
-  isNil
+  isNil,
+  getNewlineSettingsFromBrowser
 } from './helpers/general.js'
 import {
   decimal_to_cents,
   line_to_decimal,
   sanitize_filename,
 } from './helpers/converters.js'
-import { show_mos_cf } from './helpers/events.js'
 import { synth } from './synth.js'
-import { LINE_TYPE, TUNING_MAX_SIZE } from './constants.js'
+import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE, WINDOWS_NEWLINE, NEWLINE_REGEX } from './constants.js'
 import {
   get_scale_url,
   update_page_url,
@@ -32,6 +32,12 @@ import {
   export_reference_deflemask,
   export_url
 } from './exporters.js'
+import Model from './helpers/Model.js'
+import Synth from './synth/Synth.js'
+import MIDI from './helpers/MIDI.js'
+import { initUI } from './ui.js'
+import { initSynth } from './synth.js'
+import { initEvents } from './events.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
@@ -44,25 +50,117 @@ if (window.location.hostname.endsWith('.github.com') || window.location.hostname
   redirectToHTTPS()
 }
 
-/**
- * GLOBALS
- */
+const synth = new Synth()
+const midi = new MIDI()
+const model = new Model({
+  'main volume': 0.8,
+  'newline': getNewlineSettingsFromBrowser(),
+  'tuning table': {
+    scale_data: [],      // an array containing list of intervals input by the user
+    tuning_data: [],     // an array containing the same list above converted to decimal format
+    note_count: 0,       // number of values stored in tuning_data
+    freq: [],            // an array containing the frequency for each MIDI note
+    cents: [],           // an array containing the cents value for each MIDI note
+    decimal: [],         // an array containing the frequency ratio expressed as decimal for each MIDI note
+    base_frequency: 440, // init val
+    base_midi_note: 69,  // init val
+    description: "",
+    filename: ""
+  }
+})
 
-let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
-const newlineTest = /\r?\n/;
-const unix_newline = '\n'
-var tuning_table = {
-  scale_data: [], // an array containing list of intervals input by the user
-  tuning_data: [], // an array containing the same list above converted to decimal format
-  note_count: 0, // number of values stored in tuning_data
-  freq: [], // an array containing the frequency for each MIDI note
-  cents: [], // an array containing the cents value for each MIDI note
-  decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
-  base_frequency: 440, // init val
-  base_midi_note: 69, // init val
-  description: "",
-  filename: ""
-};
+// data changed, handle programmatic reaction - no jQuery
+model.on('change', (key, newValue) => {
+  console.log('model:change', key, newValue)
+  switch(key){
+    case 'main volume':
+      synth.setMainVolume(newValue)
+      break
+    case 'newline':
+      localStorage.setItem(`${LOCALSTORAGE_PREFIX}newline`, newValue)
+      console.log('line ending changed to', newValue)
+      break
+  }
+})
+
+// data changed, sync it with the DOM
+model.on('change', (key, newValue) => {
+  switch(key) {
+    case 'main volume':
+      jQuery('#input_range_main_vol').val(newValue)
+      break
+    case 'newline':
+      jQuery('#input_select_newlines').val(newValue)
+      break
+  }
+})
+
+// set initial values of the UI based on the values in model
+jQuery(() => {
+  jQuery('#input_range_main_vol').val(model.get('main volume'))
+  jQuery('#input_select_newlines').val(model.get('newline'))
+  // TODO: set inputs for tuning table
+})
+
+midi
+  .on('blocked', () => {
+    midiEnablerBtn
+      .prop('disabled', false)
+      .removeClass('btn-success')
+      .addClass('btn-danger')
+      .text('off (blocked)')
+  })
+  .on('note on', synth.noteOn.bind(synth))
+  .on('note off', synth.noteOff.bind(synth))
+
+jQuery(() => {
+  const midiEnablerBtn = jQuery('#midi-enabler')
+
+  midiEnablerBtn.on('click', () => {
+    if (midi.isSupported()) {
+      midiEnablerBtn
+        .prop('disabled', true)
+        .removeClass('btn-danger')
+        .addClass('btn-success')
+        .text('on')
+      midi.init()
+    }
+  })
+})
+
+// clear all inputted scale data
+function clear_all() {
+  // empty text fields
+  jQuery("#txt_tuning_data").val("");
+  jQuery("#txt_name").val("");
+
+  // empty any information displayed on page
+  jQuery("#tuning-table").empty();
+
+  // restore default base tuning
+  jQuery("#txt_base_frequency").val(440);
+  jQuery("#txt_base_midi_note").val(69);
+
+  // reset tuning table
+  model.set('tuning table', {
+    scale_data: [],
+    tuning_data: [],
+    note_count: 0,
+    freq: [],
+    cents: [],
+    decimal: [],
+    base_frequency: 440,
+    base_midi_note: 69,
+    description: "",
+    filename: ""
+  })
+}
+
+// DOM changed, need to sync it with model
+jQuery('#input_range_main_vol').on('input', function() {
+  model.set('main volume', parseFloat(jQuery(this).val()))
+});
+
 var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ];
 
 var stagedRank2Structure; // Used for holding data regarding available MOS sizes & more
@@ -72,15 +170,12 @@ var approximationFilterPrimeCount = [0, 10];
 
 var debug_enabled = true;
 
-/**
- * SCALE WORKSHOP FUNCTIONS
- */
-
 // take a tuning, do loads of calculations, then output the data to tuning_table
 function generate_tuning_table( tuning ) {
+  const tuning_table = model.get('tuning table')
 
-  var base_frequency = tuning_table['base_frequency'];
-  var base_midi_note = tuning_table['base_midi_note'];
+  var base_frequency = tuning_table.base_frequency
+  var base_midi_note = tuning_table.base_midi_note
 
   for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
 
@@ -93,15 +188,16 @@ function generate_tuning_table( tuning ) {
     var decimal = tuning[ remainder ] * Math.pow( period, quotient );
 
     // store the data in the tuning_table object
-    tuning_table['freq'][i] = base_frequency * decimal;
-    tuning_table['cents'][i] = decimal_to_cents( decimal );
-    tuning_table['decimal'][i] = decimal;
+    tuning_table.freq[i] = base_frequency * decimal;
+    tuning_table.cents[i] = decimal_to_cents( decimal );
+    tuning_table.decimal[i] = decimal;
 
+    model.set('tuning table', tuning_table)
   }
-
 }
 
 function set_key_colors( list ) {
+  const tuning_table = model.get('tuning table')
 
   // check if the list of colors is empty
   if ( isEmpty(list) ) {
@@ -120,13 +216,9 @@ function set_key_colors( list ) {
     var keynum = ( i - tuning_table['base_midi_note'] ).mod( key_colors.length );
     // set the color of the key
     jQuery( ttkeys[i] ).attr( "style", "background-color: " + key_colors[keynum] + " !important" );
-    //debug( i + ": " + key_colors[keynum] );
+    // debug( i + ": " + key_colors[keynum] );
   }
 }
-
-/**
- * parse_url()
- */
 
 function parse_url() {
 
@@ -166,11 +258,11 @@ function parse_url() {
   function parseWiki(str) {
     var s = decodeHTML(str);
     s = s.replace(/[_ ]+/g, ''); // remove underscores and spaces
-    var a = s.split(newlineTest); // split by line into an array
+    var a = s.split(NEWLINE_REGEX); // split by line into an array
     a = a.filter(line => !line.startsWith('<') && !line.startsWith('{') && !isEmpty(line)); // remove <nowiki> tag, wiki templates and blank lines
     a = a.map(line => line.split('!')[0]); // remove .scl comments
     a = a.slice(2); // remove .scl metadata
-    return a.join(unix_newline);
+    return a.join(UNIX_NEWLINE);
   }
 
   // specially parse inputs from the Xenharmonic Wiki
@@ -217,11 +309,9 @@ function parse_url() {
 
 }
 
-/**
- * parse_tuning_data()
- */
-
 function parse_tuning_data() {
+  const tuning_table = model.get('tuning table')
+
   // http://www.huygens-fokker.org/scala/scl_format.html
 
   tuning_table['base_midi_note'] = parseInt ( jQuery( "#txt_base_midi_note" ).val() );
@@ -234,13 +324,13 @@ function parse_tuning_data() {
   // check if user pasted a scala file
   // we check if the first character is !
   if ( user_tuning_data.value.startsWith("!") ) {
-    alert('Hello, trying to paste a Scala file into this app?' + unix_newline + 'Please use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
+    alert('Hello, trying to paste a Scala file into this app?' + UNIX_NEWLINE + 'Please use the \'Import .scl\' function instead or remove the first few lines (description) from the text box');
     jQuery("#txt_tuning_data").parent().addClass("has-error");
     return false;
   }
 
   // split user data into individual lines
-  var lines = user_tuning_data.value.split(newlineTest);
+  var lines = user_tuning_data.value.split(NEWLINE_REGEX);
 
   // strip out the unusable lines, assemble an array of usable tuning data
   tuning_table['tuning_data'] = ['1']; // when initialised the array contains only '1' (unison)
@@ -263,9 +353,7 @@ function parse_tuning_data() {
 
       // if we got to this point, then the tuning must not be empty
       empty = false;
-
     }
-
   }
 
   if ( empty ) {
@@ -296,8 +384,14 @@ function parse_tuning_data() {
     }
 
     // assemble the HTML for the table row
-    jQuery( "#tuning-table" ).append("<tr id='tuning-table-row-" + i + "' class='" + table_class + "'><td class='key-color'></td><td>" + i + "</td><td>" + parseFloat( tuning_table['freq'][i] ).toFixed(3) + " Hz</td><td>" + tuning_table['cents'][i].toFixed(3) + "</td><td>" + tuning_table['decimal'][i].toFixed(3) + "</td></tr>");
-
+    jQuery( "#tuning-table" ).append(`
+      <tr id="tuning-table-row-${i}" class="${table_class}">
+        <td class="key-color"></td>
+        <td>${i}</td>
+        <td>${parseFloat(tuning_table.freq[i]).toFixed(3)} Hz</td>
+        <td>${tuning_table.cents[i].toFixed(3)}</td>
+        <td>${tuning_table.decimal[i].toFixed(3)}</td>
+      </tr>`);
   }
 
   jQuery( "#tuning-table" ).append("</tbody>");
@@ -317,41 +411,15 @@ function parse_tuning_data() {
     update_page_url( url );
   }
 
+  model.set('tuning table', tuning_table)
+
   // success
   return true;
-
 }
 
 /**
  * TUNING IMPORT RELATED FUNCTIONS
  */
-
-function is_file_api_supported() {
-  // Check for the various File API support.
-  if (window.File && window.FileReader && window.FileList && window.Blob) {
-    return true;
-  } else {
-    // File API not supported
-    alert('Trying to load a file? Sorry, your browser doesn\'t support the HTML5 File API. Please try using a different browser.');
-    return false;
-  }
-}
-
-function import_scala_scl() {
-  // check File API is supported
-  if ( is_file_api_supported() ) {
-    // trigger load file dialog
-    jQuery( "#scala-file" ).trigger('click');
-  }
-}
-
-function import_anamark_tun() {
-  // check File API is supported
-  if ( is_file_api_supported() ) {
-    // trigger load file dialog
-    jQuery( "#anamark-tun-file" ).trigger('click');
-  }
-}
 
 // after a scala file is loaded, this function will be called
 function parse_imported_scala_scl( event ) {
@@ -375,12 +443,12 @@ function parse_imported_scala_scl( event ) {
     scala_file = reader.result;
 
     // split scala_file data into individual lines
-    var lines = scala_file.split(newlineTest);
+    var lines = scala_file.split(NEWLINE_REGEX);
 
     // determine the first line of scala file that contains tuning data
     let first_line = lines.lastIndexOf('!') + 1;
 
-    jQuery( "#txt_tuning_data" ).val(lines.slice(first_line).map(line => line.trim()).join(unix_newline))
+    jQuery( "#txt_tuning_data" ).val(lines.slice(first_line).map(line => line.trim()).join(UNIX_NEWLINE))
 
     parse_tuning_data();
 
@@ -413,7 +481,7 @@ function parse_imported_anamark_tun( event ) {
     tun_file = reader.result;
 
     // split tun_file data into individual lines
-    var lines = tun_file.split(newlineTest);
+    var lines = tun_file.split(NEWLINE_REGEX);
 
     // get tuning name
     var name = false;
@@ -469,7 +537,7 @@ function parse_imported_anamark_tun( event ) {
         }
       }
 
-      jQuery( "#txt_tuning_data" ).val(tuning.join(unix_newline))
+      jQuery( "#txt_tuning_data" ).val(tuning.join(UNIX_NEWLINE))
 
       // get base MIDI note and base frequency
       for ( let i = first_line + 1; i < lines.length; i++ ) {
@@ -530,7 +598,7 @@ function parse_imported_anamark_tun( event ) {
           tuning_data_str += line ;
         }
         else {
-          tuning_data_str += unix_newline + line;
+          tuning_data_str += UNIX_NEWLINE + line;
         }
       }
       jQuery( "#txt_tuning_data" ).val(tuning_data_str)
@@ -590,27 +658,14 @@ jQuery('#show-mos').on('click', () => {
   )
 })
 
-const resetTuningTable = () => {
-  // re-init tuning_table
-  tuning_table = {
-    scale_data: [], // an array containing list of intervals input by the user
-    tuning_data: [], // an array containing the same list above converted to decimal format
-    note_count: 0, // number of values stored in tuning_data
-    freq: [], // an array containing the frequency for each MIDI note
-    cents: [], // an array containing the cents value for each MIDI note
-    decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
-    base_frequency: 440, // init val
-    base_midi_note: 69, // init val
-    description: "",
-    filename: ""
-  }
-}
+jQuery(() => {
+  initUI()
+  initSynth()
+  initEvents()
+})
 
 export {
   key_colors,
-  tuning_table,
-  unix_newline,
-  newlineTest,
   parse_tuning_data,
   newline,
   debug_enabled,
@@ -620,7 +675,7 @@ export {
   approximationFilterPrimeCount,
   set_key_colors,
   parse_url,
-  import_scala_scl,
-  import_anamark_tun,
-  resetTuningTable
+  clear_all,
+  model,
+  synth
 }

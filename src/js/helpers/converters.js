@@ -2,11 +2,11 @@
  * DATA CONVERSION FUNCTIONS
  */
 
-/* global alert, location, jQuery, localStorage, navigator */
+/* global alert, jQuery */
 import { 
   isEmpty, 
   isNil, 
-  isCent,
+  // isCent,
   isCommaDecimal,
   isNOfEdo,
   isRatio,

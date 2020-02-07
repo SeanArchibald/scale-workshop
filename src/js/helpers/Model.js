@@ -19,8 +19,4 @@ class Model extends EventEmitter {
   }
 }
 
-const model = new Model({
-  'main volume': 0.8
-})
-
-export { model, Model }
+export default Model

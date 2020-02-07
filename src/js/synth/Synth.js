@@ -1,7 +1,7 @@
 /* global jQuery */
 import { Keymap } from '../keymap.js'
-import { Delay } from './Delay.js'
-import { tuning_table } from '../scaleworkshop.js'
+import Delay from './Delay.js'
+import { model } from '../scaleworkshop.js'
 import { isNil, debug } from '../helpers/general.js'
 import { Voice } from './Voice.js'
 
@@ -54,6 +54,7 @@ class Synth {
   }
 
   noteOn ( midinote, velocity = 127 ) {
+    const tuning_table = model.get('tuning table')
     const frequency = tuning_table.freq[ midinote ];
 
     if ( !isNil(frequency) ) {
@@ -106,4 +107,4 @@ class Synth {
   }
 }
 
-export { Synth }
+export default Synth

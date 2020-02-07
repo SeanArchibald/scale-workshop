@@ -5,11 +5,8 @@
  */
 
 /* global jQuery */
-import { Synth } from './synth/Synth.js'
 import { isNil, tap, debug, getCoordsFromKey } from './helpers/general.js'
-import { tuning_table } from './scaleworkshop.js'
-
-const synth = new Synth()
+import { model, synth } from './scaleworkshop.js'
 
 // keycode_to_midinote()
 // it turns a keycode to a MIDI note based on this reference layout:
@@ -20,6 +17,7 @@ const synth = new Synth()
 //      Z  X  C  V  B  N  M  ,  .  /
 //
 function keycode_to_midinote(keycode) {
+  const tuning_table = model.get('tuning table')
   // get row/col vals from the keymap
   var key = synth.keymap[keycode];
 
@@ -27,16 +25,17 @@ function keycode_to_midinote(keycode) {
     // return false if there is no note assigned to this key
     return false;
   } else {
-    var [row, col] = key;
-    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
+    const [row, col] = key
+    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table.base_midi_note
   }
 }
 
 function touch_to_midinote([ row, col ]) {
+  const tuning_table = model.get('tuning table')
   if (isNil(row) || isNil(col)) {
     return false
   } else {
-    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
+    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table.base_midi_note
   }
 }
 
@@ -57,57 +56,60 @@ function is_qwerty_active() {
   }
 }
 
-// KEYDOWN -- capture keyboard input
-document.addEventListener( "keydown", function(event) {
-
-  // bail if focus is on an input or textarea element
-  if ( !is_qwerty_active() ) {
-    return false;
-  }
-
-  // bail, if a modifier is pressed alongside the key
-  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
-    return false;
-  }
-
-  const midiNote = keycode_to_midinote( event.which ); // midi note number 0-127
-  const velocity = 100
-
-  if (midiNote !== false)  {
+function initSynth() {
+  // KEYDOWN -- capture keyboard input
+  document.addEventListener( "keydown", function(event) {
+  
+    // bail if focus is on an input or textarea element
+    if ( !is_qwerty_active() ) {
+      return false;
+    }
+  
+    // bail, if a modifier is pressed alongside the key
+    if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+      return false;
+    }
+  
+    const midiNote = keycode_to_midinote( event.which ); // midi note number 0-127
+    const velocity = 100
+  
+    if (midiNote !== false)  {
+      event.preventDefault();
+      synth.noteOn( midiNote, velocity );
+    }
+  });
+  
+  // KEYUP -- capture keyboard input
+  document.addEventListener( "keyup", function(event) {
+    // bail, if a modifier is pressed alongside the key
+    if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+      return false;
+    }
+    const midiNote = keycode_to_midinote( event.which )
+    if (midiNote !== false) {
+      event.preventDefault();
+      synth.noteOff( midiNote );
+    }
+  });
+  
+  // TOUCHSTART -- virtual keyboard
+  jQuery( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
     event.preventDefault();
-    synth.noteOn( midiNote, velocity );
-  }
-});
-
-// KEYUP -- capture keyboard input
-document.addEventListener( "keyup", function(event) {
-  // bail, if a modifier is pressed alongside the key
-  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
-    return false;
-  }
-  const midiNote = keycode_to_midinote( event.which )
-  if (midiNote !== false) {
+    jQuery(event.originalEvent.targetTouches[0].target).addClass('active');
+    synth.noteOn(tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
+  });
+  
+  // TOUCHEND -- virtual keyboard
+  jQuery( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
     event.preventDefault();
-    synth.noteOff( midiNote );
-  }
-});
+    jQuery(event.originalEvent.changedTouches[0].target).removeClass('active');
+    synth.noteOff(tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
+  });
+}
 
-// TOUCHSTART -- virtual keyboard
-jQuery( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
-  event.preventDefault();
-  jQuery(event.originalEvent.targetTouches[0].target).addClass('active');
-  synth.noteOn(tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
-});
-
-// TOUCHEND -- virtual keyboard
-jQuery( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
-  event.preventDefault();
-  jQuery(event.originalEvent.changedTouches[0].target).removeClass('active');
-  synth.noteOff(tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
-});
 
 export {
-  synth,
   touch_to_midinote,
-  is_qwerty_active
+  is_qwerty_active,
+  initSynth
 }

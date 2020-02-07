@@ -4,12 +4,9 @@
 
 /* global alert, jQuery */
 import {
-  unix_newline,
-  newlineTest,
   parse_tuning_data,
-  newline,
-  tuning_table,
-  current_approximations
+  current_approximations,
+  model
 } from './scaleworkshop.js'
 import {
   trimSelf,
@@ -24,7 +21,7 @@ import {
   decimal_to_cents,
   n_of_edo_to_cents
 } from './helpers/converters.js'
-import { PRIMES } from './constants.js'
+import { PRIMES, UNIX_NEWLINE, NEWLINE_REGEX, WINDOWS_NEWLINE } from './constants.js'
 
 // stretch/compress tuning
 function modify_stretch() {
@@ -44,7 +41,7 @@ function modify_stretch() {
   var stretch_ratio = parseFloat( jQuery( "#input_stretch_ratio" ).val() ); // amount of stretching, ratio
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
@@ -67,7 +64,7 @@ function modify_stretch() {
   }
 
   // update tuning input field with new tuning
-  jQuery( "#txt_tuning_data" ).val( new_tuning_lines.join(unix_newline) );
+  jQuery( "#txt_tuning_data" ).val( new_tuning_lines.join(UNIX_NEWLINE) );
 
   parse_tuning_data();
 
@@ -95,7 +92,7 @@ function modify_random_variance() {
   var vary_period = document.getElementById( "input_checkbox_vary_period" ).checked;
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
 
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
@@ -124,7 +121,7 @@ function modify_random_variance() {
   }
 
   // update tuning input field with new tuning
-  jQuery( "#txt_tuning_data" ).val( new_tuning_lines.join(unix_newline) );
+  jQuery( "#txt_tuning_data" ).val( new_tuning_lines.join(UNIX_NEWLINE) );
 
   parse_tuning_data();
 
@@ -156,14 +153,14 @@ function modify_mode() {
     mode[i] = parseInt( mode[i] );
 
     if ( isNaN( mode[i] ) || mode[i] < 1 ) {
-      alert( "Your mode should contain a list of positive integers, seperated by spaces. E.g." + unix_newline + "5 5 1 3 1 2" );
+      alert( "Your mode should contain a list of positive integers, seperated by spaces. E.g." + UNIX_NEWLINE + "5 5 1 3 1 2" );
       return false;
     }
 
   }
 
   // split user's scale data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
   debug(lines);
   debug(mode);
 
@@ -179,13 +176,14 @@ function modify_mode() {
 
     // number of notes in the mode should equal the number of lines in the scale data field
     if ( mode_sum !== lines.length ) {
-      alert( "Your mode doesn't add up to the same size as the current scale." + unix_newline + "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
+      alert( "Your mode doesn't add up to the same size as the current scale." + UNIX_NEWLINE + "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5." );
       return false;
     }
 
     // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
     var note_count = 1;
     var mode_index = 0;
+    const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
     for ( let i = 0; i < lines.length; i++ ) {
 
       if ( mode[mode_index] === note_count ) {
@@ -212,7 +210,7 @@ function modify_mode() {
 
     // number of notes in the mode should equal the number of lines in the scale data field
     if ( mode[mode.length - 1] !== lines.length ) {
-      alert( "Your mode isn't the same size as the current scale." + unix_newline + "E.g. if you have a 5 note scale, mode 2 4 5 is valid because the final degree is 5. But mode 2 4 6 is invalid because 6 is greater than 5." );
+      alert( "Your mode isn't the same size as the current scale." + UNIX_NEWLINE + "E.g. if you have a 5 note scale, mode 2 4 5 is valid because the final degree is 5. But mode 2 4 6 is invalid because 6 is greater than 5." );
       return false;
     }
 
@@ -223,7 +221,7 @@ function modify_mode() {
 
       // add a newline for all lines except the last
       if ( i < mode.length-1 ) {
-        new_tuning += unix_newline;
+        new_tuning += UNIX_NEWLINE;
       }
 
     }
@@ -267,17 +265,17 @@ function modify_sync_beating() {
   debug(fundamental);
 
   var resolution = jQuery( "#select_sync_beating_resolution" ).val();
-  debug (resolution);
+  debug(resolution);
 
   // loop through all in the scale, convert to ratio, then quantize to fundamental, then convert to cents
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
   debug(lines);
   var new_tuning = "";
 
   for ( let i = 0; i < lines.length; i++ ) {
 
     lines[i] = line_to_decimal( lines[i] );
-    new_tuning += toString(Math.round(lines[i] * resolution)) + "/" + toString(resolution) + unix_newline;
+    new_tuning += toString(Math.round(lines[i] * resolution)) + "/" + toString(resolution) + UNIX_NEWLINE;
 
   }
   new_tuning = new_tuning.trim(); // remove final newline
@@ -318,7 +316,7 @@ function modify_key_transpose() {
   }
 
   // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
 
   // key to transpose to
   var key = parseInt( jQuery( "#input_modify_key_transpose" ).val() );
@@ -347,7 +345,7 @@ function modify_key_transpose() {
 
     // add a newline for all lines except the last
     if ( i < lines.length-1 ) {
-      new_tuning += unix_newline;
+      new_tuning += UNIX_NEWLINE;
     }
 
   }
@@ -366,11 +364,14 @@ function modify_key_transpose() {
 
 // approximate rationals
 function modify_replace_with_approximation () {
+  const tuning_table = model.get('tuning table')
+  const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
+
   var degree_selected = parseInt(jQuery( "#input_scale_degree" ).val());
 
   if (degree_selected < tuning_table.note_count) {
     var tuning_data = document.getElementById("txt_tuning_data");
-    var lines = tuning_data.value.split(newlineTest);
+    var lines = tuning_data.value.split(NEWLINE_REGEX);
 
     var aprxs = document.getElementById("approximation_selection");
     var approximation = aprxs.options[aprxs.selectedIndex].text;

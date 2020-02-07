@@ -2,7 +2,7 @@
  * NUMBER OPERATIONS
  */
 
-/* global alert, location, jQuery, localStorage, navigator */
+/* global alert */
 import { PRIMES } from '../constants.js'
 import { getPrimeFactors } from './sequences.js'
 
@@ -22,7 +22,7 @@ function sumOfArray(array, index) {
     sum += array[i];
   }
 
-   return sum;
+  return sum;
 }
 
  function isPrime(number) {
@@ -171,8 +171,8 @@ function getPrimesOfRatio(numerator, denominator) {
      }
    } );
 
-   steps.reverse();
-   intervals = [[1, 1]];
+  steps.reverse();
+  intervals = [[1, 1]];
 
    let denominators = [];
    steps.forEach(function(item, index) {

@@ -1,10 +1,10 @@
-const LINE_TYPE = {
+const LINE_TYPE = Object.freeze({
   CENTS: 'cents',
   DECIMAL: 'decimal',
   RATIO: 'ratio',
   N_OF_EDO: 'n of edo',
   INVALID: 'invalid'
-}
+})
 
 const SEMITONE_RATIO_IN_12_EDO = Math.pow(2, 1 / 12)
 
@@ -13,10 +13,20 @@ const PRIMES = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83
 const APP_TITLE = 'Scale Workshop 1.0.4'
 const TUNING_MAX_SIZE = 128
 
+const UNIX_NEWLINE = '\n'
+const WINDOWS_NEWLINE = '\r\n'
+const NEWLINE_REGEX = /\r?\n/
+
+const LOCALSTORAGE_PREFIX = 'scaleworkshop:'
+
 export {
   LINE_TYPE,
   SEMITONE_RATIO_IN_12_EDO,
   PRIMES,
   APP_TITLE,
-  TUNING_MAX_SIZE
+  TUNING_MAX_SIZE,
+  UNIX_NEWLINE,
+  WINDOWS_NEWLINE,
+  NEWLINE_REGEX,
+  LOCALSTORAGE_PREFIX
 }

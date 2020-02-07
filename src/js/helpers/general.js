@@ -1,10 +1,6 @@
-/**
- * HELPER FUNCTIONS
- */
-
-/* global alert, location, jQuery, localStorage, navigator */
-import { LINE_TYPE } from '../constants.js'
-import { debug_enabled, resetTuningTable } from '../scaleworkshop.js'
+/* global location, jQuery, localStorage, navigator */
+import { LINE_TYPE, LOCALSTORAGE_PREFIX } from '../constants.js'
+import { debug_enabled } from '../scaleworkshop.js'
 import { toString } from './converters.js'
 
 function isCent(rawInput) {
@@ -47,23 +43,6 @@ function getLineType(rawInput) {
   } else {
     return LINE_TYPE.INVALID
   }
-}
-
-// clear all inputted scale data
-function clear_all() {
-
-  // empty text fields
-  jQuery("#txt_tuning_data").val("");
-  jQuery("#txt_name").val("");
-
-  // empty any information displayed on page
-  jQuery("#tuning-table").empty();
-
-  // restore default base tuning
-  jQuery("#txt_base_frequency").val(440);
-  jQuery("#txt_base_midi_note").val(69);
-
-  resetTuningTable()
 }
 
 function debug(msg = "") {
@@ -169,7 +148,23 @@ const isLocalStorageAvailable = () => {
 
 // source: https://stackoverflow.com/a/9514476/1806628
 const isRunningOnWindows = () => {
-  return navigator.userAgent.userAgent.includes('Windows')
+  return navigator.userAgent.includes('Windows')
+}
+
+function getNewlineSettingsFromBrowser() {
+  let value = isRunningOnWindows() ? 'windows' : 'unix'
+
+  if (isLocalStorageAvailable()){
+    const valueInLocalStorage = localStorage.getItem(`${LOCALSTORAGE_PREFIX}newline`)
+    if (valueInLocalStorage === 'windows' || valueInLocalStorage === 'unix') {
+      value = valueInLocalStorage
+    } else {
+      // newline settings in localStorage has invalid value, this is the time to do some cleanup
+      localStorage.removeItem(`${LOCALSTORAGE_PREFIX}newline`)
+    }
+  }
+
+  return value
 }
 
 export {
@@ -178,7 +173,6 @@ export {
   isCommaDecimal,
   isNOfEdo,
   getLineType,
-  clear_all,
   debug,
   setScaleName,
   closePopup,
@@ -195,5 +189,6 @@ export {
   openDialog,
   redirectToHTTPS,
   isLocalStorageAvailable,
-  isRunningOnWindows
+  isRunningOnWindows,
+  getNewlineSettingsFromBrowser
 }
