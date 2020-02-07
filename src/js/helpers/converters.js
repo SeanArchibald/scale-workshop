@@ -14,8 +14,7 @@ import {
   trim 
   } from './general.js'
 import { LINE_TYPE, SEMITONE_RATIO_IN_12_EDO } from '../constants.js'
-import { getCf, getConvergent, getRatioStructure } from './sequences.js'
-import { getLCM } from './numbers.js'
+import { getCF, getConvergent } from './sequences.js'
 
 function getFloat(id, errorMessage) {
   var value = parseFloat(jQuery(id).val());
@@ -143,8 +142,8 @@ function decimal_to_ratio(rawInput, iterations=15, depth=0) {
   if (input === 0 || isNaN(input)) {
     return false;
   } else {
-    var inputcf = get_cf(input, iterations, 100000);
-    return get_convergent(inputcf, depth);
+    var inputcf = getCF(input, iterations, 100000);
+    return getConvergent(inputcf, depth);
   }
 }
 

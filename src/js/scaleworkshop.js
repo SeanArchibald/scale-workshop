@@ -64,13 +64,10 @@ var tuning_table = {
   filename: ""
 };
 var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ];
+
 var stagedRank2Structure; // Used for holding data regarding available MOS sizes & more
 var currentRatioStructure; // Used for storing data regarding ratio approximations
-var currenRatioPrimeLimit = {  // Holds prime limits of current ratio approximation
-  ratioLimits: [],
-  numeratorLimits: [],
-  denominatorLimits: []
-}
+var currentRatioPrimeLimits;  // Holds prime limits of current ratio approximation
 var approximationFilterPrimeCount = [0, 10];
 
 var debug_enabled = true;
@@ -616,9 +613,11 @@ export {
   newlineTest,
   parse_tuning_data,
   newline,
-  current_approximations,
   debug_enabled,
-  approx_filter_prime_counter,
+  stagedRank2Structure,
+  currentRatioStructure,
+  currentRatioPrimeLimits,
+  approximationFilterPrimeCount,
   set_key_colors,
   parse_url,
   import_scala_scl,

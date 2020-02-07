@@ -78,14 +78,14 @@ function getPrimeLimit(number) {
 
 // Returns a single prime, the largest one between the numerator and denominator
 function getPrimeLimitOfRatio(numerator, denominator) {
-  return Math.max(get_prime_limit(numerator), get_prime_limit(denominator));
+  return Math.max(getPrimeLimit(numerator), getPrimeLimit(denominator));
 }
 
 // Returns an array of: [ratioPrimeLimit, numeratorPrimeLimit, denominatorPrimeLimit] 
 function getPrimesOfRatio(numerator, denominator) {
   var nlim, dlim;
-  numerator === 1 ? nlim = 1 : nlim = getPrimeLimit(structIn.numerators[i]);
-  denominator === 1 ? dlim = 1 : dlim = getPrimeLimit(structIn.denominators[i]);
+  numerator === 1 ? nlim = 1 : nlim = getPrimeLimit(numerator);
+  denominator === 1 ? dlim = 1 : dlim = getPrimeLimit(denominator);
   return [Math.max(nlim, dlim), nlim, dlim];
 }
 
@@ -176,12 +176,12 @@ function getPrimesOfRatio(numerator, denominator) {
 
    let denominators = [];
    steps.forEach(function(item, index) {
-     var reduced_interval = reduce_ratio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
-     intervals.push(reduced_interval);
-     denominators.push(reduced_interval[1]);
+     var reducedInterval = reduceRatio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
+     intervals.push(reducedInterval);
+     denominators.push(reducedInterval[1]);
    } );
 
-   var lcm = get_lcm(denominators);
+   var lcm = getLCM(denominators);
 
    chordString = [];
    intervals.forEach(function(x) {

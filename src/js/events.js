@@ -24,20 +24,21 @@ import {
   getConvergents,
   getCoprimes,
   get_rank2_mode,
-  get_rational_approximations,
-  load_approximations
+  getRatioStructure
 } from './helpers/sequences.js'
 import {
   tuning_table,
   newline,
-  approx_filter_prime_counter,
+  newlineTest,
   set_key_colors,
+  approximationFilterPrimeCount,
+  currentRatioStructure,
+  currentRatioPrimeLimits,
   parse_tuning_data,
   parse_url,
   import_scala_scl,
   import_anamark_tun,
-  current_approximations,
-  newlineTest
+  stagedRank2Structure,
 } from './scaleworkshop.js'
 import { rotate,  closestPrime } from './helpers/numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
@@ -63,70 +64,6 @@ import {
   generate_subharmonic_series_segment,
   load_preset_scale
 } from './generators.js'
-
-// generate and display MOS list
-// TODO: revise and improve algorithm, refactor
-function show_mos_cf(per, gen, ssz, threshold) {
-  var maxsize = 400; // maximum period size
-  var maxcfsize = 12; // maximum continued fraction length
-
-  per = line_to_decimal(per);
-  if (per <= 0 || isNaN(per)) {
-    jQuery("#info_rank_2_mos").text("invalid period");
-    return false;
-  }
-
-  gen = line_to_decimal(gen);
-  if (gen <= 0 || isNaN(gen)) {
-    jQuery("#info_rank_2_mos").text("invalid generator");
-    return false;
-  }
-
-  var genlog = Math.log(gen) / Math.log(per); // the logarithmic ratio to generate MOS info
-
-  var cf = []; // continued fraction
-  var nn = []; // MOS generators
-  var dd = []; // MOS periods
-
-  cf = getCF(genlog, maxcfsize);
-  getConvergents(cf, nn, dd, maxsize);
-
-  // filter by step size threshold
-  var gc = decimal_to_cents(gen);
-  var pc = decimal_to_cents(per);
-  var L = pc + gc; // Large step
-  var s = pc; // small step
-  var c = gc; // chroma (L - s)
-
-  for (let i = 1; i < cf.length; i++) {
-    L -= c * cf[i];
-    s = c;
-    c = L - s;
-
-    // break if g is some equal division of period
-    if (c < (1e-6) && cf.length < maxcfsize) {
-      // add size-1 
-      // not sure if flaw in the algorithm or weird edge case
-
-      if (dd[dd.length-2] !== dd[dd.length-1]-1)
-        dd.splice(dd.length-1, 0, dd[dd.length-1]-1);
-
-      break;
-    }
-
-    if (c < threshold) {
-      var ind = sum_array(cf, i+1);
-      dd.splice(ind+1, dd.length - ind);
-      break;
-    }
-  }
-
-  // the first two periods are trivial
-  dd.shift();
-  dd.shift();
-
-  jQuery("#info_rank_2_mos").text(dd.join(", "));
-}
 
 jQuery( document ).ready( function() {
 
@@ -330,18 +267,9 @@ jQuery( document ).ready( function() {
 
   // calculate and list rational approximations within user parameters
   jQuery( "#input_interval_to_approximate" ).change( function() {
-    var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
-    current_approximations.convergent_indicies = [];
-    current_approximations.numerators = [];
-    current_approximations.denominators = [];
-    current_approximations.ratios = [];
-    current_approximations.numerator_limits = [];
-    current_approximations.denominator_limits = [];
-    current_approximations.ratio_limits = [];
-
-    load_approximations(interval);
-
-    modify_update_approximations();
+    var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() )
+    currentRatioStructure = getRatioStructure(interval)
+    modify_update_approximations()
   } );
 
   // recalculate approximations when scale degree changes
@@ -359,36 +287,36 @@ jQuery( document ).ready( function() {
   // can be improved, but it's a bit tricky!
   jQuery( "#input_approx_min_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_min_prime").val());
-    var dif = num - PRIMES[approx_filter_prime_counter[0]];
+    var dif = num - PRIMES[approximationFilterPrimeCount[0]];
     if (Math.abs(dif) === 1) {
-      if (num < PRIMES[approx_filter_prime_counter[0]]) {
-        approx_filter_prime_counter[0]--;
+      if (num < PRIMES[approximationFilterPrimeCount[0]]) {
+        approximationFilterPrimeCount[0]--;
       } else {
-        approx_filter_prime_counter[0]++;
+        approximationFilterPrimeCount[0]++;
       }
     } else {
-      approx_filter_prime_counter[0] = PRIMES.indexOf(closestPrime(num));
+      approximationFilterPrimeCount[0] = PRIMES.indexOf(closestPrime(num));
     }
 
-    jQuery( "#input_approx_min_prime").val(PRIMES[approx_filter_prime_counter[0]]);
+    jQuery( "#input_approx_min_prime").val(PRIMES[approximationFilterPrimeCount[0]]);
     modify_update_approximations();
   } );
 
   // refilter approximations when prime limit changes
   jQuery( "#input_approx_max_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_max_prime").val());
-    var dif = num - PRIMES[approx_filter_prime_counter[1]];
+    var dif = num - PRIMES[approximationFilterPrimeCount[1]];
     if (Math.abs(dif) === 1) {
-      if (num < PRIMES[approx_filter_prime_counter[1]]) {
-        approx_filter_prime_counter[1]--;
+      if (num < PRIMES[approximationFilterPrimeCount[1]]) {
+        approximationFilterPrimeCount[1]--;
       } else {
-        approx_filter_prime_counter[1]++;
+        approximationFilterPrimeCount[1]++;
       }
     } else {
-      approx_filter_prime_counter[1] = PRIMES.indexOf(closestPrime(num));
+      approximationFilterPrimeCount[1] = PRIMES.indexOf(closestPrime(num));
     }
 
-    jQuery( "#input_approx_max_prime").val(PRIMES[approx_filter_prime_counter[1]]);
+    jQuery( "#input_approx_max_prime").val(PRIMES[approximationFilterPrimeCount[1]]);
     modify_update_approximations();
   } );
 
@@ -404,13 +332,13 @@ jQuery( document ).ready( function() {
   // repopulates the available degrees for selection
   function update_modify_mode_mos_generators() {
     show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
-    let coprimes = get_coprimes(tuning_table.note_count-1);
+    let coprimes = getCoprimes(tuning_table.note_count-1);
     jQuery("#modal_modify_mos_degree").empty();
     for (let d=1; d < coprimes.length-1; d++) {
-    var num = coprimes[d];
-    var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
-    var text = num + " (" + cents + "c)";
-    jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
+      var num = coprimes[d];
+      var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
+      var text = num + " (" + cents + "c)";
+      jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
     }
   }
 
@@ -425,14 +353,12 @@ jQuery( document ).ready( function() {
 
   // update the available sizes for selection
   jQuery( "#modal_modify_mos_degree").change( function() {
-    let nn = [];
-    let dd = [];
-    var gp = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
-    get_rational_approximations(gp, nn, dd);
+    var genPeriodRatio = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
+    stagedRank2Structure = getRatioStructure(genPeriodRatio);
     jQuery("#modal_modify_mos_size").empty();
-    for (let d=2; d < dd.length-1; d++) {
-      var num = dd[d];
-      jQuery("#modal_modify_mos_size").append('<option value="'+num+'">'+num+'</option>');
+    for (let s=2; s < stagedRank2Structure.length - 1; s++) {
+      var size = stagedRank2Structure.denominators[s];
+      jQuery("#modal_modify_mos_size").append('<option value="'+size+'">'+size+'</option>');
     }
   } );
 

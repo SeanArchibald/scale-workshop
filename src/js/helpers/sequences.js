@@ -5,7 +5,7 @@
 /* global jQuery */
 import { PRIMES } from '../constants.js'
 import { getPrimesOfRatio } from './numbers.js'
-import { stepsToDegrees } from './converters.js'
+import { stepsToDegrees, decimal_to_cents } from './converters.js'
 
 // returns a rotation of the given array
 function rotated(array, steps) {
@@ -140,28 +140,28 @@ function getRatioStructure(numIn, maxPeriod=1e6) {
   
   var ratioStructure = {
     number: numIn,
-  	numerators: [], // the numerator of the approximation, degree of generator in MOS size
-	  denominators: [], // the denominator of the approximation, MOS sizes
-	  rationals: [], // the decimal of the approximation
+    numerators: [], // the numerator of the approximation, degree of generator in MOS size
+    denominators: [], // the denominator of the approximation, MOS sizes
+    rationals: [], // the decimal of the approximation
     ratioStrings: [], // the ratio of the approximation
-	  xVectors: [], // x and y vectors are an array of number pairs that add up to the rational of the same index,
-	  yVectors: [], // can describe vectors of generator & period, such that [xV[0],yV[0]] = g(x, y), [xV[1],yV[1]] = p(x, y)
-	  cf: [], // the continued fraction of the number
+    xVectors: [], // x and y vectors are an array of number pairs that add up to the rational of the same index,
+    yVectors: [], // can describe vectors of generator & period, such that [xV[0],yV[0]] = g(x, y), [xV[1],yV[1]] = p(x, y)
+    cf: [], // the continued fraction of the number
     convergentIndicies: [], // indicies of convergents
     length: 0 // the length of most of the properties (except for 'cf' and 'convergentIndicies')
   };
 
   numIn = Math.abs(parseFloat(numIn))
   ratioStructure.cf = getCF(numIn)
-  cf = ratioStructure.cf
+  let cf = ratioStructure.cf
 
   let structureLegend = [
-    ratioStructure.x_vectors,
-    ratioStructure.y_vectors,
+    ratioStructure.xVectors,
+    ratioStructure.yVectors,
     ratioStructure.numerators,
     ratioStructure.denominators,
     ratioStructure.rationals,
-    ratioStructure.ratio_strings
+    ratioStructure.ratioStrings
   ]
 
   // pushes each elements of a packet its respective structure property
@@ -173,12 +173,13 @@ function getRatioStructure(numIn, maxPeriod=1e6) {
 
   // calculates the next packet based off of previous packet and cf index eveness
   function zigzag(lastPacket, cfidx) {
-    [x, y, numIn, den, ratio] = lastPacket;
-    cfidx % 2 ? y = [numIn, den] : x = [numIn, den];
-    numIn =  x[0] + y[0];
+    var x, y, num, den, ratio;
+    [x, y, num, den, ratio] = lastPacket;
+    cfidx % 2 ? y = [num, den] : x = [num, den];
+    num =  x[0] + y[0];
     den = x[1] + y[1];
-    ratio = numIn / den;
-    p = [ x, y, numIn, den, ratio, numIn+"/"+den ];
+    ratio = num / den;
+    let p = [ x, y, num, den, ratio, num+"/"+den ];
     return p
   }
 
@@ -212,7 +213,8 @@ function ratioGenerate(array, maxPeriod=500, underOne=false, seed=[1,1]){
 
   let r0 = [seed[0], seed[0] + seed[1]]
   let r1 = [seed[0] + seed[1], seed[1]];
-
+  var r;
+  
   if (seed[0] - seed[1] != 0 || !underOne) {
     r = ratioGenerate(array, maxPeriod, underOne, r1);
     if (r[0] / r[1] > 1) {
@@ -230,16 +232,63 @@ function ratioGenerate(array, maxPeriod=500, underOne=false, seed=[1,1]){
   return seed
 }
 
-// pass in a ratio_structure in get a 2D array of the prime limits of each approximation
+// pass in a ratioStructure in get a 2D array of the prime limits of each approximation
 function getRatioStructurePrimeLimits(structIn) {
   let primeLimitsOut = []; // [ [limitOfRatio], [limitOfNumerator], [limitOfDenominator] ], ...
-  var nlim, dlim;
 
     for (let i = 0; i < structIn.length; i++) {
-      ratiolimits.push(getPrimesOfRatio(structIn.numerators[i], structIn.denominators[i]));
+      primeLimitsOut.push(getPrimesOfRatio(structIn.numerators[i], structIn.denominators[i]));
     }
 
   return primeLimitsOut;
+}
+
+// pass in a period and generator, plus some filters, and get valid MOS sizes
+function getValidMOSSizes(periodDecimal, generatorDecimal, minCents=2.5, maxSize=400, maxCFSize=12) {
+  var genlog = Math.log(generatorDecimal) / Math.log(periodDecimal); // the logarithmic ratio to generate MOS info
+
+  var cf = []; // continued fraction
+  var numerators = []; // MOS generators
+  var denominators = []; // MOS periods
+  var convergentIndicies = []; // Indicies that are convergent
+
+  cf = getCF(genlog, maxCFSize);
+  getConvergents(cf, numerators, denominators, maxSize, convergentIndicies);
+
+  // filter by step size threshold
+  var gc = decimal_to_cents(generatorDecimal);
+  var pc = decimal_to_cents(periodDecimal);
+  var L = pc + gc; // Large step
+  var s = pc; // small step
+  var c = gc; // chroma (L - s)
+
+  for (let i = 1; i < cf.length; i++) {
+    L -= c * cf[i];
+    s = c;
+    c = L - s;
+
+    // break if g is some equal division of period
+    if (c < (1e-6) && cf.length < maxCFSize) {
+      // add size-1 
+
+      if (denominators[denominators.length-2] !== denominators[denominators.length-1]-1)
+        denominators.splice(denominators.length-1, 0, denominators[denominators.length-1]-1);
+
+      break;
+    }
+
+    if (c < minCents) {
+      var ind = convergentIndicies[i+1];
+      denominators.splice(ind+1, denominators.length - ind);
+      break;
+    }
+  }
+
+  // the first two periods are trivial (size 1)
+  denominators.shift();
+  denominators.shift();
+
+  return denominators;
 }
 
 // rank2 scale algorithm intended for integers, in ET contexts
@@ -338,6 +387,8 @@ export {
   getConvergents,
   getRatioStructure,
   getRatioStructurePrimeLimits,
+  getValidMOSSizes,
+  ratioGenerate,
   get_rank2_mode,
   getPrimeFactors,
   getCoprimes
