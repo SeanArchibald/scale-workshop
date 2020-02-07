@@ -167,6 +167,14 @@ function getNewlineSettingsFromBrowser() {
   return value
 }
 
+// source: https://stackoverflow.com/a/14810722/1806628
+// objectMap(val => val * 2, {a: 10, b: 20}) --> {a: 20, b: 40}
+const objectMap = (fn, obj) => {
+  return Object.fromEntries(
+    Object.entries(obj).map(([k, v]) => [k, fn(v)])
+  )
+}
+
 export {
   isCent,
   isRatio,
@@ -190,5 +198,6 @@ export {
   redirectToHTTPS,
   isLocalStorageAvailable,
   isRunningOnWindows,
-  getNewlineSettingsFromBrowser
+  getNewlineSettingsFromBrowser,
+  objectMap
 }

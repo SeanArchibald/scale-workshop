@@ -3,7 +3,9 @@
  * International keyboard layouts
  */
 
-var Layouts = {
+import { objectMap } from './helpers/general.js'
+
+const Layouts = {
   // English QWERTY Layout
   //
   // <\> is placed to the right of <'> because on ISO (EU) variants it's there.
@@ -55,7 +57,7 @@ var Layouts = {
 //
 //    https://keycode.info
 //
-var Keycodes = {
+const Keycodes = {
   ";": 186,
   "=": 187,
   ",": 188,
@@ -71,24 +73,18 @@ var Keycodes = {
   "#": 163
 }
 
-// Build Keymap from Layouts
-var Keymap = {}
-for (let id in Layouts) {
-  Keymap[id] = buildKeymapFromLayout(Layouts[id]);
+function buildKeymapFromLayout(rows) {
+  return rows.reduce((acc, row, index) => {
+    for (let c = 0; c < row.length; c++) {
+      const keycode = Keycodes[row.charAt(c)] || row.charCodeAt(c);
+      acc[keycode] = [-index + 2, c]
+    }
+    return acc
+  }, {})
 }
 
-function buildKeymapFromLayout(rows) {
-  var map = {}
-  for (let r = rows.length - 1; r >= 0; r--) {
-    var row = rows[r];
-    var rowId = rows.length - r - 2;
-    for (let c = 0; c < row.length; c++) {
-      var keycode = Keycodes[row.charAt(c)] || row.charCodeAt(c);
-      map[keycode] = [rowId, c];
-    }
-  }
-  return map;
-}
+// build Keymap from Layouts
+const Keymap = objectMap(buildKeymapFromLayout, Layouts)
 
 export {
   Keymap
