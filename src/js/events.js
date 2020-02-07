@@ -307,7 +307,7 @@ jQuery( document ).ready( function() {
   // approximate option clicked
   jQuery( "#modify_approximate" ).click( function( event ) {
     event.preventDefault();
-    trimSelf();
+    trimSelf("#txt_tuning_data");
 
     jQuery( "#input_scale_degree" ).val(1);
     jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 });

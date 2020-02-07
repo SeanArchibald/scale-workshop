@@ -209,10 +209,23 @@ function stepsToDegrees(steps) {
   let degrees = [0];
   if (steps.length > 0) {
     for (let i = 1; i < steps.length; i++) {
-      degrees.push(degrees[i-1] + degrees[i]);
+      degrees.push(degrees[i-1] + steps[i]);
     }
   }
   return degrees;
+}
+
+// convert absolute degree values into an array of step values
+// if first degree is nonzero, doing degrees -> steps -> degrees will normalize the set
+// if degrees are a musical scale, the last note needs to be the period (or equivalency)
+function degreesToSteps(degrees) {
+  let steps = [];
+  if (degrees.length > 1) {
+    for (let i = 1; i < degrees.length; i++) {
+      steps.push(degrees[i] - degrees[i-1]);
+    }
+  }
+  return steps;
 }
 
 // convert an input string into a filename-sanitized version
@@ -233,28 +246,6 @@ function midi_note_number_to_name(input) {
   return name[remainder] + quotient;
 }
 
-function getLsFromStructure(structIn, index, periodTarget, generatorTarget) {
-  let Ls = [0, 0]
-	let periodPoint = [structIn.xVectors[index][1], structIn.yVectors[index][1]];
-  let generatorPoint = [structIn.xVectors[index][0], structIn.yVectors[index][0]];
-  
-  let periodScale = periodTarget / structIn.denominators[index];
-  let generatorScale = generatorTarget / structIn.numerators[index];
-
-	// find L, delta x
-	let lcmY = getLCM([periodPoint[1], generatorPoint[1]]);
-	var gFactor = (lcmY / generatorPoint[1]) * structIn.numerators[index] * generatorScale;
-	var pFactor = (lcmY / periodPoint[1]) * structIn.denominators[index] * periodScale;
-	Ls[0] = Math.max(pFactor, gFactor) - Math.min(pFactor, gFactor);
-
-	// find s, delta y
-	let lcmX = getLCM([periodPoint[0], generatorPoint[0]]);
-	gFactor = (lcmX / generatorPoint[0]) * structIn.numerators[index]* generatorScale;
-	pFactor = (lcmX / periodPoint[0]) * structIn.denominators[index]* periodScale;
-	Ls[1]  = Math.max(pFactor, gFactor) - Math.min(pFactor, gFactor);
-
-	return Ls;
-}
 
 export {
   getFloat,
@@ -274,7 +265,7 @@ export {
   mtof,
   ftom,
   stepsToDegrees,
+  degreesToSteps,
   sanitize_filename,
-  midi_note_number_to_name,
-  getLsFromStructure
+  midi_note_number_to_name
 }

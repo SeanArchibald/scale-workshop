@@ -64,16 +64,15 @@ var tuning_table = {
   filename: ""
 };
 var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ];
-var current_approximations = {
-    convergent_indicies: [], // indicies of the convergent ratios
-    numerators: [], // numerators of approximations
-    denominators: [], // denominators of approximations
-    ratios: [], // the ratios combined
-    numerator_limits: [], // the prime limit of each numerator
-    denominator_limits: [], // the prime limit of each denominator
-    ratio_limits: [] // the prime limit of each ratio
+var stagedRank2Structure; // Used for holding data regarding available MOS sizes & more
+var currentRatioStructure; // Used for storing data regarding ratio approximations
+var currenRatioPrimeLimit = {  // Holds prime limits of current ratio approximation
+  ratioLimits: [],
+  numeratorLimits: [],
+  denominatorLimits: []
 }
-var approx_filter_prime_counter = [0, 10];
+var approximationFilterPrimeCount = [0, 10];
+
 var debug_enabled = true;
 
 /**
