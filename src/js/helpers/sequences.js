@@ -124,7 +124,7 @@ function getConvergents(cf, numeratorsOut=null, maxPeriod=NaN, cnvgtIdxOut=null)
 
 // pass in a number, can represent the logarithmic ratio of the generator / period
 // recieve an object with rational approximation properties
-function getRatioStructure(numIn, maxPeriod=1e6) {
+function getRatioStructure(numIn, maxPeriod=10e6) {
   if (isNaN(numIn))
     alert("Error in getRatioStructure(): num is " + numIn)
   
@@ -189,7 +189,7 @@ function getRatioStructure(numIn, maxPeriod=1e6) {
     }
   }
 
-  ratioStructure.convergents = stepsToDegrees(ratioStructure.cf);
+  ratioStructure.convergentIndicies = [0, ...stepsToDegrees(ratioStructure.cf.slice(1))];
   ratioStructure.length = ratioStructure.denominators.length;
 
   return ratioStructure;

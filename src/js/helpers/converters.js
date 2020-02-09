@@ -214,8 +214,6 @@ function stepsToDegrees(steps) {
 }
 
 // convert absolute degree values into an array of step values
-// if first degree is nonzero, doing degrees -> steps -> degrees will normalize the set
-// if degrees are a musical scale, the last note needs to be the period (or equivalency)
 function degreesToSteps(degrees) {
   const degreesRooted = [0, ...degrees]
   let steps = [];

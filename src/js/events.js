@@ -47,7 +47,6 @@ import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { is_qwerty_active } from './synth.js'
 import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, NEWLINE_REGEX, LOCALSTORAGE_PREFIX } from './constants.js'
 import {
-  modify_update_approximations,
   modify_random_variance,
   modify_mode,
   modify_sync_beating,
@@ -234,85 +233,82 @@ function initEvents(){
     openDialog("#modal_modify_sync_beating", modify_sync_beating)
   } );
 
-
   // approximate option clicked
   jQuery( "#modify_approximate" ).click( function( event ) {
     event.preventDefault();
-    const tuning_table = model.get('tuning table')
     trimSelf("#txt_tuning_data")
-
-    jQuery( "#input_scale_degree" ).val(1)
-    jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 })
-
-    jQuery( "#input_scale_degree" ).select()
-    jQuery( "#input_scale_degree" ).trigger("change")
-
-    jQuery( "#modal_approximate_intervals" ).dialog({
-      modal: true,
-      buttons: {
-        Apply: function() {
-          modify_replace_with_approximation()
-        },
-        Close: function() {
-          jQuery( this ).dialog( 'close' )
-        }
-      }
-    } );
-  } );
+    const tuningTable = model.get('tuning table')
+    const inputScaleDegree = jQuery("#input_scale_degree")
+    inputScaleDegree.attr({ "min" : 1, "max" : tuningTable.note_count - 1 })
+    inputScaleDegree.val(0).change().val(1).change().select() // force update
+    openDialog("#modal_approximate_intervals", modify_replace_with_approximation)
+  } )
 
   // calculate and list rational approximations within user parameters
   jQuery( "#input_interval_to_approximate" ).change( function() {
-    var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() )
-    currentRatioStructure = getRatioStructure(interval)
-    modify_update_approximations()
+    model.set('modify approx interval', line_to_decimal(jQuery("#input_interval_to_approximate").val()))
   } );
 
   // recalculate approximations when scale degree changes
   jQuery( "#input_scale_degree").change( function() {
-    trimSelf(); // TODO: trim self requires a parameter to apply trim to, otherwise this is just a NOP
-    var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
-    var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);
-    jQuery ( "#input_interval_to_approximate" ).val(lines[index]).trigger("change");
+    trimSelf("#txt_tuning_data");
+    var index = parseInt(jQuery('#input_scale_degree').val());
+    model.set('modify approx degree', index)
   } );
 
   // refilter approximations when fields change
-  jQuery( "#input_min_error, #input_max_error, #input_show_convergents" ).change(modify_update_approximations);
+  jQuery('#input_min_error').change(function() {
+    model.set('modify approx min error', jQuery('#input_min_error').val())
+  })
+  
+  jQuery('#input_max_error').change(function() {
+    model.set('modify approx max error', jQuery('#input_max_error').val())
+  })
 
-  // refilter approximations when prime limit changes
-  // can be improved, but it's a bit tricky!
+  jQuery('#input_show_convergents').change(function() {
+    model.set('modify approx convergents', jQuery('#input_show_convergents')[0].checked)
+  })
+
+  // step to next prime
   jQuery( "#input_approx_min_prime" ).change( function() {
-    var num = parseInt(jQuery( "#input_approx_min_prime").val());
-    var dif = num - PRIMES[approximationFilterPrimeCount[0]];
+    var numInput = parseInt(jQuery( "#input_approx_min_prime").val());
+    var primeIndex = model.get('modify approx min prime')
+    var numPrevious = PRIMES[primeIndex]
+
+    // Find difference between last number and next number
+    var dif = numInput - numPrevious;
     if (Math.abs(dif) === 1) {
-      if (num < PRIMES[approximationFilterPrimeCount[0]]) {
-        approximationFilterPrimeCount[0]--;
-      } else {
-        approximationFilterPrimeCount[0]++;
+      if (numInput < numPrevious && primeIndex > 0) {
+        primeIndex--;
+      } else if (numInput > numPrevious) {
+        primeIndex++;
       }
     } else {
-      approximationFilterPrimeCount[0] = PRIMES.indexOf(closestPrime(num));
+      primeIndex = PRIMES.indexOf(closestPrime(numInput));
     }
 
-    jQuery( "#input_approx_min_prime").val(PRIMES[approximationFilterPrimeCount[0]]);
-    modify_update_approximations();
+    model.set('modify approx min prime', primeIndex)
   } );
 
-  // refilter approximations when prime limit changes
+  // step to next prime
   jQuery( "#input_approx_max_prime" ).change( function() {
-    var num = parseInt(jQuery( "#input_approx_max_prime").val());
-    var dif = num - PRIMES[approximationFilterPrimeCount[1]];
+    var numInput = parseInt(jQuery( "#input_approx_max_prime").val());
+    var primeIndex = model.get('modify approx max prime')
+    var numPrevious = PRIMES[primeIndex]
+
+    // Find difference between last number and next number
+    var dif = numInput - numPrevious;
     if (Math.abs(dif) === 1) {
-      if (num < PRIMES[approximationFilterPrimeCount[1]]) {
-        approximationFilterPrimeCount[1]--;
-      } else {
-        approximationFilterPrimeCount[1]++;
+      if (numInput < numPrevious && primeIndex > 0) {
+        primeIndex--;
+      } else if (numInput > numPrevious) {
+        primeIndex++;
       }
     } else {
-      approximationFilterPrimeCount[1] = PRIMES.indexOf(closestPrime(num));
+      primeIndex = PRIMES.indexOf(closestPrime(numInput));
     }
 
-    jQuery( "#input_approx_max_prime").val(PRIMES[approximationFilterPrimeCount[1]]);
-    modify_update_approximations();
+    model.set('modify approx max prime', primeIndex)
   } );
 
   jQuery( "#modal_modify_mode").change( function(newValue) {

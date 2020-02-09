@@ -368,81 +368,80 @@ function modify_replace_with_approximation () {
 }
 
 // update list of rationals to choose from
-function modify_update_approximations() {
-  jQuery("#approximation_selection").empty();
+// function modify_update_approximations() {
+//   jQuery("#approximation_selection").empty();
 
-  if (!(isEmpty(currentRatioStructure))) {
-    var interval = line_to_decimal( jQuery ("#input_interval_to_approximate").val() );
-    var mincentsd = parseFloat( jQuery ( "#input_min_error").val() );
-    var maxcentsd = parseFloat( jQuery ( "#input_max_error").val() );
-    var minprime = parseInt( jQuery (" #input_approx_min_prime").val() );
-    var maxprime = parseInt( jQuery (" #input_approx_max_prime").val() );
-    var semiconvergents = !document.getElementById("input_show_convergents").checked;
+//   if (!(isEmpty(currentRatioStructure))) {
+//     var interval = line_to_decimal( jQuery ("#input_interval_to_approximate").val() );
+//     var mincentsd = parseFloat( jQuery ( "#input_min_error").val() );
+//     var maxcentsd = parseFloat( jQuery ( "#input_max_error").val() );
+//     var minprime = parseInt( jQuery (" #input_approx_min_prime").val() );
+//     var maxprime = parseInt( jQuery (" #input_approx_max_prime").val() );
+//     var semiconvergents = !document.getElementById("input_show_convergents").checked;
 
-    if (minprime < PRIMES[0]) {
-      minprime = PRIMES[0];
-      jQuery("#input_approx_min_prime").val(PRIMES[0]);
-    }
+//     if (minprime < PRIMES[0]) {
+//       minprime = PRIMES[0];
+//       jQuery("#input_approx_min_prime").val(PRIMES[0]);
+//     }
 
-    if (maxprime > PRIMES[PRIMES.length-1]) {
-      maxprime = PRIMES[PRIMES.length-1];
-      jQuery("#input_approx_max_prime").val(maxprime);
-    }
+//     if (maxprime > PRIMES[PRIMES.length-1]) {
+//       maxprime = PRIMES[PRIMES.length-1];
+//       jQuery("#input_approx_max_prime").val(maxprime);
+//     }
 
-    if (mincentsd < 0)
-      mincentsd = 0;
+//     if (mincentsd < 0)
+//       mincentsd = 0;
 
-    if (maxcentsd < 0)
-      maxcentsd = 0;
+//     if (maxcentsd < 0)
+//       maxcentsd = 0;
 
-    var menulength = (semiconvergents) ? currentRatioStructure.length : currentRatioStructure.cf.length;
-    var index;
+//     var menulength = (semiconvergents) ? currentRatioStructure.length : currentRatioStructure.cf.length;
+//     var index;
 
-    for (let i = 0; i < menulength; i++) {
-      index = (semiconvergents) ? i : currentRatioStructure.convergentIndicies[i];
-      if (index > currentRatioStructure.length)
-        break;
+//     for (let i = 0; i < menulength; i++) {
+//       index = (semiconvergents) ? i : currentRatioStructure.convergentIndicies[i];
+//       if (index > currentRatioStructure.length)
+//         break;
 
-      var n = parseInt(currentRatioStructure.numerators[index]);
-      var d = parseInt(currentRatioStructure.denominators[index]);
-      var prime_limit = currentRatioPrimeLimits[index][0];
+//       var n = parseInt(currentRatioStructure.numerators[index]);
+//       var d = parseInt(currentRatioStructure.denominators[index]);
+//       var prime_limit = currentRatioPrimeLimits[index][0];
 
-      var fraction_str = currentRatioStructure.ratiosStrings[index];
-      var fraction = n / d;
+//       var fraction_str = currentRatioStructure.ratiosStrings[index];
+//       var fraction = n / d;
 
-      var cents_deviation = decimal_to_cents(fraction) - decimal_to_cents(interval);
-      var centsdabs = Math.abs(cents_deviation);
-      var cents_rounded = Math.round(10e6 * cents_deviation) / 10e6;
+//       var cents_deviation = decimal_to_cents(fraction) - decimal_to_cents(interval);
+//       var centsdabs = Math.abs(cents_deviation);
+//       var cents_rounded = Math.round(10e6 * cents_deviation) / 10e6;
 
-      var centsdsgn;
-      if (cents_deviation / centsdabs >= 0)
-        centsdsgn = "+";
-      else
-        centsdsgn = "";
+//       var centsdsgn;
+//       if (cents_deviation / centsdabs >= 0)
+//         centsdsgn = "+";
+//       else
+//         centsdsgn = "";
 
-      var description = fraction_str+ " | " + centsdsgn + cents_rounded.toString() + "c | " + prime_limit + "-limit";
+//       var description = fraction_str+ " | " + centsdsgn + cents_rounded.toString() + "c | " + prime_limit + "-limit";
 
-      if (!interval) {
-        jQuery("#approximation_selection").append("<option selected disabled>Error: Invalid interval</option>");
-        break;
-      } else if (interval === fraction && interval) {  // for cases like 1200.0 === 2/1
-        jQuery("#approximation_selection").append("<option>"+description+"</option>");
-        break;
-      } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
-        jQuery("#approximation_selection").append("<option>"+description+"</option>");
-      }
-    }
+//       if (!interval) {
+//         jQuery("#approximation_selection").append("<option selected disabled>Error: Invalid interval</option>");
+//         break;
+//       } else if (interval === fraction && interval) {  // for cases like 1200.0 === 2/1
+//         jQuery("#approximation_selection").append("<option>"+description+"</option>");
+//         break;
+//       } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
+//         jQuery("#approximation_selection").append("<option>"+description+"</option>");
+//       }
+//     }
 
-    if (document.getElementById("approximation_selection").options.length === 0) {
-      semiconvergents ?
-        jQuery("#approximation_selection").append("<option selected disabled> None found, try to raise error tolerances.</option>") :
-        jQuery("#approximation_selection").append("<option selected disabled> Try to  \"Show next best approximations\" or edit filters.</option>")
-    }
-  }
-}
+//     if (document.getElementById("approximation_selection").options.length === 0) {
+//       semiconvergents ?
+//         jQuery("#approximation_selection").append("<option selected disabled> None found, try to raise error tolerances.</option>") :
+//         jQuery("#approximation_selection").append("<option selected disabled> Try to  \"Show next best approximations\" or edit filters.</option>")
+//     }
+//   }
+// }
 
 export {
-  modify_update_approximations,
   modify_random_variance,
   modify_mode,
   modify_sync_beating,

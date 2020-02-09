@@ -22,7 +22,7 @@ import {
   degreesToSteps,
   degreeModPeriodCents
 } from './helpers/converters.js'
-import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE, WINDOWS_NEWLINE, NEWLINE_REGEX } from './constants.js'
+import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE, WINDOWS_NEWLINE, NEWLINE_REGEX, PRIMES } from './constants.js'
 import {
   get_scale_url,
   update_page_url,
@@ -35,13 +35,20 @@ import {
   export_reference_deflemask,
   export_url
 } from './exporters.js'
+import { 
+  getValidMOSSizes, 
+  getCF, 
+  getConvergents, 
+  get_rank2_mode, 
+  getRatioStructure, 
+  getRatioStructurePrimeLimits 
+} from './helpers/sequences.js'
 import Model from './helpers/Model.js'
 import Synth from './synth/Synth.js'
 import MIDI from './helpers/MIDI.js'
 import { initUI } from './ui.js'
 import { initSynth } from './synth.js'
 import { initEvents } from './events.js'
-import { getValidMOSSizes, getCF, getConvergents, getCoprimes, get_rank2_mode } from './helpers/sequences.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
@@ -89,16 +96,16 @@ const model = new Model({
   'modify mode input': [],
   'modify mode mos structure': null,
   'modify approx degree': 1,
+  'modify approx interval': 1,
   'modify approx min error': 0.0,
   'modify approx max error': 15.0,
-  'modify approx min prime': 2,
-  'modify approx max prime': 31,
+  'modify approx min prime': 0,
+  'modify approx max prime': 10,
   'modify approx convergents': false,
   'modify approx selections': false,
   'modify approx selection id': 0,
   'modify approx ratio structure': null,
-  'modify approx ratio limits': null,
-  'modify approx prime counters': [0, 10]
+  'modify approx ratio limits': null
 })
 
 // data changed, handle programmatic reaction - no jQuery
@@ -123,11 +130,9 @@ model.on('change', (key, newValue) => {
         model.set('modify mode input', stepsToDegrees(model.get('modify mode input').map(x => parseInt(x))))
       model.set('modify mode type previous', newValue)
       break
-    case 'modify mode mos degree':
-      break
     case 'modify mode mos degree selected': {
       let sizes = getConvergents(getCF(newValue/(model.get('tuning table').note_count-1)))
-      model.set('modify mode mos sizes', sizes.slice(2, sizes.length-2))
+      model.set('modify mode mos sizes', sizes.slice(2, sizes.length-1))
     }
       break 
     case 'modify mode mos size selected':
@@ -137,16 +142,13 @@ model.on('change', (key, newValue) => {
       )
       break
     case 'modify approx degree':
+      model.set('modify approx interval', model.get('tuning table').scale_data[newValue])
       break
-    case 'modify approx min error':
+    case 'modify approx interval': 
+      model.set('modify approx ratio structure', getRatioStructure(line_to_decimal(newValue)))
       break
-    case 'modify approx max error':
-      break
-    case 'modify approx min prime':
-      break
-    case 'modify approx max prime': 
-      break
-    case 'modify approx convergents': 
+    case 'modify approx ratio structure':
+      model.set('modify approx ratio limits', getRatioStructurePrimeLimits(newValue))
       break
   }
 })
@@ -167,33 +169,43 @@ model.on('change', (key, newValue) => {
       document.getElementById("mos_mode_options").style.display = newValue === "mos" ?  'block' : 'none'
       break
     case 'modify mode mos degrees': {
-      const degreeCents = model.get('modify mode mos degrees').map( degree => 
-         ' (' + roundToNDecimals(6, degreeModPeriodCents(degree)) + 'c)'
-      )
-      const degrees = model.get('modify mode mos degrees')
+      const degreeCents = 
+        newValue.map(degree => ' (' + roundToNDecimals(6, degreeModPeriodCents(degree)) + 'c)')
       setDropdownOptions('#modal_modify_mos_degree', 
-        degrees.map((degree, index) => degree + degreeCents[index]), degrees
+        newValue.map((degree, index) => degree + degreeCents[index]), newValue
       )   
-      model.set('modify mode mos degree selected', degrees[0])
+      model.set('modify mode mos degree selected', newValue[0])
     }
       break
     case 'modify mode mos degree selected':
       setDropdownOptions('#modal_modify_mos_size', model.get('modify mode mos sizes'))
       break
     case 'modify mode input':
-      jQuery('#input_modify_mode').val(model.get('modify mode input').join(' '))
+      jQuery('#input_modify_mode').val(newValue.join(' '))
       break
     case 'modify approx degree':
+      jQuery('#input_scale_degree').val(newValue)
       break
+    case 'modify approx interval':
+      jQuery('#input_interval_to_approximate').val(newValue)
+    case 'modify approx ratio limits':
+      updateApproximationOptions()
     case 'modify approx min error':
+      updateApproximationOptions()
       break
     case 'modify approx max error':
+      updateApproximationOptions()
       break
     case 'modify approx min prime':
+      jQuery('#input_approx_min_prime').val(PRIMES[newValue])
+      updateApproximationOptions()
       break
     case 'modify approx max prime': 
+      jQuery('#input_approx_max_prime').val(PRIMES[newValue])
+      updateApproximationOptions()
       break
-    case 'modify approx convergents': 
+    case 'modify approx convergents':
+      updateApproximationOptions()
       break
   }
 })
@@ -328,6 +340,72 @@ function set_key_colors( list ) {
     jQuery( ttkeys[i] ).attr( "style", "background-color: " + key_colors[keynum] + " !important" );
     // debug( i + ": " + key_colors[keynum] );
   }
+}
+
+function updateApproximationOptions() {
+  const interval = model.get('modify approx interval')
+  const minCentsError = model.get('modify approx min error')
+  const maxCentsError = model.get('modify approx max error')
+  const minPrimeLimit = PRIMES[model.get('modify approx min prime')]
+  const maxPrimeLimit = PRIMES[model.get('modify approx max prime')]
+  const semiconvergents = !model.get('modify approx convergents')
+  const ratioStructure = model.get('modify approx ratio structure')
+  const ratioLimits = model.get('modify approx ratio limits')
+  const menulength = semiconvergents ? ratioStructure.length : ratioStructure.cf.length
+  
+  let descriptions = []
+  let values = []
+  let tags = []
+  console.log(ratioLimits)
+  console.log("SIZE: " + ratioLimits.length)
+  console.log("menulength = "+ menulength)
+  console.log("Convergent indicies: " + ratioStructure.convergentIndicies)
+
+  let index = 0
+  for (let i = 0; i < menulength; i++) {
+    index = semiconvergents ? i : ratioStructure.convergentIndicies[i];
+    if (index > ratioStructure.length)
+      break
+
+    var limit = ratioLimits[index][0]
+
+    var ratioString = ratioStructure.ratioStrings[index]
+    var decimal = ratioStructure.rationals[index]
+
+    var centsDelta = decimal_to_cents(decimal - interval);
+    var centsDeltaAbs = Math.abs(centsDelta);
+    var centsRounded = roundToNDecimals(6, centsDelta);
+
+    var centsSign = "";
+    if (centsDelta / centsDeltaAbs >= 0)
+      centsSign = "+";
+
+    var description = ratioString + " | " + centsSign + centsRounded.toString() + "c | " + limit + "-limit";
+
+    if (!interval) {
+      tags.push("selected disabled");
+      descriptions.push("Error: Invalid interval")
+      break;
+    } else if (interval === decimal && interval) {  // for cases like 1200.0 === 2/1
+      descriptions.push(description)
+      values.push(ratioString)
+      break;
+    } else if ((centsDeltaAbs >= minCentsError && centsDeltaAbs <= maxCentsError) && (limit >= minPrimeLimit && limit <= maxPrimeLimit)) {
+      descriptions.push(descriptions)
+      values.push(ratioString)
+    }
+  }
+
+  console.log("last index = " + index)
+
+  if (descriptions.length === 0) {
+    semiconvergents ?
+      descriptions.push("None found, try to raise error tolerances.") :
+      descriptions.push("Try to  \"Show next best approximations\" or edit filters.")
+    tags.push("selected disabled");
+  }
+
+  setDropdownOptions('#approximation_selection', descriptions, values, tags)
 }
 
 function parse_url() {
