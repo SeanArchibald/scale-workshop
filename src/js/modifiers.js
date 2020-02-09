@@ -5,8 +5,6 @@
 /* global alert, jQuery */
 import {
   parse_tuning_data,
-  currentRatioStructure,
-  currentRatioPrimeLimits,
   model
 } from './scaleworkshop.js'
 import {

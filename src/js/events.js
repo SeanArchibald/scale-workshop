@@ -16,11 +16,13 @@ import {
   decimal_to_cents,
   line_to_decimal,
   mtof,
-  midi_note_number_to_name
+  midi_note_number_to_name,
+  degreesToSteps,
+  stepsToDegrees
 } from './helpers/converters.js'
 import {
-  rotate,
-  rotated,
+  rotateArrayLeft,
+  rotateArrayRight,
   getCF,
   getConvergents,
   getCoprimes,
@@ -29,12 +31,8 @@ import {
 } from './helpers/sequences.js'
 import {
   set_key_colors,
-  approximationFilterPrimeCount,
-  currentRatioStructure,
-  currentRatioPrimeLimits,
   parse_tuning_data,
   parse_url,
-  stagedRank2Structure,
   clear_all,
   model,
   synth
@@ -75,14 +73,14 @@ function show_modify_mode_mos_options(showOptions) {
 // repopulates the available degrees for selection
 function update_modify_mode_mos_generators() {
   const tuning_table = model.get('tuning table')
-  show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+  //show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
   let coprimes = get_coprimes(tuning_table.note_count-1);
-  jQuery("#modal_modify_mos_degree").empty();
+  //jQuery("#modal_modify_mos_degree").empty();
   for (let d=1; d < coprimes.length-1; d++) {
     var num = coprimes[d];
     var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
     var text = num + " (" + cents + "c)";
-    jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
+    //jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
   }
 }
 
@@ -93,7 +91,7 @@ function modify_mode_update_mos_scale() {
   var g = parseInt(jQuery("#modal_modify_mos_degree").val());
   var s = parseInt(jQuery("#modal_modify_mos_size").val());
   let mode = get_rank2_mode(p, g, s);
-  jQuery("#input_modify_mode").val(mode.join(" "));
+  //jQuery("#input_modify_mode").val(mode.join(" "));
 }
 
 function initEvents(){
@@ -235,10 +233,10 @@ function initEvents(){
   jQuery( "#modify_mode" ).click( function( event ) {
     event.preventDefault();
     // setup MOS options, and hide
-    update_modify_mode_mos_generators();
-    show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value);
-    jQuery( "#modal_modify_mos_degree").change(); // make sizes available
-    jQuery( "#input_modify_mode" ).select();
+    model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').note_count-1).slice(1))
+    //show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value);
+    jQuery("#modal_modify_mos_degree").change(); // make sizes available
+    jQuery("#input_modify_mode" ).select();
     openDialog("#modal_modify_mode", modify_mode)
   } );
 
@@ -343,60 +341,42 @@ function initEvents(){
     modify_update_approximations();
   } );
 
-  jQuery( "#modal_modify_mode").change( function() {
-    show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+  jQuery( "#modal_modify_mode").change( function(newValue) {
+    model.set('modify mode type', document.querySelector('input[name="mode_type"]:checked').value)
+    //show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
   } );
 
-  // repopulates the available degrees for selection
-  function update_modify_mode_mos_generators() {
-    show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
-    let coprimes = getCoprimes(tuning_table.note_count-1);
-    jQuery("#modal_modify_mos_degree").empty();
-    for (let d=1; d < coprimes.length-1; d++) {
-      var num = coprimes[d];
-      var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
-      var text = num + " (" + cents + "c)";
-      jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
-    }
-  }
+  jQuery('#input_modify_mode').change(function(element) {
+    model.set('modify mode input', element.target.value.split(' '))
+  } )
 
-   // calculate the MOS mode and insert it in the mode input box
-  function modify_mode_update_mos_scale() {
-    var p = tuning_table.note_count-1;
-    var g = parseInt(jQuery("#modal_modify_mos_degree").val());
-    var s = parseInt(jQuery("#modal_modify_mos_size").val());
-    let mode = get_rank2_mode(p, g, s);
-    jQuery("#input_modify_mode").val(mode.join(" "));
-  }
-
-  // update the available sizes for selection
-  jQuery( "#modal_modify_mos_degree").change( function() {
-    var genPeriodRatio = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
-    stagedRank2Structure = getRatioStructure(genPeriodRatio);
-    jQuery("#modal_modify_mos_size").empty();
-    for (let s=2; s < stagedRank2Structure.length - 1; s++) {
-      var size = stagedRank2Structure.denominators[s];
-      jQuery("#modal_modify_mos_size").append('<option value="'+size+'">'+size+'</option>');
-    }
+  jQuery( "#modal_modify_mos_degree").change( function(element) {
+    model.set('modify mode mos degree selected', parseInt(element.target.options[element.target.selectedIndex].text))
   } );
 
   // update mode when size is selected
-  jQuery( "#modal_modify_mos_size").change( function() {
-    modify_mode_update_mos_scale();
+  jQuery( "#modal_modify_mos_size").change( function(element) {
+    model.set('modify mode mos size selected', parseInt(element.target.options[element.target.selectedIndex].text))
   } );
 
   // move the mode steps back one
   jQuery( "#input_mode_step_left").click( function() {
-    var mode = jQuery( "#input_modify_mode" ).val().split(" ");
-    rotate(mode, -1);
-    jQuery( "#input_modify_mode" ).val(mode.join(" "));
+    let mode = jQuery( "#input_modify_mode" ).val().split(' ');
+    if (model.get('modify mode type') === 'frombase')
+      mode = stepsToDegrees(rotateArrayLeft(1, degreesToSteps(mode)))
+    else
+      mode = rotateArrayLeft(1, mode)
+    model.set('modify mode input', mode);
   } );
 
   // move the mode steps forward one
   jQuery( "#input_mode_step_right").click( function() {
-    var mode = jQuery( "#input_modify_mode" ).val().split(" ");
-    rotate(mode, 1);
-    jQuery( "#input_modify_mode" ).val(mode.join(" "));
+    let mode = jQuery( "#input_modify_mode" ).val().split(' ');
+    if (model.get('modify mode type') === 'frombase')
+      mode = stepsToDegrees(rotateArrayRight(1, degreesToSteps(mode)))
+    else
+      mode = rotateArrayRight(1, mode)
+    model.set('modify mode input', mode);
   } );
 
   /*

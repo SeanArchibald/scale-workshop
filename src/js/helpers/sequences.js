@@ -7,44 +7,26 @@ import { PRIMES } from '../constants.js'
 import { getPrimesOfRatio } from './numbers.js'
 import { stepsToDegrees, decimal_to_cents } from './converters.js'
 
-// returns a rotation of the given array
-function rotated(array, steps) {
+// returns a version of the given array rotated left by a given amount
+function rotateArrayLeft(steps, array) {
   let out = []
-  var x;
-  var i = Math.abs(steps);
-  if (steps > 0) {
-    while (i > 0) {
-      x = array.pop();
-      out.unshift(x);
-      i--;
-    }
-  } else if (steps < 0) {
-    while (i > 0) {
-      x = array.shift();
-      out.push(x);
-      i--;
-    }
+  var i = 0;
+  while (i < array.length) {
+    out.push(array[(i + steps).mod(array.length)])
+    i++
   }
   return out;
 } 
 
-// mutates the array by rotating by given amount
-function rotate(array, steps) {
-  var x;
-  var i = Math.abs(steps);
-  if (steps > 0) {
-    while (i > 0) {
-      x = array.pop();
-      array.unshift(x);
-      i--;
-    }
-  } else if (steps < 0) {
-    while (i > 0) {
-      x = array.shift();
-      array.push(x);
-      i--;
-    }
+// returns a version of the given array rotated right by a given amount
+function rotateArrayRight(steps, array) {
+  let out = []
+  var i = 0;
+  while (i < array.length) {
+    out.push(array[(i - steps).mod(array.length)]);
+    i++;
   }
+  return out;
 } 
 
 // calculate a continued fraction for the given number
@@ -85,12 +67,15 @@ function getConvergent(cf, depth=-1) {
 }
 
 // calculate all best rational approximations given a continued fraction
-function getConvergents(cf, numArray, denArray, maxPeriod, cnvgtIdxOut=null) {
-  var digit; // the continued fraction digit
-  var num; // the convergent numerator
-  var den; // the convergent denominator
-  var scnum; // the semiconvergent numerator
-  var scden; // the semiconvergent denominator
+// 
+function getConvergents(cf, numeratorsOut=null, maxPeriod=NaN, cnvgtIdxOut=null) {
+  let numerators = [] // numerators of the approximations
+  let denominators = [] // denominators of the appxoimations
+  var digit // the continued fraction digit
+  var num // the convergent numerator
+  var den // the convergent denominator
+  var scnum // the semiconvergent numerator
+  var scden // the semiconvergent denominator
   var cind = []; // tracks indicies of convergents
 
   for (let d = 0; d < cf.length; d++) {
@@ -106,23 +91,23 @@ function getConvergents(cf, numArray, denArray, maxPeriod, cnvgtIdxOut=null) {
 
     if (d > 0) {
       for (let i = 1; i < digit; i++) {
-        scnum = num - (digit - i) * numArray[cind[d-1]]
-        scden = den - (digit - i) * denArray[cind[d-1]]
+        scnum = num - (digit - i) * numerators[cind[d-1]]
+        scden = den - (digit - i) * denominators[cind[d-1]]
 
         if (scden > maxPeriod)
           break
 
-        numArray.push(scnum)
-        denArray.push(scden)
+        numerators.push(scnum)
+        denominators.push(scden)
       }
     }
 
     if (den > maxPeriod)
       break
 
-    cind.push(numArray.length)
-    numArray.push(num)
-    denArray.push(den)
+    cind.push(numerators.length)
+    numerators.push(num)
+    denominators.push(den)
   }
 
   if (!(cnvgtIdxOut===null)) {
@@ -130,6 +115,11 @@ function getConvergents(cf, numArray, denArray, maxPeriod, cnvgtIdxOut=null) {
       cnvgtIdxOut.push(cind[i])
     }
   }
+
+  if (numeratorsOut !== null)
+    numeratorsOut = numerators
+  
+  return denominators
 }
 
 // pass in a number, can represent the logarithmic ratio of the generator / period
@@ -253,7 +243,7 @@ function getValidMOSSizes(periodDecimal, generatorDecimal, minCents=2.5, maxSize
   var convergentIndicies = []; // Indicies that are convergent
 
   cf = getCF(genlog, maxCFSize);
-  getConvergents(cf, numerators, denominators, maxSize, convergentIndicies);
+  denominators = getConvergents(cf, numerators, maxSize, convergentIndicies);
 
   // filter by step size threshold
   var gc = decimal_to_cents(generatorDecimal);
@@ -380,8 +370,8 @@ function getPrimeFactors(number) {
  }
 
 export {
-  rotated,
-  rotate,
+  rotateArrayLeft,
+  rotateArrayRight,
   getCF,
   getConvergent,
   getConvergents,

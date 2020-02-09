@@ -12,16 +12,9 @@ Number.prototype.mod = function (n) {
 };
 
 // calculate the sum of the values in a given array given a stopping index
-function sumOfArray(array, index) {
+function sumOfArray(array) {
   var sum = 0;
-
-  if (array.length <= index)
-    index = array.length - 1;
-
-  for (let i = 0; i < index; i ++) {
-    sum += array[i];
-  }
-
+  array.forEach(x => sum += x)
   return sum;
 }
 

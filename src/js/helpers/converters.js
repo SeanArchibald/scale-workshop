@@ -11,10 +11,13 @@ import {
   isNOfEdo,
   isRatio,
   getLineType, 
-  trim 
-  } from './general.js'
+  trim,
+  debug,
+  tap
+} from './general.js'
 import { LINE_TYPE, SEMITONE_RATIO_IN_12_EDO } from '../constants.js'
 import { getCF, getConvergent } from './sequences.js'
+import { model } from '../scaleworkshop.js'
 
 function getFloat(id, errorMessage) {
   var value = parseFloat(jQuery(id).val());
@@ -206,24 +209,17 @@ function ftom(input) {
 // convert an array of step values into absolute degree values
 function stepsToDegrees(steps) {
   let degrees = [0];
-  if (steps.length > 0) {
-    for (let i = 1; i < steps.length; i++) {
-      degrees.push(degrees[i-1] + steps[i]);
-    }
-  }
-  return degrees;
+  steps.forEach((step, index) => degrees.push(degrees[index] + step))
+  return degrees.splice(1);
 }
 
 // convert absolute degree values into an array of step values
 // if first degree is nonzero, doing degrees -> steps -> degrees will normalize the set
 // if degrees are a musical scale, the last note needs to be the period (or equivalency)
 function degreesToSteps(degrees) {
+  const degreesRooted = [0, ...degrees]
   let steps = [];
-  if (degrees.length > 1) {
-    for (let i = 1; i < degrees.length; i++) {
-      steps.push(degrees[i] - degrees[i-1]);
-    }
-  }
+  degrees.forEach((degree, index) => steps.push(degree - degreesRooted[index]))
   return steps;
 }
 
@@ -243,6 +239,15 @@ function midi_note_number_to_name(input) {
   var remainder = n % 12;
   var name = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
   return name[remainder] + quotient;
+}
+
+function degreeModPeriod(degree) {
+  return degree.mod(model.get('tuning table').note_count - 1)
+}
+
+function degreeModPeriodCents(degree) {
+  const tuningTable = model.get('tuning table');
+  return tuningTable.cents[degreeModPeriod(degree) + tuningTable.base_midi_note]
 }
 
 
@@ -266,5 +271,7 @@ export {
   stepsToDegrees,
   degreesToSteps,
   sanitize_filename,
-  midi_note_number_to_name
+  midi_note_number_to_name,
+  degreeModPeriod,
+  degreeModPeriodCents
 }
