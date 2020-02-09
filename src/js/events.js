@@ -10,7 +10,8 @@ import {
   openDialog,
   trimSelf,
   isLocalStorageAvailable,
-  isRunningOnWindows
+  isRunningOnWindows,
+  isTuningDataAvailable
 } from './helpers/general.js'
 import {
   decimal_to_cents,
@@ -64,35 +65,6 @@ import {
   generate_subharmonic_series_segment,
   load_preset_scale
 } from './generators.js'
-
-// shows or hides MOS mode selection boxes
-function show_modify_mode_mos_options(showOptions) {
-  document.getElementById("mos_mode_options").style.display = showOptions === "mos" ?  'block' : 'none';
-}
-
-// repopulates the available degrees for selection
-function update_modify_mode_mos_generators() {
-  const tuning_table = model.get('tuning table')
-  //show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
-  let coprimes = get_coprimes(tuning_table.note_count-1);
-  //jQuery("#modal_modify_mos_degree").empty();
-  for (let d=1; d < coprimes.length-1; d++) {
-    var num = coprimes[d];
-    var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
-    var text = num + " (" + cents + "c)";
-    //jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
-  }
-}
-
- // calculate the MOS mode and insert it in the mode input box
-function modify_mode_update_mos_scale() {
-  const tuning_table = model.get('tuning table')
-  var p = tuning_table.note_count-1;
-  var g = parseInt(jQuery("#modal_modify_mos_degree").val());
-  var s = parseInt(jQuery("#modal_modify_mos_size").val());
-  let mode = get_rank2_mode(p, g, s);
-  //jQuery("#input_modify_mode").val(mode.join(" "));
-}
 
 function initEvents(){
   // automatically load generatal options saved in localStorage (if available)
@@ -231,13 +203,15 @@ function initEvents(){
 
   // modify_mode option clicked
   jQuery( "#modify_mode" ).click( function( event ) {
-    event.preventDefault();
-    // setup MOS options, and hide
-    model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').note_count-1).slice(1))
-    //show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value);
-    jQuery("#modal_modify_mos_degree").change(); // make sizes available
-    jQuery("#input_modify_mode" ).select();
-    openDialog("#modal_modify_mode", modify_mode)
+    if (isTuningDataAvailable(true, "No tuning data to modify.")) {
+      event.preventDefault();
+      const modeType = document.querySelector('input[name="mode_type"]:checked').value
+      model.set('modify mode type', modeType)
+      model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').note_count - 1).slice(1))
+      document.getElementById("mos_mode_options").style.display = modeType === 'mos' ? 'block' : 'none'
+      jQuery("#input_modify_mode" ).select();
+      openDialog("#modal_modify_mode", modify_mode)
+    }
   } );
 
   // modify_stretch option clicked
@@ -343,7 +317,6 @@ function initEvents(){
 
   jQuery( "#modal_modify_mode").change( function(newValue) {
     model.set('modify mode type', document.querySelector('input[name="mode_type"]:checked').value)
-    //show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
   } );
 
   jQuery('#input_modify_mode').change(function(element) {

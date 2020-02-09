@@ -306,7 +306,6 @@ function get_rank2_mode(period, generator, size, numdown=0) {
   }
 
   modeOut.push(period - degrees[degrees.length-1]);
-
   return modeOut;
 }
 

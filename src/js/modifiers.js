@@ -13,6 +13,7 @@ import {
   debug,
   trim,
   getLineType,
+  isTuningDataAvailable
 } from './helpers/general.js'
 import {
   ratio_to_cents,
@@ -25,15 +26,7 @@ import { PRIMES, UNIX_NEWLINE, NEWLINE_REGEX, WINDOWS_NEWLINE } from './constant
 // stretch/compress tuning
 function modify_stretch() {
 
-  // remove white space from tuning data field
-  trimSelf("#txt_tuning_data")
-
-  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-
-    alert( "No tuning data to modify." );
-    return false;
-
-  }
+  isTuningDataAvailable(true, "No tuning data to modify.")
 
   // var octave_size; // (pseudo)octave size in cents
   // var stretch_size; // size of new pseudo-octave after stretching
@@ -77,15 +70,7 @@ function modify_stretch() {
 // random variance
 function modify_random_variance() {
 
-  // remove white space from tuning data field
-  trimSelf("#txt_tuning_data")
-
-  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-
-    alert( "No tuning data to modify." );
-    return false;
-
-  }
+  isTuningDataAvailable(true, "No tuning data to modify.")
 
   var cents_max_variance = parseFloat( jQuery( "#input_cents_max_variance" ).val() ); // maximum amount of variance in cents
   var vary_period = document.getElementById( "input_checkbox_vary_period" ).checked;
@@ -134,15 +119,7 @@ function modify_random_variance() {
 // mode
 function modify_mode() {
 
-  // remove white space from tuning data field
-  trimSelf("#txt_tuning_data")
-
-  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-
-    alert( "No tuning data to modify." );
-    return false;
-
-  }
+  // Tuning data checked when modal is opened
 
   var mode = jQuery( "#input_modify_mode" ).val().split(" ");
 
@@ -242,15 +219,8 @@ function modify_mode() {
 // sync beating
 function modify_sync_beating() {
 
-  // remove white space from tuning data field
-  trimSelf("#txt_tuning_data")
+  isTuningDataAvailable(true, "No tuning data to modify.")
 
-  if ( isEmpty( jQuery( "#txt_tuning_data" ).val() ) ) {
-
-    alert( "No tuning data to modify." );
-    return false;
-
-  }
 
   if ( isEmpty( jQuery( "#input_modify_sync_beating_bpm" ).val() ) ) {
 
@@ -304,15 +274,8 @@ function modify_sync_beating() {
 function modify_key_transpose() {
   // I will come back to this later... it's going to require some thinking with regards to just ratios...
 
-  // remove white space from tuning data field
-  trimSelf("#txt_tuning_data")
+  isTuningDataAvailable(true, "No tuning data to modify.")
 
-  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-
-    alert( "No tuning data to modify." );
-    return false;
-
-  }
 
   // split user data into individual lines
   var lines = document.getElementById("txt_tuning_data").value.split(NEWLINE_REGEX);

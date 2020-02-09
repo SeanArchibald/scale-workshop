@@ -78,15 +78,15 @@ const model = new Model({
   'staged rank-2 generator': 1.5,
   'staged rank-2 size' : 7,
   'staged rank-2 generators down': 1,
-  'staged rank-2 MOS sizes' : [0],
+  'staged rank-2 MOS sizes' : [],
   'staged rank-2 structure': null,
   'modify mode type': 'intervals',
   'modify mode type previous': 'intervals',
-  'modify mode mos degrees': [2, 3],
-  'modify mode mos sizes': [2],
+  'modify mode mos degrees': [],
+  'modify mode mos sizes': [],
   'modify mode mos degree selected': 2,
   'modify mode mos size selected': 2,
-  'modify mode input': "",
+  'modify mode input': [],
   'modify mode mos structure': null,
   'modify approx degree': 1,
   'modify approx min error': 0.0,
@@ -125,11 +125,10 @@ model.on('change', (key, newValue) => {
       break
     case 'modify mode mos degree':
       break
-    case 'modify mode mos degree selected':
-     model.set('modify mode mos sizes', getConvergents(getCF(
-       newValue/(model.get('tuning table').note_count-1))).slice(2).reverse().slice(1).reverse()
-       // is that discouraged?
-     )
+    case 'modify mode mos degree selected': {
+      let sizes = getConvergents(getCF(newValue/(model.get('tuning table').note_count-1)))
+      model.set('modify mode mos sizes', sizes.slice(2, sizes.length-2))
+    }
       break 
     case 'modify mode mos size selected':
       model.set('modify mode input', get_rank2_mode(
@@ -171,9 +170,11 @@ model.on('change', (key, newValue) => {
       const degreeCents = model.get('modify mode mos degrees').map( degree => 
          ' (' + roundToNDecimals(6, degreeModPeriodCents(degree)) + 'c)'
       )
+      const degrees = model.get('modify mode mos degrees')
       setDropdownOptions('#modal_modify_mos_degree', 
-        model.get('modify mode mos degrees').map((degree, index) => degree + degreeCents[index])
-      )
+        degrees.map((degree, index) => degree + degreeCents[index]), degrees
+      )   
+      model.set('modify mode mos degree selected', degrees[0])
     }
       break
     case 'modify mode mos degree selected':
