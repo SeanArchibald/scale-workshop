@@ -11,10 +11,48 @@ import {
   isNOfEdo,
   isRatio,
   getLineType, 
-  trim 
-  } from './general.js'
+  trim,
+  debug,
+  tap
+} from './general.js'
 import { LINE_TYPE, SEMITONE_RATIO_IN_12_EDO } from '../constants.js'
-import { get_cf, get_convergent } from './sequences.js'
+import { getCF, getConvergent } from './sequences.js'
+import { model } from '../scaleworkshop.js'
+
+function getFloat(id, errorMessage) {
+  var value = parseFloat(jQuery(id).val());
+
+  if (isNaN(value) || value === 0) {
+    alert(errorMessage);
+    return false;
+  }
+
+  return value
+}
+
+function getString(id, errorMessage) {
+  var value = jQuery(id).val();
+
+  if (isEmpty(value) || isNil(value)) {
+    alert(errorMessage);
+    return false;
+  }
+
+  return value
+}
+
+function getLine(id, errorMessage) {
+  var value = jQuery(id).val();
+
+  if (isEmpty(value) || parseFloat(value) <= 0 || isNil(value) || getLineType(value) === LINE_TYPE.INVALID) {
+    alert(errorMessage);
+    return false;
+  }
+
+  return value
+}
+
+const toString = input => input + ''
 
 // convert a cents value to decimal
 function cents_to_decimal(rawInput) {
@@ -107,8 +145,8 @@ function decimal_to_ratio(rawInput, iterations=15, depth=0) {
   if (input === 0 || isNaN(input)) {
     return false;
   } else {
-    var inputcf = get_cf(input, iterations, 100000);
-    return get_convergent(inputcf, depth);
+    var inputcf = getCF(input, iterations, 100000);
+    return getConvergent(inputcf, depth);
   }
 }
 
@@ -168,6 +206,23 @@ function ftom(input) {
   return [midi_note_number, cents_offset];
 }
 
+// convert an array of step values into absolute degree values
+function stepsToDegrees(steps) {
+  let degrees = [0];
+  steps.forEach((step, index) => degrees.push(degrees[index] + step))
+  return degrees.splice(1);
+}
+
+// convert absolute degree values into an array of step values
+// if first degree is nonzero, doing degrees -> steps -> degrees will normalize the set
+// if degrees are a musical scale, the last note needs to be the period (or equivalency)
+function degreesToSteps(degrees) {
+  const degreesRooted = [0, ...degrees]
+  let steps = [];
+  degrees.forEach((degree, index) => steps.push(degree - degreesRooted[index]))
+  return steps;
+}
+
 // convert an input string into a filename-sanitized version
 // if input is empty, returns "tuning" as a fallback
 function sanitize_filename(input) {
@@ -186,42 +241,21 @@ function midi_note_number_to_name(input) {
   return name[remainder] + quotient;
 }
 
-function getFloat(id, errorMessage) {
-  var value = parseFloat(jQuery(id).val());
-
-  if (isNaN(value) || value === 0) {
-    alert(errorMessage);
-    return false;
-  }
-
-  return value
+function degreeModPeriod(degree) {
+  return degree.mod(model.get('tuning table').note_count - 1)
 }
 
-function getString(id, errorMessage) {
-  var value = jQuery(id).val();
-
-  if (isEmpty(value) || isNil(value)) {
-    alert(errorMessage);
-    return false;
-  }
-
-  return value
+function degreeModPeriodCents(degree) {
+  const tuningTable = model.get('tuning table');
+  return tuningTable.cents[degreeModPeriod(degree) + tuningTable.base_midi_note]
 }
 
-function getLine(id, errorMessage) {
-  var value = jQuery(id).val();
-
-  if (isEmpty(value) || parseFloat(value) <= 0 || isNil(value) || getLineType(value) === LINE_TYPE.INVALID) {
-    alert(errorMessage);
-    return false;
-  }
-
-  return value
-}
-
-const toString = input => input + ''
 
 export {
+  getFloat,
+  getString,
+  getLine,
+  toString,
   cents_to_decimal,
   ratio_to_decimal,
   commadecimal_to_decimal,
@@ -234,10 +268,10 @@ export {
   line_to_cents,
   mtof,
   ftom,
+  stepsToDegrees,
+  degreesToSteps,
   sanitize_filename,
   midi_note_number_to_name,
-  getFloat,
-  getString,
-  getLine,
-  toString
+  degreeModPeriod,
+  degreeModPeriodCents
 }

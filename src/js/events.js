@@ -16,20 +16,23 @@ import {
   decimal_to_cents,
   line_to_decimal,
   mtof,
-  midi_note_number_to_name
+  midi_note_number_to_name,
+  degreesToSteps,
+  stepsToDegrees
 } from './helpers/converters.js'
 import {
-  get_coprimes,
+  rotateArrayLeft,
+  rotateArrayRight,
+  getCF,
+  getConvergents,
+  getCoprimes,
   get_rank2_mode,
-  get_rational_approximations,
-  load_approximations
+  getRatioStructure
 } from './helpers/sequences.js'
 import {
-  approx_filter_prime_counter,
   set_key_colors,
   parse_tuning_data,
   parse_url,
-  current_approximations,
   clear_all,
   model,
   synth
@@ -38,7 +41,7 @@ import {
   import_scala_scl,
   import_anamark_tun
 } from './helpers/importers.js'
-import { rotate,  closestPrime } from './helpers/numbers.js'
+import { closestPrime } from './helpers/numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
 import { is_qwerty_active } from './synth.js'
 import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, NEWLINE_REGEX, LOCALSTORAGE_PREFIX } from './constants.js'
@@ -70,14 +73,14 @@ function show_modify_mode_mos_options(showOptions) {
 // repopulates the available degrees for selection
 function update_modify_mode_mos_generators() {
   const tuning_table = model.get('tuning table')
-  show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+  //show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
   let coprimes = get_coprimes(tuning_table.note_count-1);
-  jQuery("#modal_modify_mos_degree").empty();
+  //jQuery("#modal_modify_mos_degree").empty();
   for (let d=1; d < coprimes.length-1; d++) {
     var num = coprimes[d];
     var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
     var text = num + " (" + cents + "c)";
-    jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
+    //jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
   }
 }
 
@@ -88,7 +91,7 @@ function modify_mode_update_mos_scale() {
   var g = parseInt(jQuery("#modal_modify_mos_degree").val());
   var s = parseInt(jQuery("#modal_modify_mos_size").val());
   let mode = get_rank2_mode(p, g, s);
-  jQuery("#input_modify_mode").val(mode.join(" "));
+  //jQuery("#input_modify_mode").val(mode.join(" "));
 }
 
 function initEvents(){
@@ -230,10 +233,10 @@ function initEvents(){
   jQuery( "#modify_mode" ).click( function( event ) {
     event.preventDefault();
     // setup MOS options, and hide
-    update_modify_mode_mos_generators();
-    show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value);
-    jQuery( "#modal_modify_mos_degree").change(); // make sizes available
-    jQuery( "#input_modify_mode" ).select();
+    model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').note_count-1).slice(1))
+    //show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value);
+    jQuery("#modal_modify_mos_degree").change(); // make sizes available
+    jQuery("#input_modify_mode" ).select();
     openDialog("#modal_modify_mode", modify_mode)
   } );
 
@@ -261,22 +264,23 @@ function initEvents(){
   // approximate option clicked
   jQuery( "#modify_approximate" ).click( function( event ) {
     event.preventDefault();
-    trimSelf(); // TODO: trim self requires a parameter to apply trim to, otherwise this is just a NOP
+    const tuning_table = model.get('tuning table')
+    trimSelf("#txt_tuning_data")
 
-    jQuery( "#input_scale_degree" ).val(1);
-    jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 });
+    jQuery( "#input_scale_degree" ).val(1)
+    jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 })
 
-    jQuery( "#input_scale_degree" ).select();
-    jQuery( "#input_scale_degree" ).trigger("change");
+    jQuery( "#input_scale_degree" ).select()
+    jQuery( "#input_scale_degree" ).trigger("change")
 
     jQuery( "#modal_approximate_intervals" ).dialog({
       modal: true,
       buttons: {
         Apply: function() {
-          modify_replace_with_approximation();
+          modify_replace_with_approximation()
         },
         Close: function() {
-          jQuery( this ).dialog( 'close' );
+          jQuery( this ).dialog( 'close' )
         }
       }
     } );
@@ -284,18 +288,9 @@ function initEvents(){
 
   // calculate and list rational approximations within user parameters
   jQuery( "#input_interval_to_approximate" ).change( function() {
-    var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
-    current_approximations.convergent_indicies = [];
-    current_approximations.numerators = [];
-    current_approximations.denominators = [];
-    current_approximations.ratios = [];
-    current_approximations.numerator_limits = [];
-    current_approximations.denominator_limits = [];
-    current_approximations.ratio_limits = [];
-
-    load_approximations(interval);
-
-    modify_update_approximations();
+    var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() )
+    currentRatioStructure = getRatioStructure(interval)
+    modify_update_approximations()
   } );
 
   // recalculate approximations when scale degree changes
@@ -313,74 +308,75 @@ function initEvents(){
   // can be improved, but it's a bit tricky!
   jQuery( "#input_approx_min_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_min_prime").val());
-    var dif = num - PRIMES[approx_filter_prime_counter[0]];
+    var dif = num - PRIMES[approximationFilterPrimeCount[0]];
     if (Math.abs(dif) === 1) {
-      if (num < PRIMES[approx_filter_prime_counter[0]]) {
-        approx_filter_prime_counter[0]--;
+      if (num < PRIMES[approximationFilterPrimeCount[0]]) {
+        approximationFilterPrimeCount[0]--;
       } else {
-        approx_filter_prime_counter[0]++;
+        approximationFilterPrimeCount[0]++;
       }
     } else {
-      approx_filter_prime_counter[0] = PRIMES.indexOf(closestPrime(num));
+      approximationFilterPrimeCount[0] = PRIMES.indexOf(closestPrime(num));
     }
 
-    jQuery( "#input_approx_min_prime").val(PRIMES[approx_filter_prime_counter[0]]);
+    jQuery( "#input_approx_min_prime").val(PRIMES[approximationFilterPrimeCount[0]]);
     modify_update_approximations();
   } );
 
   // refilter approximations when prime limit changes
   jQuery( "#input_approx_max_prime" ).change( function() {
     var num = parseInt(jQuery( "#input_approx_max_prime").val());
-    var dif = num - PRIMES[approx_filter_prime_counter[1]];
+    var dif = num - PRIMES[approximationFilterPrimeCount[1]];
     if (Math.abs(dif) === 1) {
-      if (num < PRIMES[approx_filter_prime_counter[1]]) {
-        approx_filter_prime_counter[1]--;
+      if (num < PRIMES[approximationFilterPrimeCount[1]]) {
+        approximationFilterPrimeCount[1]--;
       } else {
-        approx_filter_prime_counter[1]++;
+        approximationFilterPrimeCount[1]++;
       }
     } else {
-      approx_filter_prime_counter[1] = PRIMES.indexOf(closestPrime(num));
+      approximationFilterPrimeCount[1] = PRIMES.indexOf(closestPrime(num));
     }
 
-    jQuery( "#input_approx_max_prime").val(PRIMES[approx_filter_prime_counter[1]]);
+    jQuery( "#input_approx_max_prime").val(PRIMES[approximationFilterPrimeCount[1]]);
     modify_update_approximations();
   } );
 
-  jQuery( "#modal_modify_mode").change( function() {
-    show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+  jQuery( "#modal_modify_mode").change( function(newValue) {
+    model.set('modify mode type', document.querySelector('input[name="mode_type"]:checked').value)
+    //show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
   } );
 
-  // update the available sizes for selection
-  jQuery( "#modal_modify_mos_degree").change( function() {
-    const tuning_table = model.get('tuning table')
-    let nn = [];
-    let dd = [];
-    var gp = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
-    get_rational_approximations(gp, nn, dd);
-    jQuery("#modal_modify_mos_size").empty();
-    for (let d=2; d < dd.length-1; d++) {
-      var num = dd[d];
-      jQuery("#modal_modify_mos_size").append('<option value="'+num+'">'+num+'</option>');
-    }
+  jQuery('#input_modify_mode').change(function(element) {
+    model.set('modify mode input', element.target.value.split(' '))
+  } )
+
+  jQuery( "#modal_modify_mos_degree").change( function(element) {
+    model.set('modify mode mos degree selected', parseInt(element.target.options[element.target.selectedIndex].text))
   } );
 
   // update mode when size is selected
-  jQuery( "#modal_modify_mos_size").change( function() {
-    modify_mode_update_mos_scale();
+  jQuery( "#modal_modify_mos_size").change( function(element) {
+    model.set('modify mode mos size selected', parseInt(element.target.options[element.target.selectedIndex].text))
   } );
 
   // move the mode steps back one
   jQuery( "#input_mode_step_left").click( function() {
-    var mode = jQuery( "#input_modify_mode" ).val().split(" ");
-    rotate(mode, -1);
-    jQuery( "#input_modify_mode" ).val(mode.join(" "));
+    let mode = jQuery( "#input_modify_mode" ).val().split(' ');
+    if (model.get('modify mode type') === 'frombase')
+      mode = stepsToDegrees(rotateArrayLeft(1, degreesToSteps(mode)))
+    else
+      mode = rotateArrayLeft(1, mode)
+    model.set('modify mode input', mode);
   } );
 
   // move the mode steps forward one
   jQuery( "#input_mode_step_right").click( function() {
-    var mode = jQuery( "#input_modify_mode" ).val().split(" ");
-    rotate(mode, 1);
-    jQuery( "#input_modify_mode" ).val(mode.join(" "));
+    let mode = jQuery( "#input_modify_mode" ).val().split(' ');
+    if (model.get('modify mode type') === 'frombase')
+      mode = stepsToDegrees(rotateArrayRight(1, degreesToSteps(mode)))
+    else
+      mode = rotateArrayRight(1, mode)
+    model.set('modify mode input', mode);
   } );
 
   /*

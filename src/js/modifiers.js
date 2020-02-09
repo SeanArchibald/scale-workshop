@@ -5,7 +5,6 @@
 /* global alert, jQuery */
 import {
   parse_tuning_data,
-  current_approximations,
   model
 } from './scaleworkshop.js'
 import {
@@ -367,9 +366,9 @@ function modify_replace_with_approximation () {
   const tuning_table = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
-  var degree_selected = parseInt(jQuery( "#input_scale_degree" ).val());
+  var degreeSelected = parseInt(jQuery( "#input_scale_degree" ).val());
 
-  if (degree_selected < tuning_table.note_count) {
+  if (degreeSelected < tuning_table.note_count) {
     var tuning_data = document.getElementById("txt_tuning_data");
     var lines = tuning_data.value.split(NEWLINE_REGEX);
 
@@ -377,24 +376,24 @@ function modify_replace_with_approximation () {
     var approximation = aprxs.options[aprxs.selectedIndex].text;
     approximation = approximation.slice(0, approximation.indexOf("|")).trim();
 
-    if (degree_selected - 1 < lines.length && line_to_decimal(approximation)) {
-      lines[degree_selected-1] = approximation;
+    if (degreeSelected - 1 < lines.length && line_to_decimal(approximation)) {
+      lines[degreeSelected-1] = approximation;
     } else {
       lines.push(approximation);
     }
 
-    var lines_to_text = "";
+    var linesToText = "";
     lines.forEach(function(item, index, array) {
-      lines_to_text += lines[index];
+      linesToText += lines[index];
       if (index + 1 < array.length) 
-        lines_to_text += newline;
+        linesToText += newline;
     } );
-    tuning_data.value = lines_to_text;
+    tuning_data.value = linesToText;
 
     parse_tuning_data();
 
-    if (degree_selected < tuning_table.note_count - 1) {
-      jQuery( "#input_scale_degree" ).val(degree_selected + 1);
+    if (degreeSelected < tuning_table.note_count - 1) {
+      jQuery( "#input_scale_degree" ).val(degreeSelected + 1);
       jQuery( "#input_scale_degree" ).trigger("change");
     }
     // success
@@ -409,7 +408,7 @@ function modify_replace_with_approximation () {
 function modify_update_approximations() {
   jQuery("#approximation_selection").empty();
 
-  if (!(isEmpty(current_approximations))) {
+  if (!(isEmpty(currentRatioStructure))) {
     var interval = line_to_decimal( jQuery ("#input_interval_to_approximate").val() );
     var mincentsd = parseFloat( jQuery ( "#input_min_error").val() );
     var maxcentsd = parseFloat( jQuery ( "#input_max_error").val() );
@@ -433,17 +432,19 @@ function modify_update_approximations() {
     if (maxcentsd < 0)
       maxcentsd = 0;
 
-    var menulength = (semiconvergents) ? current_approximations.ratios.length : current_approximations.convergent_indicies.length;
+    var menulength = (semiconvergents) ? currentRatioStructure.length : currentRatioStructure.cf.length;
     var index;
 
     for (let i = 0; i < menulength; i++) {
-      index = (semiconvergents) ? i : current_approximations.convergent_indicies[i];
+      index = (semiconvergents) ? i : currentRatioStructure.convergentIndicies[i];
+      if (index > currentRatioStructure.length)
+        break;
 
-      var n = parseInt(current_approximations.numerators[index]);
-      var d = parseInt(current_approximations.denominators[index]);
-      var prime_limit = current_approximations.ratio_limits[index];
+      var n = parseInt(currentRatioStructure.numerators[index]);
+      var d = parseInt(currentRatioStructure.denominators[index]);
+      var prime_limit = currentRatioPrimeLimits[index][0];
 
-      var fraction_str = current_approximations.ratios[index];
+      var fraction_str = currentRatioStructure.ratiosStrings[index];
       var fraction = n / d;
 
       var cents_deviation = decimal_to_cents(fraction) - decimal_to_cents(interval);

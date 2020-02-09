@@ -82,6 +82,10 @@ function getCoordsFromKey(tdOfKeyboard) {
   }
 }
 
+const roundToNDecimals = (decimals, number) => { 
+  return Math.round(number * 10 ** decimals) / 10 ** decimals;
+}
+
 // Runs the given function with the supplied value, then returns the value
 // This is a great tool for injecting debugging in the middle of expressions
 // Note: fn does not need to return the value, tap will handle that
@@ -190,6 +194,7 @@ export {
   isNil,
   trim,
   getCoordsFromKey,
+  roundToNDecimals,
   tap,
   getSearchParamOr,
   getSearchParamAsNumberOr,

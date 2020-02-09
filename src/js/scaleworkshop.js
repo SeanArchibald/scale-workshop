@@ -11,14 +11,17 @@ import {
   getSearchParamAsNumberOr,
   getLineType,
   isNil,
-  getNewlineSettingsFromBrowser
+  getNewlineSettingsFromBrowser,
+  roundToNDecimals
 } from './helpers/general.js'
 import {
   decimal_to_cents,
   line_to_decimal,
   sanitize_filename,
+  stepsToDegrees,
+  degreesToSteps,
+  degreeModPeriodCents
 } from './helpers/converters.js'
-import { show_mos_cf } from './helpers/sequences.js'
 import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE, WINDOWS_NEWLINE, NEWLINE_REGEX } from './constants.js'
 import {
   get_scale_url,
@@ -38,6 +41,7 @@ import MIDI from './helpers/MIDI.js'
 import { initUI } from './ui.js'
 import { initSynth } from './synth.js'
 import { initEvents } from './events.js'
+import { getValidMOSSizes, getCF, getConvergents, getCoprimes, get_rank2_mode } from './helpers/sequences.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
@@ -66,7 +70,35 @@ const model = new Model({
     base_midi_note: 69,  // init val
     description: "",
     filename: ""
-  }
+  },
+  'staged ET period': 2,
+  'staged ET divisions': 5,
+  'staged ET cents threshold': 2.5,
+  'staged rank-2 period': 2,
+  'staged rank-2 generator': 1.5,
+  'staged rank-2 size' : 7,
+  'staged rank-2 generators down': 1,
+  'staged rank-2 MOS sizes' : [0],
+  'staged rank-2 structure': null,
+  'modify mode type': 'intervals',
+  'modify mode type previous': 'intervals',
+  'modify mode mos degrees': [2, 3],
+  'modify mode mos sizes': [2],
+  'modify mode mos degree selected': 2,
+  'modify mode mos size selected': 2,
+  'modify mode input': "",
+  'modify mode mos structure': null,
+  'modify approx degree': 1,
+  'modify approx min error': 0.0,
+  'modify approx max error': 15.0,
+  'modify approx min prime': 2,
+  'modify approx max prime': 31,
+  'modify approx convergents': false,
+  'modify approx selections': false,
+  'modify approx selection id': 0,
+  'modify approx ratio structure': null,
+  'modify approx ratio limits': null,
+  'modify approx prime counters': [0, 10]
 })
 
 // data changed, handle programmatic reaction - no jQuery
@@ -80,6 +112,43 @@ model.on('change', (key, newValue) => {
       localStorage.setItem(`${LOCALSTORAGE_PREFIX}newline`, newValue)
       console.log('line ending changed to', newValue)
       break
+    case 'staged rank-2 period':
+      break
+    case 'staged rank-2 generator':
+      break
+    case 'modify mode type':
+      if (model.get('modify mode type previous') === 'frombase')
+        model.set('modify mode input', degreesToSteps(model.get('modify mode input').map(x => parseInt(x))))
+      else if (newValue === 'frombase')
+        model.set('modify mode input', stepsToDegrees(model.get('modify mode input').map(x => parseInt(x))))
+      model.set('modify mode type previous', newValue)
+      break
+    case 'modify mode mos degree':
+      break
+    case 'modify mode mos degree selected':
+     model.set('modify mode mos sizes', getConvergents(getCF(
+       newValue/(model.get('tuning table').note_count-1))).slice(2).reverse().slice(1).reverse()
+       // is that discouraged?
+     )
+      break 
+    case 'modify mode mos size selected':
+      model.set('modify mode input', get_rank2_mode(
+        model.get('tuning table').note_count-1, 
+        model.get('modify mode mos degree selected'), newValue)
+      )
+      break
+    case 'modify approx degree':
+      break
+    case 'modify approx min error':
+      break
+    case 'modify approx max error':
+      break
+    case 'modify approx min prime':
+      break
+    case 'modify approx max prime': 
+      break
+    case 'modify approx convergents': 
+      break
   }
 })
 
@@ -91,6 +160,39 @@ model.on('change', (key, newValue) => {
       break
     case 'newline':
       jQuery('#input_select_newlines').val(newValue)
+      break
+    case 'staged rank-2 sizes':
+      jQuery('#info_rank_2_mos').val(newValue.join(", "))
+      break
+    case 'modify mode type':
+      document.getElementById("mos_mode_options").style.display = newValue === "mos" ?  'block' : 'none'
+      break
+    case 'modify mode mos degrees': {
+      const degreeCents = model.get('modify mode mos degrees').map( degree => 
+         ' (' + roundToNDecimals(6, degreeModPeriodCents(degree)) + 'c)'
+      )
+      setDropdownOptions('#modal_modify_mos_degree', 
+        model.get('modify mode mos degrees').map((degree, index) => degree + degreeCents[index])
+      )
+    }
+      break
+    case 'modify mode mos degree selected':
+      setDropdownOptions('#modal_modify_mos_size', model.get('modify mode mos sizes'))
+      break
+    case 'modify mode input':
+      jQuery('#input_modify_mode').val(model.get('modify mode input').join(' '))
+      break
+    case 'modify approx degree':
+      break
+    case 'modify approx min error':
+      break
+    case 'modify approx max error':
+      break
+    case 'modify approx min prime':
+      break
+    case 'modify approx max prime': 
+      break
+    case 'modify approx convergents': 
       break
   }
 })
@@ -156,22 +258,25 @@ function clear_all() {
   })
 }
 
+function setDropdownOptions(element, optionsText, optionsValue=[], otherTags=[], clearExistingOptions=true) {
+  if (clearExistingOptions) {
+    jQuery(element).empty()
+  }
+
+  optionsText.forEach(function(option, index, textArray) {
+    let injection = optionsValue ? optionsValue[index] : option
+    injection += '\" ' + otherTags[index];
+    jQuery(element).append('<option value="' + injection + '>'+option+"</option>");
+  })
+}
+
 // DOM changed, need to sync it with model
 jQuery('#input_range_main_vol').on('input', function() {
   model.set('main volume', parseFloat(jQuery(this).val()))
 });
 
 var key_colors = [ "white", "black", "white", "white", "black", "white", "black", "white", "white", "black", "white", "black" ];
-var current_approximations = {
-    convergent_indicies: [], // indicies of the convergent ratios
-    numerators: [], // numerators of approximations
-    denominators: [], // denominators of approximations
-    ratios: [], // the ratios combined
-    numerator_limits: [], // the prime limit of each numerator
-    denominator_limits: [], // the prime limit of each denominator
-    ratio_limits: [] // the prime limit of each ratio
-}
-var approx_filter_prime_counter = [0, 10];
+
 var debug_enabled = true;
 
 // take a tuning, do loads of calculations, then output the data to tuning_table
@@ -654,11 +759,12 @@ jQuery('#scala-file').on('change', parse_imported_scala_scl)
 jQuery('#anamark-tun-file').on('change', parse_imported_anamark_tun)
 
 jQuery('#show-mos').on('click', () => {
-  show_mos_cf(
-    jQuery('#input_rank-2_period').val(),
-    jQuery('#input_rank-2_generator').val(),
-    jQuery('#input_rank-2_size').val(),
-    jQuery('#input_rank-2_mos_threshold').val()
+  model.set("staged rank-2 sizes",
+    getValidMOSSizes(
+      line_to_decimal(jQuery('#input_rank-2_period').val()),
+      line_to_decimal(jQuery('#input_rank-2_generator').val()),
+      parseFloat(jQuery('#input_rank-2_mos_threshold').val())
+    )
   )
 })
 
@@ -671,9 +777,7 @@ jQuery(() => {
 export {
   key_colors,
   parse_tuning_data,
-  current_approximations,
   debug_enabled,
-  approx_filter_prime_counter,
   set_key_colors,
   parse_url,
   clear_all,

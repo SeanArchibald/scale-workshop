@@ -19,7 +19,7 @@ import{
   getString,
   getLine
 } from './helpers/converters.js'
-import { invert_chord } from './helpers/numbers.js'
+import { invertChord } from './helpers/numbers.js'
 import { UNIX_NEWLINE } from './constants.js'
 import { parse_tuning_data } from './scaleworkshop.js'
 
@@ -291,7 +291,7 @@ function generate_enumerate_chord() {
 
   if (isInversion) {
     debug("This is an inversion. Chord is " + chord);
-    chord = invert_chord(chord);
+    chord = invertChord(chord);
     debug("Chord returned: " + chord);
     chordStr += (" (" + chord + ") ");
     debug("str = " + chordStr);
