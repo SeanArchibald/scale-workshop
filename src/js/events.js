@@ -10,11 +10,9 @@ import {
   openDialog,
   trimSelf,
   isLocalStorageAvailable,
-  isRunningOnWindows,
-  isTuningDataAvailable
+  tuningDataIsAvailable
 } from './helpers/general.js'
 import {
-  decimal_to_cents,
   line_to_decimal,
   mtof,
   midi_note_number_to_name,
@@ -24,11 +22,7 @@ import {
 import {
   rotateArrayLeft,
   rotateArrayRight,
-  getCF,
-  getConvergents,
   getCoprimes,
-  get_rank2_mode,
-  getRatioStructure
 } from './helpers/sequences.js'
 import {
   set_key_colors,
@@ -202,8 +196,8 @@ function initEvents(){
 
   // modify_mode option clicked
   jQuery( "#modify_mode" ).click( function( event ) {
-    if (isTuningDataAvailable(true, "No tuning data to modify.")) {
-      event.preventDefault();
+    event.preventDefault();
+    if (tuningDataIsAvailable(true, "No tuning data to modify.")) {
       const modeType = document.querySelector('input[name="mode_type"]:checked').value
       model.set('modify mode type', modeType)
       model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').note_count - 1).slice(1))

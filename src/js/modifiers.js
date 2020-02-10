@@ -13,7 +13,7 @@ import {
   debug,
   trim,
   getLineType,
-  isTuningDataAvailable
+  tuningDataIsAvailable
 } from './helpers/general.js'
 import {
   ratio_to_cents,
@@ -26,7 +26,7 @@ import { PRIMES, UNIX_NEWLINE, NEWLINE_REGEX, WINDOWS_NEWLINE } from './constant
 // stretch/compress tuning
 function modify_stretch() {
 
-  isTuningDataAvailable(true, "No tuning data to modify.")
+  tuningDataIsAvailable(true, "No tuning data to modify.")
 
   // var octave_size; // (pseudo)octave size in cents
   // var stretch_size; // size of new pseudo-octave after stretching
@@ -70,7 +70,7 @@ function modify_stretch() {
 // random variance
 function modify_random_variance() {
 
-  isTuningDataAvailable(true, "No tuning data to modify.")
+  tuningDataIsAvailable(true, "No tuning data to modify.")
 
   var cents_max_variance = parseFloat( jQuery( "#input_cents_max_variance" ).val() ); // maximum amount of variance in cents
   var vary_period = document.getElementById( "input_checkbox_vary_period" ).checked;
@@ -219,7 +219,7 @@ function modify_mode() {
 // sync beating
 function modify_sync_beating() {
 
-  isTuningDataAvailable(true, "No tuning data to modify.")
+  tuningDataIsAvailable(true, "No tuning data to modify.")
 
 
   if ( isEmpty( jQuery( "#input_modify_sync_beating_bpm" ).val() ) ) {

@@ -66,7 +66,7 @@ function setTuningData(tuning) {
   jQuery("#txt_tuning_data").val(tuning)
 }
 
-function isTuningDataAvailable(alertIfNot=false, alertMsg="No tuning data.") {
+function tuningDataIsAvailable(alertIfNot=false, alertMsg="No tuning data.") {
   trimSelf("#txt_tuning_data")
   if (isEmpty(jQuery("#txt_tuning_data").val())) {
     if (alertIfNot) 
@@ -199,7 +199,7 @@ export {
   setScaleName,
   closePopup,
   setTuningData,
-  isTuningDataAvailable,
+  tuningDataIsAvailable,
   isEmpty,
   isFunction,
   isNil,

@@ -91,8 +91,8 @@ const model = new Model({
   'modify mode type previous': 'intervals',
   'modify mode mos degrees': [],
   'modify mode mos sizes': [],
-  'modify mode mos degree selected': 2,
-  'modify mode mos size selected': 2,
+  'modify mode mos degree selected': 0,
+  'modify mode mos size selected': 0,
   'modify mode input': [],
   'modify mode mos structure': null,
   'modify approx degree': 1,
@@ -130,7 +130,12 @@ model.on('change', (key, newValue) => {
         model.set('modify mode input', stepsToDegrees(model.get('modify mode input').map(x => parseInt(x))))
       model.set('modify mode type previous', newValue)
       break
+    case 'modify mode mos degrees':
+      console.log("Setting mos degree to: " + newValue[0])
+      model.set('modify mode mos degree selected', newValue[0])
+      break
     case 'modify mode mos degree selected': {
+      console.log("Recalculating sizes")
       let sizes = getConvergents(getCF(newValue/(model.get('tuning table').note_count-1)))
       model.set('modify mode mos sizes', sizes.slice(2, sizes.length-1))
     }
@@ -138,8 +143,8 @@ model.on('change', (key, newValue) => {
     case 'modify mode mos size selected':
       model.set('modify mode input', get_rank2_mode(
         model.get('tuning table').note_count-1, 
-        model.get('modify mode mos degree selected'), newValue)
-      )
+        model.get('modify mode mos degree selected'), newValue
+      ))
       break
     case 'modify approx degree':
       model.set('modify approx interval', model.get('tuning table').scale_data[newValue])
@@ -174,10 +179,10 @@ model.on('change', (key, newValue) => {
       setDropdownOptions('#modal_modify_mos_degree', 
         newValue.map((degree, index) => degree + degreeCents[index]), newValue
       )   
-      model.set('modify mode mos degree selected', newValue[0])
     }
       break
     case 'modify mode mos degree selected':
+      console.log("Repopulating sizes with", model.get('modify mode mos sizes'))
       setDropdownOptions('#modal_modify_mos_size', model.get('modify mode mos sizes'))
       break
     case 'modify mode input':
