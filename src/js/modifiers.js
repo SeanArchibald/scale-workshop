@@ -13,7 +13,8 @@ import {
   debug,
   trim,
   getLineType,
-  tuningDataIsAvailable
+  tuningDataIsAvailable,
+  isRatio
 } from './helpers/general.js'
 import {
   ratio_to_cents,
@@ -326,18 +327,15 @@ function modify_key_transpose() {
 
 // approximate rationals
 function modify_replace_with_approximation () {
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
-  var degreeSelected = parseInt(jQuery( "#input_scale_degree" ).val());
+  const degreeSelected = model.get('modify approx degree')
+  const approximation = model.get('modify approx approximation')
 
-  if (degreeSelected < tuning_table.note_count) {
-    var tuning_data = document.getElementById("txt_tuning_data");
-    var lines = tuning_data.value.split(NEWLINE_REGEX);
-
-    var aprxs = document.getElementById("approximation_selection");
-    var approximation = aprxs.options[aprxs.selectedIndex].text;
-    approximation = approximation.slice(0, approximation.indexOf("|")).trim();
+  if (degreeSelected < tuningTable.note_count && isRatio(approximation)) {
+    var tuningTextData = jQuery('#txt_tuning_data')[0]
+    var lines = tuningTextData.value.split(NEWLINE_REGEX)
 
     if (degreeSelected - 1 < lines.length && line_to_decimal(approximation)) {
       lines[degreeSelected-1] = approximation;
@@ -345,19 +343,21 @@ function modify_replace_with_approximation () {
       lines.push(approximation);
     }
 
+    // rebuild tuning with replaced value
     var linesToText = "";
     lines.forEach(function(item, index, array) {
       linesToText += lines[index];
       if (index + 1 < array.length) 
         linesToText += newline;
     } );
-    tuning_data.value = linesToText;
+    tuningTextData.value = linesToText;
 
     parse_tuning_data();
 
-    if (degreeSelected < tuning_table.note_count - 1) {
-      jQuery( "#input_scale_degree" ).val(degreeSelected + 1);
-      jQuery( "#input_scale_degree" ).trigger("change");
+    if (degreeSelected < tuningTable.note_count - 1) {
+      model.set('modify approx degree', degreeSelected + 1)
+      //jQuery( "#input_scale_degree" ).val(degreeSelected + 1);
+      //jQuery( "#input_scale_degree" ).trigger("change");
     }
     // success
     return true;

@@ -17,6 +17,7 @@ import {
 import {
   decimal_to_cents,
   line_to_decimal,
+  line_to_cents,
   sanitize_filename,
   stepsToDegrees,
   degreesToSteps,
@@ -102,10 +103,9 @@ const model = new Model({
   'modify approx min prime': 0,
   'modify approx max prime': 10,
   'modify approx convergents': false,
-  'modify approx selections': false,
-  'modify approx selection id': 0,
   'modify approx ratio structure': null,
-  'modify approx ratio limits': null
+  'modify approx ratio limits': null,
+  'modify approx approximation': 0
 })
 
 // data changed, handle programmatic reaction - no jQuery
@@ -131,11 +131,9 @@ model.on('change', (key, newValue) => {
       model.set('modify mode type previous', newValue)
       break
     case 'modify mode mos degrees':
-      console.log("Setting mos degree to: " + newValue[0])
       model.set('modify mode mos degree selected', newValue[0])
       break
     case 'modify mode mos degree selected': {
-      console.log("Recalculating sizes")
       let sizes = getConvergents(getCF(newValue/(model.get('tuning table').note_count-1)))
       model.set('modify mode mos sizes', sizes.slice(2, sizes.length-1))
     }
@@ -182,7 +180,6 @@ model.on('change', (key, newValue) => {
     }
       break
     case 'modify mode mos degree selected':
-      console.log("Repopulating sizes with", model.get('modify mode mos sizes'))
       setDropdownOptions('#modal_modify_mos_size', model.get('modify mode mos sizes'))
       break
     case 'modify mode input':
@@ -361,10 +358,6 @@ function updateApproximationOptions() {
   let descriptions = []
   let values = []
   let tags = []
-  console.log(ratioLimits)
-  console.log("SIZE: " + ratioLimits.length)
-  console.log("menulength = "+ menulength)
-  console.log("Convergent indicies: " + ratioStructure.convergentIndicies)
 
   let index = 0
   for (let i = 0; i < menulength; i++) {
@@ -375,9 +368,9 @@ function updateApproximationOptions() {
     var limit = ratioLimits[index][0]
 
     var ratioString = ratioStructure.ratioStrings[index]
-    var decimal = ratioStructure.rationals[index]
+    var decimal = ratioStructure.rationals[index] 
 
-    var centsDelta = decimal_to_cents(decimal - interval);
+    var centsDelta = decimal_to_cents(decimal/line_to_decimal(interval));
     var centsDeltaAbs = Math.abs(centsDelta);
     var centsRounded = roundToNDecimals(6, centsDelta);
 
@@ -386,6 +379,7 @@ function updateApproximationOptions() {
       centsSign = "+";
 
     var description = ratioString + " | " + centsSign + centsRounded.toString() + "c | " + limit + "-limit";
+    
 
     if (!interval) {
       tags.push("selected disabled");
@@ -396,12 +390,12 @@ function updateApproximationOptions() {
       values.push(ratioString)
       break;
     } else if ((centsDeltaAbs >= minCentsError && centsDeltaAbs <= maxCentsError) && (limit >= minPrimeLimit && limit <= maxPrimeLimit)) {
-      descriptions.push(descriptions)
+      descriptions.push(description)
       values.push(ratioString)
     }
   }
 
-  console.log("last index = " + index)
+  // console.log("last index = " + index)
 
   if (descriptions.length === 0) {
     semiconvergents ?
@@ -409,8 +403,9 @@ function updateApproximationOptions() {
       descriptions.push("Try to  \"Show next best approximations\" or edit filters.")
     tags.push("selected disabled");
   }
-
+  
   setDropdownOptions('#approximation_selection', descriptions, values, tags)
+  model.set('modify approx approximation', jQuery('#approximation_selection')[0].options[0].value)
 }
 
 function parse_url() {

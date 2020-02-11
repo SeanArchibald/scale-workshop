@@ -200,6 +200,7 @@ function initEvents(){
     if (tuningDataIsAvailable(true, "No tuning data to modify.")) {
       const modeType = document.querySelector('input[name="mode_type"]:checked').value
       model.set('modify mode type', modeType)
+      model.set('modify mode mos degree selected', 0) // reset values
       model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').note_count - 1).slice(1))
       document.getElementById("mos_mode_options").style.display = modeType === 'mos' ? 'block' : 'none'
       jQuery("#input_modify_mode" ).select();
@@ -231,10 +232,11 @@ function initEvents(){
   jQuery( "#modify_approximate" ).click( function( event ) {
     event.preventDefault();
     trimSelf("#txt_tuning_data")
-    const tuningTable = model.get('tuning table')
     const inputScaleDegree = jQuery("#input_scale_degree")
-    inputScaleDegree.attr({ "min" : 1, "max" : tuningTable.note_count - 1 })
-    inputScaleDegree.val(0).change().val(1).change().select() // force update
+    model.set('modify approx degree', 0) // force update
+    inputScaleDegree.attr({ "min" : 1, "max" : model.get('tuning table').note_count - 1 })
+    model.set('modify approx degree', 1)
+    inputScaleDegree.select()
     openDialog("#modal_approximate_intervals", modify_replace_with_approximation)
   } )
 
@@ -245,10 +247,13 @@ function initEvents(){
 
   // recalculate approximations when scale degree changes
   jQuery( "#input_scale_degree").change( function() {
-    trimSelf("#txt_tuning_data");
     var index = parseInt(jQuery('#input_scale_degree').val());
     model.set('modify approx degree', index)
   } );
+
+  jQuery('#approximation_selection').change(function(element) {
+    model.set('modify approx approximation', element.target.options[element.target.selectedIndex].value)
+  })
 
   // refilter approximations when fields change
   jQuery('#input_min_error').change(function() {
