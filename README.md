@@ -1,6 +1,6 @@
 # Scale Workshop
 
-![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/assets/img/scale-workshop-og-image.png)
+![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/src/assets/img/scale-workshop-og-image.png)
 
 
 ## Description
@@ -90,7 +90,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 ### 1.0.4
 * New feature: 'Approximate' method for modifying scales can produce rational approximations of your scale
 * Improvement: Enumerate Chord method of scale generation now allows for inverted chords (e.g. 4:5:6 inverted would give 10:12:15)
-* Improvement: site now automatically redirects to HTTPS
+* Improvement: site now automatically redirects to HTTPS on domains known to have valid HTTPS
 * Bug fix: changing the main volume before pressing the first note no longer gets ignored
 * Bug fix: exported TUN files now has a correct functional tuning section (https://github.com/SeanArchibald/scale-workshop/issues/82)
 
