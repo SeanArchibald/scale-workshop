@@ -54,8 +54,8 @@ class Synth {
   }
 
   noteOn (midinote, velocity = 127) {
-    const tuning_table = model.get('tuning table')
-    const frequency = tuning_table.freq[midinote]
+    const tuningTable = model.get('tuning table')
+    const frequency = tuningTable.freq[midinote]
 
     if (!isNil(frequency)) {
       // make sure note triggers only on first input (prevent duplicate notes)

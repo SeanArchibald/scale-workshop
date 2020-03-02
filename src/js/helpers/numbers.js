@@ -6,16 +6,13 @@
 import { PRIMES } from '../constants.js'
 import { getPrimeFactors } from './sequences.js'
 
-// modulo function
-Number.prototype.mod = function (n) {
-  return ((this % n) + n) % n
+function mathModulo (number, modulo) {
+  return ((number % modulo) + modulo) % modulo
 }
 
 // calculate the sum of the values in a given array given a stopping index
 function sumOfArray (array) {
-  var sum = 0
-  array.forEach(x => sum += x)
-  return sum
+  return array.reduce((sum, x) => sum + x, 0)
 }
 
 function isPrime (number) {
@@ -171,6 +168,7 @@ function invertChord (chordString) {
 }
 
 export {
+  mathModulo,
   sumOfArray,
   isPrime,
   nextPrime,

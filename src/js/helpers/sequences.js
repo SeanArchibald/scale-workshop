@@ -2,17 +2,17 @@
  * SEQUENCING GENERATING FUNCTIONS
  */
 
-/* global jQuery */
+/* global alert */
 import { PRIMES } from '../constants.js'
-import { getPrimesOfRatio } from './numbers.js'
-import { stepsToDegrees, decimal_to_cents } from './converters.js'
+import { getPrimesOfRatio, mathModulo } from './numbers.js'
+import { stepsToDegrees, decimalToCents } from './converters.js'
 
 // returns a version of the given array rotated left by a given amount
 function rotateArrayLeft (steps, array) {
   const out = []
   var i = 0
   while (i < array.length) {
-    out.push(array[(i + steps).mod(array.length)])
+    out.push(array[mathModulo(i + steps, array.length)])
     i++
   }
   return out
@@ -23,7 +23,7 @@ function rotateArrayRight (steps, array) {
   const out = []
   var i = 0
   while (i < array.length) {
-    out.push(array[(i - steps).mod(array.length)])
+    out.push(array[mathModulo(i - steps, array.length)])
     i++
   }
   return out
@@ -198,7 +198,7 @@ function ratioGenerate (array, maxPeriod = 500, underOne = false, seed = [1, 1])
   const r1 = [seed[0] + seed[1], seed[1]]
   var r
 
-  if (seed[0] - seed[1] != 0 || !underOne) {
+  if (seed[0] - seed[1] !== 0 || !underOne) {
     r = ratioGenerate(array, maxPeriod, underOne, r1)
     if (r[0] / r[1] > 1) {
       r = [r[1], r[0]]
@@ -239,8 +239,8 @@ function getValidMOSSizes (periodDecimal, generatorDecimal, minCents = 2.5, maxS
   denominators = getConvergents(cf, numerators, maxSize, convergentIndicies)
 
   // filter by step size threshold
-  var gc = decimal_to_cents(generatorDecimal)
-  var pc = decimal_to_cents(periodDecimal)
+  var gc = decimalToCents(generatorDecimal)
+  var pc = decimalToCents(periodDecimal)
   var L = pc + gc // Large step
   var s = pc // small step
   var c = gc // chroma (L - s)
@@ -275,7 +275,7 @@ function getValidMOSSizes (periodDecimal, generatorDecimal, minCents = 2.5, maxS
 
 // rank2 scale algorithm intended for integers, in ET contexts
 // for example, period = 12, gen = 7 : [ 2 2 1 2 2 2 1 ]
-function get_rank2_mode (period, generator, size, numdown = 0) {
+function getRank2Mode (period, generator, size, numdown = 0) {
   const degrees = []
   const modeOut = []
   var interval
@@ -370,7 +370,7 @@ export {
   getRatioStructurePrimeLimits,
   getValidMOSSizes,
   ratioGenerate,
-  get_rank2_mode,
+  getRank2Mode,
   getPrimeFactors,
   getCoprimes
 }

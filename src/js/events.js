@@ -13,10 +13,10 @@ import {
   isRunningOnWindows
 } from './helpers/general.js'
 import {
-  decimal_to_cents,
-  line_to_decimal,
+  decimalToCents,
+  lineToDecimal,
   mtof,
-  midi_note_number_to_name,
+  midiNoteNumberToName,
   degreesToSteps,
   stepsToDegrees
 } from './helpers/converters.js'
@@ -26,7 +26,7 @@ import {
   getCF,
   getConvergents,
   getCoprimes,
-  get_rank2_mode,
+  getRank2Mode,
   getRatioStructure
 } from './helpers/sequences.js'
 import {
@@ -38,8 +38,8 @@ import {
   synth
 } from './scaleworkshop.js'
 import {
-  import_scala_scl,
-  import_anamark_tun
+  importScalaScl,
+  importAnamarkTun
 } from './helpers/importers.js'
 import { closestPrime } from './helpers/numbers.js'
 import { touch_kbd_open, touch_kbd_close } from './ui.js'
@@ -72,13 +72,13 @@ function show_modify_mode_mos_options (showOptions) {
 
 // repopulates the available degrees for selection
 function update_modify_mode_mos_generators () {
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   // show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
-  const coprimes = get_coprimes(tuning_table.note_count - 1)
+  const coprimes = get_coprimes(tuningTable.note_count - 1)
   // jQuery("#modal_modify_mos_degree").empty();
   for (let d = 1; d < coprimes.length - 1; d++) {
     var num = coprimes[d]
-    var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6
+    var cents = Math.round(decimalToCents(tuningTable.tuning_data[num]) * 10e6) / 10.0e6
     var text = num + ' (' + cents + 'c)'
     // jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
   }
@@ -86,11 +86,11 @@ function update_modify_mode_mos_generators () {
 
 // calculate the MOS mode and insert it in the mode input box
 function modify_mode_update_mos_scale () {
-  const tuning_table = model.get('tuning table')
-  var p = tuning_table.note_count - 1
+  const tuningTable = model.get('tuning table')
+  var p = tuningTable.note_count - 1
   var g = parseInt(jQuery('#modal_modify_mos_degree').val())
   var s = parseInt(jQuery('#modal_modify_mos_size').val())
-  const mode = get_rank2_mode(p, g, s)
+  const mode = getRank2Mode(p, g, s)
   // jQuery("#input_modify_mode").val(mode.join(" "));
 }
 
@@ -118,7 +118,7 @@ function initEvents () {
   // base MIDI note changed
   jQuery('#txt_base_midi_note').change(function () {
     // update MIDI note name
-    jQuery('#base_midi_note_name').text(midi_note_number_to_name(jQuery('#txt_base_midi_note').val()))
+    jQuery('#base_midi_note_name').text(midiNoteNumberToName(jQuery('#txt_base_midi_note').val()))
   })
 
   // clear button clicked
@@ -142,13 +142,13 @@ function initEvents () {
   // import scala option clicked
   jQuery('#import-scala-scl').click(function (event) {
     event.preventDefault()
-    import_scala_scl()
+    importScalaScl()
   })
 
   // import anamark tun option clicked
   jQuery('#import-anamark-tun').click(function (event) {
     event.preventDefault()
-    import_anamark_tun()
+    importAnamarkTun()
   })
 
   // generate_equal_temperament option clicked
@@ -255,11 +255,11 @@ function initEvents () {
   // approximate option clicked
   jQuery('#modify_approximate').click(function (event) {
     event.preventDefault()
-    const tuning_table = model.get('tuning table')
+    const tuningTable = model.get('tuning table')
     trimSelf('#txt_tuning_data')
 
     jQuery('#input_scale_degree').val(1)
-    jQuery('#input_scale_degree').attr({ min: 1, max: tuning_table.note_count - 1 })
+    jQuery('#input_scale_degree').attr({ min: 1, max: tuningTable.note_count - 1 })
 
     jQuery('#input_scale_degree').select()
     jQuery('#input_scale_degree').trigger('change')
@@ -279,7 +279,7 @@ function initEvents () {
 
   // calculate and list rational approximations within user parameters
   jQuery('#input_interval_to_approximate').change(function () {
-    var interval = line_to_decimal(jQuery('#input_interval_to_approximate').val())
+    var interval = lineToDecimal(jQuery('#input_interval_to_approximate').val())
     currentRatioStructure = getRatioStructure(interval)
     modify_update_approximations()
   })
@@ -502,8 +502,8 @@ function initEvents () {
   // Isomorphic Settings - Key colors Auto button clicked
   jQuery('#btn_key_colors_auto').click(function (event) {
     event.preventDefault()
-    const tuning_table = model.get('tuning table')
-    var size = tuning_table.note_count - 1
+    const tuningTable = model.get('tuning table')
+    var size = tuningTable.note_count - 1
     var colors = ''
 
     // fall back in some situations

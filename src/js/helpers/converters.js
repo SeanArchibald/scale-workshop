@@ -11,13 +11,12 @@ import {
   isNOfEdo,
   isRatio,
   getLineType,
-  trim,
-  debug,
-  tap
+  trim
 } from './general.js'
 import { LINE_TYPE, SEMITONE_RATIO_IN_12_EDO } from '../constants.js'
 import { getCF, getConvergent } from './sequences.js'
 import { model } from '../scaleworkshop.js'
+import { mathModulo } from './numbers.js'
 
 function getFloat (id, errorMessage) {
   var value = parseFloat(jQuery(id).val())
@@ -55,13 +54,13 @@ function getLine (id, errorMessage) {
 const toString = input => input + ''
 
 // convert a cents value to decimal
-function cents_to_decimal (rawInput) {
+function centsToDecimal (rawInput) {
   const input = trim(toString(rawInput))
   return Math.pow(2, (parseFloat(input) / 1200.0))
 }
 
 // convert a ratio (string 'x/y') to decimal
-function ratio_to_decimal (rawInput) {
+function ratioToDecimal (rawInput) {
   if (isRatio(rawInput)) {
     const input = trim(toString(rawInput))
     const [val1, val2] = input.split('/')
@@ -73,7 +72,7 @@ function ratio_to_decimal (rawInput) {
 }
 
 // convert a comma decimal (1,25) to decimal
-function commadecimal_to_decimal (rawInput) {
+function commadecimalToDecimal (rawInput) {
   if (isCommaDecimal(rawInput)) {
     const input = parseFloat(rawInput.toString().replace(',', '.'))
     if (input === 0 || isNaN(input)) {
@@ -101,7 +100,7 @@ function decimal_to_commadecimal(rawInput) {
 */
 
 // convert a decimal into cents
-function decimal_to_cents (rawInput) {
+function decimalToCents (rawInput) {
   if (rawInput === false) {
     return false
   }
@@ -114,12 +113,12 @@ function decimal_to_cents (rawInput) {
 }
 
 // convert a ratio to cents
-function ratio_to_cents (rawInput) {
-  return decimal_to_cents(ratio_to_decimal(rawInput))
+function ratioToCents (rawInput) {
+  return decimalToCents(ratioToDecimal(rawInput))
 }
 
 // convert an n-of-m-edo (string 'x\y') to decimal
-function n_of_edo_to_decimal (rawInput) {
+function nOfEdoToDecimal (rawInput) {
   if (isNOfEdo(rawInput)) {
     const input = trim(toString(rawInput))
     const [val1, val2] = input.split('\\').map(x => parseInt(x))
@@ -131,12 +130,12 @@ function n_of_edo_to_decimal (rawInput) {
 }
 
 // convert an n-of-m-edo (string 'x\y') to cents
-function n_of_edo_to_cents (rawInput) {
-  return decimal_to_cents(n_of_edo_to_decimal(rawInput))
+function nOfEdoToCents (rawInput) {
+  return decimalToCents(nOfEdoToDecimal(rawInput))
 }
 
 // convert a decimal to ratio (string 'x/y'), may have rounding errors for irrationals
-function decimal_to_ratio (rawInput, iterations = 15, depth = 0) {
+function decimalToRatio (rawInput, iterations = 15, depth = 0) {
   if (rawInput === false) { return false }
 
   const input = parseFloat(rawInput)
@@ -150,33 +149,33 @@ function decimal_to_ratio (rawInput, iterations = 15, depth = 0) {
 }
 
 /*
-function cents_to_ratio(rawInput, iterations=15, depth=0) {
-  return decimal_to_ratio(cents_to_decimal(rawInput), iterations, depth);
+function centsToRatio(rawInput, iterations=15, depth=0) {
+  return decimalToRatio(centsToDecimal(rawInput), iterations, depth);
 }
 */
 
 /*
-function n_of_edo_to_ratio(rawInput, iterations=15, depth=0) {
-  return decimal_to_ratio(n_of_edo_to_decimal(rawInput), iterations, depth);
+function nOfEdoToRatio(rawInput, iterations=15, depth=0) {
+  return decimalToRatio(nOfEdoToDecimal(rawInput), iterations, depth);
 }
 */
 
 // convert any input 'line' to decimal
-function line_to_decimal (rawInput) {
+function lineToDecimal (rawInput) {
   let converterFn = () => false
 
   switch (getLineType(rawInput)) {
     case LINE_TYPE.CENTS:
-      converterFn = cents_to_decimal
+      converterFn = centsToDecimal
       break
     case LINE_TYPE.DECIMAL:
-      converterFn = commadecimal_to_decimal
+      converterFn = commadecimalToDecimal
       break
     case LINE_TYPE.N_OF_EDO:
-      converterFn = n_of_edo_to_decimal
+      converterFn = nOfEdoToDecimal
       break
     case LINE_TYPE.RATIO:
-      converterFn = ratio_to_decimal
+      converterFn = ratioToDecimal
       break
   }
 
@@ -184,8 +183,8 @@ function line_to_decimal (rawInput) {
 }
 
 // convert any input 'line' to a cents value
-function line_to_cents (rawInput) {
-  return decimal_to_cents(line_to_decimal(rawInput))
+function lineToCents (rawInput) {
+  return decimalToCents(lineToDecimal(rawInput))
 }
 
 // convert a midi note number to a frequency in Hertz
@@ -196,13 +195,13 @@ function mtof (input) {
 
 // convert a frequency to a midi note number and cents offset
 // assuming 12-edo at 1440Hz
-// returns an array [midi_note_number, cents_offset]
+// returns an array [midiNoteNumber, centsOffset]
 function ftom (input) {
   input = parseFloat(input)
-  var midi_note_number = 69 + (12 * Math.log2(input / 440))
-  var cents_offset = (midi_note_number - Math.round(midi_note_number)) * 100
-  midi_note_number = Math.round(midi_note_number)
-  return [midi_note_number, cents_offset]
+  var midiNoteNumber = 69 + (12 * Math.log2(input / 440))
+  var centsOffset = (midiNoteNumber - Math.round(midiNoteNumber)) * 100
+  midiNoteNumber = Math.round(midiNoteNumber)
+  return [midiNoteNumber, centsOffset]
 }
 
 // convert an array of step values into absolute degree values
@@ -224,7 +223,7 @@ function degreesToSteps (degrees) {
 
 // convert an input string into a filename-sanitized version
 // if input is empty, returns "tuning" as a fallback
-function sanitize_filename (input) {
+function sanitizeFilename (input) {
   if (isEmpty(input.trim())) {
     return 'tuning'
   }
@@ -232,7 +231,7 @@ function sanitize_filename (input) {
 }
 
 // find MIDI note name from MIDI note number
-function midi_note_number_to_name (input) {
+function midiNoteNumberToName (input) {
   var n = parseInt(input)
   var quotient = Math.floor(n / 12)
   var remainder = n % 12
@@ -241,7 +240,7 @@ function midi_note_number_to_name (input) {
 }
 
 function degreeModPeriod (degree) {
-  return degree.mod(model.get('tuning table').note_count - 1)
+  return mathModulo(degree, model.get('tuning table').note_count - 1)
 }
 
 function degreeModPeriodCents (degree) {
@@ -254,22 +253,22 @@ export {
   getString,
   getLine,
   toString,
-  cents_to_decimal,
-  ratio_to_decimal,
-  commadecimal_to_decimal,
-  decimal_to_cents,
-  ratio_to_cents,
-  n_of_edo_to_decimal,
-  n_of_edo_to_cents,
-  decimal_to_ratio,
-  line_to_decimal,
-  line_to_cents,
+  centsToDecimal,
+  ratioToDecimal,
+  commadecimalToDecimal,
+  decimalToCents,
+  ratioToCents,
+  nOfEdoToDecimal,
+  nOfEdoToCents,
+  decimalToRatio,
+  lineToDecimal,
+  lineToCents,
   mtof,
   ftom,
   stepsToDegrees,
   degreesToSteps,
-  sanitize_filename,
-  midi_note_number_to_name,
+  sanitizeFilename,
+  midiNoteNumberToName,
   degreeModPeriod,
   degreeModPeriodCents
 }

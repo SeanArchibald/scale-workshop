@@ -1,6 +1,6 @@
 /* global location, jQuery, localStorage, navigator */
 import { LINE_TYPE, LOCALSTORAGE_PREFIX } from '../constants.js'
-import { debug_enabled } from '../scaleworkshop.js'
+import { debugEnabled } from '../scaleworkshop.js'
 import { toString } from './converters.js'
 
 function isCent (rawInput) {
@@ -46,7 +46,7 @@ function getLineType (rawInput) {
 }
 
 function debug (msg = '') {
-  if (debug_enabled) {
+  if (debugEnabled) {
     msg = isEmpty(msg) ? 'Debug' : msg
     console.log(msg)
     return true

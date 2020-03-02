@@ -12,14 +12,14 @@ import {
   setScaleName
 } from './helpers/general.js'
 import {
-  line_to_decimal,
-  decimal_to_ratio,
-  line_to_cents,
+  lineToDecimal,
+  decimalToRatio,
+  lineToCents,
   getFloat,
   getString,
   getLine
 } from './helpers/converters.js'
-import { invertChord } from './helpers/numbers.js'
+import { invertChord, mathModulo } from './helpers/numbers.js'
 import { UNIX_NEWLINE } from './constants.js'
 import { parse_tuning_data } from './scaleworkshop.js'
 
@@ -28,7 +28,7 @@ function generate_equal_temperament () {
   var period = getString('#input_interval_to_divide', 'Warning: no interval to divide')
 
   // convert period to cents
-  var period_cents = line_to_cents(period)
+  var period_cents = lineToCents(period)
 
   // bail if period is invalid
   if (!period_cents) {
@@ -70,7 +70,7 @@ function generate_equal_temperament_data (divider, period) {
 function generate_rank_2_temperament () {
   var generator = getLine('#input_rank-2_generator', 'Warning: no generator')
 
-  var generator_cents = line_to_cents(generator)
+  var generator_cents = lineToCents(generator)
 
   // bail if generator is invalid
   if (!generator_cents) {
@@ -79,7 +79,7 @@ function generate_rank_2_temperament () {
 
   var period = getLine('#input_rank-2_period', 'Warning: no period')
 
-  var period_cents = line_to_cents(period)
+  var period_cents = lineToCents(period)
 
   // bail if period is invalid
   if (!period_cents) {
@@ -119,17 +119,17 @@ function generate_rank_2_temperament_data (generator, period, size, up) {
   for (let i = 1; i < size; i++) {
     // calculate generators up
     if (i <= up) {
-      aa[i] = (aa[i - 1] + generator).mod(period)
+      aa[i] = mathModulo(aa[i - 1] + generator, period)
       debug('up: ' + i + ': ' + aa[i])
     } else {
       // first down generator
       if (i === up + 1) {
-        aa[i] = (aa[0] - generator).mod(period)
+        aa[i] = mathModulo(aa[0] - generator, period)
       }
 
       // subsequent down generators
       else {
-        aa[i] = (aa[i - 1] - generator).mod(period)
+        aa[i] = mathModulo(aa[i - 1] - generator, period)
       }
       debug('down: ' + i + ': ' + aa[i])
     }
@@ -225,7 +225,7 @@ function generate_enumerate_chord () {
   var chord = getString('#input_chord', 'Warning: bad input')
   let chordStr = chord
 
-  var convert_to_ratios = document.getElementById('input_convert_to_ratios').checked
+  var convertToRatios = document.getElementById('input_convertToRatios').checked
 
   // It doesn't make much sense to mix different values,
   // but it's cool to experiment with.
@@ -239,7 +239,7 @@ function generate_enumerate_chord () {
   for (let i = 0; i < inputTest.length; i++) {
     let value = inputTest[i]
     if (/^\d+$/.test(value)) { value += ',' }
-    value = line_to_decimal(value)
+    value = lineToDecimal(value)
     if (value === 0 || !/(^\d+([,.]\d*)?|([\\/]\d+)?$)*/.test(value)) {
       alert('Warning: Invalid pitch ' + inputTest[i])
       return false
@@ -281,11 +281,11 @@ function generate_enumerate_chord () {
 
   var pitches = chord.split(':')
 
-  // TODO: if pitches are not harmonics but "convert_to_ratios" is true,
+  // TODO: if pitches are not harmonics but "convertToRatios" is true,
   // update name with proper harmonics format
   setScaleName('Chord ' + chordStr)
 
-  setTuningData(generate_enumerate_chord_data(pitches, convert_to_ratios))
+  setTuningData(generate_enumerate_chord_data(pitches, convertToRatios))
 
   parse_tuning_data()
 
@@ -306,13 +306,13 @@ function generate_enumerate_chord_data (pitches, convertToRatios = false) {
     }
 
     var isCentsValue = isCent(pitches[i]) || isNOfEdo(pitches[i])
-    var parsed = line_to_decimal(pitches[i])
+    var parsed = lineToDecimal(pitches[i])
 
     if (i > 0) {
       if (isCentsValue && !convertToRatios) {
         ratios.push(pitches[i])
       } else {
-        ratios.push(decimal_to_ratio(parsed / fundamental))
+        ratios.push(decimalToRatio(parsed / fundamental))
       }
     } else {
       fundamental = parsed

@@ -15,9 +15,9 @@ import {
   roundToNDecimals
 } from './helpers/general.js'
 import {
-  decimal_to_cents,
-  line_to_decimal,
-  sanitize_filename,
+  decimalToCents,
+  lineToDecimal,
+  sanitizeFilename,
   stepsToDegrees,
   degreesToSteps,
   degreeModPeriodCents
@@ -41,7 +41,8 @@ import MIDI from './helpers/MIDI.js'
 import { initUI } from './ui.js'
 import { initSynth } from './synth.js'
 import { initEvents } from './events.js'
-import { getValidMOSSizes, getCF, getConvergents, getCoprimes, get_rank2_mode } from './helpers/sequences.js'
+import { getValidMOSSizes, getCF, getConvergents, getCoprimes, getRank2Mode } from './helpers/sequences.js'
+import { mathModulo } from './helpers/numbers.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
@@ -129,7 +130,7 @@ model.on('change', (key, newValue) => {
       )
       break
     case 'modify mode mos size selected':
-      model.set('modify mode input', get_rank2_mode(
+      model.set('modify mode input', getRank2Mode(
         model.get('tuning table').note_count - 1,
         model.get('modify mode mos degree selected'), newValue)
       )
@@ -274,14 +275,14 @@ jQuery('#input_range_main_vol').on('input', function () {
 
 var key_colors = ['white', 'black', 'white', 'white', 'black', 'white', 'black', 'white', 'white', 'black', 'white', 'black']
 
-var debug_enabled = true
+var debugEnabled = true
 
-// take a tuning, do loads of calculations, then output the data to tuning_table
-function generate_tuning_table (tuning) {
-  const tuning_table = model.get('tuning table')
+// take a tuning, do loads of calculations, then output the data to tuningTable
+function generateTuningTable (tuning) {
+  const tuningTable = model.get('tuning table')
 
-  var base_frequency = tuning_table.base_frequency
-  var base_midi_note = tuning_table.base_midi_note
+  var base_frequency = tuningTable.base_frequency
+  var base_midi_note = tuningTable.base_midi_note
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
     var offset = i - base_midi_note
@@ -292,17 +293,17 @@ function generate_tuning_table (tuning) {
     // "decimal" here means a frequency ratio, but stored in decimal format
     var decimal = tuning[remainder] * Math.pow(period, quotient)
 
-    // store the data in the tuning_table object
-    tuning_table.freq[i] = base_frequency * decimal
-    tuning_table.cents[i] = decimal_to_cents(decimal)
-    tuning_table.decimal[i] = decimal
+    // store the data in the tuningTable object
+    tuningTable.freq[i] = base_frequency * decimal
+    tuningTable.cents[i] = decimalToCents(decimal)
+    tuningTable.decimal[i] = decimal
 
-    model.set('tuning table', tuning_table)
+    model.set('tuning table', tuningTable)
   }
 }
 
 function set_key_colors (list) {
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
 
   // check if the list of colors is empty
   if (isEmpty(list)) {
@@ -318,7 +319,7 @@ function set_key_colors (list) {
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
     // get the number representing this key color, with the first item being 0
 
-    var keynum = (i - tuning_table.base_midi_note).mod(key_colors.length)
+    var keynum = mathModulo(i - tuningTable.base_midi_note, key_colors.length)
     // set the color of the key
     jQuery(ttkeys[i]).attr('style', 'background-color: ' + key_colors[keynum] + ' !important')
     // debug( i + ": " + key_colors[keynum] );
@@ -410,14 +411,14 @@ function parse_url () {
 }
 
 function parse_tuning_data () {
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
 
   // http://www.huygens-fokker.org/scala/scl_format.html
 
-  tuning_table.base_midi_note = parseInt(jQuery('#txt_base_midi_note').val())
-  tuning_table.base_frequency = parseFloat(jQuery('#txt_base_frequency').val())
-  tuning_table.description = jQuery('#txt_name').val()
-  tuning_table.filename = sanitize_filename(tuning_table.description)
+  tuningTable.base_midi_note = parseInt(jQuery('#txt_base_midi_note').val())
+  tuningTable.base_frequency = parseFloat(jQuery('#txt_base_frequency').val())
+  tuningTable.description = jQuery('#txt_name').val()
+  tuningTable.filename = sanitizeFilename(tuningTable.description)
 
   var user_tuning_data = document.getElementById('txt_tuning_data')
 
@@ -433,8 +434,8 @@ function parse_tuning_data () {
   var lines = user_tuning_data.value.split(NEWLINE_REGEX)
 
   // strip out the unusable lines, assemble an array of usable tuning data
-  tuning_table.tuning_data = ['1'] // when initialised the array contains only '1' (unison)
-  tuning_table.note_count = 1
+  tuningTable.tuning_data = ['1'] // when initialised the array contains only '1' (unison)
+  tuningTable.note_count = 1
   var empty = true
   for (let i = 0; i < lines.length; i++) {
     // check that line is not empty
@@ -445,9 +446,9 @@ function parse_tuning_data () {
       }
 
       // so far so good - store the line in tuning array
-      tuning_table.scale_data[tuning_table.note_count] = lines[i] // 'scale_data' is the scale in the original format input in the text box
-      tuning_table.tuning_data[tuning_table.note_count] = line_to_decimal(lines[i]) // 'tuning_data' is the same as before but all input is converted to decimal format to make the maths easier later
-      tuning_table.note_count++
+      tuningTable.scale_data[tuningTable.note_count] = lines[i] // 'scale_data' is the scale in the original format input in the text box
+      tuningTable.tuning_data[tuningTable.note_count] = lineToDecimal(lines[i]) // 'tuning_data' is the same as before but all input is converted to decimal format to make the maths easier later
+      tuningTable.note_count++
 
       // if we got to this point, then the tuning must not be empty
       empty = false
@@ -462,7 +463,7 @@ function parse_tuning_data () {
   }
 
   // finally, generate the frequency table
-  generate_tuning_table(tuning_table.tuning_data)
+  generateTuningTable(tuningTable.tuning_data)
 
   // display generated tuning in a table on the page
   jQuery('#tuning-table').empty()
@@ -471,10 +472,10 @@ function parse_tuning_data () {
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
     // highlight the row which corresponds to the base MIDI note
     var table_class = ''
-    if (i === tuning_table.base_midi_note) {
+    if (i === tuningTable.base_midi_note) {
       table_class = 'info'
     } else {
-      if ((tuning_table.base_midi_note - i) % (tuning_table.note_count - 1) === 0) {
+      if ((tuningTable.base_midi_note - i) % (tuningTable.note_count - 1) === 0) {
         table_class = 'warning'
       }
     }
@@ -484,9 +485,9 @@ function parse_tuning_data () {
       <tr id="tuning-table-row-${i}" class="${table_class}">
         <td class="key-color"></td>
         <td>${i}</td>
-        <td>${parseFloat(tuning_table.freq[i]).toFixed(3)} Hz</td>
-        <td>${tuning_table.cents[i].toFixed(3)}</td>
-        <td>${tuning_table.decimal[i].toFixed(3)}</td>
+        <td>${parseFloat(tuningTable.freq[i]).toFixed(3)} Hz</td>
+        <td>${tuningTable.cents[i].toFixed(3)}</td>
+        <td>${tuningTable.decimal[i].toFixed(3)}</td>
       </tr>`)
   }
 
@@ -496,7 +497,7 @@ function parse_tuning_data () {
 
   // scroll to reference note on the table
   jQuery('#col-tuning-table').animate({
-    scrollTop: jQuery('#tuning-table-row-' + tuning_table.base_midi_note).position().top + jQuery('#col-tuning-table').scrollTop()
+    scrollTop: jQuery('#tuning-table-row-' + tuningTable.base_midi_note).position().top + jQuery('#col-tuning-table').scrollTop()
   }, 600) // 600ms scroll to reference note
 
   jQuery('#txt_tuning_data').parent().removeClass('has-error')
@@ -507,7 +508,7 @@ function parse_tuning_data () {
     update_page_url(url)
   }
 
-  model.set('tuning table', tuning_table)
+  model.set('tuning table', tuningTable)
 
   // success
   return true
@@ -692,7 +693,7 @@ function parse_imported_anamark_tun (event) {
       }
       jQuery( "#txt_tuning_data" ).val(tuning_data_str)
 
-      jQuery( "#txt_base_frequency" ).val( 440 / cents_to_decimal(offset) );
+      jQuery( "#txt_base_frequency" ).val( 440 / centsToDecimal(offset) );
       jQuery( "#txt_base_midi_note" ).val( 0 );
       */
     }
@@ -738,8 +739,8 @@ jQuery('#anamark-tun-file').on('change', parse_imported_anamark_tun)
 jQuery('#show-mos').on('click', () => {
   model.set('staged rank-2 sizes',
     getValidMOSSizes(
-      line_to_decimal(jQuery('#input_rank-2_period').val()),
-      line_to_decimal(jQuery('#input_rank-2_generator').val()),
+      lineToDecimal(jQuery('#input_rank-2_period').val()),
+      lineToDecimal(jQuery('#input_rank-2_generator').val()),
       parseFloat(jQuery('#input_rank-2_mos_threshold').val())
     )
   )
@@ -754,7 +755,7 @@ jQuery(() => {
 export {
   key_colors,
   parse_tuning_data,
-  debug_enabled,
+  debugEnabled,
   set_key_colors,
   parse_url,
   clear_all,

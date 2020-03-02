@@ -24,9 +24,9 @@ function initUI () {
 }
 
 function touch_kbd_open () {
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   // check if scale already set up - we can't use the touch kbd if there is no scale
-  if (tuning_table.note_count === 0) {
+  if (tuningTable.note_count === 0) {
     alert("Can't open the touch keyboard until you have created or loaded a scale.")
     return false
   }
@@ -38,10 +38,10 @@ function touch_kbd_open () {
 
     // add text to key
     // jQuery(this).append("<p><small>midi</small> <strong>" + midinote + "</strong></p>");
-    // jQuery(this).append("<p><strong>" + tuning_table['freq'][midinote].toFixed(1) + "</strong><br/><small>Hz</small></p>");
+    // jQuery(this).append("<p><strong>" + tuningTable['freq'][midinote].toFixed(1) + "</strong><br/><small>Hz</small></p>");
 
     // get the number representing this key color, with the first item being 0
-    var keynum = (midinote - tuning_table.base_midi_note).mod(key_colors.length)
+    var keynum = mathModulo(midinote - tuningTable.base_midi_note, key_colors.length)
     // set the color of the key
     jQuery(this).css('background-color', key_colors[keynum])
   })

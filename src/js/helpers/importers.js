@@ -1,6 +1,6 @@
 /* global alert, jQuery */
 
-function is_file_api_supported () {
+function isFileApiSupported () {
   // Check for the various File API support.
   if (window.File && window.FileReader && window.FileList && window.Blob) {
     return true
@@ -11,23 +11,23 @@ function is_file_api_supported () {
   }
 }
 
-function import_scala_scl () {
+function importScalaScl () {
   // check File API is supported
-  if (is_file_api_supported()) {
+  if (isFileApiSupported()) {
     // trigger load file dialog
     jQuery('#scala-file').trigger('click')
   }
 }
 
-function import_anamark_tun () {
+function importAnamarkTun () {
   // check File API is supported
-  if (is_file_api_supported()) {
+  if (isFileApiSupported()) {
     // trigger load file dialog
     jQuery('#anamark-tun-file').trigger('click')
   }
 }
 
 export {
-  import_anamark_tun,
-  import_scala_scl
+  importAnamarkTun,
+  importScalaScl
 }

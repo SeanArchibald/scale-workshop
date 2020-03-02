@@ -7,17 +7,17 @@ import {
   getLineType
 } from './helpers/general.js'
 import {
-  decimal_to_cents,
+  decimalToCents,
   mtof,
-  midi_note_number_to_name,
+  midiNoteNumberToName,
   ftom
 } from './helpers/converters.js'
 import { LINE_TYPE, APP_TITLE, TUNING_MAX_SIZE, UNIX_NEWLINE, WINDOWS_NEWLINE } from './constants.js'
 
 function export_error () {
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   // no tuning data to export
-  if (isNil(tuning_table.freq[tuning_table.base_midi_note])) {
+  if (isNil(tuningTable.freq[tuningTable.base_midi_note])) {
     alert('No tuning data to export.')
     return true
   }
@@ -36,7 +36,7 @@ function export_anamark_tun () {
     return
   }
 
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
   // TUN format spec:
@@ -50,7 +50,7 @@ function export_anamark_tun () {
   file += '[Tuning]' + newline
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-    file += 'note ' + i + '=' + parseInt(decimal_to_cents(parseFloat(tuning_table.freq[i]) / mtof(0))) + newline
+    file += 'note ' + i + '=' + parseInt(decimalToCents(parseFloat(tuningTable.freq[i]) / mtof(0))) + newline
   }
 
   file += newline + '; AnaMark section' + newline
@@ -59,34 +59,34 @@ function export_anamark_tun () {
   file += 'FormatVersion= 200' + newline
   file += 'FormatSpecs= "http://www.mark-henning.de/eternity/tuningspecs.html"' + newline + newline
   file += '[Info]' + newline
-  file += 'Name= "' + tuning_table.filename + '.tun"' + newline
-  file += 'ID= "' + tuning_table.filename.replace(/ /g, '') + '.tun"' + newline // this line strips whitespace from filename, as per .tun spec
-  file += 'Filename= "' + tuning_table.filename + '.tun"' + newline
-  file += 'Description= "' + tuning_table.description + '"' + newline
+  file += 'Name= "' + tuningTable.filename + '.tun"' + newline
+  file += 'ID= "' + tuningTable.filename.replace(/ /g, '') + '.tun"' + newline // this line strips whitespace from filename, as per .tun spec
+  file += 'Filename= "' + tuningTable.filename + '.tun"' + newline
+  file += 'Description= "' + tuningTable.description + '"' + newline
   var date = new Date().toISOString().slice(0, 10)
   file += 'Date= "' + date + '"' + newline
   file += 'Editor= "' + APP_TITLE + '"' + newline + newline
   file += '[Exact Tuning]' + newline
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-    file += 'note ' + i + '= ' + decimal_to_cents(parseFloat(tuning_table.freq[i]) / mtof(0)).toFixed(6) + newline
+    file += 'note ' + i + '= ' + decimalToCents(parseFloat(tuningTable.freq[i]) / mtof(0)).toFixed(6) + newline
   }
 
   file += newline + '[Functional Tuning]' + newline
 
-  for (let i = 1; i < tuning_table.note_count; i++) {
-    if (i === tuning_table.note_count - 1) {
-      file += 'note ' + i + '="#>-' + i + ' % ' + decimal_to_cents(tuning_table.tuning_data[i]).toFixed(6) + ' ~999"' + newline
+  for (let i = 1; i < tuningTable.note_count; i++) {
+    if (i === tuningTable.note_count - 1) {
+      file += 'note ' + i + '="#>-' + i + ' % ' + decimalToCents(tuningTable.tuning_data[i]).toFixed(6) + ' ~999"' + newline
     } else {
-      file += 'note ' + i + '="#=0 % ' + decimal_to_cents(tuning_table.tuning_data[i]).toFixed(6) + '"' + newline
+      file += 'note ' + i + '="#=0 % ' + decimalToCents(tuningTable.tuning_data[i]).toFixed(6) + '"' + newline
     }
   }
 
   file += newline + '; Set reference key to absolute frequency (not scale note but midi key)' + newline
-  file += 'note ' + tuning_table.base_midi_note + '="! ' + tuning_table.base_frequency.toFixed(6) + '"' + newline
+  file += 'note ' + tuningTable.base_midi_note + '="! ' + tuningTable.base_frequency.toFixed(6) + '"' + newline
   file += '[Scale End]' + newline
 
-  save_file(tuning_table.filename + '.tun', file)
+  save_file(tuningTable.filename + '.tun', file)
 
   // success
   return true
@@ -97,11 +97,11 @@ function export_scala_scl () {
     return
   }
 
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
   // assemble the .scl file contents
-  var file = '! ' + tuning_table.filename + '.scl' + newline
+  var file = '! ' + tuningTable.filename + '.scl' + newline
   file += '! Created using ' + APP_TITLE + newline
   file += '!' + newline
   if (isEmpty(jQuery('#txt_name').val())) {
@@ -111,23 +111,23 @@ function export_scala_scl () {
   }
   file += newline + ' '
 
-  file += tuning_table.note_count - 1 + newline
+  file += tuningTable.note_count - 1 + newline
   file += '!' + newline
 
-  for (let i = 1; i < tuning_table.note_count; i++) {
+  for (let i = 1; i < tuningTable.note_count; i++) {
     file += ' '
 
     // if the current interval is n-of-m edo or commadecimal linetype, output as cents instead
-    if (getLineType(tuning_table.scale_data[i]) === LINE_TYPE.N_OF_EDO || getLineType(tuning_table.scale_data[i]) === LINE_TYPE.DECIMAL) {
-      file += decimal_to_cents(tuning_table.tuning_data[i]).toFixed(6)
+    if (getLineType(tuningTable.scale_data[i]) === LINE_TYPE.N_OF_EDO || getLineType(tuningTable.scale_data[i]) === LINE_TYPE.DECIMAL) {
+      file += decimalToCents(tuningTable.tuning_data[i]).toFixed(6)
     } else {
-      file += tuning_table.scale_data[i]
+      file += tuningTable.scale_data[i]
     }
 
     file += newline
   }
 
-  save_file(tuning_table.filename + '.scl', file)
+  save_file(tuningTable.filename + '.scl', file)
 
   // success
   return true
@@ -138,37 +138,37 @@ function export_scala_kbm () {
     return
   }
 
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
   // assemble the .kbm file contents
   var file = '! Template for a keyboard mapping' + newline
   file += '!' + newline
   file += '! Size of map. The pattern repeats every so many keys:' + newline
-  file += parseInt(tuning_table.note_count - 1) + newline
+  file += parseInt(tuningTable.note_count - 1) + newline
   file += '! First MIDI note number to retune:' + newline
   file += '0' + newline
   file += '! Last MIDI note number to retune:' + newline
   file += '127' + newline
   file += '! Middle note where the first entry of the mapping is mapped to:' + newline
-  file += parseInt(tuning_table.base_midi_note) + newline
+  file += parseInt(tuningTable.base_midi_note) + newline
   file += '! Reference note for which frequency is given:' + newline
-  file += parseInt(tuning_table.base_midi_note) + newline
+  file += parseInt(tuningTable.base_midi_note) + newline
   file += '! Frequency to tune the above note to' + newline
-  file += parseFloat(tuning_table.base_frequency) + newline
+  file += parseFloat(tuningTable.base_frequency) + newline
   file += '! Scale degree to consider as formal octave (determines difference in pitch' + newline
   file += '! between adjacent mapping patterns):' + newline
-  file += parseInt(tuning_table.note_count - 1) + newline
+  file += parseInt(tuningTable.note_count - 1) + newline
   file += '! Mapping.' + newline
   file += '! The numbers represent scale degrees mapped to keys. The first entry is for' + newline
   file += '! the given middle note, the next for subsequent higher keys.' + newline
   file += '! For an unmapped key, put in an "x". At the end, unmapped keys may be left out.' + newline
 
-  for (let i = 0; i < parseInt(tuning_table.note_count - 1); i++) {
+  for (let i = 0; i < parseInt(tuningTable.note_count - 1); i++) {
     file += i + newline
   }
 
-  save_file(tuning_table.filename + '.kbm', file)
+  save_file(tuningTable.filename + '.kbm', file)
 
   // success
   return true
@@ -179,7 +179,7 @@ function export_maxmsp_coll () {
     return
   }
 
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
   // assemble the coll file contents
@@ -188,10 +188,10 @@ function export_maxmsp_coll () {
   file += '#' + newline
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-    file += i + ', ' + tuning_table.freq[i].toFixed(7) + ';' + newline
+    file += i + ', ' + tuningTable.freq[i].toFixed(7) + ';' + newline
   }
 
-  save_file(tuning_table.filename + '.txt', file)
+  save_file(tuningTable.filename + '.txt', file)
 
   // success
   return true
@@ -202,16 +202,16 @@ function export_pd_text () {
     return
   }
 
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
   // assemble the text file contents
   var file = ''
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-    file += tuning_table.freq[i].toFixed(7) + ';' + newline
+    file += tuningTable.freq[i].toFixed(7) + ';' + newline
   }
 
-  save_file(tuning_table.filename + '.txt', file)
+  save_file(tuningTable.filename + '.txt', file)
 
   // success
   return true
@@ -222,13 +222,13 @@ function export_kontakt_script () {
     return
   }
 
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
   // assemble the kontakt script contents
   var file = '{**************************************' + newline
   file += jQuery('#txt_name').val() + newline
-  file += 'MIDI note ' + tuning_table.base_midi_note + ' (' + midi_note_number_to_name(tuning_table.base_midi_note) + ') = ' + parseFloat(tuning_table.base_frequency) + ' Hz' + newline
+  file += 'MIDI note ' + tuningTable.base_midi_note + ' (' + midiNoteNumberToName(tuningTable.base_midi_note) + ') = ' + parseFloat(tuningTable.base_frequency) + ' Hz' + newline
   file += 'Created using ' + APP_TITLE + newline
   file += '****************************************}' + newline + newline
 
@@ -239,7 +239,7 @@ function export_kontakt_script () {
   file += 'declare $key' + newline + newline
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-    var this_note = ftom(tuning_table.freq[i])
+    var this_note = ftom(tuningTable.freq[i])
 
     if (this_note[0] < 0 || this_note[0] >= TUNING_MAX_SIZE) {
       // if we're out of range of the default Kontakt tuning, leave note as default tuning
@@ -261,7 +261,7 @@ function export_kontakt_script () {
   file += 'change_tune ($EVENT_ID, $bend, 0)' + newline
   file += 'end on' + newline
 
-  save_file(tuning_table.filename + '.txt', file)
+  save_file(tuningTable.filename + '.txt', file)
 
   // success
   return true
@@ -276,20 +276,20 @@ function export_reference_deflemask () {
     return
   }
 
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
   // assemble the text file contents
-  var file = tuning_table.description + newline + 'Reference for Deflemask note input - generated by ' + APP_TITLE + newline + newline
+  var file = tuningTable.description + newline + 'Reference for Deflemask note input - generated by ' + APP_TITLE + newline + newline
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
     // convert frequency into midi note number + cents offset
-    var data = ftom(tuning_table.freq[i])
+    var data = ftom(tuningTable.freq[i])
 
     // acceptable range is C#0 to B7 (MIDI notes 1-95). skip this note if it's out of range
     if (data[0] < 1 || data[0] > 95) continue
 
     // convert note number to note name
-    data[0] = midi_note_number_to_name(data[0])
+    data[0] = midiNoteNumberToName(data[0])
     data[0] = (data[0].length === 2) ? data[0].slice(0, 1) + '-' + data[0].slice(1) : data[0]
 
     // convert cents offset to hex where -100c=00, 0c=80, 100c=FF
@@ -297,10 +297,10 @@ function export_reference_deflemask () {
 
     // add data to text file
     data = '[' + data[0] + ' xx] [xx E5 ' + data[1] + ']'
-    file += data + ' ..... ' + i + ': ' + tuning_table.freq[i].toFixed(2) + ' Hz / ' + tuning_table.cents[i].toFixed(2) + ' cents' + newline
+    file += data + ' ..... ' + i + ': ' + tuningTable.freq[i].toFixed(2) + ' Hz / ' + tuningTable.cents[i].toFixed(2) + ' cents' + newline
   }
 
-  save_file(tuning_table.filename + '.txt', file)
+  save_file(tuningTable.filename + '.txt', file)
 
   // success
   return true
@@ -326,9 +326,9 @@ function get_scale_url () {
 }
 
 function update_page_url (url = get_scale_url()) {
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   // update this change in the browser's Back/Forward navigation
-  history.pushState({ }, tuning_table.description, url)
+  history.pushState({ }, tuningTable.description, url)
 }
 
 function export_url () {

@@ -15,10 +15,10 @@ import {
   getLineType
 } from './helpers/general.js'
 import {
-  ratio_to_cents,
-  line_to_decimal,
-  decimal_to_cents,
-  n_of_edo_to_cents
+  ratioToCents,
+  lineToDecimal,
+  decimalToCents,
+  nOfEdoToCents
 } from './helpers/converters.js'
 import { PRIMES, UNIX_NEWLINE, NEWLINE_REGEX, WINDOWS_NEWLINE } from './constants.js'
 
@@ -51,10 +51,10 @@ function modify_stretch () {
           new_tuning_lines.push((parseFloat(line) * stretch_ratio).toFixed(5))
           break
         case 'n of edo':
-          new_tuning_lines.push((n_of_edo_to_cents(line) * stretch_ratio).toFixed(5))
+          new_tuning_lines.push((nOfEdoToCents(line) * stretch_ratio).toFixed(5))
           break
         case 'ratio':
-          new_tuning_lines.push((ratio_to_cents(line) * stretch_ratio).toFixed(5))
+          new_tuning_lines.push((ratioToCents(line) * stretch_ratio).toFixed(5))
       }
     }
   }
@@ -100,7 +100,7 @@ function modify_random_variance () {
       }
       // line doesn't contain a period, so it is a ratio
       else {
-        new_tuning_lines.push((ratio_to_cents(lines[i]) + random_variance).toFixed(5))
+        new_tuning_lines.push((ratioToCents(lines[i]) + random_variance).toFixed(5))
       }
     }
     // last line is a period and we're not applying random variance to it
@@ -240,7 +240,7 @@ function modify_sync_beating () {
   var new_tuning = ''
 
   for (let i = 0; i < lines.length; i++) {
-    lines[i] = line_to_decimal(lines[i])
+    lines[i] = lineToDecimal(lines[i])
     new_tuning += toString(Math.round(lines[i] * resolution)) + '/' + toString(resolution) + UNIX_NEWLINE
   }
   new_tuning = new_tuning.trim() // remove final newline
@@ -329,12 +329,12 @@ function modify_key_transpose() {
 
 // approximate rationals
 function modify_replace_with_approximation () {
-  const tuning_table = model.get('tuning table')
+  const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
   var degreeSelected = parseInt(jQuery('#input_scale_degree').val())
 
-  if (degreeSelected < tuning_table.note_count) {
+  if (degreeSelected < tuningTable.note_count) {
     var tuning_data = document.getElementById('txt_tuning_data')
     var lines = tuning_data.value.split(NEWLINE_REGEX)
 
@@ -342,7 +342,7 @@ function modify_replace_with_approximation () {
     var approximation = aprxs.options[aprxs.selectedIndex].text
     approximation = approximation.slice(0, approximation.indexOf('|')).trim()
 
-    if (degreeSelected - 1 < lines.length && line_to_decimal(approximation)) {
+    if (degreeSelected - 1 < lines.length && lineToDecimal(approximation)) {
       lines[degreeSelected - 1] = approximation
     } else {
       lines.push(approximation)
@@ -357,7 +357,7 @@ function modify_replace_with_approximation () {
 
     parse_tuning_data()
 
-    if (degreeSelected < tuning_table.note_count - 1) {
+    if (degreeSelected < tuningTable.note_count - 1) {
       jQuery('#input_scale_degree').val(degreeSelected + 1)
       jQuery('#input_scale_degree').trigger('change')
     }
@@ -374,7 +374,7 @@ function modify_update_approximations () {
   jQuery('#approximation_selection').empty()
 
   if (!(isEmpty(currentRatioStructure))) {
-    var interval = line_to_decimal(jQuery('#input_interval_to_approximate').val())
+    var interval = lineToDecimal(jQuery('#input_interval_to_approximate').val())
     var mincentsd = parseFloat(jQuery('#input_min_error').val())
     var maxcentsd = parseFloat(jQuery('#input_max_error').val())
     var minprime = parseInt(jQuery(' #input_approx_min_prime').val())
@@ -409,7 +409,7 @@ function modify_update_approximations () {
       var fraction_str = currentRatioStructure.ratiosStrings[index]
       var fraction = n / d
 
-      var cents_deviation = decimal_to_cents(fraction) - decimal_to_cents(interval)
+      var cents_deviation = decimalToCents(fraction) - decimalToCents(interval)
       var centsdabs = Math.abs(cents_deviation)
       var cents_rounded = Math.round(10e6 * cents_deviation) / 10e6
 

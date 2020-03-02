@@ -3,7 +3,10 @@
   "version": "1.0.4",
   "description": "![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/src/assets/img/scale-workshop-og-image.png)",
   "main": "src/js/ndex.js",
-  "scripts": {},
+  "scripts": {
+    "lint": "standard src/js/**/*.js",
+    "lint:fix": "standard src/js/**/*.js --fix"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SeanArchibald/scale-workshop.git"
@@ -13,5 +16,13 @@
   "bugs": {
     "url": "https://github.com/SeanArchibald/scale-workshop/issues"
   },
-  "homepage": "https://github.com/SeanArchibald/scale-workshop#readme"
+  "homepage": "https://github.com/SeanArchibald/scale-workshop#readme",
+  "devDependencies": {
+    "standard": "^14.3.1"
+  },
+  "standard": {
+    "ignore": [
+      "src/lib"
+    ]
+  }
 }
