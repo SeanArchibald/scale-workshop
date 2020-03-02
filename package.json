@@ -1,0 +1,17 @@
+{
+  "name": "scale-workshop",
+  "version": "1.0.4",
+  "description": "![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/src/assets/img/scale-workshop-og-image.png)",
+  "main": "src/js/ndex.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeanArchibald/scale-workshop.git"
+  },
+  "author": "Sean Archibald <SeanArchibald@users.noreply.github.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SeanArchibald/scale-workshop/issues"
+  },
+  "homepage": "https://github.com/SeanArchibald/scale-workshop#readme"
+}
