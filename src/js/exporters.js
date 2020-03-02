@@ -1,3 +1,7 @@
+/*
+import jQuery from 'jquery'
+*/
+
 function export_error() {
 
   // no tuning data to export
@@ -31,7 +35,7 @@ function export_anamark_tun() {
   file += "; VAZ Plus section" + newline;
   file += "[Tuning]" + newline;
 
-  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+  for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
     file += "note " + i + "=" + parseInt( decimal_to_cents( parseFloat( tuning_table['freq'][i] ) / mtof(0) ) ) + newline;
   }
 
@@ -50,16 +54,16 @@ function export_anamark_tun() {
   file += 'Editor= "' + APP_TITLE + '"' + newline + newline;
   file += "[Exact Tuning]" + newline;
 
-  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+  for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
     file += "note " + i + "= " + decimal_to_cents( parseFloat( tuning_table['freq'][i] ) / mtof(0) ).toFixed(6) + newline;
   }
 
   file += newline + "[Functional Tuning]" + newline;
 
-  for ( i = 1; i < tuning_table['note_count']; i++ ) {
+  for ( let i = 1; i < tuning_table['note_count']; i++ ) {
 
     if ( i == tuning_table['note_count']-1 ) {
-      file += "note " + i + '="#>-' + i + ' * ' + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + ' ~999"' + newline;
+      file += "note " + i + '="#>-' + i + ' % ' + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + ' ~999"' + newline;
     }
     else {
       file += "note " + i + '="#=0 % ' + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + '"' + newline;
@@ -89,25 +93,28 @@ function export_scala_scl() {
   file += "! Created using " + APP_TITLE + newline;
   file += "!" + newline;
   if ( isEmpty( jQuery( "#txt_name" ).val() ) ) {
-    file += "Untitled tuning" + newline + " ";
+    file += "Untitled tuning";
   }
   else {
-    file += jQuery( "#txt_name" ).val() + newline + " ";
+    file += jQuery( "#txt_name" ).val();
   }
+  file += newline + " "
 
   file += tuning_table['note_count']-1 + newline;
   file += "!" + newline;
 
-  for ( i = 1; i < tuning_table['note_count']; i++ ) {
+  for ( let i = 1; i < tuning_table['note_count']; i++ ) {
+    file += " "
 
-    // if the current interval is n-of-m edo type, output as cents instead
-    if ( getLineType( tuning_table['scale_data'][i] ) === LINE_TYPE.N_OF_EDO  ) {
-      file += " " + decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6) + newline;
+    // if the current interval is n-of-m edo or commadecimal linetype, output as cents instead
+    if ( getLineType( tuning_table['scale_data'][i] ) === LINE_TYPE.N_OF_EDO || getLineType( tuning_table['scale_data'][i] ) === LINE_TYPE.DECIMAL ) {
+      file += decimal_to_cents( tuning_table['tuning_data'][i] ).toFixed(6);
     }
     else {
-      file += " " + tuning_table['scale_data'][i] + newline;
+      file += tuning_table['scale_data'][i];
     }
 
+    file += newline
   }
 
   save_file( tuning_table['filename'] + '.scl', file );
@@ -146,7 +153,7 @@ function export_scala_kbm() {
   file += "! the given middle note, the next for subsequent higher keys." + newline;
   file += "! For an unmapped key, put in an \"x\". At the end, unmapped keys may be left out." + newline;
 
-  for ( i = 0; i < parseInt( tuning_table['note_count']-1 ); i++ ) {
+  for ( let i = 0; i < parseInt( tuning_table['note_count']-1 ); i++ ) {
     file += i + newline;
   }
 
@@ -168,7 +175,7 @@ function export_maxmsp_coll() {
   file += "# " + jQuery( "#txt_name" ).val() + newline;
   file += "#" + newline;
 
-  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+  for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
     file += i + ", " + tuning_table['freq'][i].toFixed(7) + ";" + newline;
   }
 
@@ -187,7 +194,7 @@ function export_pd_text() {
 
   // assemble the text file contents
   var file = "";
-  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+  for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
     file += tuning_table['freq'][i].toFixed(7) + ";" + newline;
   }
 
@@ -217,7 +224,7 @@ function export_kontakt_script() {
   file += "declare $bend" + newline;
   file += "declare $key" + newline + newline;
 
-  for ( i = 0; i < TUNING_MAX_SIZE; i++ ) {
+  for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
 
     var this_note = ftom( tuning_table['freq'][i] );
 
@@ -247,6 +254,45 @@ function export_kontakt_script() {
   file += "change_note ($EVENT_ID, $key)" + newline;
   file += "change_tune ($EVENT_ID, $bend, 0)" + newline;
   file += "end on" + newline;
+
+  save_file( tuning_table['filename'] + '.txt', file );
+
+  // success
+  return true;
+
+}
+
+function export_reference_deflemask() {
+
+  // This exporter converts your tuning data into a readable format you can easily input manually into Deflemask.
+  // For example if you have a note 50 cents below A4, you would input that into Deflemask as A-4 -- - E5 40
+  // Deflemask manual: http://www.deflemask.com/manual.pdf
+
+  if ( export_error() ) {
+    return;
+  }
+
+  // assemble the text file contents
+  var file = tuning_table['description'] + newline + "Reference for Deflemask note input - generated by " + APP_TITLE + newline + newline;
+  for ( let i = 0; i < TUNING_MAX_SIZE; i++ ) {
+
+    // convert frequency into midi note number + cents offset
+    var data = ftom( tuning_table['freq'][i] );
+
+    // acceptable range is C#0 to B7 (MIDI notes 1-95). skip this note if it's out of range
+    if ( data[0] < 1 || data[0] > 95 ) continue;
+
+    // convert note number to note name
+    data[0] = midi_note_number_to_name( data[0] );
+    data[0] = (data[0].length == 2) ? data[0].slice(0,1) + "-" + data[0].slice(1) : data[0];
+
+    // convert cents offset to hex where -100c=00, 0c=80, 100c=FF
+    data[1] = Math.round( 128 + (data[1] * 1.28) ).toString(16).toUpperCase();
+
+    // add data to text file
+    data = "[" + data[0] + " xx] [xx E5 " + data[1] + "]";
+    file += data + " ..... " + i + ": " + tuning_table['freq'][i].toFixed(2) + " Hz / " + tuning_table['cents'][i].toFixed(2) + " cents" + newline;
+  }
 
   save_file( tuning_table['filename'] + '.txt', file );
 

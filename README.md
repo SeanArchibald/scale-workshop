@@ -1,6 +1,6 @@
 # Scale Workshop
 
-![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/assets/img/scale-workshop-og-image.png)
+![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/src/assets/img/scale-workshop-og-image.png)
 
 
 ## Description
@@ -86,6 +86,21 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 
 ## Changelog
+
+### 1.0.4
+* New feature: 'Approximate' method for modifying scales can produce rational approximations of your scale
+* Improvement: Enumerate Chord method of scale generation now allows for inverted chords (e.g. 4:5:6 inverted would give 10:12:15)
+* Improvement: site now automatically redirects to HTTPS on domains known to have valid HTTPS
+* Bug fix: changing the main volume before pressing the first note no longer gets ignored
+* Bug fix: exported TUN files now has a correct functional tuning section (https://github.com/SeanArchibald/scale-workshop/issues/82)
+
+### 1.0.3
+* New feature: generate scale from 'Enumerate chord' e.g. `4:5:6:7:8` will result in a scale containing intervals 1/1, 5/4, 3/2, 7/4, 2/1
+* New feature: specify an interval in decimal format e.g. `1,5` for a perfect fifth, `2,0` for an octave.
+* New feature: export your tuning as a list of Deflemask 'fine tune' effect parameters. The resulting text file is a reference you can use when manually inputting notes into Deflemask chip music tracker.
+* Improvement: Colemak keyboard layout support added
+* Improvement: when generating rank-2 temperaments, finding MOS scale sizes is now more efficient.
+* Bug fix: error when changing main volume before audio initialised
 
 ### 1.0.2
 * MIDI now waits for user input before initializing (issues #56 #57)
@@ -269,6 +284,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 * Lajos Mészáros
 * Carl Lumma
 * Tobia
+* Vincenzo Sicurella
 
 
 ## License

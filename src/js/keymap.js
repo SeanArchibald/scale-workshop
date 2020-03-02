@@ -40,12 +40,12 @@ var Layouts = {
     "'QJKXBMWVZ",
   ],
 
-// Colemak Keyboard
+  // Colemak keyboard
   CO: [
-    "1234567890-=",
-    "QWFPGJLUY;[]",
-    "ARSTDHNEIO'\\",
-    "ZXCVBKM,./",
+  	"1234567890-=",
+	"QWFPGJLUY;[]",
+	"ARSTDHNEIO'\\",
+	"ZXCVBKM,./"
   ],
 };
 

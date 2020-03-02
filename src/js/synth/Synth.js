@@ -1,3 +1,7 @@
+/*
+import jQuery from 'jquery'
+*/
+
 class Synth {
   constructor() {
     this.keymap = Keymap.EN
@@ -7,6 +11,7 @@ class Synth {
     }
     this.active_voices = {} // polyphonic voice management
     this.waveform = 'triangle'
+    this.mainVolume = 0.8
     this.inited = false
 
     this.delay = new Delay(this)
@@ -19,7 +24,7 @@ class Synth {
 
       // master gain
       this.masterGain = this.audioCtx.createGain(); // create master gain before output
-      this.masterGain.gain.value = 0.8;
+      this.masterGain.gain.value = this.mainVolume;
       // master filter
       this.masterLPfilter = this.audioCtx.createBiquadFilter();
       this.masterLPfilter.frequency.value = 5000;
@@ -30,6 +35,18 @@ class Synth {
       this.masterLPfilter.connect( this.audioCtx.destination );
 
       this.delay.init(this.audioCtx)
+    }
+  }
+
+  setMainVolume(newValue) {
+    const oldValue = this.mainVolume
+    if (newValue !== oldValue) {
+      this.mainVolume = newValue
+      if (this.inited) {
+        const now = this.now();
+        this.masterGain.gain.value = newValue;
+        this.masterGain.gain.setValueAtTime(newValue, now);
+      }
     }
   }
 
@@ -72,7 +89,7 @@ class Synth {
     debug( this.active_voices );
 
     // loop through active voices
-    for ( i=0; i<127; i++ ) {
+    for ( let i=0; i<127; i++ ) {
       // turn off voice
       this.noteOff( i );
     }
@@ -85,3 +102,7 @@ class Synth {
     this.delay.gainR.gain.setValueAtTime(this.delay.gain, now);
   }
 }
+
+/*
+export default Synth
+*/

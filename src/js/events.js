@@ -2,6 +2,10 @@
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
+/*
+import jQuery from 'jquery'
+*/
+
 jQuery( document ).ready( function() {
 
   // automatically load generatal options saved in localStorage (if available)
@@ -78,40 +82,16 @@ jQuery( document ).ready( function() {
 
   // generate_equal_temperament option clicked
   jQuery( "#generate_equal_temperament" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_number_of_divisions" ).select();
-    jQuery( "#modal_generate_equal_temperament" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          generate_equal_temperament();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_generate_equal_temperament", generate_equal_temperament)
   } );
 
   // generate_rank_2_temperament option clicked
   jQuery( "#generate_rank_2_temperament" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_rank-2_generator" ).select();
-    jQuery( "#modal_generate_rank_2_temperament" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          generate_rank_2_temperament();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_generate_rank_2_temperament", generate_rank_2_temperament)
   } );
 
   // rank-2 temperament generator - generators up changed
@@ -133,33 +113,28 @@ jQuery( document ).ready( function() {
 
   // generate_harmonic_series_segment option clicked
   jQuery( "#generate_harmonic_series_segment" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_lowest_harmonic" ).select();
-    jQuery( "#modal_generate_harmonic_series_segment" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          generate_harmonic_series_segment();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
-  } );
+    openDialog("#modal_generate_harmonic_series_segment", generate_harmonic_series_segment)
+  });
 
   // generate_subharmonic_series_segment option clicked
   jQuery( "#generate_subharmonic_series_segment" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_lowest_subharmonic" ).select();
-    jQuery( "#modal_generate_subharmonic_series_segment" ).dialog({
+    openDialog("#modal_generate_subharmonic_series_segment", generate_subharmonic_series_segment)
+  } );
+
+// enumerate_chord option clicked
+  jQuery( "#enumerate_chord" ).click( function( event ) {
+
+    event.preventDefault();
+    jQuery( "#input_chord" ).select();
+    jQuery( "#modal_enumerate_chord" ).dialog({
       modal: true,
       buttons: {
         OK: function() {
-          generate_subharmonic_series_segment();
+          generate_enumerate_chord();
         },
         Cancel: function() {
           jQuery( this ).dialog( 'close' );
@@ -171,91 +146,75 @@ jQuery( document ).ready( function() {
 
   // load-preset option clicked
   jQuery( "#load-preset" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#select_preset_scale" ).select();
-    jQuery( "#modal_load_preset_scale" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          load_preset_scale( jQuery('#select_preset_scale')[0].value );
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_load_preset_scale", function() {
+      load_preset_scale( jQuery('#select_preset_scale')[0].value );
+    })
   } );
 
   // modify_mode option clicked
   jQuery( "#modify_mode" ).click( function( event ) {
-
     event.preventDefault();
-    jQuery( "#input_modify_mode" ).select();
-    jQuery( "#modal_modify_mode" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_mode();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
+    // setup MOS options, and hide
+    update_modify_mode_mos_generators();
+    show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value);
+	jQuery( "#modal_modify_mos_degree").change(); // make sizes available
 
+    jQuery( "#input_modify_mode" ).select();
+    openDialog("#modal_modify_mode", modify_mode)
   } );
 
   // modify_stretch option clicked
   jQuery( "#modify_stretch" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_stretch_ratio" ).select();
-    jQuery( "#modal_modify_stretch" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_stretch();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_modify_stretch", modify_stretch)
   } );
 
   // modify_random_variance option clicked
   jQuery( "#modify_random_variance" ).click( function( event ) {
-
     event.preventDefault();
     jQuery( "#input_cents_max_variance" ).select();
-    jQuery( "#modal_modify_random_variance" ).dialog({
-      modal: true,
-      buttons: {
-        OK: function() {
-          modify_random_variance();
-        },
-        Cancel: function() {
-          jQuery( this ).dialog( 'close' );
-        }
-      }
-    });
-
+    openDialog("#modal_modify_random_variance", modify_random_variance)
   } );
 
   // modify_sync_beating option clicked
   jQuery( "#modify_sync_beating" ).click( function( event ) {
-
     event.preventDefault();
-    jQuery( "#modal_modify_sync_beating" ).dialog({
+    openDialog("#modal_modify_sync_beating", modify_sync_beating)
+  } );
+
+
+  // approximate option clicked
+  jQuery( "#modify_approximate" ).click( function( event ) {
+    
+	event.preventDefault();
+
+    // this needs to be here because a tuning data line needs to be
+    // inserted into the #input_interval_to_approximate field
+                                        
+	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim());
+
+	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+		alert( "No tuning data to modify." );
+		return false;
+	 }
+    
+    jQuery( "#input_scale_degree" ).val(1);
+    jQuery( "#input_scale_degree" ).attr( { "min" : 1, "max" : tuning_table.note_count - 1 });
+
+    
+	jQuery( "#input_scale_degree" ).select();
+	jQuery( "#input_scale_degree" ).trigger("change");
+
+    jQuery( "#modal_approximate_intervals" ).dialog({
       modal: true,
       buttons: {
-        OK: function() {
-          modify_sync_beating();
+        Apply: function() {
+          modify_replace_with_approximation();
         },
-        Cancel: function() {
+        Close: function() {
           jQuery( this ).dialog( 'close' );
         }
       }
@@ -263,6 +222,172 @@ jQuery( document ).ready( function() {
 
   } );
 
+  // calculate and list rational approximations within user parameters
+  jQuery( "#input_interval_to_approximate" ).change( function() {
+		var interval = line_to_decimal( jQuery ( "#input_interval_to_approximate" ).val() );
+		
+        current_approximations.convergent_indicies = [];
+        current_approximations.numerators = [];
+        current_approximations.denominators = [];
+        current_approximations.ratios = [];
+        current_approximations.numerator_limits = [];
+        current_approximations.denominator_limits = [];
+        current_approximations.ratio_limits = [];
+
+        get_rational_approximations(interval, current_approximations.numerators, current_approximations.denominators, 999999,
+                                    current_approximations.convergent_indicies,
+                                    current_approximations.ratios,
+                                    current_approximations.numerator_limits,
+                                    current_approximations.denominator_limits,
+                                    current_approximations.ratio_limits);
+        modify_update_approximations();
+  });
+  
+  // recalculate approximations when scale degree changes
+  jQuery( "#input_scale_degree").change( function() {
+	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
+
+	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+		alert( "No tuning data to modify." );
+		return false;
+	 }
+
+    var index = parseInt( jQuery( '#input_scale_degree' ).val() ) - 1;
+	var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+	jQuery ( "#input_interval_to_approximate" ).val(lines[index]);
+	jQuery ( "#input_interval_to_approximate" ).trigger("change");
+
+  });
+
+  // refilter approximations when error amount changes
+  jQuery( "#input_min_error" ).change( function() {
+      modify_update_approximations();
+  })
+                                                   
+   // refilter approximations when error amount changes
+  jQuery( "#input_max_error" ).change( function() {
+      modify_update_approximations();
+  })
+                                                   
+  // refilter approximations when "show semiconvergents" changes
+  jQuery( "#input_show_convergents" ).change( function() {
+      modify_update_approximations();
+  })
+
+  // refilter approximations when prime limit changes
+  // can be improved, but it's a bit tricky!
+  jQuery( "#input_approx_min_prime" ).change( function() {
+    var num = parseInt(jQuery( "#input_approx_min_prime").val());
+    var dif = num - PRIMES[prime_counter[0]];
+	if (Math.abs(dif) == 1) {
+		if (num < PRIMES[prime_counter[0]]) {
+			prime_counter[0]--;
+		} else {
+			prime_counter[0]++;
+		}
+	} else {
+		prime_counter[0] = PRIMES.indexOf(closestPrime(num));
+	}
+    
+    jQuery( "#input_approx_min_prime").val(PRIMES[prime_counter[0]]);
+    modify_update_approximations();
+  })
+                                                   
+  // refilter approximations when prime limit changes
+  jQuery( "#input_approx_max_prime" ).change( function() {
+    var num = parseInt(jQuery( "#input_approx_max_prime").val());
+    var dif = num - PRIMES[prime_counter[1]];
+	if (Math.abs(dif) == 1) {
+		if (num < PRIMES[prime_counter[1]]) {
+			prime_counter[1]--;
+		} else {
+			prime_counter[1]++;
+		}
+	} else {
+		prime_counter[1] = PRIMES.indexOf(closestPrime(num));
+	}
+    
+    jQuery( "#input_approx_max_prime").val(PRIMES[prime_counter[1]]);
+    modify_update_approximations();
+  })
+                                                
+    // shows or hides MOS mode selection boxes
+    function show_modify_mode_mos_options(showOptions) {
+      document.getElementById("mos_mode_options").style.display = showOptions == "mos" ?  'block' : 'none';
+    }
+    
+    jQuery( "#modal_modify_mode").change( function() {
+        show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+    })
+
+    // repopulates the available degrees for selection
+    function update_modify_mode_mos_generators() {
+        show_modify_mode_mos_options(document.querySelector('input[name="mode_type"]:checked').value)
+        let coprimes = get_coprimes(tuning_table.note_count-1);
+        jQuery("#modal_modify_mos_degree").empty();
+        for (var d=1; d < coprimes.length-1; d++) {
+            var num = coprimes[d];
+            var cents = Math.round(decimal_to_cents(tuning_table.tuning_data[num]) * 10e6) / 10.0e6;
+            var text = num + " (" + cents + "c)";
+           jQuery("#modal_modify_mos_degree").append('<option value="'+num+'">'+text+'</option>');
+        }
+                                            
+     }
+    
+     // calculate the MOS mode and insert it in the mode input box
+     function modify_mode_update_mos_scale() {
+         var p = tuning_table.note_count-1;
+         var g = parseInt(jQuery("#modal_modify_mos_degree").val());
+         var s = parseInt(jQuery("#modal_modify_mos_size").val());
+         let mode = get_rank2_mode(p, g, s);
+         jQuery("#input_modify_mode").val(mode.join(" "));
+     }
+    
+    // update the available sizes for selection
+    jQuery( "#modal_modify_mos_degree").change( function() {
+        let nn = [];
+        let dd = [];
+        var gp = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count-1);
+        get_rational_approximations(gp, nn, dd);
+        jQuery("#modal_modify_mos_size").empty();
+        for (var d=2; d < dd.length-1; d++) {
+           var num = dd[d];
+           jQuery("#modal_modify_mos_size").append('<option value="'+num+'">'+num+'</option>');
+        }
+    })
+                         
+    // update mode when size is selected
+    jQuery( "#modal_modify_mos_size").change( function() {
+        modify_mode_update_mos_scale();
+    })
+    
+    // move the mode steps back one
+    jQuery( "#input_mode_step_left").click( function() {
+		var mode = jQuery( "#input_modify_mode" ).val().split(" ");
+		rotate(mode, -1);
+		jQuery( "#input_modify_mode" ).val(mode.join(" "));
+     })
+
+    // move the mode steps forward one
+    jQuery( "#input_mode_step_right").click( function() {
+		var mode = jQuery( "#input_modify_mode" ).val().split(" ");
+		rotate(mode, 1);
+		jQuery( "#input_modify_mode" ).val(mode.join(" "));
+     })
+                        
+  /*
+    // rank-2 temperament generator - scale size changed
+  jQuery( '#input_rank-2_size' ).change( function() {
+
+    var size = parseInt( jQuery( '#input_rank-2_size' ).val() );
+    // set generators up to be one less than scale size
+    jQuery( '#input_rank-2_up' ).val( size - 1 );
+    // set generators up input maximum
+    jQuery( '#input_rank-2_up' ).attr({ "max" : size - 1 });
+    // zero generators down
+    jQuery( '#input_rank-2_down' ).val( 0 );
+  } );
+  */
   // Touch keyboard (#nav_play) option clicked
   jQuery( "#nav_play, #launch-kbd" ).click( function( event ) {
 
@@ -331,17 +456,40 @@ jQuery( document ).ready( function() {
     }
   } );
 
+  // ------------------------------------
+  // old version
 
-
+  /*
   // Synth Settings - Main Volume
   jQuery(document).on('input', '#input_range_main_vol', function() {
     const gain = jQuery(this).val();
-    const now = synth.now();
-    synth.masterGain.gain.value = gain;
-    synth.masterGain.gain.setValueAtTime(gain, now);
+    synth.setMainVolume(gain)
+  });
+  */
+
+  // ------------------------------------
+  // new version
+
+  // data changed, handle programmatic reaction - no jQuery
+  model.on('change', (key, newValue) => {
+    if (key === 'main volume') {
+      synth.setMainVolume(newValue)
+    }
+  })
+
+  // data changed, sync it with the DOM
+  model.on('change', (key, newValue) => {
+    if (key === 'main volume') {
+      jQuery('#input_range_main_vol').val(newValue)
+    }
+  })
+
+  // DOM changed, need to sync it with model
+  jQuery('#input_range_main_vol').on('input', function() {
+    model.set('main volume', parseFloat(jQuery(this).val()))
   });
 
-
+  // ------------------------------------
 
   // Synth Settings - Waveform
   jQuery( "#input_select_synth_waveform" ).change( function( event ) {
@@ -350,17 +498,15 @@ jQuery( document ).ready( function() {
   } );
 
 
-
   // Synth Settings - Amplitude Envelope
   jQuery( "#input_select_synth_amp_env" ).change( function( event ) {
     update_page_url();
   } );
 
 
-
   // Synth Settings - Delay
   jQuery( "#input_checkbox_delay_on" ).change( function() {
-    if ($(this).is(':checked')) {
+    if (jQuery(this).is(':checked')) {
       synth.delay.enable()
     } else {
       synth.delay.disable()
@@ -505,14 +651,18 @@ jQuery( document ).ready( function() {
         colors = "white lightgrey black dimgrey white lightgrey white lightgrey black dimgrey white lightgrey black dimgrey white lightgrey white lightgrey black dimgrey white lightgrey black dimgrey";
         break;
 
-      default:
+      default: {
         // assemble a key colouring for any arbitrary scale size
-        for ( i = 0; i < size; i++ ) {
-          colors += ( i % 2 == 0 ) ? "white " : "black ";
+        let sequenceOfColors = []
+        for (let i = 0; i < Math.floor(size / 2); i++) {
+          sequenceOfColors.push("white", "black")
         }
-        // trim ending space
-        colors = colors.slice(0, -1);
-        break;
+        if (size % 2 === 1) {
+          sequenceOfColors.push("white")
+        }
+        colors = sequenceOfColors.join(' ')
+      }
+      break;
 
     }
 

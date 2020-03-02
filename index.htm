@@ -13,249 +13,305 @@
 -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Scale Workshop</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+  <title>Scale Workshop</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="Scale Workshop" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="http://sevish.com/scaleworkshop/" />
-    <meta property="og:image" content="http://sevish.com/scaleworkshop/assets/img/scale-workshop-og-image.png" />
-    <meta property="og:description" content="Scale Workshop is a tool that allows you to create microtonal tunings within your web browser. You can export these tunings to your device and use them to tune various synthesizers." />
-    <meta property="og:site_name" content="Sevish Music" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Scale Workshop" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="http://sevish.com/scaleworkshop/" />
+  <meta property="og:image" content="http://sevish.com/scaleworkshop/src/assets/img/scale-workshop-og-image.png" />
+  <meta property="og:description"
+    content="Scale Workshop is a tool that allows you to create microtonal tunings within your web browser. You can export these tunings to your device and use them to tune various synthesizers." />
+  <meta property="og:site_name" content="Sevish Music" />
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="inc/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="inc/jquery-ui-1.12.1/jquery-ui.min.css">
-    <link rel="stylesheet" href="inc/socicon/style.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="style-dark.css">
+  <!-- Styles -->
+  <link rel="stylesheet" href="src/lib/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="src/lib/jquery-ui-1.12.1/jquery-ui.min.css">
+  <link rel="stylesheet" href="src/lib/socicon/style.css">
+  <link rel="stylesheet" href="src/css/style.css">
+  <link rel="stylesheet" href="src/css/style-dark.css">
 
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
-    <link rel="manifest" href="assets/favicon/manifest.json">
-    <link rel="mask-icon" href="assets/favicon/safari-pinned-tab.svg" color="#9bd03b">
-    <meta name="theme-color" content="#ffffff">
-  </head>
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="src/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="src/assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="src/assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="src/assets/favicon/manifest.json">
+  <link rel="mask-icon" href="src/assets/favicon/safari-pinned-tab.svg" color="#9bd03b">
+  <meta name="theme-color" content="#ffffff">
+</head>
 
-  <body>
-    <div id="splash">
-      <div id="splash-center">
-        <noscript>
-          <img src="assets/img/scale-workshop-og-image.png" />
-          <p class="lead" style="padding:1em;">JavaScript is disabled in your browser. Please enable JavaScript to use Scale Workshop.</p>
-        </noscript>
-      </div>
+<body>
+  <div id="splash">
+    <div id="splash-center">
+      <noscript>
+        <img src="src/assets/img/scale-workshop-og-image.png" />
+        <p class="lead" style="padding:1em;">JavaScript is disabled in your browser. Please enable JavaScript to use
+          Scale Workshop.</p>
+      </noscript>
     </div>
+  </div>
 
-    <div id="header-mobile" class="visible-xs-block">
-      <h1>Scale Workshop</h1>
-    </div>
+  <div id="header-mobile" class="visible-xs-block">
+    <h1>Scale Workshop</h1>
+  </div>
 
-    <nav class="navbar navbar-inverse bg-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed pull-right" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <span class="navbar-brand">Scale Workshop</span>
-        </div>
-
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> New <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#" id="generate_equal_temperament"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Equal temperament</a></li>
-                <li><a href="#" id="generate_rank_2_temperament"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Rank-2 temperament</a></li>
-                <li><a href="#" id="generate_harmonic_series_segment"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Harmonic series segment</a></li>
-                <li><a href="#" id="generate_subharmonic_series_segment"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Subharmonic series segment</a></li>
-                <li class="divider"></li>
-                <li><a href="#" id="import-scala-scl"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Import .scl</a></li>
-                <li><a href="#" id="import-anamark-tun"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Import .tun</a></li>
-                <li class="divider"></li>
-                <li><a href="#" id="load-preset"><span class="glyphicon glyphicon-cd" aria-hidden="true"></span> Load preset scale</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-adjust" aria-hidden="true"></span> Modify <span class="caret"></span></a>
-              <ul class="dropdown-menu" id="modify-buttons">
-                <!--<li><a href="#" id="modify_key_transpose"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span> Key transpose</a></li>-->
-                <li><a href="#" id="modify_mode"><span class="glyphicon glyphicon-equalizer" aria-hidden="true"></span> Mode</a></li>
-                <!--<li><a href="#" id="modify_extend">Extend/repeat</a></li>-->
-                <li><a href="#" id="modify_stretch"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span> Stretch/compress</a></li>
-                <li><a href="#" id="modify_random_variance"><span class="glyphicon glyphicon-random" aria-hidden="true"></span> Random variance</a></li>
-                <li><a href="#" id="modify_sync_beating"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> Tempo-sync beating</a></li>
-                <!--<li><a href="#" id="modify_octave_reduce">Octave reduce</a></li>-->
-              </ul>
-            </li>
-            <li><a href="#" id="nav_play"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> Touch Kbd</a></li>
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export <span class="caret"></span></a>
-              <ul class="dropdown-menu" id="export-buttons">
-                <li><a href="#" onclick="event.preventDefault(); export_anamark_tun();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download AnaMark Tuning (.tun)</a></li>
-                <li><a href="#" onclick="event.preventDefault(); export_scala_scl();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Scala Scale (.scl)</a></li>
-                <li><a href="#" onclick="event.preventDefault(); export_scala_kbm();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Scala Mapping (.kbm)</a></li>
-                <li><a href="#" onclick="event.preventDefault(); export_maxmsp_coll();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Max/MSP coll Tuning (.txt)</a></li>
-                <li><a href="#" onclick="event.preventDefault(); export_pd_text();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download PureData text Tuning (.txt)</a></li>
-                <li><a href="#" onclick="event.preventDefault(); export_kontakt_script();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Kontakt Tuning Script (.txt)</a></li>
-                <li class="divider"></li>
-                <li><a href="#" onclick="event.preventDefault(); export_url();"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Share scale as URL</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#" id="about_scale_workshop"><img src="assets/favicon/android-chrome-192x192.png" style="height:1em; width:auto;" /> About Scale Workshop</a></li>
-                <li><a href="https://github.com/SeanArchibald/scale-workshop" target="_blank"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> GitHub</a></li>
-                <li><a href="https://github.com/SeanArchibald/scale-workshop/issues" target="_blank"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Report issue</a></li>
-                <li><a href="http://sevish.com" target="_blank"><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span> Made by Sevish</a></li>
-              </ul>
-            </li>
-            <li><a href="guide.htm" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> User guide</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+  <nav class="navbar navbar-inverse bg-inverse">
     <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed pull-right" data-toggle="collapse"
+          data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <span class="navbar-brand">Scale Workshop</span>
+      </div>
 
-      <div class="row">
-        <div class="col-sm-6 col-md-4 col-lg-4 col-main">
-          <form>
-            <label>Scale name/description</label>
-            <div class="form-group">
-              <input id="txt_name" name="base_frequency" type="text" class="form-control"></input>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-asterisk"
+                aria-hidden="true"></span> New <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#" id="generate_equal_temperament"><span class="glyphicon glyphicon-stats"
+                    aria-hidden="true"></span> Equal temperament</a></li>
+              <li><a href="#" id="generate_rank_2_temperament"><span class="glyphicon glyphicon-stats"
+                    aria-hidden="true"></span> Rank-2 temperament</a></li>
+              <li><a href="#" id="generate_harmonic_series_segment"><span class="glyphicon glyphicon-stats"
+                    aria-hidden="true"></span> Harmonic series segment</a></li>
+              <li><a href="#" id="generate_subharmonic_series_segment"><span class="glyphicon glyphicon-stats"
+                    aria-hidden="true"></span> Subharmonic series segment</a></li>
+              <li><a href="#" id="enumerate_chord"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                  Enumerate chord</a></li>
+              <li class="divider"></li>
+              <li><a href="#" id="import-scala-scl"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                  Import .scl</a></li>
+              <li><a href="#" id="import-anamark-tun"><span class="glyphicon glyphicon-log-in"
+                    aria-hidden="true"></span> Import .tun</a></li>
+              <li class="divider"></li>
+              <li><a href="#" id="load-preset"><span class="glyphicon glyphicon-cd" aria-hidden="true"></span> Load
+                  preset scale</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-adjust"
+                aria-hidden="true"></span> Modify <span class="caret"></span></a>
+            <ul class="dropdown-menu" id="modify-buttons">
+              <!--<li><a href="#" id="modify_key_transpose"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span> Key transpose</a></li>-->
+              <li><a href="#" id="modify_mode"><span class="glyphicon glyphicon-equalizer" aria-hidden="true"></span>
+                  Mode</a></li>
+              <!--<li><a href="#" id="modify_extend">Extend/repeat</a></li>-->
+              <li><a href="#" id="modify_stretch"><span class="glyphicon glyphicon-compressed"
+                    aria-hidden="true"></span> Stretch/compress</a></li>
+              <li><a href="#" id="modify_random_variance"><span class="glyphicon glyphicon-random"
+                    aria-hidden="true"></span> Random variance</a></li>
+              <li><a href="#" id="modify_sync_beating"><span class="glyphicon glyphicon-magnet"
+                    aria-hidden="true"></span> Tempo-sync beating</a></li>
+              <!--<li><a href="#" id="modify_octave_reduce">Octave reduce</a></li>-->
+              <li><a href="#" id="modify_approximate"><span class="glyphicon glyphicon-list-alt"
+                    aria-hidden="true"></span> Approximate</a></li>
+            </ul>
+          </li>
+          <li><a href="#" id="nav_play"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> Touch Kbd</a>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-download-alt"
+                aria-hidden="true"></span> Export <span class="caret"></span></a>
+            <ul class="dropdown-menu" id="export-buttons">
+              <li><a href="#" onclick="event.preventDefault(); export_anamark_tun();"><span
+                    class="glyphicon glyphicon-download" aria-hidden="true"></span> Download AnaMark Tuning (.tun)</a>
+              </li>
+              <li><a href="#" onclick="event.preventDefault(); export_scala_scl();"><span
+                    class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Scala Scale (.scl)</a></li>
+              <li><a href="#" onclick="event.preventDefault(); export_scala_kbm();"><span
+                    class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Scala Mapping (.kbm)</a>
+              </li>
+              <li><a href="#" onclick="event.preventDefault(); export_maxmsp_coll();"><span
+                    class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Max/MSP coll Tuning
+                  (.txt)</a></li>
+              <li><a href="#" onclick="event.preventDefault(); export_pd_text();"><span
+                    class="glyphicon glyphicon-download" aria-hidden="true"></span> Download PureData text Tuning
+                  (.txt)</a></li>
+              <li><a href="#" onclick="event.preventDefault(); export_kontakt_script();"><span
+                    class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Kontakt Tuning Script
+                  (.txt)</a></li>
+              <li class="divider"></li>
+              <li><a href="#" onclick="event.preventDefault(); export_reference_deflemask();"><span
+                    class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Deflemask 'fine tune'
+                  reference (.txt)</a></li>
+              <li class="divider"></li>
+              <li><a href="#" onclick="event.preventDefault(); export_url();"><span
+                    class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Share scale as URL</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-info-sign"
+                aria-hidden="true"></span> About <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#" id="about_scale_workshop"><img src="src/assets/favicon/android-chrome-192x192.png"
+                    style="height:1em; width:auto;" /> About Scale Workshop</a></li>
+              <li><a href="https://github.com/SeanArchibald/scale-workshop" target="_blank"><span
+                    class="glyphicon glyphicon-book" aria-hidden="true"></span> GitHub</a></li>
+              <li><a href="https://github.com/SeanArchibald/scale-workshop/issues" target="_blank"><span
+                    class="glyphicon glyphicon-send" aria-hidden="true"></span> Report issue</a></li>
+              <li><a href="http://sevish.com" target="_blank"><span class="glyphicon glyphicon-heart-empty"
+                    aria-hidden="true"></span> Made by Sevish</a></li>
+            </ul>
+          </li>
+          <li><a href="guide.htm" target="_blank"><span class="glyphicon glyphicon-question-sign"
+                aria-hidden="true"></span> User guide</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-sm-6 col-md-4 col-lg-4 col-main">
+        <form>
+          <label>Scale name/description</label>
+          <div class="form-group">
+            <input id="txt_name" name="base_frequency" type="text" class="form-control"></input>
+          </div>
+
+          <label>Scale data <a href="guide.htm#manual-data-entry" target="_blank"><span
+                class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></label>
+          <div class="form-group">
+            <textarea id="txt_tuning_data" class="form-control" rows="12"
+              title="Enter one interval per line. Values with a . will be calculated as cents. Values with a backslash (n\m) are n degrees of m-EDO. Values with forward slash (/) are calculated as ratios. See the user guide for examples (About > User Guide)"
+              placeholder=" "></textarea>
+          </div>
+
+          <hr />
+
+          <div class="form-group">
+            <label>Base frequency (note 1/1)</label>
+            <div class="input-group">
+              <input id="txt_base_frequency" name="base_frequency" type="number" min="0.0001" max="999999"
+                class="form-control" value="440" title="Set the frequency (in Hz) of note 1/1"></input>
+              <div class="input-group-addon">Hz</div>
+            </div>
+            <input name="Auto" id="btn_frequency_auto" type="button" value="Auto" class="btn btn-default pull-right"
+              title="Automatically set base frequency from the MIDI note, assuming 12-EDO A440Hz"></input>
+          </div>
+
+          <div class="form-group">
+            <label>Base MIDI note (note 1/1)</label>
+            <div class="input-group"
+              title="Set the MIDI note number to be note 1/1. By default this is 69 (A above middle C).">
+              <input id="txt_base_midi_note" name="base_midi_note" type="number" min="0" max="127" step="1"
+                class="form-control" value="69"></input>
+              <div id="base_midi_note_name" class="input-group-addon" style="min-width:5em;">A5</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <input name="Clear" id="btn_clear" type="button" value="Clear scale" class="btn btn-danger"></input>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-sm-6 col-md-8 col-lg-8 col-main">
+        <div class="row">
+
+          <!-- Settings column -->
+          <div class="col-sm-12 col-md-6 col-md-push-6 col-lg-6 col-sub">
+
+            <a id="btn_panic" href="#" class="btn btn-link" style="float:right;margin-top:1em;"
+              title="Stops all currently playing notes and also turns down the Delay feedback gain.">Quiet</a>
+
+            <div id="qwerty-indicator">
             </div>
 
-            <label>Scale data <a href="guide.htm#manual-data-entry" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></label>
-            <div class="form-group">
-              <textarea id="txt_tuning_data" class="form-control" rows="12" title="Enter one interval per line. Values with a . will be calculated as cents. Values with a backslash (n\m) are n degrees of m-EDO. Values with forward slash (/) are calculated as ratios. See the user guide for examples (About > User Guide)" placeholder=" "></textarea>
-            </div>
+            <div id="settings-accordion">
 
-            <hr/>
-
-            <div class="form-group">
-              <label>Base frequency (note 1/1)</label>
-              <div class="input-group">
-                <input id="txt_base_frequency" name="base_frequency" type="number" min="0.0001" max="999999" class="form-control" value="440" title="Set the frequency (in Hz) of note 1/1"></input>
-                <div class="input-group-addon">Hz</div>
-              </div>
-              <input name="Auto" id="btn_frequency_auto" type="button" value="Auto" class="btn btn-default pull-right" title="Automatically set base frequency from the MIDI note, assuming 12-EDO A440Hz"></input>
-            </div>
-
-            <div class="form-group">
-              <label>Base MIDI note (note 1/1)</label>
-              <div class="input-group" title="Set the MIDI note number to be note 1/1. By default this is 69 (A above middle C).">
-                <input id="txt_base_midi_note" name="base_midi_note" type="number" min="0" max="127" step="1" class="form-control" value="69"></input>
-                <div id="base_midi_note_name" class="input-group-addon" style="min-width:5em;">A5</div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <input name="Clear" id="btn_clear" type="button" value="Clear scale" class="btn btn-danger"></input>
-            </div>
-          </form>
-        </div>
-
-        <div class="col-sm-6 col-md-8 col-lg-8 col-main">
-          <div class="row">
-
-            <!-- Settings column -->
-            <div class="col-sm-12 col-md-6 col-md-push-6 col-lg-6 col-sub">
-
-              <a id="btn_panic" href="#" class="btn btn-link" style="float:right;margin-top:1em;" title="Stops all currently playing notes and also turns down the Delay feedback gain.">Quiet</a>
-
-              <div id="qwerty-indicator">
-              </div>
-
-              <div id="settings-accordion">
-
-                <!-- general settings -->
-                <div id="settings_general" class="group">
-                  <h3>General settings</h3>
-                  <div>
-                    <form>
-                      <div class="form-group">
-                        <label>Line endings format</label>
-                        <select id="input_select_newlines" class="form-control" title="If your exported tuning files didn't work right on macOS synths, try changing this option to Unix.">
-                          <option value="windows">Microsoft (Windows/MS-DOS)</option>
-                          <option value="unix">Unix (Mac/Linux)</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-
-                        <div class="checkbox">
-                          <label>
-                            <input id="input_checkbox_night_mode" type="checkbox"></input> <label>Night mode</label>
-                          </label>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-
-                <!-- synth settings -->
-                <div id="settings_synth" class="group">
-                  <h3>Synth settings</h3>
-                  <div>
+              <!-- general settings -->
+              <div id="settings_general" class="group">
+                <h3>General settings</h3>
+                <div>
+                  <form>
                     <div class="form-group">
-                      <label for="midi-enabler">MIDI</label>
-                      <button type="button" class="btn btn-danger" id="midi-enabler">off</button>
+                      <label>Line endings format</label>
+                      <select id="input_select_newlines" class="form-control"
+                        title="If your exported tuning files didn't work right on macOS synths, try changing this option to Unix.">
+                        <option value="windows">Microsoft (Windows/MS-DOS)</option>
+                        <option value="unix">Unix (Mac/Linux)</option>
+                      </select>
                     </div>
-                    <form>
-                      <div class="form-group">
-                        <label for="input_range_main_vol">Main Volume</label>
-                        <input type="range" class="form-control-range" id="input_range_main_vol" min="0" max="1" step="0.005" value="0.8">
-                      </div>
-                      <div class="form-group">
-                        <label>Waveform</label>
-                        <select id="input_select_synth_waveform" class="form-control">
-                          <option value="triangle">Triangle</option>
-                          <option value="sawtooth">Sawtooth</option>
-                          <option value="square">Square</option>
-                          <option value="sine">Sine</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label>Amplitude Envelope</label>
-                        <select id="input_select_synth_amp_env" class="form-control">
-                          <option value="organ">Organ</option>
-                          <option value="pad">Pad</option>
-                          <option value="perc-short">Percussive (Short)</option>
-                          <option value="perc-medium">Percussive (Medium)</option>
-                          <option value="perc-long">Percussive (Long)</option>
-                        </select>
-                      </div>
-                      <hr/>
-                      <div class="form-group">
-                        <label>Delay effect</label>
-                        <div class="checkbox">
-                          <label>
-                            <input id="input_checkbox_delay_on" type="checkbox"></input> On
-                          </label>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="input_range_feedback_gain">Feedback gain</label>
-                        <input type="range" class="form-control-range" id="input_range_feedback_gain" min="0" max="0.99" step="0.005" value="0.3">
-                      </div>
-                      <div class="form-group">
-                        <label for="input_range_delay_time">Delay Time (<span id="delay_time_ms">400</span> ms)</label>
-                        <input type="range" class="form-control-range" id="input_range_delay_time" min="10" max="5000" value="400">
-                      </div>
-                    </form>
-                  </div>
-                </div>
+                    <div class="form-group">
 
-                <!-- MIDI settings -->
-                <!--<div id="settings_midi" class="group">
+                      <div class="checkbox">
+                        <label>
+                          <input id="input_checkbox_night_mode" type="checkbox"></input> <label>Night mode</label>
+                        </label>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- synth settings -->
+              <div id="settings_synth" class="group">
+                <h3>Synth settings</h3>
+                <div>
+                  <div class="form-group">
+                    <label for="midi-enabler">MIDI</label>
+                    <button type="button" class="btn btn-danger" id="midi-enabler">off</button>
+                  </div>
+                  <form>
+                    <div class="form-group">
+                      <label for="input_range_main_vol">Main Volume</label>
+                      <input type="range" class="form-control-range" id="input_range_main_vol" min="0" max="1"
+                        step="0.005" value="0.8">
+                    </div>
+                    <div class="form-group">
+                      <label>Waveform</label>
+                      <select id="input_select_synth_waveform" class="form-control">
+                        <option value="triangle">Triangle</option>
+                        <option value="sawtooth">Sawtooth</option>
+                        <option value="square">Square</option>
+                        <option value="sine">Sine</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Amplitude Envelope</label>
+                      <select id="input_select_synth_amp_env" class="form-control">
+                        <option value="organ">Organ</option>
+                        <option value="pad">Pad</option>
+                        <option value="perc-short">Percussive (Short)</option>
+                        <option value="perc-medium">Percussive (Medium)</option>
+                        <option value="perc-long">Percussive (Long)</option>
+                      </select>
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                      <label>Delay effect</label>
+                      <div class="checkbox">
+                        <label>
+                          <input id="input_checkbox_delay_on" type="checkbox"></input> On
+                        </label>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="input_range_feedback_gain">Feedback gain</label>
+                      <input type="range" class="form-control-range" id="input_range_feedback_gain" min="0" max="0.99"
+                        step="0.005" value="0.3">
+                    </div>
+                    <div class="form-group">
+                      <label for="input_range_delay_time">Delay Time (<span id="delay_time_ms">400</span> ms)</label>
+                      <input type="range" class="form-control-range" id="input_range_delay_time" min="10" max="5000"
+                        value="400">
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- MIDI settings -->
+              <!--<div id="settings_midi" class="group">
                   <h3>MIDI settings</h3>
                   <div>
                     <form>
@@ -269,384 +325,496 @@
                   </div>
                 </div>-->
 
-                <!-- Isomorphic keyboard settings -->
-                <div id="settings_note_input" class="group">
-                  <h3>Isomorphic keyboard settings</h3>
-                  <div>
-                    <p>Play your scale using your computer keyboard or the touch keyboard.</p>
-                    <form>
+              <!-- Isomorphic keyboard settings -->
+              <div id="settings_note_input" class="group">
+                <h3>Isomorphic keyboard settings</h3>
+                <div>
+                  <p>Play your scale using your computer keyboard or the touch keyboard.</p>
+                  <form>
 
-                      <div class="form-group">
-                        <label>Computer keyboard layout</label>
-                        <select id="input_select_keyboard_layout" class="form-control" title="Select your regional keyboard layout.">
-                          <option value="EN">English (QWERTY)</option>
-                          <option value="HU">Hungarian (QWERTZ)</option>
-                          <option value="DK">Dvorak</option>
-                          <option value="PK">Programmer Dvorak</option>
-			  <option value="CO">Colemak</option>
-                        </select>
+                    <div class="form-group">
+                      <label>Computer keyboard layout</label>
+                      <select id="input_select_keyboard_layout" class="form-control"
+                        title="Select your regional keyboard layout.">
+                        <option value="EN">English (QWERTY)</option>
+                        <option value="HU">Hungarian (QWERTZ)</option>
+                        <option value="DK">Dvorak</option>
+                        <option value="PK">Programmer Dvorak</option>
+                        <option value="CO">Colemak</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Isomorphic key mapping</label>
+                      <p>Distance (in scale degrees) between adjacent keys on the horizontal/vertical axes.</p>
+                      <div class="input-group">
+                        <div class="input-group-addon">V</div>
+                        <input id="input_number_isomorphicmapping_vert" type="number" class="form-control" value="5"
+                          min="-100" max="100" />
+                        <div class="input-group-addon">default 5</div>
                       </div>
-                      <div class="form-group">
-                        <label>Isomorphic key mapping</label>
-                        <p>Distance (in scale degrees) between adjacent keys on the horizontal/vertical axes.</p>
-                        <div class="input-group">
-                          <div class="input-group-addon">V</div>
-                          <input id="input_number_isomorphicmapping_vert" type="number" class="form-control" value="5" min="-100" max="100" />
-                          <div class="input-group-addon">default 5</div>
-                        </div>
-                        <div class="input-group">
-                          <div class="input-group-addon">H</div>
-                          <input id="input_number_isomorphicmapping_horiz" type="number" class="form-control" value="1" min="-100" max="100" />
-                          <div class="input-group-addon">default 1</div>
-                        </div>
+                      <div class="input-group">
+                        <div class="input-group-addon">H</div>
+                        <input id="input_number_isomorphicmapping_horiz" type="number" class="form-control" value="1"
+                          min="-100" max="100" />
+                        <div class="input-group-addon">default 1</div>
                       </div>
-                      <div class="form-group">
-                        <label>Key colours</label>
-                        <p>A list of key colours, ascending from 1/1. Key colours are purely cosmetic and do not affect mapping.</p>
-                        <textarea id="input_key_colors" class="form-control" placeholder="white black white white black white black white white black white black" title="Examples: black grey white red green blue palevioletred antiquewhite steelblue olive">white black white white black white black white white black white black</textarea>
-                        <input name="Auto" id="btn_key_colors_auto" type="button" value="Auto" class="btn btn-default pull-right" title="Automatically colour keys based on your scale size. Auto colouring is not optimal but a good starting point."></input>
-                      </div>
-                    </form>
-                  </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Key colours</label>
+                      <p>A list of key colours, ascending from 1/1. Key colours are purely cosmetic and do not affect
+                        mapping.</p>
+                      <textarea id="input_key_colors" class="form-control"
+                        placeholder="white black white white black white black white white black white black"
+                        title="Examples: black grey white red green blue palevioletred antiquewhite steelblue olive">white black white white black white black white white black white black</textarea>
+                      <input name="Auto" id="btn_key_colors_auto" type="button" value="Auto"
+                        class="btn btn-default pull-right"
+                        title="Automatically colour keys based on your scale size. Auto colouring is not optimal but a good starting point."></input>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- tuning table column -->
-            <div id="col-tuning-table" class="col-sm-12 col-md-6 col-md-pull-6 col-lg-6 col-sub">
-              <table id="tuning-table" class="table table-condensed table-hover">
-              </table>
+          <!-- tuning table column -->
+          <div id="col-tuning-table" class="col-sm-12 col-md-6 col-md-pull-6 col-lg-6 col-sub">
+            <table id="tuning-table" class="table table-condensed table-hover">
+            </table>
+          </div>
+
+        </div><!-- /.row -->
+      </div><!-- /col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+
+  <!-- Hidden by default -->
+  <input type="file" id="scala-file" accept=".scl" style="display:none;" onchange="parse_imported_scala_scl(event)" />
+  <input type="file" id="anamark-tun-file" accept=".tun" style="display:none;"
+    onchange="parse_imported_anamark_tun(event)" />
+
+
+
+  <!-- Generator Modals -->
+  <div id="modal_generate_equal_temperament" class="modal" title="Generate equal temperament">
+    <a href="guide.htm#equal-temperaments" target="_blank"><span class="glyphicon glyphicon-question-sign"
+        aria-hidden="true" style="float:right;"></span></a>
+    <form>
+      <label>Number of divisions</label>
+      <div class="form-group">
+        <input id="input_number_of_divisions" name="" type="number" min="1" max="999999" class="form-control"
+          value="5"></input>
+      </div>
+
+      <label>Interval to divide</label>
+      <div class="form-group">
+        <input id="input_interval_to_divide" name="" type="text" class="form-control" value="2/1"></input>
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_generate_rank_2_temperament" class="modal" title="Generate rank-2 temperament">
+    <form>
+      <label>Generator</label>
+      <div class="form-group">
+        <input id="input_rank-2_generator" name="" type="text" class="form-control" value="3/2"></input>
+      </div>
+
+      <label>Period</label>
+      <div class="form-group">
+        <input id="input_rank-2_period" name="" type="text" class="form-control" value="2/1"></input>
+      </div>
+
+      <label>Scale size</label>
+      <div class="form-group">
+        <input id="input_rank-2_size" name="" type="number" min="2" max="99999" step="1" class="form-control"
+          value="7"></input>
+      </div>
+
+      <label>Generators up/down from 1/1</label>
+      <div class="form-group form-inline">
+        <div class="input-group">
+          <input id="input_rank-2_up" name="" type="number" min="0" max="6" step="1" class="form-control" value="6"
+            title="Number of generators up" style="min-width:5em;"></input>
+          <div class="input-group-addon">Up</div>
+        </div>
+        <div class="input-group">
+          <input id="input_rank-2_down" name="" type="number" min="0" max="99999" step="1" class="form-control"
+            value="0" disabled></input>
+          <div class="input-group-addon">Down</div>
+        </div>
+      </div>
+    </form>
+    <hr />
+    <button class="btn btn-default"
+      onclick="show_mos_cf( jQuery('#input_rank-2_period').val(), jQuery('#input_rank-2_generator').val(), jQuery('#input_rank-2_size').val(), jQuery('#input_rank-2_mos_threshold').val() );"
+      style="float:left;">Show MOS</button>
+    <p style="text-align:right;">(ignore MOS with steps smaller than <input id="input_rank-2_mos_threshold" name=""
+        type="number" min="0.1" max="600" value="2.5" style="width:4em;"></input> cents)</p>
+    <span id="info_rank_2_mos" style="display:block;margin-top:10px;"></span>
+  </div>
+
+  <div id="modal_generate_harmonic_series_segment" class="modal" title="Generate harmonic series segment">
+    <form>
+      <label>Lowest harmonic</label>
+      <div class="form-group">
+        <input id="input_lowest_harmonic" name="" type="number" min="1" max="999999" step="1" class="form-control"
+          value="8"></input>
+      </div>
+
+      <label>Highest harmonic</label>
+      <div class="form-group">
+        <input id="input_highest_harmonic" name="" type="number" min="1" max="999999" step="1" class="form-control"
+          value="16"></input>
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_generate_subharmonic_series_segment" class="modal" title="Generate subharmonic series segment">
+    <form>
+      <label>Lowest subharmonic</label>
+      <div class="form-group">
+        <input id="input_lowest_subharmonic" name="" type="number" min="1" max="999999" step="1" class="form-control"
+          value="8"></input>
+      </div>
+
+      <label>Highest subharmonic</label>
+      <div class="form-group">
+        <input id="input_highest_subharmonic" name="" type="number" min="1" max="999999" step="1" class="form-control"
+          value="16"></input>
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_enumerate_chord" class="modal" title="Enumerate chord">
+    <form>
+      <label>Chord</label>
+      <div class="form-group">
+        <input id="input_chord" name="" type="text" class="form-control" value="4:5:6:7:8"></input>
+      </div>
+      <div class="form-group">
+        <label>
+          <input id="input_invert_chord" type="checkbox"></input> Invert chord
+        </label>
+      </div>
+      <label>
+        <input id="input_convert_to_ratios" type="checkbox"></input> Convert all to ratios
+      </label>
+    </form>
+  </div>
+
+  <div id="modal_load_preset_scale" class="modal" title="Load preset scale">
+    <form>
+      <label>Choose a scale</label>
+      <div class="form-group">
+        <select id="select_preset_scale" name="" size="10" class="form-control">
+          <option value="12edo">12-tone equal temperament</option>
+          <option value="partch43">Partch 43-tone JI</option>
+          <option value="bohlenpierce">Bohlen-Pierce (equal)</option>
+          <option value="pelog">Pelog</option>
+          <option value="slendro">Slendro</option>
+          <option value="werckmeisteriii">Werckmeister III (1691)</option>
+          <option value="young1799">Young (1799)</option>
+          <option value="snakeoil">Pythagorean 432Hz</option>
+          <option value="313island9">313edo island[9]</option>
+          <option value="17superpyth12">17edo superpyth[12]</option>
+          <option value="15blackwood10">15edo blackwood[10]</option>
+          <option value="26flattone12">26edo flattone[12]</option>
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modify Modals -->
+  <div id="modal_modify_stretch" class="modal" title="Stretch/compress tuning">
+    <p>This applies a stretching or compression evenly across the whole scale.<br />Entering 1 will cause no change;
+      entering 2 will make every interval twice as large.</p>
+    <form>
+      <label>Stretch ratio</label>
+      <div class="form-group">
+        <input id="input_stretch_ratio" name="" type="number" class="form-control" value="1.005" min="0.0001"
+          max="99999"></input>
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_modify_random_variance" class="modal" title="Random variance">
+    <p>This will add a random amount of detuning to each note of the scale.</p>
+    <form>
+      <label>Maximum variance in cents</label>
+      <div class="form-group">
+        <input id="input_cents_max_variance" name="" type="number" class="form-control" value="10" min="0"
+          max="99999"></input>
+      </div>
+
+      <div class="checkbox"
+        title="By default, the 'octave' won't be detuned. This prevents the scale sound progressively more out-of-tune as you go up/down by octaves. Check this box option to over-ride this.">
+        <label>
+          <input id="input_checkbox_vary_period" type="checkbox"></input> Vary the octave
+        </label>
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_modify_mode" class="modal" title="Mode">
+    <p>Create a subset of a scale.</p>
+    <form>
+      <label>Mode</label>
+      <div class="form-group">
+        <input id="input_modify_mode" name="" type="text" class="form-control" value=""
+          placeholder="2 2 1 2 2 2 1"></input>
+        <div class="form-row">
+          <button class="btn btn-default" id="input_mode_step_left" type="button">&laquo</button>
+          <button class="btn btn-default" id="input_mode_step_right" type="button">&raquo</button>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="mode_type" value="intervals" checked>Intervals (e.g. 2 2 1 2 2 2 1)</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="mode_type" value="frombase">From base note (e.g. 2 4 5 7 9 11 12)</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="mode_type" value="mos">MOS Mode (select a degree to stack)</label>
+        </div>
+        <div id="mos_mode_options">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label> Degree </label>
+              <select class="form-control" id="modal_modify_mos_degree"></select>
             </div>
-
-          </div><!-- /.row -->
-        </div><!-- /col -->
-      </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
-
-    <!-- Hidden by default -->
-    <input type="file" id="scala-file" accept=".scl" style="display:none;" onchange="parse_imported_scala_scl(event)" />
-    <input type="file" id="anamark-tun-file" accept=".tun" style="display:none;" onchange="parse_imported_anamark_tun(event)" />
-
-
-
-    <!-- Generator Modals -->
-    <div id="modal_generate_equal_temperament" class="modal" title="Generate equal temperament">
-      <a href="guide.htm#equal-temperaments" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="float:right;"></span></a>
-      <form>
-        <label>Number of divisions</label>
-        <div class="form-group">
-          <input id="input_number_of_divisions" name="" type="number" min="1" max="999999" class="form-control" value="5"></input>
-        </div>
-
-        <label>Interval to divide</label>
-        <div class="form-group">
-          <input id="input_interval_to_divide" name="" type="text" class="form-control" value="2/1"></input>
-        </div>
-      </form>
-    </div>
-
-    <div id="modal_generate_rank_2_temperament" class="modal" title="Generate rank-2 temperament">
-      <form>
-        <label>Generator</label>
-        <div class="form-group">
-          <input id="input_rank-2_generator" name="" type="text" class="form-control" value="3/2"></input>
-        </div>
-
-        <label>Period</label>
-        <div class="form-group">
-          <input id="input_rank-2_period" name="" type="text" class="form-control" value="2/1"></input>
-        </div>
-
-        <label>Scale size</label>
-        <div class="form-group">
-          <input id="input_rank-2_size" name="" type="number" min="2" max="99999" step="1" class="form-control" value="7"></input>
-        </div>
-
-        <label>Generators up/down from 1/1</label>
-        <div class="form-group form-inline">
-          <div class="input-group">
-            <input id="input_rank-2_up" name="" type="number" min="0" max="6" step="1" class="form-control" value="6" title="Number of generators up" style="min-width:5em;"></input>
-            <div class="input-group-addon">Up</div>
-          </div>
-          <div class="input-group">
-            <input id="input_rank-2_down" name="" type="number" min="0" max="99999" step="1" class="form-control" value="0" disabled></input>
-            <div class="input-group-addon">Down</div>
+            <div class="form-group col-md-6">
+              <label> Size </label>
+              <select class="form-control" id="modal_modify_mos_size"></select>
+            </div>
           </div>
         </div>
-      </form>
-      <hr/>
-      <button class="btn btn-default" onclick="show_mos( jQuery('#input_rank-2_period').val(), jQuery('#input_rank-2_generator').val(), jQuery('#input_rank-2_size').val(), jQuery('#input_rank-2_mos_threshold').val() );" style="float:left;">Show MOS</button>
-      <p style="text-align:right;">(ignore MOS with steps smaller than <input id="input_rank-2_mos_threshold" name="" type="number" min="0.1" max="600" value="2.5" style="width:4em;"></input> cents)</p>
-      <span id="info_rank_2_mos" style="display:block;margin-top:10px;"></span>
-    </div>
+      </div>
+    </form>
+  </div>
 
-    <div id="modal_generate_harmonic_series_segment" class="modal" title="Generate harmonic series segment">
-      <form>
-        <label>Lowest harmonic</label>
-        <div class="form-group">
-          <input id="input_lowest_harmonic" name="" type="number" min="1" max="999999" step="1" class="form-control" value="8"></input>
+  <div id="modal_modify_sync_beating" class="modal" title="Tempo-sync beating">
+    <a href="guide.htm#tempo-sync-beating" target="_blank"><span class="glyphicon glyphicon-question-sign"
+        aria-hidden="true" style="float:right;"></span></a>
+    <form>
+      <label>BPM</label>
+      <div class="form-group">
+        <input id="input_modify_sync_beating_bpm" name="" type="number" class="form-control" value="100"
+          placeholder="100"></input>
+      </div>
+
+      <label>Resolution</label>
+      <div class="form-group">
+        <select id="select_sync_beating_resolution" name="" class="form-control">
+          <option value="16">16 (2^4)</option>
+          <option value="24">24 (2^3 . 3)</option>
+          <option value="27">27 (3^3)</option>
+          <option value="30">30 (2 . 3 . 5)</option>
+          <option value="32">32 (2^5)</option>
+          <option value="48">48 (2^4 . 3)</option>
+          <option value="64" selected>64 (2^6)</option>
+          <option value="96">96 (2^5 . 3)</option>
+          <option value="128">128 (2^7)</option>
+          <option value="144">144 (2^4 . 3^2)</option>
+          <option value="192">192 (2^6 . 3)</option>
+          <option value="256">256 (2^8)</option>
+          <option value="512">512 (2^9)</option>
+          <option value="1024">1024 (2^10)</option>
+          <option value="2048">2048 (2^11)</option>
+          <option value="2310">2310 (2 . 3 . 5 . 7 . 11)</option>
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_approximate_intervals" class="modal" title="Mode">
+    <p>Select a ratio that approximates the interval.</p>
+    <form>
+      <label>Scale Degree</label>
+      <div class="form-group">
+        <input id="input_scale_degree" name="" type="number" class="form-control" value="1" min="1" max="128"></input>
+      </div>
+      <label>Interval</label>
+      <div class="form-group">
+        <input id="input_interval_to_approximate" name="" tyep="number" class="form-control" value=""></input>
+      </div>
+      <div class="form-group">
+        <label>Approximation</label>
+        <select class="form-control" id="approximation_selection"></select>
+      </div>
+      <div class="form-group">
+        <label>
+          <input id="input_show_convergents" type="checkbox"> Only show convergents</input>
+        </label>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Min Error</label>
+          <input id="input_min_error" name="" type="number" class="form-control" value="0.0" min="0"
+            max="200.0">cents</input>
         </div>
-
-        <label>Highest harmonic</label>
-        <div class="form-group">
-          <input id="input_highest_harmonic" name="" type="number" min="1" max="999999" step="1" class="form-control" value="16"></input>
+        <div class="form-group col-md-6">
+          <label>Max Error</label>
+          <input id="input_max_error" name="" type="number" class="form-control" value="15.0" min="1.0"
+            max="200.0">cents</input>
         </div>
-      </form>
-    </div>
-
-    <div id="modal_generate_subharmonic_series_segment" class="modal" title="Generate subharmonic series segment">
-      <form>
-        <label>Lowest subharmonic</label>
-        <div class="form-group">
-          <input id="input_lowest_subharmonic" name="" type="number" min="1" max="999999" step="1" class="form-control" value="8"></input>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Min Prime Limit</label>
+          <input id="input_approx_min_prime" name="" type="number" class="form-control" value="2" min="0"
+            max="7919"></input>
         </div>
-
-        <label>Highest subharmonic</label>
-        <div class="form-group">
-          <input id="input_highest_subharmonic" name="" type="number" min="1" max="999999" step="1" class="form-control" value="16"></input>
+        <div class="form-group col-md-6">
+          <label>Max Prime Limit</label>
+          <input id="input_approx_max_prime" name="" type="number" class="form-control" value="31" min="0"
+            max="7919"></input>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
+  </div>
 
-    <div id="modal_load_preset_scale" class="modal" title="Load preset scale">
-      <form>
-        <label>Choose a scale</label>
-        <div class="form-group">
-          <select id="select_preset_scale" name="" size="10" class="form-control">
-            <option value="12edo">12-tone equal temperament</option>
-            <option value="partch43">Partch 43-tone JI</option>
-            <option value="bohlenpierce">Bohlen-Pierce (equal)</option>
-            <option value="pelog">Pelog</option>
-            <option value="slendro">Slendro</option>
-            <option value="werckmeisteriii">Werckmeister III (1691)</option>
-            <option value="young1799">Young (1799)</option>
-            <option value="snakeoil">Pythagorean 432Hz</option>
-            <option value="313island9">313edo island[9]</option>
-            <option value="17superpyth12">17edo superpyth[12]</option>
-            <option value="15blackwood10">15edo blackwood[10]</option>
-            <option value="26flattone12">26edo flattone[12]</option>
-          </select>
-        </div>
-      </form>
-    </div>
+  <!-- Export Modals -->
+  <div id="modal_share_url" class="modal" title="Share scale as URL">
+    <p>Share your scale using the sharing link.</p>
+    <form>
+      <div class="form-group">
+        <input id="input_share_url" name="" type="text" class="form-control" value="" readonly></input>
+      </div>
+    </form>
+    <p class="social-icons">
+      <a class="social-icons-email" href="#" title="Send scale via email"><span class="socicon-mail"></span></a>
+      <a class="social-icons-twitter" href="#" title="Tweet this scale"><span class="socicon-twitter"></span></a>
+    </p>
+  </div>
 
-    <!-- Modify Modals -->
-    <div id="modal_modify_stretch" class="modal" title="Stretch/compress tuning">
-      <p>This applies a stretching or compression evenly across the whole scale.<br/>Entering 1 will cause no change; entering 2 will make every interval twice as large.</p>
-      <form>
-        <label>Stretch ratio</label>
-        <div class="form-group">
-          <input id="input_stretch_ratio" name="" type="number" class="form-control" value="1.005" min="0.0001" max="99999"></input>
-        </div>
-      </form>
-    </div>
-
-    <div id="modal_modify_random_variance" class="modal" title="Random variance">
-      <p>This will add a random amount of detuning to each note of the scale.</p>
-      <form>
-        <label>Maximum variance in cents</label>
-        <div class="form-group">
-          <input id="input_cents_max_variance" name="" type="number" class="form-control" value="10" min="0" max="99999"></input>
-        </div>
-
-        <div class="checkbox" title="By default, the 'octave' won't be detuned. This prevents the scale sound progressively more out-of-tune as you go up/down by octaves. Check this box option to over-ride this.">
-          <label>
-            <input id="input_checkbox_vary_period" type="checkbox"></input> Vary the octave
-          </label>
-        </div>
-      </form>
-    </div>
-
-    <div id="modal_modify_mode" class="modal" title="Mode">
-      <p>Create a subset of a scale.</p>
-      <form>
-        <label>Mode</label>
-        <div class="form-group">
-          <input id="input_modify_mode" name="" type="text" class="form-control" value="" placeholder="2 2 1 2 2 2 1"></input>
-          <div class="radio">
-            <label><input type="radio" name="mode_type" value="intervals" checked>Intervals (e.g. 2 2 1 2 2 2 1)</label>
-          </div>
-          <div class="radio">
-            <label><input type="radio" name="mode_type" value="frombase">From base note (e.g. 2 4 5 7 9 11 12)</label>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <div id="modal_modify_sync_beating" class="modal" title="Tempo-sync beating">
-      <a href="guide.htm#tempo-sync-beating" target="_blank"><span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="float:right;"></span></a>
-      <form>
-        <label>BPM</label>
-        <div class="form-group">
-          <input id="input_modify_sync_beating_bpm" name="" type="number" class="form-control" value="100" placeholder="100"></input>
-        </div>
-
-        <label>Resolution</label>
-        <div class="form-group">
-          <select id="select_sync_beating_resolution" name="" class="form-control">
-            <option value="16">16 (2^4)</option>
-            <option value="24">24 (2^3 . 3)</option>
-            <option value="27">27 (3^3)</option>
-            <option value="30">30 (2 . 3 . 5)</option>
-            <option value="32">32 (2^5)</option>
-            <option value="48">48 (2^4 . 3)</option>
-            <option value="64" selected>64 (2^6)</option>
-            <option value="96">96 (2^5 . 3)</option>
-            <option value="128">128 (2^7)</option>
-            <option value="144">144 (2^4 . 3^2)</option>
-            <option value="192">192 (2^6 . 3)</option>
-            <option value="256">256 (2^8)</option>
-            <option value="512">512 (2^9)</option>
-            <option value="1024">1024 (2^10)</option>
-            <option value="2048">2048 (2^11)</option>
-            <option value="2310">2310 (2 . 3 . 5 . 7 . 11)</option>
-          </select>
-        </div>
-      </form>
-    </div>
-
-    <!-- Export Modals -->
-    <div id="modal_share_url" class="modal" title="Share scale as URL">
-      <p>Share your scale using the sharing link.</p>
-      <form>
-        <div class="form-group">
-          <input id="input_share_url" name="" type="text" class="form-control" value="" readonly></input>
-        </div>
-      </form>
-      <p class="social-icons">
-        <a class="social-icons-email" href="#" title="Send scale via email"><span class="socicon-mail"></span></a>
-        <a class="social-icons-twitter" href="#" title="Tweet this scale"><span class="socicon-twitter"></span></a>
-      </p>
-    </div>
-
-    <!-- About Scale Workshop modal -->
-    <div id="modal_about_scale_workshop" class="modal text-center" title="About Scale Workshop">
-      <img src="assets/favicon/android-chrome-192x192.png" style="margin-top: 2em;" />
-      <h2 id="about_version"></h2>
-      <p><em>Because there are more than 12 notes</em></p>
-      <hr/>
-      <p>Lead programmer: Sevish<br/>Contributors: Lajos Mészáros, Scott Thompson, Carl Lumma, Tobia</p>
-    </div>
+  <!-- About Scale Workshop modal -->
+  <div id="modal_about_scale_workshop" class="modal text-center" title="About Scale Workshop">
+    <img src="src/assets/favicon/android-chrome-192x192.png" style="margin-top: 2em;" />
+    <h2 id="about_version"></h2>
+    <p><em>Because there are more than 12 notes</em></p>
+    <hr />
+    <p>Lead programmer: Sevish<br />Contributors: Lajos Mészáros, Scott Thompson, Carl Lumma, Tobia</p>
+  </div>
 
 
-    <!-- Play virtual keyboard -->
-    <table id="virtual-keyboard">
-      <tr class="hidden-xs hidden-sm">
-        <td data-coord="[3,0]"></td>
-        <td data-coord="[3,1]"></td>
-        <td data-coord="[3,2]"></td>
-        <td data-coord="[3,3]"></td>
-        <td data-coord="[3,4]"></td>
-        <td data-coord="[3,5]"></td>
-        <td data-coord="[3,6]"></td>
-        <td data-coord="[3,7]"></td>
-        <td data-coord="[3,8]"></td>
-        <td data-coord="[3,9]"></td>
-        <td data-coord="[3,10]"></td>
-        <td data-coord="[3,11]"></td>
-        <td data-coord="[3,12]"></td>
-      </tr>
-      <tr>
-        <td data-coord="[2,0]"></td>
-        <td data-coord="[2,1]"></td>
-        <td data-coord="[2,2]"></td>
-        <td data-coord="[2,3]"></td>
-        <td data-coord="[2,4]"></td>
-        <td data-coord="[2,5]"></td>
-        <td data-coord="[2,6]"></td>
-        <td data-coord="[2,7]"></td>
-        <td data-coord="[2,8]"></td>
-        <td data-coord="[2,9]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[2,10]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[2,11]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[2,12]" class="hidden-xs hidden-sm"></td>
-      </tr>
-      <tr>
-        <td data-coord="[1,0]"></td>
-        <td data-coord="[1,1]"></td>
-        <td data-coord="[1,2]"></td>
-        <td data-coord="[1,3]"></td>
-        <td data-coord="[1,4]"></td>
-        <td data-coord="[1,5]"></td>
-        <td data-coord="[1,6]"></td>
-        <td data-coord="[1,7]"></td>
-        <td data-coord="[1,8]"></td>
-        <td data-coord="[1,9]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[1,10]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[1,11]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[1,12]" class="hidden-xs hidden-sm"></td>
-      </tr>
-      <tr>
-        <td data-coord="[0,0]"></td>
-        <td data-coord="[0,1]"></td>
-        <td data-coord="[0,2]"></td>
-        <td data-coord="[0,3]"></td>
-        <td data-coord="[0,4]"></td>
-        <td data-coord="[0,5]"></td>
-        <td data-coord="[0,6]"></td>
-        <td data-coord="[0,7]"></td>
-        <td data-coord="[0,8]"></td>
-        <td data-coord="[0,9]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[0,10]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[0,11]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[0,12]" class="hidden-xs hidden-sm"></td>
-      </tr>
-      <tr>
-        <td data-coord="[-1,0]"></td>
-        <td data-coord="[-1,1]"></td>
-        <td data-coord="[-1,2]"></td>
-        <td data-coord="[-1,3]"></td>
-        <td data-coord="[-1,4]"></td>
-        <td data-coord="[-1,5]"></td>
-        <td data-coord="[-1,6]"></td>
-        <td data-coord="[-1,7]"></td>
-        <td data-coord="[-1,8]"></td>
-        <td data-coord="[-1,9]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[-1,10]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[-1,11]" class="hidden-xs hidden-sm"></td>
-        <td data-coord="[-1,12]" class="hidden-xs hidden-sm"></td>
-      </tr>
-      <tr class="hidden-xs hidden-sm">
-        <td data-coord="[-2,0]"></td>
-        <td data-coord="[-2,1]"></td>
-        <td data-coord="[-2,2]"></td>
-        <td data-coord="[-2,3]"></td>
-        <td data-coord="[-2,4]"></td>
-        <td data-coord="[-2,5]"></td>
-        <td data-coord="[-2,6]"></td>
-        <td data-coord="[-2,7]"></td>
-        <td data-coord="[-2,8]"></td>
-        <td data-coord="[-2,9]"></td>
-        <td data-coord="[-2,10]"></td>
-        <td data-coord="[-2,11]"></td>
-        <td data-coord="[-2,12]"></td>
-      </tr>
-    </table>
+  <!-- Play virtual keyboard -->
+  <table id="virtual-keyboard">
+    <tr class="hidden-xs hidden-sm">
+      <td data-coord="[3,0]"></td>
+      <td data-coord="[3,1]"></td>
+      <td data-coord="[3,2]"></td>
+      <td data-coord="[3,3]"></td>
+      <td data-coord="[3,4]"></td>
+      <td data-coord="[3,5]"></td>
+      <td data-coord="[3,6]"></td>
+      <td data-coord="[3,7]"></td>
+      <td data-coord="[3,8]"></td>
+      <td data-coord="[3,9]"></td>
+      <td data-coord="[3,10]"></td>
+      <td data-coord="[3,11]"></td>
+      <td data-coord="[3,12]"></td>
+    </tr>
+    <tr>
+      <td data-coord="[2,0]"></td>
+      <td data-coord="[2,1]"></td>
+      <td data-coord="[2,2]"></td>
+      <td data-coord="[2,3]"></td>
+      <td data-coord="[2,4]"></td>
+      <td data-coord="[2,5]"></td>
+      <td data-coord="[2,6]"></td>
+      <td data-coord="[2,7]"></td>
+      <td data-coord="[2,8]"></td>
+      <td data-coord="[2,9]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[2,10]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[2,11]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[2,12]" class="hidden-xs hidden-sm"></td>
+    </tr>
+    <tr>
+      <td data-coord="[1,0]"></td>
+      <td data-coord="[1,1]"></td>
+      <td data-coord="[1,2]"></td>
+      <td data-coord="[1,3]"></td>
+      <td data-coord="[1,4]"></td>
+      <td data-coord="[1,5]"></td>
+      <td data-coord="[1,6]"></td>
+      <td data-coord="[1,7]"></td>
+      <td data-coord="[1,8]"></td>
+      <td data-coord="[1,9]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[1,10]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[1,11]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[1,12]" class="hidden-xs hidden-sm"></td>
+    </tr>
+    <tr>
+      <td data-coord="[0,0]"></td>
+      <td data-coord="[0,1]"></td>
+      <td data-coord="[0,2]"></td>
+      <td data-coord="[0,3]"></td>
+      <td data-coord="[0,4]"></td>
+      <td data-coord="[0,5]"></td>
+      <td data-coord="[0,6]"></td>
+      <td data-coord="[0,7]"></td>
+      <td data-coord="[0,8]"></td>
+      <td data-coord="[0,9]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[0,10]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[0,11]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[0,12]" class="hidden-xs hidden-sm"></td>
+    </tr>
+    <tr>
+      <td data-coord="[-1,0]"></td>
+      <td data-coord="[-1,1]"></td>
+      <td data-coord="[-1,2]"></td>
+      <td data-coord="[-1,3]"></td>
+      <td data-coord="[-1,4]"></td>
+      <td data-coord="[-1,5]"></td>
+      <td data-coord="[-1,6]"></td>
+      <td data-coord="[-1,7]"></td>
+      <td data-coord="[-1,8]"></td>
+      <td data-coord="[-1,9]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[-1,10]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[-1,11]" class="hidden-xs hidden-sm"></td>
+      <td data-coord="[-1,12]" class="hidden-xs hidden-sm"></td>
+    </tr>
+    <tr class="hidden-xs hidden-sm">
+      <td data-coord="[-2,0]"></td>
+      <td data-coord="[-2,1]"></td>
+      <td data-coord="[-2,2]"></td>
+      <td data-coord="[-2,3]"></td>
+      <td data-coord="[-2,4]"></td>
+      <td data-coord="[-2,5]"></td>
+      <td data-coord="[-2,6]"></td>
+      <td data-coord="[-2,7]"></td>
+      <td data-coord="[-2,8]"></td>
+      <td data-coord="[-2,9]"></td>
+      <td data-coord="[-2,10]"></td>
+      <td data-coord="[-2,11]"></td>
+      <td data-coord="[-2,12]"></td>
+    </tr>
+  </table>
 
 
 
-    <!-- Dependencies -->
-    <script src="inc/jquery-3.2.1.min.js"></script>
-    <script src="inc/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-    <script src="inc/jquery-ui-1.12.1/external/jquery/jquery.js"></script>
-    <script src="inc/jquery-ui-1.12.1/jquery-ui.min.js"></script>
-    <script src="inc/eventemitter3.js"></script>
+  <!-- Dependencies -->
+  <script src="src/lib/jquery-3.2.1.min.js"></script>
+  <script src="src/lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <script src="src/lib/jquery-ui-1.12.1/external/jquery/jquery.js"></script>
+  <script src="src/lib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+  <script src="src/lib/eventemitter3.js"></script>
 
-    <!-- Scale Workshop scripts -->
-    <script src="js/constants.js"></script>
-    <script src="js/scaleworkshop.js"></script>
-    <script src="js/helpers.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/generators.js"></script>
-    <script src="js/modifiers.js"></script>
-    <script src="js/exporters.js"></script>
-    <script src="js/keymap.js"></script>
-    <script src="js/synth/Voice.js"></script>
-    <script src="js/synth/Delay.js"></script>
-    <script src="js/synth/Synth.js"></script>
-    <script src="js/synth.js"></script>
-    <script src="js/midi.js"></script>
-    <script src="js/events.js"></script>
-    <script src="js/user.js"></script>
-  </body>
+  <!-- Scale Workshop scripts -->
+  <script src="src/js/model.js"></script>
+  <script src="src/js/constants.js"></script>
+  <script src="src/js/helpers.js"></script>
+  <script src="src/js/scaleworkshop.js"></script>
+  <script src="src/js/ui.js"></script>
+  <script src="src/js/generators.js"></script>
+  <script src="src/js/modifiers.js"></script>
+  <script src="src/js/exporters.js"></script>
+  <script src="src/js/keymap.js"></script>
+  <script src="src/js/synth/Voice.js"></script>
+  <script src="src/js/synth/Delay.js"></script>
+  <script src="src/js/synth/Synth.js"></script>
+  <script src="src/js/synth.js"></script>
+  <script src="src/js/midi.js"></script>
+  <script src="src/js/events.js"></script>
+  <script src="src/js/user.js"></script>
+</body>
 </html>
