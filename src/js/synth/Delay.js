@@ -7,18 +7,21 @@ class Delay {
     this.inited = false
     this.synth = synth
   }
+
   enable () {
-    if ( this.inited ) {
-      this.panL.connect( this.synth.masterGain );
-      this.panR.connect( this.synth.masterGain );
+    if (this.inited) {
+      this.panL.connect(this.synth.masterGain)
+      this.panR.connect(this.synth.masterGain)
     }
   }
+
   disable () {
-    if ( this.inited ) {
-      this.panL.disconnect( this.synth.masterGain );
-      this.panR.disconnect( this.synth.masterGain );
+    if (this.inited) {
+      this.panL.disconnect(this.synth.masterGain)
+      this.panR.disconnect(this.synth.masterGain)
     }
   }
+
   init (audioCtx) {
     if (!this.inited) {
       this.inited = true
@@ -34,10 +37,10 @@ class Delay {
       this.panR = audioCtx.createPanner()
 
       // feedback loop with gain stage
-      this.channelL.connect( this.gainL );
-      this.gainL.connect( this.channelR );
-      this.channelR.connect( this.gainR );
-      this.gainR.connect( this.channelL );
+      this.channelL.connect(this.gainL)
+      this.gainL.connect(this.channelR)
+      this.channelR.connect(this.gainR)
+      this.gainR.connect(this.channelL)
 
       // filters
       // this.gainL.connect( this.lowpassL );
@@ -60,21 +63,21 @@ class Delay {
       // this.highpassR.connect( this.panR );
 
       // panning
-      this.gainL.connect( this.panL ); // if you uncomment the above filters lines, then comment out this line
-      this.gainR.connect( this.panR ); // if you uncomment the above filters lines, then comment out this line
-      this.panL.setPosition( -1, 0, 0 );
-      this.panR.setPosition( 1, 0, 0 );
+      this.gainL.connect(this.panL) // if you uncomment the above filters lines, then comment out this line
+      this.gainR.connect(this.panR) // if you uncomment the above filters lines, then comment out this line
+      this.panL.setPosition(-1, 0, 0)
+      this.panR.setPosition(1, 0, 0)
 
       // setup delay time and gain for delay lines
       const now = this.synth.now()
-      this.channelL.delayTime.setValueAtTime(this.time, now);
-      this.channelR.delayTime.setValueAtTime(this.time, now);
-      this.gainL.gain.setValueAtTime(this.gain, now);
-      this.gainR.gain.setValueAtTime(this.gain, now);
+      this.channelL.delayTime.setValueAtTime(this.time, now)
+      this.channelR.delayTime.setValueAtTime(this.time, now)
+      this.gainL.gain.setValueAtTime(this.gain, now)
+      this.gainR.gain.setValueAtTime(this.gain, now)
 
       // check on init if user has already enabled delay
-      if ( jQuery( "#input_checkbox_delay_on" ).is(':checked') ) {
-        this.enable();
+      if (jQuery('#input_checkbox_delay_on').is(':checked')) {
+        this.enable()
       }
     }
   }

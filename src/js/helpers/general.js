@@ -3,35 +3,35 @@ import { LINE_TYPE, LOCALSTORAGE_PREFIX } from '../constants.js'
 import { debug_enabled } from '../scaleworkshop.js'
 import { toString } from './converters.js'
 
-function isCent(rawInput) {
+function isCent (rawInput) {
   // true, when the input has numbers at the beginning, followed by a dot, ending with any number of numbers
   // for example: 700.00
   const input = trim(toString(rawInput))
   return /^\d+\.\d*$/.test(input)
 }
 
-function isCommaDecimal(rawInput) {
+function isCommaDecimal (rawInput) {
   // true, when the input has numbers at the beginning, followed by a comma, ending with any number of numbers
   // for example: 1,25
   const input = trim(toString(rawInput))
-  return /^\d+,\d*$/.test(input);
+  return /^\d+,\d*$/.test(input)
 }
 
-function isNOfEdo(rawInput) {
+function isNOfEdo (rawInput) {
   // true, when the input has numbers at the beginning and the end, separated by a single backslash
   // for example: 7\12
   const input = trim(toString(rawInput))
   return /^\d+\\\d+$/.test(input)
 }
 
-function isRatio(rawInput) {
+function isRatio (rawInput) {
   // true, when the input has numbers at the beginning and the end, separated by a single slash
   // for example: 3/2
   const input = trim(toString(rawInput))
   return /^\d+\/\d+$/.test(input)
 }
 
-function getLineType(rawInput) {
+function getLineType (rawInput) {
   if (isCent(rawInput)) {
     return LINE_TYPE.CENTS
   } else if (isCommaDecimal(rawInput)) {
@@ -45,25 +45,25 @@ function getLineType(rawInput) {
   }
 }
 
-function debug(msg = "") {
+function debug (msg = '') {
   if (debug_enabled) {
-    msg = isEmpty(msg) ? "Debug" : msg;
-    console.log(msg);
-    return true;
+    msg = isEmpty(msg) ? 'Debug' : msg
+    console.log(msg)
+    return true
   }
-  return false;
+  return false
 }
 
-function setScaleName(title) {
-  jQuery("#txt_name").val(title);
+function setScaleName (title) {
+  jQuery('#txt_name').val(title)
 }
 
-function closePopup(id) {
-  jQuery(id).dialog("close");
+function closePopup (id) {
+  jQuery(id).dialog('close')
 }
 
-function setTuningData(tuning) {
-  jQuery("#txt_tuning_data").val(tuning)
+function setTuningData (tuning) {
+  jQuery('#txt_tuning_data').val(tuning)
 }
 
 const isEmpty = string => string === ''
@@ -74,7 +74,7 @@ const isFunction = x => typeof x === 'function'
 
 const trim = input => input.trim()
 
-function getCoordsFromKey(tdOfKeyboard) {
+function getCoordsFromKey (tdOfKeyboard) {
   try {
     return JSON.parse(tdOfKeyboard.getAttribute('data-coord'))
   } catch (e) {
@@ -82,8 +82,8 @@ function getCoordsFromKey(tdOfKeyboard) {
   }
 }
 
-const roundToNDecimals = (decimals, number) => { 
-  return Math.round(number * 10 ** decimals) / 10 ** decimals;
+const roundToNDecimals = (decimals, number) => {
+  return Math.round(number * 10 ** decimals) / 10 ** decimals
 }
 
 // Runs the given function with the supplied value, then returns the value
@@ -98,18 +98,17 @@ const roundToNDecimals = (decimals, number) => {
 //   let result = 3 * 5
 //   debug(result)
 //   result = toString(result)
-function tap(fn, value) {
+function tap (fn, value) {
   fn(value)
   return value
 }
-
 
 function getSearchParamOr (valueIfMissing, key, url) {
   return url.searchParams.has(key) ? url.searchParams.get(key) : valueIfMissing
 }
 
 function getSearchParamAsNumberOr (valueIfMissingOrNan, key, url) {
-  return (url.searchParams.has(key) && !isNaN(url.searchParams.get(key))) ? parseFloat(url.searchParams.get(key)) : valueIfMissingOrNan;
+  return (url.searchParams.has(key) && !isNaN(url.searchParams.get(key))) ? parseFloat(url.searchParams.get(key)) : valueIfMissingOrNan
 }
 
 function trimSelf (el) {
@@ -123,8 +122,8 @@ function openDialog (el, onOK) {
     modal: true,
     buttons: {
       OK: onOK,
-      Cancel: function() {
-        jQuery( this ).dialog( 'close' );
+      Cancel: function () {
+        jQuery(this).dialog('close')
       }
     }
   })
@@ -132,21 +131,21 @@ function openDialog (el, onOK) {
 
 // redirect all traffic to https, if not there already
 // source: https://stackoverflow.com/a/4723302/1806628
-function redirectToHTTPS() {
+function redirectToHTTPS () {
   if (location.protocol !== 'https:') {
-    location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+    location.href = 'https:' + window.location.href.substring(window.location.protocol.length)
   }
 }
 
 // source: https://stackoverflow.com/a/16427747/1806628
 const isLocalStorageAvailable = () => {
-  const test = 'test';
+  const test = 'test'
   try {
-    localStorage.setItem(test, test);
-    localStorage.removeItem(test);
-    return true;
-  } catch(e) {
-    return false;
+    localStorage.setItem(test, test)
+    localStorage.removeItem(test)
+    return true
+  } catch (e) {
+    return false
   }
 }
 
@@ -155,10 +154,10 @@ const isRunningOnWindows = () => {
   return navigator.userAgent.includes('Windows')
 }
 
-function getNewlineSettingsFromBrowser() {
+function getNewlineSettingsFromBrowser () {
   let value = isRunningOnWindows() ? 'windows' : 'unix'
 
-  if (isLocalStorageAvailable()){
+  if (isLocalStorageAvailable()) {
     const valueInLocalStorage = localStorage.getItem(`${LOCALSTORAGE_PREFIX}newline`)
     if (valueInLocalStorage === 'windows' || valueInLocalStorage === 'unix') {
       value = valueInLocalStorage
