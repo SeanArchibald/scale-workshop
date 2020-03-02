@@ -69,7 +69,7 @@ Exporting a file with the correct filename is not supported in Safari (iOS and m
 
 ### Can I run this software offline?
 
-Yes, just download the project from GitHub as a zip file and run index.htm from your web browser.
+You can run it only, if you have a local webserver installed to your computer (https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server#Running_a_simple_local_HTTP_server)
 
 ### Can you add a new feature to Scale Workshop?
 
