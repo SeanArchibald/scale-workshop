@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/SeanArchibald/scale-workshop/issues"
   },
-  "homepage": "https://github.com/SeanArchibald/scale-workshop#readme",
+  "homepage": "https://sevish.com/scaleworkshop/",
   "devDependencies": {
     "standard": "^14.3.1"
   },
