@@ -69,7 +69,8 @@ Exporting a file with the correct filename is not supported in Safari (iOS and m
 
 ### Can I run this software offline?
 
-You can run it only, if you have a local webserver installed to your computer (https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server#Running_a_simple_local_HTTP_server)
+Yes, but you need to have `Node.js` installed on your computer and to have the downloaded package hosted via the internal hosting tool.
+(see `Tools in this package` > `Host the page locally` for more information)
 
 ### Can you add a new feature to Scale Workshop?
 
@@ -82,6 +83,46 @@ Please [create a bug report](https://github.com/SeanArchibald/scale-workshop/iss
 ## Contributing
 
 Please base any work on develop branch, and pull requests should also be made against develop branch not master.
+
+Also, please make sure, that you fix any errors shown by the linter before commiting
+(see `Tools in this package` > `Linter` for more information).
+
+## Tools in the package
+
+This package comes with a bunch of tools, which provides you to host Scale Workshop locally or to aid development.
+
+To run these tools you need to have `Node.js` installed on your computer, which you can get from https://nodejs.org/.
+Scale Workshop requires `Node.js` version `8.0.0` or newer for the tools to run properly.
+
+After installation you should have `npm` and `node` available as commands in the command line.
+To test this out, open a command line tool and type in the following 2 commands:
+
+`npm --version`
+
+`node --version`
+
+Both commands should return a version number for npm and node respectively.
+
+If node and npm are both available, then navigate to the folder where you have Scale Workshop downloaded and run `npm install`.
+This will install dependencies and make the internal tools ready to be used.
+
+### Linter
+
+`npm run lint` - checks the code to see, if it fits the rules of the coding standards
+
+`npm run lint:fix` - checks the code and also tries to fix issues automatically
+
+As the codebase grew it was necessary to introduce some level of coding standards, which assures, that the codebase has a uniform look and feel.
+
+Scale Workshop uses the rules of `standard.js`, which are listed and explained in detail here: https://standardjs.com/rules.html
+
+### Host the page locally
+
+`npm run host` - creates a webserver and allows you to run scale workshop locally
+
+The javascript files of `Scale Workshop` need to be served via a webserver so that they are requested via the `http` and not the `file` protocol.
+
+When starting the webserver, it will list out the ip address and port from where Scale Workshop is accessible and will continue to host it until `Ctrl+C` is pressed.
 
 ## Contributors
 
