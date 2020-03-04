@@ -4,8 +4,8 @@
   "description": "![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/src/assets/img/scale-workshop-og-image.png)",
   "main": "src/js/ndex.js",
   "scripts": {
-    "lint": "standard src/js/**/*.js",
-    "lint:fix": "standard src/js/**/*.js --fix",
+    "lint": "eslint src/js/ --ext .js",
+    "lint:fix": "eslint src/js/ --ext .js --fix",
     "host": "http-server . -o index.htm"
   },
   "repository": {
@@ -19,12 +19,18 @@
   },
   "homepage": "https://sevish.com/scaleworkshop/",
   "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-prettier-standard": "^3.0.1",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "http-server": "^0.12.1",
-    "standard": "^14.3.1"
-  },
-  "standard": {
-    "ignore": [
-      "src/lib"
-    ]
+    "prettier": "1.19.1",
+    "prettier-config-standard": "^1.0.1"
   }
 }

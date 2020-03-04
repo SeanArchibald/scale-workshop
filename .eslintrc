@@ -1,0 +1,29 @@
+{
+  "extends": [
+    "standard",
+    "prettier-standard"
+  ],
+  "parser": "babel-eslint",
+  "rules": {
+    "react/prop-types": "off",
+    "no-var": "error",
+    "prefer-const": "error",
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 120,
+        "semi": false,
+        "singleQuote": true
+      }
+    ],
+    "import/no-unresolved": "error",
+    "import/named": "error",
+    "import/namespace": "error",
+    "import/default": "error",
+    "import/export": "error",
+    "import/no-named-as-default": "warn",
+    "import/no-named-as-default-member": "off",
+    "import/no-duplicates": "warn",
+    "import/order": "error"
+  }
+}
