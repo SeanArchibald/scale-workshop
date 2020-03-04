@@ -5,7 +5,8 @@
   "main": "src/js/ndex.js",
   "scripts": {
     "lint": "standard src/js/**/*.js",
-    "lint:fix": "standard src/js/**/*.js --fix"
+    "lint:fix": "standard src/js/**/*.js --fix",
+    "host": "http-server . -o index.htm"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   },
   "homepage": "https://sevish.com/scaleworkshop/",
   "devDependencies": {
+    "http-server": "^0.12.1",
     "standard": "^14.3.1"
   },
   "standard": {
