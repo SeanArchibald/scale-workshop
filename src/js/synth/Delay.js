@@ -1,28 +1,28 @@
 /* global jQuery */
 
 class Delay {
-  constructor (synth) {
+  constructor(synth) {
     this.time = 0.3
     this.gain = 0.4
     this.inited = false
     this.synth = synth
   }
 
-  enable () {
+  enable() {
     if (this.inited) {
       this.panL.connect(this.synth.masterGain)
       this.panR.connect(this.synth.masterGain)
     }
   }
 
-  disable () {
+  disable() {
     if (this.inited) {
       this.panL.disconnect(this.synth.masterGain)
       this.panR.disconnect(this.synth.masterGain)
     }
   }
 
-  init (audioCtx) {
+  init(audioCtx) {
     if (!this.inited) {
       this.inited = true
       this.channelL = audioCtx.createDelay(5.0)

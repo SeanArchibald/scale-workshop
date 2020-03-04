@@ -1,16 +1,16 @@
 /* global EventEmitter */
 
 class Model extends EventEmitter {
-  constructor (initialData = {}) {
+  constructor(initialData = {}) {
     super()
     this.data = initialData
   }
 
-  get (key) {
+  get(key) {
     return this.data[key]
   }
 
-  set (key, newValue) {
+  set(key, newValue) {
     const oldValue = this.data[key]
     if (oldValue !== newValue) {
       this.data[key] = newValue

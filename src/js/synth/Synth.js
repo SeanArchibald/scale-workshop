@@ -1,12 +1,12 @@
 /* global jQuery */
 import { Keymap } from '../keymap.js'
-import Delay from './Delay.js'
 import { model } from '../scaleworkshop.js'
 import { isNil, debug } from '../helpers/general.js'
+import Delay from './Delay.js'
 import { Voice } from './Voice.js'
 
 class Synth {
-  constructor () {
+  constructor() {
     this.keymap = Keymap.EN
     this.isomorphicMapping = {
       vertical: 5, // how many scale degrees as you move up/down by rows
@@ -20,7 +20,7 @@ class Synth {
     this.delay = new Delay(this)
   }
 
-  init () {
+  init() {
     if (!this.inited) {
       this.inited = true
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
@@ -41,7 +41,7 @@ class Synth {
     }
   }
 
-  setMainVolume (newValue) {
+  setMainVolume(newValue) {
     const oldValue = this.mainVolume
     if (newValue !== oldValue) {
       this.mainVolume = newValue
@@ -53,7 +53,7 @@ class Synth {
     }
   }
 
-  noteOn (midinote, velocity = 127) {
+  noteOn(midinote, velocity = 127) {
     const tuningTable = model.get('tuning table')
     const frequency = tuningTable.freq[midinote]
 
@@ -74,7 +74,7 @@ class Synth {
     }
   }
 
-  noteOff (midinote) {
+  noteOff(midinote) {
     if (!isNil(this.active_voices[midinote])) {
       this.active_voices[midinote].stop()
       delete this.active_voices[midinote]
@@ -84,12 +84,12 @@ class Synth {
     }
   }
 
-  now () {
+  now() {
     return this.audioCtx.currentTime
   }
 
   // this function stops all active voices and cuts the delay
-  panic () {
+  panic() {
     // show which voices are active (playing)
     debug(this.active_voices)
 

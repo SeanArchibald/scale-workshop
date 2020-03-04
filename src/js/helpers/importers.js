@@ -1,17 +1,19 @@
 /* global alert, jQuery */
 
-function isFileApiSupported () {
+function isFileApiSupported() {
   // Check for the various File API support.
   if (window.File && window.FileReader && window.FileList && window.Blob) {
     return true
   } else {
     // File API not supported
-    alert('Trying to load a file? Sorry, your browser doesn\'t support the HTML5 File API. Please try using a different browser.')
+    alert(
+      "Trying to load a file? Sorry, your browser doesn't support the HTML5 File API. Please try using a different browser."
+    )
     return false
   }
 }
 
-function importScalaScl () {
+function importScalaScl() {
   // check File API is supported
   if (isFileApiSupported()) {
     // trigger load file dialog
@@ -19,7 +21,7 @@ function importScalaScl () {
   }
 }
 
-function importAnamarkTun () {
+function importAnamarkTun() {
   // check File API is supported
   if (isFileApiSupported()) {
     // trigger load file dialog
@@ -27,7 +29,4 @@ function importAnamarkTun () {
   }
 }
 
-export {
-  importAnamarkTun,
-  importScalaScl
-}
+export { importAnamarkTun, importScalaScl }

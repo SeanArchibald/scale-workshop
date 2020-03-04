@@ -19,30 +19,32 @@ const commands = {
 // }
 
 class MIDI extends EventEmitter {
-  onMidiMessage (event) {
+  onMidiMessage(event) {
     const [data, ...params] = event.data
     const cmd = data >> 4
     const channel = data & 0x0f
 
     switch (cmd) {
-      case commands.noteOff: {
-        const [note, velocity] = params
-        this.emit('note off', note, velocity, channel)
-      }
-        break
-      case commands.noteOn: {
-        const [note, velocity] = params
-        if (velocity > 0) {
-          this.emit('note on', note, velocity, channel)
-        } else {
+      case commands.noteOff:
+        {
+          const [note, velocity] = params
           this.emit('note off', note, velocity, channel)
         }
-      }
+        break
+      case commands.noteOn:
+        {
+          const [note, velocity] = params
+          if (velocity > 0) {
+            this.emit('note on', note, velocity, channel)
+          } else {
+            this.emit('note off', note, velocity, channel)
+          }
+        }
         break
     }
   }
 
-  initPort (port) {
+  initPort(port) {
     if (port.type === 'input' && port.state === 'connected') {
       if (port.connection === 'closed') {
         port.open()
@@ -52,7 +54,7 @@ class MIDI extends EventEmitter {
     }
   }
 
-  enableMidiSupport (midiAccess) {
+  enableMidiSupport(midiAccess) {
     midiAccess.onstatechange = event => {
       this.initPort(event.port)
     }
@@ -62,13 +64,14 @@ class MIDI extends EventEmitter {
     })
   }
 
-  init () {
-    navigator.requestMIDIAccess()
+  init() {
+    navigator
+      .requestMIDIAccess()
       .then(this.enableMidiSupport.bind(this))
       .catch(() => this.emit('blocked'))
   }
 
-  isSupported () {
+  isSupported() {
     return !!navigator.requestMIDIAccess
   }
 }

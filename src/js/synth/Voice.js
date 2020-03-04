@@ -1,4 +1,5 @@
 /* global jQuery */
+
 import { isFunction } from '../helpers/general.js'
 
 const getEnvelopeByName = name => {
@@ -10,16 +11,36 @@ const getEnvelopeByName = name => {
   }
 
   switch (name) {
-    case 'organ' :
-      envelope.attackTime = 0.008; envelope.decayTime = 0.1; envelope.sustain = 0.8; envelope.releaseTime = 0.008; break
-    case 'pad' :
-      envelope.attackTime = 1; envelope.decayTime = 3; envelope.sustain = 0.5; envelope.releaseTime = 3; break
-    case 'perc-short' :
-      envelope.attackTime = 0.001; envelope.decayTime = 0.2; envelope.sustain = 0.001; envelope.releaseTime = 0.2; break
-    case 'perc-medium' :
-      envelope.attackTime = 0.001; envelope.decayTime = 1; envelope.sustain = 0.001; envelope.releaseTime = 1; break
-    case 'perc-long' :
-      envelope.attackTime = 0.001; envelope.decayTime = 5; envelope.sustain = 0.001; envelope.releaseTime = 5; break
+    case 'organ':
+      envelope.attackTime = 0.008
+      envelope.decayTime = 0.1
+      envelope.sustain = 0.8
+      envelope.releaseTime = 0.008
+      break
+    case 'pad':
+      envelope.attackTime = 1
+      envelope.decayTime = 3
+      envelope.sustain = 0.5
+      envelope.releaseTime = 3
+      break
+    case 'perc-short':
+      envelope.attackTime = 0.001
+      envelope.decayTime = 0.2
+      envelope.sustain = 0.001
+      envelope.releaseTime = 0.2
+      break
+    case 'perc-medium':
+      envelope.attackTime = 0.001
+      envelope.decayTime = 1
+      envelope.sustain = 0.001
+      envelope.releaseTime = 1
+      break
+    case 'perc-long':
+      envelope.attackTime = 0.001
+      envelope.decayTime = 5
+      envelope.sustain = 0.001
+      envelope.releaseTime = 5
+      break
   }
 
   return envelope
@@ -28,9 +49,7 @@ const getEnvelopeByName = name => {
 const getEnvelopeName = () => jQuery('#input_select_synth_amp_env').val()
 
 // https://github.com/mohayonao/pseudo-audio-param/blob/master/lib/expr.js#L3
-function getLinearRampToValueAtTime (t, v0, v1, t0, t1) {
-  var a
-
+function getLinearRampToValueAtTime(t, v0, v1, t0, t1) {
   if (t <= t0) {
     return v0
   }
@@ -38,15 +57,13 @@ function getLinearRampToValueAtTime (t, v0, v1, t0, t1) {
     return v1
   }
 
-  a = (t - t0) / (t1 - t0)
+  const a = (t - t0) / (t1 - t0)
 
   return v0 + a * (v1 - v0)
 }
 
 // https://github.com/mohayonao/pseudo-audio-param/blob/master/lib/expr.js#L18
-function getExponentialRampToValueAtTime (t, v0, v1, t0, t1) {
-  var a
-
+function getExponentialRampToValueAtTime(t, v0, v1, t0, t1) {
   if (t <= t0) {
     return v0
   }
@@ -57,7 +74,7 @@ function getExponentialRampToValueAtTime (t, v0, v1, t0, t1) {
     return v0
   }
 
-  a = (t - t0) / (t1 - t0)
+  const a = (t - t0) / (t1 - t0)
 
   if ((v0 > 0 && v1 > 0) || (v0 < 0 && v1 < 0)) {
     return v0 * Math.pow(v1 / v0, a)
@@ -74,7 +91,13 @@ const interpolateValueAtTime = (minValue, maxValue, envelope, t) => {
 
   // interpolate decay
   if (envelope.attackTime + envelope.decayTime > t) {
-    return getExponentialRampToValueAtTime(t, maxValue, maxValue * envelope.sustain, envelope.attackTime, envelope.attackTime + envelope.decayTime)
+    return getExponentialRampToValueAtTime(
+      t,
+      maxValue,
+      maxValue * envelope.sustain,
+      envelope.attackTime,
+      envelope.attackTime + envelope.decayTime
+    )
   }
 
   // interpolate sustain
@@ -82,9 +105,9 @@ const interpolateValueAtTime = (minValue, maxValue, envelope, t) => {
 }
 
 class Voice {
-  constructor (audioCtx, frequency, velocity) {
+  constructor(audioCtx, frequency, velocity) {
     this.frequency = frequency
-    this.velocity = 0.2 * velocity / 127
+    this.velocity = (0.2 * velocity) / 127
     if (this.velocity === 0) {
       this.velocity = 0.001 // prevent 0 value for velocity - safe for using exponential ramp
     }
@@ -104,15 +127,15 @@ class Voice {
     this.oscillators = []
   }
 
-  bindSynth (synth) {
+  bindSynth(synth) {
     this.synth = synth
   }
 
-  bindDelay (delay) {
+  bindDelay(delay) {
     this.delay = delay
   }
 
-  start () {
+  start() {
     const now = this.synth.now()
 
     /* VCO */
@@ -137,7 +160,7 @@ class Voice {
     this.oscillators.push(this.vco)
   }
 
-  stop () {
+  stop() {
     const now = this.synth.now()
     const vcaGain = this.vca.gain
     this.oscillators.forEach(oscillator => {
@@ -146,7 +169,15 @@ class Voice {
         vcaGain.cancelAndHoldAtTime(now)
       } else {
         vcaGain.cancelScheduledValues(now)
-        vcaGain.setValueAtTime(interpolateValueAtTime(0, this.velocity, getEnvelopeByName(getEnvelopeName()), now - this.vca.gain._startTime), now)
+        vcaGain.setValueAtTime(
+          interpolateValueAtTime(
+            0,
+            this.velocity,
+            getEnvelopeByName(getEnvelopeName()),
+            now - this.vca.gain._startTime
+          ),
+          now
+        )
       }
       vcaGain.exponentialRampToValueAtTime(0.001, now + this.releaseTime) // release
       oscillator.stop(now + this.releaseTime)
@@ -154,6 +185,4 @@ class Voice {
   }
 }
 
-export {
-  Voice
-}
+export { Voice }

@@ -6,19 +6,21 @@
 import { PRIMES } from '../constants.js'
 import { getPrimeFactors } from './sequences.js'
 
-function mathModulo (number, modulo) {
+function mathModulo(number, modulo) {
   return ((number % modulo) + modulo) % modulo
 }
 
 // calculate the sum of the values in a given array given a stopping index
-function sumOfArray (array) {
+function sumOfArray(array) {
   return array.reduce((sum, x) => sum + x, 0)
 }
 
-function isPrime (number) {
-  var sqrtnum = Math.floor(Math.sqrt(number))
+function isPrime(number) {
+  const sqrtnum = Math.floor(Math.sqrt(number))
   for (let i = 0; i < PRIMES.length; i++) {
-    if (PRIMES[i] >= sqrtnum) { break }
+    if (PRIMES[i] >= sqrtnum) {
+      break
+    }
 
     if (number % PRIMES[i] === 0) {
       return false
@@ -27,57 +29,69 @@ function isPrime (number) {
   return true
 }
 
-function prevPrime (number) {
-  if (number < 2) { return 2 }
-  var i = 0
+function prevPrime(number) {
+  if (number < 2) {
+    return 2
+  }
+  let i = 0
   while (i < PRIMES.length && PRIMES[i++] <= number);
   return PRIMES[i - 2]
 }
 
-function nextPrime (number) {
-  if (number < 2) { return 2 }
-  var i = 0
+function nextPrime(number) {
+  if (number < 2) {
+    return 2
+  }
+  let i = 0
   while (i < PRIMES.length && PRIMES[i++] <= number);
   return PRIMES[i - 1]
 }
 
-function closestPrime (number) {
-  var thisPrime = isPrime(number)
+function closestPrime(number) {
+  const thisPrime = isPrime(number)
 
-  if (number < 2) { return 2 } else if (thisPrime) { return number }
+  if (number < 2) {
+    return 2
+  } else if (thisPrime) {
+    return number
+  }
 
-  var next = nextPrime(number)
-  var previous = prevPrime(number)
+  const next = nextPrime(number)
+  const previous = prevPrime(number)
 
-  if (Math.abs(next - number) < Math.abs(previous - number)) { return next } else { return previous }
+  if (Math.abs(next - number) < Math.abs(previous - number)) {
+    return next
+  } else {
+    return previous
+  }
 }
 
-function getPrimeLimit (number) {
-  var factors = getPrimeFactors(number)
+function getPrimeLimit(number) {
+  const factors = getPrimeFactors(number)
   return PRIMES[factors.length - 1]
 }
 
 // Returns a single prime, the largest one between the numerator and denominator
-function getPrimeLimitOfRatio (numerator, denominator) {
+function getPrimeLimitOfRatio(numerator, denominator) {
   return Math.max(getPrimeLimit(numerator), getPrimeLimit(denominator))
 }
 
 // Returns an array of: [ratioPrimeLimit, numeratorPrimeLimit, denominatorPrimeLimit]
-function getPrimesOfRatio (numerator, denominator) {
-  var nlim, dlim
-  numerator === 1 ? nlim = 1 : nlim = getPrimeLimit(numerator)
-  denominator === 1 ? dlim = 1 : dlim = getPrimeLimit(denominator)
+function getPrimesOfRatio(numerator, denominator) {
+  let nlim, dlim
+  numerator === 1 ? (nlim = 1) : (nlim = getPrimeLimit(numerator))
+  denominator === 1 ? (dlim = 1) : (dlim = getPrimeLimit(denominator))
   return [Math.max(nlim, dlim), nlim, dlim]
 }
 
 // returns array of the numerator and denominator of the reduced form of given ratio
-function reduceRatio (numerator, denominator) {
-  var numeratorPrimes = getPrimeFactors(numerator)
-  var denominatorPrimes = getPrimeFactors(denominator)
+function reduceRatio(numerator, denominator) {
+  const numeratorPrimes = getPrimeFactors(numerator)
+  const denominatorPrimes = getPrimeFactors(denominator)
   const ratioPrimeFactors = []
-  var maxlength = Math.max(numeratorPrimes.length, denominatorPrimes.length)
-  for (var i = 0; i < maxlength; i++) {
-    var sum = 0
+  const maxlength = Math.max(numeratorPrimes.length, denominatorPrimes.length)
+  for (let i = 0; i < maxlength; i++) {
+    let sum = 0
 
     if (i < numeratorPrimes.length) {
       sum = numeratorPrimes[i]
@@ -90,28 +104,34 @@ function reduceRatio (numerator, denominator) {
     ratioPrimeFactors.push(sum)
   }
 
-  var nn = 1
-  var dd = 1
+  let nn = 1
+  let dd = 1
 
   for (let i = 0; i < maxlength; i++) {
-    if (ratioPrimeFactors[i] > 0) { nn *= Math.pow(PRIMES[i], ratioPrimeFactors[i]) } else { dd *= Math.pow(PRIMES[i], ratioPrimeFactors[i] * -1) }
+    if (ratioPrimeFactors[i] > 0) {
+      nn *= Math.pow(PRIMES[i], ratioPrimeFactors[i])
+    } else {
+      dd *= Math.pow(PRIMES[i], ratioPrimeFactors[i] * -1)
+    }
   }
 
   return [nn, dd]
 }
 
-function getLCM (array) {
+function getLCM(array) {
   const primeCounters = []
   const primeFactors = []
-  var f
-  array.forEach(function (item) {
+  let f
+  array.forEach(function(item) {
     f = getPrimeFactors(item)
     primeFactors.push(f)
   })
 
-  var maxlength = 0
-  primeFactors.forEach(function (item) {
-    if (item.length > maxlength) { maxlength = item.length }
+  let maxlength = 0
+  primeFactors.forEach(function(item) {
+    if (item.length > maxlength) {
+      maxlength = item.length
+    }
   })
 
   // find the min power of each primes in numbers' factorization
@@ -120,20 +140,22 @@ function getLCM (array) {
     for (let n = 0; n < primeFactors.length; n++) {
       f = primeFactors[n]
       if (p < f.length) {
-        if (primeCounters[p] < f[p]) { primeCounters[p] = f[p] }
+        if (primeCounters[p] < f[p]) {
+          primeCounters[p] = f[p]
+        }
       }
     }
   }
 
   let lcm = 1
-  primeCounters.forEach(function (item, index) {
+  primeCounters.forEach(function(item, index) {
     lcm *= Math.pow(PRIMES[index], item)
   })
 
   return lcm
 }
 
-function invertChord (chordString) {
+function invertChord(chordString) {
   if (!/^(\d+:)+\d+$/.test(chordString)) {
     alert('Warning: invalid chord ' + chordString)
     return false
@@ -141,7 +163,7 @@ function invertChord (chordString) {
 
   let intervals = chordString.split(':').map(x => parseInt(x))
   const steps = []
-  intervals.forEach(function (item, index, array) {
+  intervals.forEach(function(item, index, array) {
     if (index > 0) {
       steps.push([item, array[index - 1]])
     }
@@ -151,17 +173,17 @@ function invertChord (chordString) {
   intervals = [[1, 1]]
 
   const denominators = []
-  steps.forEach(function (item, index) {
-    var reducedInterval = reduceRatio(item[0] * intervals[index][0], item[1] * intervals[index][1])
+  steps.forEach(function(item, index) {
+    const reducedInterval = reduceRatio(item[0] * intervals[index][0], item[1] * intervals[index][1])
     intervals.push(reducedInterval)
     denominators.push(reducedInterval[1])
   })
 
-  var lcm = getLCM(denominators)
+  const lcm = getLCM(denominators)
 
   chordString = []
-  intervals.forEach(function (x) {
-    chordString.push(x[0] * lcm / x[1])
+  intervals.forEach(function(x) {
+    chordString.push((x[0] * lcm) / x[1])
   })
 
   return chordString.join(':')

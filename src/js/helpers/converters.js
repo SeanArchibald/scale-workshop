@@ -3,6 +3,8 @@
  */
 
 /* global alert, jQuery */
+import { LINE_TYPE, SEMITONE_RATIO_IN_12_EDO } from '../constants.js'
+import { model } from '../scaleworkshop.js'
 import {
   isEmpty,
   isNil,
@@ -13,13 +15,11 @@ import {
   getLineType,
   trim
 } from './general.js'
-import { LINE_TYPE, SEMITONE_RATIO_IN_12_EDO } from '../constants.js'
 import { getCF, getConvergent } from './sequences.js'
-import { model } from '../scaleworkshop.js'
 import { mathModulo } from './numbers.js'
 
-function getFloat (id, errorMessage) {
-  var value = parseFloat(jQuery(id).val())
+function getFloat(id, errorMessage) {
+  const value = parseFloat(jQuery(id).val())
 
   if (isNaN(value) || value === 0) {
     alert(errorMessage)
@@ -29,8 +29,8 @@ function getFloat (id, errorMessage) {
   return value
 }
 
-function getString (id, errorMessage) {
-  var value = jQuery(id).val()
+function getString(id, errorMessage) {
+  const value = jQuery(id).val()
 
   if (isEmpty(value) || isNil(value)) {
     alert(errorMessage)
@@ -40,8 +40,8 @@ function getString (id, errorMessage) {
   return value
 }
 
-function getLine (id, errorMessage) {
-  var value = jQuery(id).val()
+function getLine(id, errorMessage) {
+  const value = jQuery(id).val()
 
   if (isEmpty(value) || parseFloat(value) <= 0 || isNil(value) || getLineType(value) === LINE_TYPE.INVALID) {
     alert(errorMessage)
@@ -54,13 +54,13 @@ function getLine (id, errorMessage) {
 const toString = input => input + ''
 
 // convert a cents value to decimal
-function centsToDecimal (rawInput) {
+function centsToDecimal(rawInput) {
   const input = trim(toString(rawInput))
-  return Math.pow(2, (parseFloat(input) / 1200.0))
+  return Math.pow(2, parseFloat(input) / 1200.0)
 }
 
 // convert a ratio (string 'x/y') to decimal
-function ratioToDecimal (rawInput) {
+function ratioToDecimal(rawInput) {
   if (isRatio(rawInput)) {
     const input = trim(toString(rawInput))
     const [val1, val2] = input.split('/')
@@ -72,7 +72,7 @@ function ratioToDecimal (rawInput) {
 }
 
 // convert a comma decimal (1,25) to decimal
-function commadecimalToDecimal (rawInput) {
+function commadecimalToDecimal(rawInput) {
   if (isCommaDecimal(rawInput)) {
     const input = parseFloat(rawInput.toString().replace(',', '.'))
     if (input === 0 || isNaN(input)) {
@@ -100,7 +100,7 @@ function decimal_to_commadecimal(rawInput) {
 */
 
 // convert a decimal into cents
-function decimalToCents (rawInput) {
+function decimalToCents(rawInput) {
   if (rawInput === false) {
     return false
   }
@@ -113,12 +113,12 @@ function decimalToCents (rawInput) {
 }
 
 // convert a ratio to cents
-function ratioToCents (rawInput) {
+function ratioToCents(rawInput) {
   return decimalToCents(ratioToDecimal(rawInput))
 }
 
 // convert an n-of-m-edo (string 'x\y') to decimal
-function nOfEdoToDecimal (rawInput) {
+function nOfEdoToDecimal(rawInput) {
   if (isNOfEdo(rawInput)) {
     const input = trim(toString(rawInput))
     const [val1, val2] = input.split('\\').map(x => parseInt(x))
@@ -130,20 +130,22 @@ function nOfEdoToDecimal (rawInput) {
 }
 
 // convert an n-of-m-edo (string 'x\y') to cents
-function nOfEdoToCents (rawInput) {
+function nOfEdoToCents(rawInput) {
   return decimalToCents(nOfEdoToDecimal(rawInput))
 }
 
 // convert a decimal to ratio (string 'x/y'), may have rounding errors for irrationals
-function decimalToRatio (rawInput, iterations = 15, depth = 0) {
-  if (rawInput === false) { return false }
+function decimalToRatio(rawInput, iterations = 15, depth = 0) {
+  if (rawInput === false) {
+    return false
+  }
 
   const input = parseFloat(rawInput)
 
   if (input === 0 || isNaN(input)) {
     return false
   } else {
-    var inputcf = getCF(input, iterations, 100000)
+    const inputcf = getCF(input, iterations, 100000)
     return getConvergent(inputcf, depth)
   }
 }
@@ -161,7 +163,7 @@ function nOfEdoToRatio(rawInput, iterations=15, depth=0) {
 */
 
 // convert any input 'line' to decimal
-function lineToDecimal (rawInput) {
+function lineToDecimal(rawInput) {
   let converterFn = () => false
 
   switch (getLineType(rawInput)) {
@@ -183,29 +185,29 @@ function lineToDecimal (rawInput) {
 }
 
 // convert any input 'line' to a cents value
-function lineToCents (rawInput) {
+function lineToCents(rawInput) {
   return decimalToCents(lineToDecimal(rawInput))
 }
 
 // convert a midi note number to a frequency in Hertz
 // assuming 12-edo at 1440Hz (100% organic vanilla)
-function mtof (input) {
+function mtof(input) {
   return 8.17579891564 * Math.pow(SEMITONE_RATIO_IN_12_EDO, parseInt(input))
 }
 
 // convert a frequency to a midi note number and cents offset
 // assuming 12-edo at 1440Hz
 // returns an array [midiNoteNumber, centsOffset]
-function ftom (input) {
+function ftom(input) {
   input = parseFloat(input)
-  var midiNoteNumber = 69 + (12 * Math.log2(input / 440))
-  var centsOffset = (midiNoteNumber - Math.round(midiNoteNumber)) * 100
+  let midiNoteNumber = 69 + 12 * Math.log2(input / 440)
+  const centsOffset = (midiNoteNumber - Math.round(midiNoteNumber)) * 100
   midiNoteNumber = Math.round(midiNoteNumber)
   return [midiNoteNumber, centsOffset]
 }
 
 // convert an array of step values into absolute degree values
-function stepsToDegrees (steps) {
+function stepsToDegrees(steps) {
   const degrees = [0]
   steps.forEach((step, index) => degrees.push(degrees[index] + step))
   return degrees.splice(1)
@@ -214,7 +216,7 @@ function stepsToDegrees (steps) {
 // convert absolute degree values into an array of step values
 // if first degree is nonzero, doing degrees -> steps -> degrees will normalize the set
 // if degrees are a musical scale, the last note needs to be the period (or equivalency)
-function degreesToSteps (degrees) {
+function degreesToSteps(degrees) {
   const degreesRooted = [0, ...degrees]
   const steps = []
   degrees.forEach((degree, index) => steps.push(degree - degreesRooted[index]))
@@ -223,7 +225,7 @@ function degreesToSteps (degrees) {
 
 // convert an input string into a filename-sanitized version
 // if input is empty, returns "tuning" as a fallback
-function sanitizeFilename (input) {
+function sanitizeFilename(input) {
   if (isEmpty(input.trim())) {
     return 'tuning'
   }
@@ -231,21 +233,21 @@ function sanitizeFilename (input) {
 }
 
 // find MIDI note name from MIDI note number
-function midiNoteNumberToName (input) {
-  var n = parseInt(input)
-  var quotient = Math.floor(n / 12)
-  var remainder = n % 12
-  var name = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+function midiNoteNumberToName(input) {
+  const n = parseInt(input)
+  const quotient = Math.floor(n / 12)
+  const remainder = n % 12
+  const name = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
   return name[remainder] + quotient
 }
 
-function degreeModPeriod (degree) {
-  return mathModulo(degree, model.get('tuning table').note_count - 1)
+function degreeModPeriod(degree) {
+  return mathModulo(degree, model.get('tuning table').noteCount - 1)
 }
 
-function degreeModPeriodCents (degree) {
+function degreeModPeriodCents(degree) {
   const tuningTable = model.get('tuning table')
-  return tuningTable.cents[degreeModPeriod(degree) + tuningTable.base_midi_note]
+  return tuningTable.cents[degreeModPeriod(degree) + tuningTable.baseMidiNote]
 }
 
 export {

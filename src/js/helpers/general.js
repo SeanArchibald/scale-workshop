@@ -3,35 +3,35 @@ import { LINE_TYPE, LOCALSTORAGE_PREFIX } from '../constants.js'
 import { debugEnabled } from '../scaleworkshop.js'
 import { toString } from './converters.js'
 
-function isCent (rawInput) {
+function isCent(rawInput) {
   // true, when the input has numbers at the beginning, followed by a dot, ending with any number of numbers
   // for example: 700.00
   const input = trim(toString(rawInput))
   return /^\d+\.\d*$/.test(input)
 }
 
-function isCommaDecimal (rawInput) {
+function isCommaDecimal(rawInput) {
   // true, when the input has numbers at the beginning, followed by a comma, ending with any number of numbers
   // for example: 1,25
   const input = trim(toString(rawInput))
   return /^\d+,\d*$/.test(input)
 }
 
-function isNOfEdo (rawInput) {
+function isNOfEdo(rawInput) {
   // true, when the input has numbers at the beginning and the end, separated by a single backslash
   // for example: 7\12
   const input = trim(toString(rawInput))
   return /^\d+\\\d+$/.test(input)
 }
 
-function isRatio (rawInput) {
+function isRatio(rawInput) {
   // true, when the input has numbers at the beginning and the end, separated by a single slash
   // for example: 3/2
   const input = trim(toString(rawInput))
   return /^\d+\/\d+$/.test(input)
 }
 
-function getLineType (rawInput) {
+function getLineType(rawInput) {
   if (isCent(rawInput)) {
     return LINE_TYPE.CENTS
   } else if (isCommaDecimal(rawInput)) {
@@ -45,7 +45,7 @@ function getLineType (rawInput) {
   }
 }
 
-function debug (msg = '') {
+function debug(msg = '') {
   if (debugEnabled) {
     msg = isEmpty(msg) ? 'Debug' : msg
     console.log(msg)
@@ -54,16 +54,16 @@ function debug (msg = '') {
   return false
 }
 
-function setScaleName (title) {
+function setScaleName(title) {
   jQuery('#txt_name').val(title)
 }
 
-function closePopup (id) {
+function closePopup(id) {
   jQuery(id).dialog('close')
 }
 
-function setTuningData (tuning) {
-  jQuery('#txt_tuning_data').val(tuning)
+function setTuningData(tuning) {
+  jQuery('#txt_tuningData').val(tuning)
 }
 
 const isEmpty = string => string === ''
@@ -74,7 +74,7 @@ const isFunction = x => typeof x === 'function'
 
 const trim = input => input.trim()
 
-function getCoordsFromKey (tdOfKeyboard) {
+function getCoordsFromKey(tdOfKeyboard) {
   try {
     return JSON.parse(tdOfKeyboard.getAttribute('data-coord'))
   } catch (e) {
@@ -98,31 +98,33 @@ const roundToNDecimals = (decimals, number) => {
 //   let result = 3 * 5
 //   debug(result)
 //   result = toString(result)
-function tap (fn, value) {
+function tap(fn, value) {
   fn(value)
   return value
 }
 
-function getSearchParamOr (valueIfMissing, key, url) {
+function getSearchParamOr(valueIfMissing, key, url) {
   return url.searchParams.has(key) ? url.searchParams.get(key) : valueIfMissing
 }
 
-function getSearchParamAsNumberOr (valueIfMissingOrNan, key, url) {
-  return (url.searchParams.has(key) && !isNaN(url.searchParams.get(key))) ? parseFloat(url.searchParams.get(key)) : valueIfMissingOrNan
+function getSearchParamAsNumberOr(valueIfMissingOrNan, key, url) {
+  return url.searchParams.has(key) && !isNaN(url.searchParams.get(key))
+    ? parseFloat(url.searchParams.get(key))
+    : valueIfMissingOrNan
 }
 
-function trimSelf (el) {
-  jQuery(el).val(function (idx, val) {
+function trimSelf(el) {
+  jQuery(el).val(function(idx, val) {
     return val.trim()
   })
 }
 
-function openDialog (el, onOK) {
+function openDialog(el, onOK) {
   jQuery(el).dialog({
     modal: true,
     buttons: {
       OK: onOK,
-      Cancel: function () {
+      Cancel: function() {
         jQuery(this).dialog('close')
       }
     }
@@ -131,7 +133,7 @@ function openDialog (el, onOK) {
 
 // redirect all traffic to https, if not there already
 // source: https://stackoverflow.com/a/4723302/1806628
-function redirectToHTTPS () {
+function redirectToHTTPS() {
   if (location.protocol !== 'https:') {
     location.href = 'https:' + window.location.href.substring(window.location.protocol.length)
   }
@@ -154,7 +156,7 @@ const isRunningOnWindows = () => {
   return navigator.userAgent.includes('Windows')
 }
 
-function getNewlineSettingsFromBrowser () {
+function getNewlineSettingsFromBrowser() {
   let value = isRunningOnWindows() ? 'windows' : 'unix'
 
   if (isLocalStorageAvailable()) {
@@ -173,9 +175,7 @@ function getNewlineSettingsFromBrowser () {
 // source: https://stackoverflow.com/a/14810722/1806628
 // objectMap(val => val * 2, {a: 10, b: 20}) --> {a: 20, b: 40}
 const objectMap = (fn, obj) => {
-  return Object.fromEntries(
-    Object.entries(obj).map(([k, v]) => [k, fn(v)])
-  )
+  return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, fn(v)]))
 }
 
 export {
