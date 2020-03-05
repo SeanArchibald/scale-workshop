@@ -7,7 +7,9 @@
     "lint": "eslint \"src/js/**/*.{js,jsx}\"",
     "lint:fix": "lint -- --fix",
     "host": "http-server . -o index.htm",
-    "lint-staged-files": "lint-staged"
+    "lint-staged-files": "lint-staged",
+    "unit": "mocha test/**/*.spec.js --require @babel/register",
+    "unit:watch": "npm run unit -- --watch --watch-extensions js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,10 @@
   },
   "homepage": "https://sevish.com/scaleworkshop/",
   "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
+    "@babel/register": "^7.8.6",
+    "assert": "^2.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
@@ -32,6 +38,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "http-server": "^0.12.1",
     "lint-staged": "^10.0.8",
+    "mocha": "^7.1.0",
     "pre-commit": "^1.2.2",
     "prettier": "1.19.1",
     "prettier-config-standard": "^1.0.1"
@@ -42,6 +49,11 @@
     ]
   },
   "pre-commit": [
+    "unit",
     "lint-staged-files"
-  ]
+  ],
+  "dependencies": {
+    "eventemitter3": "^4.0.0",
+    "jquery": "^3.4.1"
+  }
 }
