@@ -2,11 +2,11 @@
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
-/* global localStorage, jQuery, confirm */
+/* global alert, localStorage, jQuery, confirm */
 
 import { isEmpty } from './helpers/strings.js'
-import { debug, isNil, openDialog, trimSelf, isLocalStorageAvailable } from './helpers/general.js'
-import { mtof, midiNoteNumberToName, degreesToSteps, stepsToDegrees } from './helpers/converters.js'
+import { debug, isNil, openDialog, trimSelf, isLocalStorageAvailable, closePopup } from './helpers/general.js'
+import { mtof, midiNoteNumberToName, degreesToSteps, stepsToDegrees, getString } from './helpers/converters.js'
 import { rotateArrayLeft, rotateArrayRight, getCoprimes } from './helpers/sequences.js'
 import { setKeyColors, parseTuningData, parseUrl, clearAll, model, synth } from './scaleworkshop.js'
 import { importScalaScl, importAnamarkTun } from './helpers/importers.js'
@@ -176,7 +176,17 @@ function initEvents() {
       modal: true,
       buttons: {
         OK: function() {
-          generateEnumerateChord()
+          try {
+            generateEnumerateChord({
+              rawChord: getString('#input_chord', 'Warning: bad input'),
+              convertToRatios: document.getElementById('input_convert_to_ratios').checked,
+              isInversion: document.getElementById('input_invert_chord').checked
+            })
+
+            closePopup('#modal_enumerate_chord')
+          } catch (e) {
+            alert(e.message)
+          }
         },
         Cancel: function() {
           jQuery(this).dialog('close')

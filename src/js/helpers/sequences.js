@@ -4,7 +4,7 @@
 
 /* global alert */
 
-import { getPrimesOfRatio, mathModulo } from './numbers.js'
+import { getPrimesOfRatio, mathModulo, clamp } from './numbers.js'
 import { stepsToDegrees, decimalToCents } from './converters.js'
 
 // returns a version of the given array rotated left by a given amount
@@ -31,41 +31,43 @@ function rotateArrayRight(steps, array) {
 
 // calculate a continued fraction for the given number
 function getCF(num, maxdepth = 20, roundErr = 1e-6) {
-  const cf = [] // the continued fraction
-  let i = 0
+  const continuedFraction = []
 
-  while (i < maxdepth) {
+  for (let i = 0; i < maxdepth; i++) {
     const integer = Math.floor(num)
-    cf.push(integer)
+    continuedFraction.push(integer)
 
     num -= integer
+
     if (num <= roundErr) {
       break
     }
 
     num = 1.0 / num
-    i++
   }
 
-  return cf
+  return continuedFraction
 }
 
 // calculate a single convergent for a given continued fraction
-function getConvergent(cf, depth = -1) {
+function getConvergent(cf, depth = cf.length) {
+  depth = clamp(1, cf.length, depth)
+
   let num // the convergent numerator
   let den // the convergent denominator
 
-  if (depth >= cf.length || depth < 0) {
-    depth = cf.length - 1
+  for (let d = 0; d < depth; d++) {
+    num = cf[d]
+    den = 1
+
+    // calculate the convergent
+    for (let i = d; i > 0; i--) {
+      ;[den, num] = [num, den]
+      num += den * cf[i - 1]
+    }
   }
 
-  ;[num, den] = [1, cf[depth]]
-
-  for (let d = depth; d > 0; d--) {
-    num += cf[d - 1] * den
-    ;[num, den] = [den, num]
-  }
-  return den + '/' + num
+  return num + '/' + den
 }
 
 // calculate all best rational approximations given a continued fraction
