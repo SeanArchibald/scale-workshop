@@ -3,6 +3,7 @@
  */
 
 /* global alert, jQuery */
+
 import { LINE_TYPE, SEMITONE_RATIO_IN_12_EDO } from '../constants.js'
 import { model } from '../scaleworkshop.js'
 import {

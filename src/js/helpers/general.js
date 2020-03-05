@@ -1,4 +1,5 @@
 /* global location, jQuery, localStorage, navigator */
+
 import { LINE_TYPE, LOCALSTORAGE_PREFIX } from '../constants.js'
 import { debugEnabled } from '../scaleworkshop.js'
 import { toString } from './converters.js'

@@ -1,4 +1,5 @@
 /* global alert, MouseEvent, history, jQuery */
+
 import { model, synth } from './scaleworkshop.js'
 import { debug, isNil, isEmpty, getLineType } from './helpers/general.js'
 import { decimalToCents, mtof, midiNoteNumberToName, ftom } from './helpers/converters.js'

@@ -3,6 +3,7 @@
  */
 
 /* global alert, jQuery */
+
 import { parseTuningData, model } from './scaleworkshop.js'
 import { trimSelf, isEmpty, debug, trim, getLineType } from './helpers/general.js'
 import { ratioToCents, lineToDecimal, decimalToCents, nOfEdoToCents } from './helpers/converters.js'

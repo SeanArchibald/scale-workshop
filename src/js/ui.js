@@ -4,6 +4,7 @@
  */
 
 /* global alert, jQuery */
+
 import { keyColors, model } from './scaleworkshop.js'
 import { touchToMidiNote } from './synth.js'
 import { getCoordsFromKey } from './helpers/general.js'

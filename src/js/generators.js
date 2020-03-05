@@ -3,6 +3,7 @@
  */
 
 /* global alert, jQuery */
+
 import { isCent, isNOfEdo, closePopup, debug, setTuningData, setScaleName } from './helpers/general.js'
 import { lineToDecimal, decimalToRatio, lineToCents, getFloat, getString, getLine } from './helpers/converters.js'
 import { invertChord, mathModulo } from './helpers/numbers.js'

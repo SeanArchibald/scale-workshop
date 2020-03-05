@@ -3,6 +3,7 @@
  */
 
 /* global location, localStorage, alert, FileReader, DOMParser, jQuery */
+
 import {
   debug,
   redirectToHTTPS,

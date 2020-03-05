@@ -3,6 +3,7 @@
  */
 
 /* global localStorage, jQuery, confirm */
+
 import { debug, isEmpty, isNil, openDialog, trimSelf, isLocalStorageAvailable } from './helpers/general.js'
 import { mtof, midiNoteNumberToName, degreesToSteps, stepsToDegrees } from './helpers/converters.js'
 import { rotateArrayLeft, rotateArrayRight, getCoprimes } from './helpers/sequences.js'

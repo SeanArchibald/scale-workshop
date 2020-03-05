@@ -3,8 +3,8 @@
  */
 
 /* global alert */
+
 import { PRIMES } from '../constants.js'
-import { getPrimeFactors } from './sequences.js'
 
 function mathModulo(number, modulo) {
   return ((number % modulo) + modulo) % modulo
@@ -189,6 +189,47 @@ function invertChord(chordString) {
   return chordString.join(':')
 }
 
+// returns an array representing the prime factorization
+// indicies are the 'nth' prime, the value is the powers of each prime
+function getPrimeFactors(number) {
+  number = Math.floor(number)
+  if (number === 1) {
+    return 1
+  }
+  const factorsOut = []
+  let n = number
+  let q = number
+  let loop
+
+  for (let i = 0; i < PRIMES.length; i++) {
+    if (PRIMES[i] > n) {
+      break
+    }
+
+    factorsOut.push(0)
+
+    if (PRIMES[i] === n) {
+      factorsOut[i]++
+      break
+    }
+
+    loop = true
+
+    while (loop) {
+      q = n / PRIMES[i]
+
+      if (q === Math.floor(q)) {
+        n = q
+        factorsOut[i]++
+        continue
+      }
+      loop = false
+    }
+  }
+
+  return factorsOut
+}
+
 export {
   mathModulo,
   sumOfArray,
@@ -201,5 +242,6 @@ export {
   getPrimesOfRatio,
   reduceRatio,
   getLCM,
-  invertChord
+  invertChord,
+  getPrimeFactors
 }
