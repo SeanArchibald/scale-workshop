@@ -332,12 +332,12 @@ function getScaleUrl() {
   const pathname = !isEmpty(url.pathname) ? url.pathname : '/scaleworkshop/'
   // var domain = !isNil(window.location.href) ? window.location.href : 'http://sevish.com/scaleworkshop';
   const name = encodeURIComponent(jQuery('#txt_name').val())
-  const data = encodeURIComponent(jQuery('#txt_tuningData').val())
-  const freq = encodeURIComponent(jQuery('#txt_baseFrequency').val())
-  const midi = encodeURIComponent(jQuery('#txt_baseMidiNote').val())
+  const data = encodeURIComponent(jQuery('#txt_tuning_data').val())
+  const freq = encodeURIComponent(jQuery('#txt_base_frequency').val())
+  const midi = encodeURIComponent(jQuery('#txt_base_midi_note').val())
   const vert = encodeURIComponent(synth.isomorphicMapping.vertical)
   const horiz = encodeURIComponent(synth.isomorphicMapping.horizontal)
-  const colors = encodeURIComponent(jQuery('#input_keyColors').val())
+  const colors = encodeURIComponent(jQuery('#input_key_colors').val())
   const waveform = encodeURIComponent(jQuery('#input_select_synth_waveform').val())
   const ampenv = encodeURIComponent(jQuery('#input_select_synth_amp_env').val())
 
@@ -387,7 +387,7 @@ function exportUrl() {
   jQuery('#modal_share_url').dialog({
     modal: true,
     buttons: {
-      'Copy URL': function() {
+      'Copy URL': function () {
         jQuery('#input_share_url').select()
         document.execCommand('Copy')
         jQuery(this).dialog('close')
@@ -396,7 +396,7 @@ function exportUrl() {
   })
 
   // url field clicked
-  jQuery('#input_share_url').click(function(event) {
+  jQuery('#input_share_url').click(function (event) {
     jQuery(this).select()
   })
 

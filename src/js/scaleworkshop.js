@@ -46,7 +46,7 @@ import { mathModulo } from './helpers/numbers.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
-jQuery(window).on('popstate', function() {
+jQuery(window).on('popstate', function () {
   debug('Back/Forward navigation detected - reloading page')
   location.reload(true)
 })
@@ -189,7 +189,7 @@ model.on('change', (key, newValue) => {
       setDropdownOptions('#modal_modify_mos_size', model.get('modify mode mos sizes'))
       break
     case 'modify mode input':
-      jQuery('#input_modifyMode').val(model.get('modify mode input').join(' '))
+      jQuery('#input_modify_mode').val(model.get('modify mode input').join(' '))
       break
     case 'modify approx degree':
       break
@@ -242,15 +242,15 @@ jQuery(() => {
 // clear all inputted scale data
 function clearAll() {
   // empty text fields
-  jQuery('#txt_tuningData').val('')
+  jQuery('#txt_tuning_data').val('')
   jQuery('#txt_name').val('')
 
   // empty any information displayed on page
   jQuery('#tuning-table').empty()
 
   // restore default base tuning
-  jQuery('#txt_baseFrequency').val(440)
-  jQuery('#txt_baseMidiNote').val(69)
+  jQuery('#txt_base_frequency').val(440)
+  jQuery('#txt_base_midi_note').val(69)
 
   // reset tuning table
   model.set('tuning table', {
@@ -272,7 +272,7 @@ function setDropdownOptions(element, optionsText, optionsValue = [], otherTags =
     jQuery(element).empty()
   }
 
-  optionsText.forEach(function(option, index, textArray) {
+  optionsText.forEach(function (option, index, textArray) {
     let injection = optionsValue ? optionsValue[index] : option
     injection += '" ' + otherTags[index]
     jQuery(element).append('<option value="' + injection + '>' + option + '</option>')
@@ -280,7 +280,7 @@ function setDropdownOptions(element, optionsText, optionsValue = [], otherTags =
 }
 
 // DOM changed, need to sync it with model
-jQuery('#input_range_main_vol').on('input', function() {
+jQuery('#input_range_main_vol').on('input', function () {
   model.set('main volume', parseFloat(jQuery(this).val()))
 })
 
@@ -401,9 +401,9 @@ function parseUrl() {
 
   // enter the data from url in to the on-page form
   jQuery('#txt_name').val(name)
-  jQuery('#txt_tuningData').val(data)
-  jQuery('#txt_baseFrequency').val(freq)
-  jQuery('#txt_baseMidiNote').val(midi)
+  jQuery('#txt_tuning_data').val(data)
+  jQuery('#txt_base_frequency').val(freq)
+  jQuery('#txt_base_midi_note').val(midi)
   jQuery('#input_number_isomorphicmapping_vert').val(vertical)
   jQuery('#input_number_isomorphicmapping_horiz').val(horizontal)
 
@@ -415,7 +415,7 @@ function parseUrl() {
   if (parseTuningData()) {
     // if there are key colorings, apply them
     if (colors !== false) {
-      jQuery('#input_keyColors').val(colors)
+      jQuery('#input_key_colors').val(colors)
       setKeyColors(colors)
     }
 
@@ -439,22 +439,22 @@ function parseTuningData() {
 
   // http://www.huygens-fokker.org/scala/scl_format.html
 
-  tuningTable.baseMidiNote = parseInt(jQuery('#txt_baseMidiNote').val())
-  tuningTable.baseFrequency = parseFloat(jQuery('#txt_baseFrequency').val())
+  tuningTable.baseMidiNote = parseInt(jQuery('#txt_base_midi_note').val())
+  tuningTable.baseFrequency = parseFloat(jQuery('#txt_base_frequency').val())
   tuningTable.description = jQuery('#txt_name').val()
   tuningTable.filename = sanitizeFilename(tuningTable.description)
 
-  const userTuningData = document.getElementById('txt_tuningData')
+  const userTuningData = document.getElementById('txt_tuning_data')
 
   // check if user pasted a scala file
   // we check if the first character is !
   if (userTuningData.value.startsWith('!')) {
     alert(
       'Hello, trying to paste a Scala file into this app?' +
-        UNIX_NEWLINE +
-        "Please use the 'Import .scl' function instead or remove the first few lines (description) from the text box"
+      UNIX_NEWLINE +
+      "Please use the 'Import .scl' function instead or remove the first few lines (description) from the text box"
     )
-    jQuery('#txt_tuningData')
+    jQuery('#txt_tuning_data')
       .parent()
       .addClass('has-error')
     return false
@@ -471,7 +471,7 @@ function parseTuningData() {
     // check that line is not empty
     if (!isEmpty(lines[i])) {
       if (getLineType(lines[i]) === LINE_TYPE.INVALID) {
-        jQuery('#txt_tuningData')
+        jQuery('#txt_tuning_data')
           .parent()
           .addClass('has-error')
         return false
@@ -490,7 +490,7 @@ function parseTuningData() {
   if (empty) {
     // if the input tuning is totally empty
     debug('no tuning data')
-    jQuery('#txt_tuningData')
+    jQuery('#txt_tuning_data')
       .parent()
       .addClass('has-error')
     return false
@@ -529,7 +529,7 @@ function parseTuningData() {
 
   jQuery('#tuning-table').append('</tbody>')
 
-  setKeyColors(jQuery('#input_keyColors').val())
+  setKeyColors(jQuery('#input_key_colors').val())
 
   // scroll to reference note on the table
   jQuery('#col-tuning-table').animate(
@@ -540,7 +540,7 @@ function parseTuningData() {
     600
   ) // 600ms scroll to reference note
 
-  jQuery('#txt_tuningData')
+  jQuery('#txt_tuning_data')
     .parent()
     .removeClass('has-error')
 
@@ -573,7 +573,7 @@ function parseImportedScalaScl(event) {
   const reader = new FileReader()
   let scalaFile = reader.readAsText(input.files[0])
 
-  reader.onload = function() {
+  reader.onload = function () {
     // get filename
     jQuery('#txt_name').val(input.files[0].name.slice(0, -4))
 
@@ -585,7 +585,7 @@ function parseImportedScalaScl(event) {
     // determine the first line of scala file that contains tuning data
     const firstLine = lines.lastIndexOf('!') + 1
 
-    jQuery('#txt_tuningData').val(
+    jQuery('#txt_tuning_data').val(
       lines
         .slice(firstLine)
         .map(line => line.trim())
@@ -615,7 +615,7 @@ function parseImportedAnamarkTun(event) {
   const reader = new FileReader()
   let tunFile = reader.readAsText(input.files[0])
 
-  reader.onload = function() {
+  reader.onload = function () {
     tunFile = reader.result
 
     // split tunFile data into individual lines
@@ -679,13 +679,13 @@ function parseImportedAnamarkTun(event) {
         }
       }
 
-      jQuery('#txt_tuningData').val(tuning.join(UNIX_NEWLINE))
+      jQuery('#txt_tuning_data').val(tuning.join(UNIX_NEWLINE))
 
       // get base MIDI note and base frequency
       for (let i = firstLine + 1; i < lines.length; i++) {
         if (lines[i].includes('!')) {
-          jQuery('#txt_baseFrequency').val(lines[i].substring(lines[i].indexOf('!') + 2, lines[i].length - 2))
-          jQuery('#txt_baseMidiNote').val(lines[i].substring(0, lines[i].indexOf('!') - 2).replace('note ', ''))
+          jQuery('#txt_base_frequency').val(lines[i].substring(lines[i].indexOf('!') + 2, lines[i].length - 2))
+          jQuery('#txt_base_midi_note').val(lines[i].substring(0, lines[i].indexOf('!') - 2).replace('note ', ''))
         }
       }
       parseTuningData()

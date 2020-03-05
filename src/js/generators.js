@@ -27,7 +27,7 @@ function generateEqualTemperament() {
 
   parseTuningData()
 
-  closePopup('#modal_generateEqualTemperament')
+  closePopup('#modal_generate_equal_temperament')
 
   // success
   return true
@@ -90,7 +90,7 @@ function generateRank2Temperament() {
 
   parseTuningData()
 
-  closePopup('#modal_generateRank2Temperament')
+  closePopup('#modal_generate_rank_2_temperament')
 
   // success
   return true
@@ -122,7 +122,7 @@ function generateRank2TemperamentData(generator, period, size, up) {
   }
 
   // sort the scale ascending
-  aa.sort(function(a, b) {
+  aa.sort(function (a, b) {
     return a - b
   })
 
@@ -158,7 +158,7 @@ function generateHarmonicSeriesSegment() {
 
   parseTuningData()
 
-  closePopup('#modal_generateHarmonicSeriesSegment')
+  closePopup('#modal_generate_harmonic_series_segment')
 
   // success
   return true
@@ -198,7 +198,7 @@ function generateSubharmonicSeriesSegment() {
 
   parseTuningData()
 
-  closePopup('#modal_generateSubharmonicSeriesSegment')
+  closePopup('#modal_generate_subharmonic_series_segment')
 
   // success
   return true
@@ -218,7 +218,7 @@ function generateEnumerateChord() {
   let chord = getString('#input_chord', 'Warning: bad input')
   let chordStr = chord
 
-  const convertToRatios = document.getElementById('input_convertToRatios').checked
+  const convertToRatios = document.getElementById('input_convert_to_ratios').checked
 
   // It doesn't make much sense to mix different values,
   // but it's cool to experiment with.
@@ -694,10 +694,10 @@ function loadPresetScale(a) {
 
   setScaleName(name)
   setTuningData(data)
-  jQuery('#txt_baseFrequency').val(freq)
-  jQuery('#txt_baseMidiNote').val(midi)
+  jQuery('#txt_base_frequency').val(freq)
+  jQuery('#txt_base_midi_note').val(midi)
   parseTuningData()
-  closePopup('#modal_loadPresetScale')
+  closePopup('#modal_load_preset_scale')
 }
 
 export {
