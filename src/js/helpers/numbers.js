@@ -230,6 +230,16 @@ function getPrimeFactors(number) {
   return factorsOut
 }
 
+const clamp = (min, max, value) => {
+  if (value < min) {
+    return min
+  }
+  if (value > max) {
+    return max
+  }
+  return value
+}
+
 export {
   mathModulo,
   sumOfArray,
@@ -243,5 +253,6 @@ export {
   reduceRatio,
   getLCM,
   invertChord,
-  getPrimeFactors
+  getPrimeFactors,
+  clamp
 }
