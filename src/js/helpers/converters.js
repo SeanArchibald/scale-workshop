@@ -7,8 +7,8 @@
 import { LINE_TYPE, SEMITONE_RATIO_IN_12_EDO } from '../constants.js'
 import { model } from '../scaleworkshop.js'
 import { isNil } from './general.js'
-import { isCommaDecimal, isNOfEdo, isRatio, getLineType } from './types.js'
-import { isEmpty, trim } from './strings.js'
+import { isCommaDecimal, isRatio, getLineType } from './types.js'
+import { isEmpty, trim, toString } from './strings.js'
 import { getCF, getConvergent } from './sequences.js'
 import { mathModulo } from './numbers.js'
 
@@ -109,36 +109,27 @@ function ratioToCents(rawInput) {
   return decimalToCents(ratioToDecimal(rawInput))
 }
 
-// convert an n-of-m-edo (string 'x\y') to decimal
+// convert an n-of-m-edo (string 'x\y') to decimal (float 1.546)
 function nOfEdoToDecimal(rawInput) {
-  if (isNOfEdo(rawInput)) {
-    const input = trim(toString(rawInput))
-    const [val1, val2] = input.split('\\').map(x => parseInt(x))
-    return Math.pow(2, val1 / val2)
-  } else {
-    alert('Invalid input: ' + rawInput)
-    return false
-  }
+  const input = trim(toString(rawInput))
+  const [val1, val2] = input.split('\\').map(x => parseInt(x))
+  return Math.pow(2, val1 / val2)
 }
 
-// convert an n-of-m-edo (string 'x\y') to cents
+// convert an n-of-m-edo (string 'x\y') to cents (string 'zzz.')
 function nOfEdoToCents(rawInput) {
   return decimalToCents(nOfEdoToDecimal(rawInput))
 }
 
-// convert a decimal to ratio (string 'x/y'), may have rounding errors for irrationals
+// convert a decimal (string '1.25') to ratio (array of int [5, 4]), may have rounding errors for irrationals
 function decimalToRatio(rawInput, iterations = 15, depth = 0) {
-  if (rawInput === false) {
-    return false
-  }
-
   const input = parseFloat(rawInput)
 
   if (input === 0 || isNaN(input)) {
     return false
   } else {
-    const inputcf = getCF(input, iterations, 100000)
-    return getConvergent(inputcf, depth)
+    const inputcf = getCF(input, iterations)
+    return getConvergent(inputcf)
   }
 }
 
