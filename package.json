@@ -4,9 +4,10 @@
   "description": "![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/src/assets/img/scale-workshop-og-image.png)",
   "main": "src/js/ndex.js",
   "scripts": {
-    "lint": "eslint src/js/ --ext .js",
-    "lint:fix": "eslint src/js/ --ext .js --fix",
-    "host": "http-server . -o index.htm"
+    "lint": "eslint \"src/js/**/*.{js,jsx}\"",
+    "lint:fix": "lint -- --fix",
+    "host": "http-server . -o index.htm",
+    "lint-staged-files": "lint-staged"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,17 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "http-server": "^0.12.1",
+    "lint-staged": "^10.0.8",
+    "pre-commit": "^1.2.2",
     "prettier": "1.19.1",
     "prettier-config-standard": "^1.0.1"
-  }
+  },
+  "lint-staged": {
+    "src/js/**/*.{js,jsx}": [
+      "eslint --fix"
+    ]
+  },
+  "pre-commit": [
+    "lint-staged-files"
+  ]
 }
