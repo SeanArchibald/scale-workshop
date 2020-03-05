@@ -5,7 +5,9 @@
 /* global alert, jQuery */
 
 import { parseTuningData, model } from './scaleworkshop.js'
-import { trimSelf, isEmpty, debug, trim, getLineType } from './helpers/general.js'
+import { trimSelf, debug } from './helpers/general.js'
+import { isEmpty, trim } from './helpers/strings.js'
+import { getLineType } from './helpers/types.js'
 import { ratioToCents, lineToDecimal, decimalToCents, nOfEdoToCents } from './helpers/converters.js'
 import { PRIMES, UNIX_NEWLINE, NEWLINE_REGEX, WINDOWS_NEWLINE } from './constants.js'
 import { getRatioStructure } from './helpers/sequences.js'

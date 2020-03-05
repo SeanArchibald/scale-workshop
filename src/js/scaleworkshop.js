@@ -7,14 +7,14 @@
 import {
   debug,
   redirectToHTTPS,
-  isEmpty,
   getSearchParamOr,
   getSearchParamAsNumberOr,
-  getLineType,
   isNil,
   getNewlineSettingsFromBrowser,
   roundToNDecimals
 } from './helpers/general.js'
+import { isEmpty } from './helpers/strings.js'
+import { getLineType } from './helpers/types.js'
 import {
   decimalToCents,
   lineToDecimal,

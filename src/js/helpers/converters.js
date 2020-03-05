@@ -6,16 +6,9 @@
 
 import { LINE_TYPE, SEMITONE_RATIO_IN_12_EDO } from '../constants.js'
 import { model } from '../scaleworkshop.js'
-import {
-  isEmpty,
-  isNil,
-  // isCent,
-  isCommaDecimal,
-  isNOfEdo,
-  isRatio,
-  getLineType,
-  trim
-} from './general.js'
+import { isNil } from './general.js'
+import { isCommaDecimal, isNOfEdo, isRatio, getLineType } from './types.js'
+import { isEmpty, trim } from './strings.js'
 import { getCF, getConvergent } from './sequences.js'
 import { mathModulo } from './numbers.js'
 
@@ -51,8 +44,6 @@ function getLine(id, errorMessage) {
 
   return value
 }
-
-const toString = input => input + ''
 
 // convert a cents value to decimal
 function centsToDecimal(rawInput) {
@@ -255,7 +246,6 @@ export {
   getFloat,
   getString,
   getLine,
-  toString,
   centsToDecimal,
   ratioToDecimal,
   commadecimalToDecimal,

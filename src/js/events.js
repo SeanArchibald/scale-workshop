@@ -4,7 +4,8 @@
 
 /* global localStorage, jQuery, confirm */
 
-import { debug, isEmpty, isNil, openDialog, trimSelf, isLocalStorageAvailable } from './helpers/general.js'
+import { isEmpty } from './helpers/strings.js'
+import { debug, isNil, openDialog, trimSelf, isLocalStorageAvailable } from './helpers/general.js'
 import { mtof, midiNoteNumberToName, degreesToSteps, stepsToDegrees } from './helpers/converters.js'
 import { rotateArrayLeft, rotateArrayRight, getCoprimes } from './helpers/sequences.js'
 import { setKeyColors, parseTuningData, parseUrl, clearAll, model, synth } from './scaleworkshop.js'

@@ -4,11 +4,12 @@
 
 /* global alert, jQuery */
 
-import { isCent, isNOfEdo, closePopup, debug, setTuningData, setScaleName } from './helpers/general.js'
+import { closePopup, debug, setTuningData, setScaleName } from './helpers/general.js'
 import { lineToDecimal, decimalToRatio, lineToCents, getFloat, getString, getLine } from './helpers/converters.js'
 import { invertChord, mathModulo } from './helpers/numbers.js'
 import { UNIX_NEWLINE } from './constants.js'
 import { parseTuningData } from './scaleworkshop.js'
+import { isCent, isNOfEdo } from './helpers/types.js'
 
 function generateEqualTemperament() {
   const divider = getFloat('#input_number_of_divisions', 'Warning: no divider')
