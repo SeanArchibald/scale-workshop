@@ -122,7 +122,7 @@ function generateRank2TemperamentData(generator, period, size, up) {
   }
 
   // sort the scale ascending
-  aa.sort(function (a, b) {
+  aa.sort(function(a, b) {
     return a - b
   })
 

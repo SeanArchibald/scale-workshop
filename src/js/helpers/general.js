@@ -114,7 +114,7 @@ function getSearchParamAsNumberOr(valueIfMissingOrNan, key, url) {
 }
 
 function trimSelf(el) {
-  jQuery(el).val(function (idx, val) {
+  jQuery(el).val(function(idx, val) {
     return val.trim()
   })
 }
@@ -124,7 +124,7 @@ function openDialog(el, onOK) {
     modal: true,
     buttons: {
       OK: onOK,
-      Cancel: function () {
+      Cancel: function() {
         jQuery(this).dialog('close')
       }
     }

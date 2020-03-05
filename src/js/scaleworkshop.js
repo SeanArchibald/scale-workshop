@@ -46,7 +46,7 @@ import { mathModulo } from './helpers/numbers.js'
 
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
-jQuery(window).on('popstate', function () {
+jQuery(window).on('popstate', function() {
   debug('Back/Forward navigation detected - reloading page')
   location.reload(true)
 })
@@ -272,7 +272,7 @@ function setDropdownOptions(element, optionsText, optionsValue = [], otherTags =
     jQuery(element).empty()
   }
 
-  optionsText.forEach(function (option, index, textArray) {
+  optionsText.forEach(function(option, index, textArray) {
     let injection = optionsValue ? optionsValue[index] : option
     injection += '" ' + otherTags[index]
     jQuery(element).append('<option value="' + injection + '>' + option + '</option>')
@@ -280,7 +280,7 @@ function setDropdownOptions(element, optionsText, optionsValue = [], otherTags =
 }
 
 // DOM changed, need to sync it with model
-jQuery('#input_range_main_vol').on('input', function () {
+jQuery('#input_range_main_vol').on('input', function() {
   model.set('main volume', parseFloat(jQuery(this).val()))
 })
 
@@ -451,8 +451,8 @@ function parseTuningData() {
   if (userTuningData.value.startsWith('!')) {
     alert(
       'Hello, trying to paste a Scala file into this app?' +
-      UNIX_NEWLINE +
-      "Please use the 'Import .scl' function instead or remove the first few lines (description) from the text box"
+        UNIX_NEWLINE +
+        "Please use the 'Import .scl' function instead or remove the first few lines (description) from the text box"
     )
     jQuery('#txt_tuning_data')
       .parent()
@@ -573,7 +573,7 @@ function parseImportedScalaScl(event) {
   const reader = new FileReader()
   let scalaFile = reader.readAsText(input.files[0])
 
-  reader.onload = function () {
+  reader.onload = function() {
     // get filename
     jQuery('#txt_name').val(input.files[0].name.slice(0, -4))
 
@@ -615,7 +615,7 @@ function parseImportedAnamarkTun(event) {
   const reader = new FileReader()
   let tunFile = reader.readAsText(input.files[0])
 
-  reader.onload = function () {
+  reader.onload = function() {
     tunFile = reader.result
 
     // split tunFile data into individual lines

@@ -387,7 +387,7 @@ function exportUrl() {
   jQuery('#modal_share_url').dialog({
     modal: true,
     buttons: {
-      'Copy URL': function () {
+      'Copy URL': function() {
         jQuery('#input_share_url').select()
         document.execCommand('Copy')
         jQuery(this).dialog('close')
@@ -396,7 +396,7 @@ function exportUrl() {
   })
 
   // url field clicked
-  jQuery('#input_share_url').click(function (event) {
+  jQuery('#input_share_url').click(function(event) {
     jQuery(this).select()
   })
 

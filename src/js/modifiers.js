@@ -12,7 +12,7 @@ import { getRatioStructure } from './helpers/sequences.js'
 let currentRatioStructure
 
 // calculate and list rational approximations within user parameters
-jQuery('#input_interval_to_approximate').change(function () {
+jQuery('#input_interval_to_approximate').change(function() {
   const interval = lineToDecimal(jQuery('#input_interval_to_approximate').val())
   currentRatioStructure = getRatioStructure(interval)
   modifyUpdateApproximations()
@@ -154,7 +154,7 @@ function modifyMode() {
 
   if (modeType === 'intervals' || modeType === 'mos') {
     // get the total number of notes in the mode
-    const modeSum = mode.reduce(function (a, b) {
+    const modeSum = mode.reduce(function(a, b) {
       return a + b
     }, 0)
 
@@ -162,8 +162,8 @@ function modifyMode() {
     if (modeSum !== lines.length) {
       alert(
         "Your mode doesn't add up to the same size as the current scale." +
-        UNIX_NEWLINE +
-        "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5."
+          UNIX_NEWLINE +
+          "E.g. if you have a 5 note scale, mode 2 2 1 is valid because 2+2+1=5. But mode 2 2 2 is invalid because 2+2+2 doesn't equal 5."
       )
       return false
     }
@@ -194,8 +194,8 @@ function modifyMode() {
     if (mode[mode.length - 1] !== lines.length) {
       alert(
         "Your mode isn't the same size as the current scale." +
-        UNIX_NEWLINE +
-        'E.g. if you have a 5 note scale, mode 2 4 5 is valid because the final degree is 5. But mode 2 4 6 is invalid because 6 is greater than 5.'
+          UNIX_NEWLINE +
+          'E.g. if you have a 5 note scale, mode 2 4 5 is valid because the final degree is 5. But mode 2 4 6 is invalid because 6 is greater than 5.'
       )
       return false
     }
@@ -359,7 +359,7 @@ function modifyReplaceWithApproximation() {
     }
 
     let linesToText = ''
-    lines.forEach(function (item, index, array) {
+    lines.forEach(function(item, index, array) {
       linesToText += lines[index]
       if (index + 1 < array.length) {
         linesToText += newline
@@ -451,11 +451,11 @@ function modifyUpdateApproximations() {
     if (document.getElementById('approximation_selection').options.length === 0) {
       semiconvergents
         ? jQuery('#approximation_selection').append(
-          '<option selected disabled> None found, try to raise error tolerances.</option>'
-        )
+            '<option selected disabled> None found, try to raise error tolerances.</option>'
+          )
         : jQuery('#approximation_selection').append(
-          '<option selected disabled> Try to  "Show next best approximations" or edit filters.</option>'
-        )
+            '<option selected disabled> Try to  "Show next best approximations" or edit filters.</option>'
+          )
     }
   }
 }
