@@ -43,7 +43,7 @@ function showModifyModeMosOptions(showOptions) {
 // repopulates the available degrees for selection
 function update_modifyModeMosGenerators() {
   const tuningTable = model.get('tuning table')
-  // showModifyModeMosOptions(document.querySelector('input[name="modeType"]:checked').value)
+  // showModifyModeMosOptions(document.querySelector('input[name="mode_type"]:checked').value)
   const coprimes = get_coprimes(tuningTable.noteCount - 1)
   // jQuery('#modal_modify_mos_degree').empty();
   for (let d = 1; d < coprimes.length - 1; d++) {
@@ -209,7 +209,7 @@ function initEvents() {
     event.preventDefault()
     // setup MOS options, and hide
     model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').noteCount - 1).slice(1))
-    // showModifyModeMosOptions(document.querySelector('input[name="modeType"]:checked').value);
+    // showModifyModeMosOptions(document.querySelector('input[name="mode_type"]:checked').value);
     jQuery('#modal_modify_mos_degree').trigger('change') // make sizes available
     jQuery('#input_modify_mode').trigger('select')
     openDialog('#modal_modify_mode', modifyMode)
@@ -313,8 +313,8 @@ function initEvents() {
   })
 
   jQuery('#modal_modify_mode').on('change', function(newValue) {
-    model.set('modify mode type', document.querySelector('input[name="modeType"]:checked').value)
-    // showModifyModeMosOptions(document.querySelector('input[name="modeType"]:checked').value)
+    model.set('modify mode type', document.querySelector('input[name="mode_type"]:checked').value)
+    // showModifyModeMosOptions(document.querySelector('input[name="mode_type"]:checked').value)
   })
 
   jQuery('#input_modify_mode').on('change', function(element) {
