@@ -182,8 +182,7 @@ function mtof(input) {
 // assuming 12-edo at 1440Hz
 // returns an array [midiNoteNumber, centsOffset]
 function ftom(input) {
-  input = parseFloat(input)
-  let midiNoteNumber = 69 + 12 * Math.log2(input / 440)
+  let midiNoteNumber = 69 + 12 * Math.log2(parseFloat(input) / 440)
   const centsOffset = (midiNoteNumber - Math.round(midiNoteNumber)) * 100
   midiNoteNumber = Math.round(midiNoteNumber)
   return [midiNoteNumber, centsOffset]

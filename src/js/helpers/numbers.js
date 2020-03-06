@@ -181,24 +181,24 @@ function invertChord(chordString) {
 
   const lcm = getLCM(denominators)
 
-  chordString = []
+  const newChordString = []
   intervals.forEach(function(x) {
-    chordString.push((x[0] * lcm) / x[1])
+    newChordString.push((x[0] * lcm) / x[1])
   })
 
-  return chordString.join(':')
+  return newChordString.join(':')
 }
 
 // returns an array representing the prime factorization
 // indicies are the 'nth' prime, the value is the powers of each prime
 function getPrimeFactors(number) {
-  number = Math.floor(number)
-  if (number === 1) {
+  const num = Math.floor(number)
+  if (num === 1) {
     return 1
   }
   const factorsOut = []
-  let n = number
-  let q = number
+  let n = num
+  let q = num
   let loop
 
   for (let i = 0; i < PRIMES.length; i++) {

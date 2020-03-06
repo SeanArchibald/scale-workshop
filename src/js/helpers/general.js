@@ -2,15 +2,11 @@
 
 import { LOCALSTORAGE_PREFIX } from '../constants.js'
 import { debugEnabled } from '../scaleworkshop.js'
-import { isEmpty } from './strings.js'
 
 function debug(msg = '') {
   if (debugEnabled) {
-    msg = isEmpty(msg) ? 'Debug' : msg
-    console.log(msg)
-    return true
+    console.debug(msg)
   }
-  return false
 }
 
 function setScaleName(title) {

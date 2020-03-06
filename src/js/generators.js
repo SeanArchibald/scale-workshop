@@ -216,7 +216,8 @@ function generateSubharmonicSeriesSegmentData(lo, hi) {
   return ratios.join(UNIX_NEWLINE)
 }
 
-function generateEnumerateChord({ rawChord, convertToRatios, isInversion }) {
+function generateEnumerateChord({ rawChord, convertToRatios, inversionCheckboxChecked }) {
+  let isInversion = inversionCheckboxChecked
   let chord = rawChord
   let chordStr = rawChord
 

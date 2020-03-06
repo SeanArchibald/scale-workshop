@@ -8,6 +8,7 @@
     "react/prop-types": "off",
     "no-var": "error",
     "prefer-const": "error",
+    "no-param-reassign": "error",
     "prettier/prettier": [
       "error",
       {

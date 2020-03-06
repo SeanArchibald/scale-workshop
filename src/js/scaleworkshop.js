@@ -99,7 +99,7 @@ const model = new Model({
   'modify approx selections': false,
   'modify approx selection id': 0,
   'modify approx ratio structure': null,
-  'modify approx ratio limits': null,
+  'modify approx ratio limits': [],
   'modify approx prime counters': [0, 10]
 })
 

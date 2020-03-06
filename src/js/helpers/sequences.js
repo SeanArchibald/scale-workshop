@@ -31,19 +31,20 @@ function rotateArrayRight(steps, array) {
 
 // calculate a continued fraction for the given number
 function getCF(num, maxdepth = 20, roundErr = 1e-6) {
+  let value = num
   const continuedFraction = []
 
   for (let i = 0; i < maxdepth; i++) {
-    const integer = Math.floor(num)
+    const integer = Math.floor(value)
     continuedFraction.push(integer)
 
-    num -= integer
+    value -= integer
 
-    if (num <= roundErr) {
+    if (value <= roundErr) {
       break
     }
 
-    num = 1.0 / num
+    value = 1.0 / value
   }
 
   return continuedFraction
@@ -51,12 +52,12 @@ function getCF(num, maxdepth = 20, roundErr = 1e-6) {
 
 // calculate a single convergent for a given continued fraction
 function getConvergent(cf, depth = cf.length) {
-  depth = clamp(1, cf.length, depth)
+  const sanitizedDepth = clamp(1, cf.length, depth)
 
   let num // the convergent numerator
   let den // the convergent denominator
 
-  for (let d = 0; d < depth; d++) {
+  for (let d = 0; d < sanitizedDepth; d++) {
     num = cf[d]
     den = 1
 
@@ -72,7 +73,7 @@ function getConvergent(cf, depth = cf.length) {
 
 // calculate all best rational approximations given a continued fraction
 //
-function getConvergents(cf, numeratorsOut = null, maxPeriod = NaN, cnvgtIdxOut = null) {
+function getConvergents(cf, maxPeriod = NaN, cnvgtIdxOut = null) {
   const numerators = [] // numerators of the approximations
   const denominators = [] // denominators of the appxoimations
   let digit // the continued fraction digit
@@ -122,10 +123,6 @@ function getConvergents(cf, numeratorsOut = null, maxPeriod = NaN, cnvgtIdxOut =
     }
   }
 
-  if (numeratorsOut !== null) {
-    numeratorsOut = numerators
-  }
-
   return denominators
 }
 
@@ -149,8 +146,7 @@ function getRatioStructure(numIn, maxPeriod = 1e6) {
     length: 0 // the length of most of the properties (except for 'cf' and 'convergentIndicies')
   }
 
-  numIn = Math.abs(parseFloat(numIn))
-  ratioStructure.cf = getCF(numIn)
+  ratioStructure.cf = getCF(Math.abs(parseFloat(numIn)))
   const cf = ratioStructure.cf
 
   const structureLegend = [
@@ -171,8 +167,7 @@ function getRatioStructure(numIn, maxPeriod = 1e6) {
 
   // calculates the next packet based off of previous packet and cf index eveness
   function zigzag(lastPacket, cfidx) {
-    let x, y, num, den, ratio
-    ;[x, y, num, den, ratio] = lastPacket
+    let [x, y, num, den, ratio] = lastPacket
     cfidx % 2 ? (y = [num, den]) : (x = [num, den])
     num = x[0] + y[0]
     den = x[1] + y[1]
@@ -247,12 +242,11 @@ function getValidMOSSizes(periodDecimal, generatorDecimal, minCents = 2.5, maxSi
   const genlog = Math.log(generatorDecimal) / Math.log(periodDecimal) // the logarithmic ratio to generate MOS info
 
   let cf = [] // continued fraction
-  const numerators = [] // MOS generators
   let denominators = [] // MOS periods
   const convergentIndicies = [] // Indicies that are convergent
 
   cf = getCF(genlog, maxCFSize)
-  denominators = getConvergents(cf, numerators, maxSize, convergentIndicies)
+  denominators = getConvergents(cf, maxSize, convergentIndicies)
 
   // filter by step size threshold
   const gc = decimalToCents(generatorDecimal)
