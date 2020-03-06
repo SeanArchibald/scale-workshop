@@ -386,12 +386,12 @@ function exportUrl() {
   jQuery('#input_share_url').val(exportUrl)
   debug('exportUrl = ' + exportUrl)
 
-  jQuery('#input_share_url').select()
+  jQuery('#input_share_url').trigger('select')
   jQuery('#modal_share_url').dialog({
     modal: true,
     buttons: {
       'Copy URL': function() {
-        jQuery('#input_share_url').select()
+        jQuery('#input_share_url').trigger('select')
         document.execCommand('Copy')
         jQuery(this).dialog('close')
       }
@@ -399,8 +399,8 @@ function exportUrl() {
   })
 
   // url field clicked
-  jQuery('#input_share_url').click(function(event) {
-    jQuery(this).select()
+  jQuery('#input_share_url').on('click', function(event) {
+    jQuery(this).trigger('select')
   })
 
   // success

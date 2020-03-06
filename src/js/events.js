@@ -89,13 +89,13 @@ function initEvents() {
   parseUrl()
 
   // base MIDI note changed
-  jQuery('#txt_base_midi_note').change(function() {
+  jQuery('#txt_base_midi_note').on('change', function() {
     // update MIDI note name
     jQuery('#base_midi_note_name').text(midiNoteNumberToName(jQuery('#txt_base_midi_note').val()))
   })
 
   // clear button clicked
-  jQuery('#btn_clear').click(function(event) {
+  jQuery('#btn_clear').on('click', function(event) {
     event.preventDefault()
 
     const response = confirm('Are you sure you want to clear the current tuning data?')
@@ -106,45 +106,45 @@ function initEvents() {
   })
 
   // auto frequency button clicked
-  jQuery('#btn_frequency_auto').click(function(event) {
+  jQuery('#btn_frequency_auto').on('click', function(event) {
     event.preventDefault()
     jQuery('#txt_base_frequency').val(mtof(jQuery('#txt_base_midi_note').val()).toFixed(6))
     parseTuningData()
   })
 
   // import scala option clicked
-  jQuery('#import-scala-scl').click(function(event) {
+  jQuery('#import-scala-scl').on('click', function(event) {
     event.preventDefault()
     importScalaScl()
   })
 
   // import anamark tun option clicked
-  jQuery('#import-anamark-tun').click(function(event) {
+  jQuery('#import-anamark-tun').on('click', function(event) {
     event.preventDefault()
     importAnamarkTun()
   })
 
   // generateEqualTemperament option clicked
-  jQuery('#generate_equal_temperament').click(function(event) {
+  jQuery('#generate_equal_temperament').on('click', function(event) {
     event.preventDefault()
-    jQuery('#input_number_of_divisions').select()
+    jQuery('#input_number_of_divisions').trigger('select')
     openDialog('#modal_generate_equal_temperament', generateEqualTemperament)
   })
 
   // generateRank2Temperament option clicked
-  jQuery('#generate_rank_2_temperament').click(function(event) {
+  jQuery('#generate_rank_2_temperament').on('click', function(event) {
     event.preventDefault()
-    jQuery('#input_rank-2_generator').select()
+    jQuery('#input_rank-2_generator').trigger('select')
     openDialog('#modal_generate_rank_2_temperament', generateRank2Temperament)
   })
 
   // rank-2 temperament generator - generators up changed
-  jQuery('#input_rank-2_up').change(function() {
+  jQuery('#input_rank-2_up').on('change', function() {
     jQuery('#input_rank-2_down').val(jQuery('#input_rank-2_size').val() - jQuery('#input_rank-2_up').val() - 1)
   })
 
   // rank-2 temperament generator - scale size changed
-  jQuery('#input_rank-2_size').change(function() {
+  jQuery('#input_rank-2_size').on('change', function() {
     const size = parseInt(jQuery('#input_rank-2_size').val())
     // set generators up to be one less than scale size
     jQuery('#input_rank-2_up').val(size - 1)
@@ -155,23 +155,23 @@ function initEvents() {
   })
 
   // generateHarmonicSeriesSegment option clicked
-  jQuery('#generate_harmonic_series_segment').click(function(event) {
+  jQuery('#generate_harmonic_series_segment').on('click', function(event) {
     event.preventDefault()
-    jQuery('#input_lowest_harmonic').select()
+    jQuery('#input_lowest_harmonic').trigger('select')
     openDialog('#modal_generate_harmonic_series_segment', generateHarmonicSeriesSegment)
   })
 
   // generateSubharmonicSeriesSegment option clicked
-  jQuery('#generate_subharmonic_series_segment').click(function(event) {
+  jQuery('#generate_subharmonic_series_segment').on('click', function(event) {
     event.preventDefault()
-    jQuery('#input_lowest_subharmonic').select()
+    jQuery('#input_lowest_subharmonic').trigger('select')
     openDialog('#modal_generate_subharmonic_series_segment', generateSubharmonicSeriesSegment)
   })
 
   // enumerate_chord option clicked
-  jQuery('#enumerate_chord').click(function(event) {
+  jQuery('#enumerate_chord').on('click', function(event) {
     event.preventDefault()
-    jQuery('#input_chord').select()
+    jQuery('#input_chord').trigger('select')
     jQuery('#modal_enumerate_chord').dialog({
       modal: true,
       buttons: {
@@ -196,47 +196,47 @@ function initEvents() {
   })
 
   // load-preset option clicked
-  jQuery('#load-preset').click(function(event) {
+  jQuery('#load-preset').on('click', function(event) {
     event.preventDefault()
-    jQuery('#select_preset_scale').select()
+    jQuery('#select_preset_scale').trigger('select')
     openDialog('#modal_load_preset_scale', function() {
       loadPresetScale(jQuery('#select_preset_scale')[0].value)
     })
   })
 
   // modifyMode option clicked
-  jQuery('#modify_mode').click(function(event) {
+  jQuery('#modify_mode').on('click', function(event) {
     event.preventDefault()
     // setup MOS options, and hide
     model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').noteCount - 1).slice(1))
     // showModifyModeMosOptions(document.querySelector('input[name="modeType"]:checked').value);
-    jQuery('#modal_modify_mos_degree').change() // make sizes available
-    jQuery('#input_modify_mode').select()
+    jQuery('#modal_modify_mos_degree').trigger('change') // make sizes available
+    jQuery('#input_modify_mode').trigger('select')
     openDialog('#modal_modify_mode', modifyMode)
   })
 
   // modifyStretch option clicked
-  jQuery('#modify_stretch').click(function(event) {
+  jQuery('#modify_stretch').on('click', function(event) {
     event.preventDefault()
-    jQuery('#input_stretch_ratio').select()
+    jQuery('#input_stretch_ratio').trigger('select')
     openDialog('#modal_modify_stretch', modifyStretch)
   })
 
   // modifyRandomVariance option clicked
-  jQuery('#modify_random_variance').click(function(event) {
+  jQuery('#modify_random_variance').on('click', function(event) {
     event.preventDefault()
-    jQuery('#input_cents_max_variance').select()
+    jQuery('#input_cents_max_variance').trigger('select')
     openDialog('#modal_modify_random_variance', modifyRandomVariance)
   })
 
   // modifySyncBeating option clicked
-  jQuery('#modify_sync_beating').click(function(event) {
+  jQuery('#modify_sync_beating').on('click', function(event) {
     event.preventDefault()
     openDialog('#modal_modify_sync_beating', modifySyncBeating)
   })
 
   // approximate option clicked
-  jQuery('#modify_approximate').click(function(event) {
+  jQuery('#modify_approximate').on('click', function(event) {
     event.preventDefault()
     const tuningTable = model.get('tuning table')
     trimSelf('#txt_tuning_data')
@@ -244,7 +244,7 @@ function initEvents() {
     jQuery('#input_scale_degree').val(1)
     jQuery('#input_scale_degree').attr({ min: 1, max: tuningTable.noteCount - 1 })
 
-    jQuery('#input_scale_degree').select()
+    jQuery('#input_scale_degree').trigger('select')
     jQuery('#input_scale_degree').trigger('change')
 
     jQuery('#modal_approximate_intervals').dialog({
@@ -261,7 +261,7 @@ function initEvents() {
   })
 
   // recalculate approximations when scale degree changes
-  jQuery('#input_scale_degree').change(function() {
+  jQuery('#input_scale_degree').on('change', function() {
     trimSelf() // TODO: trim self requires a parameter to apply trim to, otherwise this is just a NOP
     const index = parseInt(jQuery('#input_scale_degree').val()) - 1
     const lines = document.getElementById('txt_tuning_data').value.split(NEWLINE_REGEX)
@@ -271,11 +271,11 @@ function initEvents() {
   })
 
   // refilter approximations when fields change
-  jQuery('#input_min_error, #input_max_error, #input_show_convergents').change(modifyUpdateApproximations)
+  jQuery('#input_min_error, #input_max_error, #input_show_convergents').on('change', modifyUpdateApproximations)
 
   // refilter approximations when prime limit changes
   // can be improved, but it's a bit tricky!
-  jQuery('#input_approx_min_prime').change(function() {
+  jQuery('#input_approx_min_prime').on('change', function() {
     const num = parseInt(jQuery('#input_approx_min_prime').val())
     const approximationFilterPrimeCount = model.get('modify approx prime counters')
     const dif = num - PRIMES[approximationFilterPrimeCount[0]]
@@ -294,7 +294,7 @@ function initEvents() {
   })
 
   // refilter approximations when prime limit changes
-  jQuery('#input_approx_max_prime').change(function() {
+  jQuery('#input_approx_max_prime').on('change', function() {
     const num = parseInt(jQuery('#input_approx_max_prime').val())
     const approximationFilterPrimeCount = model.get('modify approx prime counters')
     const dif = num - PRIMES[approximationFilterPrimeCount[1]]
@@ -312,26 +312,26 @@ function initEvents() {
     modifyUpdateApproximations()
   })
 
-  jQuery('#modal_modify_mode').change(function(newValue) {
+  jQuery('#modal_modify_mode').on('change', function(newValue) {
     model.set('modify mode type', document.querySelector('input[name="modeType"]:checked').value)
     // showModifyModeMosOptions(document.querySelector('input[name="modeType"]:checked').value)
   })
 
-  jQuery('#input_modify_mode').change(function(element) {
+  jQuery('#input_modify_mode').on('change', function(element) {
     model.set('modify mode input', element.target.value.split(' '))
   })
 
-  jQuery('#modal_modify_mos_degree').change(function(element) {
+  jQuery('#modal_modify_mos_degree').on('change', function(element) {
     model.set('modify mode mos degree selected', parseInt(element.target.options[element.target.selectedIndex].text))
   })
 
   // update mode when size is selected
-  jQuery('#modal_modify_mos_size').change(function(element) {
+  jQuery('#modal_modify_mos_size').on('change', function(element) {
     model.set('modify mode mos size selected', parseInt(element.target.options[element.target.selectedIndex].text))
   })
 
   // move the mode steps back one
-  jQuery('#input_mode_step_left').click(function() {
+  jQuery('#input_mode_step_left').on('click', function() {
     let mode = jQuery('#input_modify_mode')
       .val()
       .split(' ')
@@ -344,7 +344,7 @@ function initEvents() {
   })
 
   // move the mode steps forward one
-  jQuery('#input_mode_step_right').click(function() {
+  jQuery('#input_mode_step_right').on('click', function() {
     let mode = jQuery('#input_modify_mode')
       .val()
       .split(' ')
@@ -357,39 +357,39 @@ function initEvents() {
   })
 
   /*
-    // rank-2 temperament generator - scale size changed
-  jQuery( '#input_rank-2_size' ).change( function() {
+  // rank-2 temperament generator - scale size changed
+jQuery( '#input_rank-2_size' ).on('change',  function() {
 
-    var size = parseInt( jQuery( '#input_rank-2_size' ).val() );
-    // set generators up to be one less than scale size
-    jQuery( '#input_rank-2_up' ).val( size - 1 );
-    // set generators up input maximum
-    jQuery( '#input_rank-2_up' ).attr({ "max" : size - 1 });
-    // zero generators down
-    jQuery( '#input_rank-2_down' ).val( 0 );
-  } );
-  */
+  var size = parseInt( jQuery( '#input_rank-2_size' ).val() );
+  // set generators up to be one less than scale size
+  jQuery( '#input_rank-2_up' ).val( size - 1 );
+  // set generators up input maximum
+  jQuery( '#input_rank-2_up' ).attr({ "max" : size - 1 });
+  // zero generators down
+  jQuery( '#input_rank-2_down' ).val( 0 );
+} );
+*/
   // Touch keyboard (#nav_play) option clicked
-  jQuery('#nav_play, #launch-kbd').click(function(event) {
+  jQuery('#nav_play, #launch-kbd').on('click', function(event) {
     event.preventDefault()
     // close or open the touch keyboard depending on if it is already visible
     jQuery('#virtual-keyboard').is(':visible') ? touchKbdClose() : touchKbdOpen()
   })
 
   // hide virtual keyboard when mobile hamburger menu button is clicked
-  jQuery('button.navbar-toggle').click(function(event) {
+  jQuery('button.navbar-toggle').on('click', function(event) {
     if (jQuery('#virtual-keyboard').is(':visible')) {
       jQuery('#virtual-keyboard').slideUp()
     }
   })
 
   // Touch keyboard clicked with mouse
-  jQuery('#virtual-keyboard').click(function() {
+  jQuery('#virtual-keyboard').on('click', function() {
     touchKbdClose()
   })
 
   // About Scale Workshop option clicked
-  jQuery('#about_scale_workshop').click(function(event) {
+  jQuery('#about_scale_workshop').on('click', function(event) {
     event.preventDefault()
     jQuery('#about_version').text(APP_TITLE)
     jQuery('#modal_about_scale_workshop').dialog({
@@ -404,7 +404,7 @@ function initEvents() {
   })
 
   // Panic button
-  jQuery('#btn_panic').click(function(event) {
+  jQuery('#btn_panic').on('click', function(event) {
     event.preventDefault()
     synth.panic() // turns off all playing synth notes
   })
@@ -418,7 +418,7 @@ function initEvents() {
   })
 
   // General Settings - Night mode
-  jQuery('#input_checkbox_night_mode').change(function(event) {
+  jQuery('#input_checkbox_night_mode').on('change', function(event) {
     if (jQuery('#input_checkbox_night_mode').is(':checked')) {
       document.body.addClass('dark')
       localStorage.setItem(`${LOCALSTORAGE_PREFIX}night mode`, true)
@@ -429,18 +429,18 @@ function initEvents() {
   })
 
   // Synth Settings - Waveform
-  jQuery('#input_select_synth_waveform').change(function(event) {
+  jQuery('#input_select_synth_waveform').on('change', function(event) {
     synth.waveform = jQuery('#input_select_synth_waveform').val()
     updatePageUrl()
   })
 
   // Synth Settings - Amplitude Envelope
-  jQuery('#input_select_synth_amp_env').change(function(event) {
+  jQuery('#input_select_synth_amp_env').on('change', function(event) {
     updatePageUrl()
   })
 
   // Synth Settings - Delay
-  jQuery('#input_checkbox_delay_on').change(function() {
+  jQuery('#input_checkbox_delay_on').on('change', function() {
     if (jQuery(this).is(':checked')) {
       synth.delay.enable()
     } else {
@@ -467,22 +467,22 @@ function initEvents() {
   })
 
   // Isomorphic Settings - Keyboard Layout
-  jQuery('#input_select_keyboard_layout').change(function(event) {
+  jQuery('#input_select_keyboard_layout').on('change', function(event) {
     const id = jQuery('#input_select_keyboard_layout').val()
     synth.keymap = Keymap[id]
     localStorage.setItem(`${LOCALSTORAGE_PREFIX}keyboard region`, id)
   })
 
   // Isomorphic Settings - Isomorphic Mapping
-  jQuery('#input_number_isomorphicmapping_vert').change(function(event) {
+  jQuery('#input_number_isomorphicmapping_vert').on('change', function(event) {
     synth.isomorphicMapping.vertical = jQuery('#input_number_isomorphicmapping_vert').val()
   })
-  jQuery('#input_number_isomorphicmapping_horiz').change(function(event) {
+  jQuery('#input_number_isomorphicmapping_horiz').on('change', function(event) {
     synth.isomorphicMapping.horizontal = jQuery('#input_number_isomorphicmapping_horiz').val()
   })
 
   // Isomorphic Settings - Key colors
-  jQuery('#input_key_colors').change(function(event) {
+  jQuery('#input_key_colors').on('change', function(event) {
     setKeyColors(jQuery('#input_key_colors').val())
     // update this change in the browser's Back/Forward navigation
     updatePageUrl()
@@ -492,7 +492,7 @@ function initEvents() {
   setKeyColors(jQuery('#input_key_colors').val())
 
   // Isomorphic Settings - Key colors Auto button clicked
-  jQuery('#btn_key_colors').click(function(event) {
+  jQuery('#btn_key_colors').on('click', function(event) {
     event.preventDefault()
     const tuningTable = model.get('tuning table')
     const size = tuningTable.noteCount - 1
@@ -607,7 +607,7 @@ function initEvents() {
 
   // Social Icons
   // Email
-  jQuery('a.social-icons-email').click(function(event) {
+  jQuery('a.social-icons-email').on('click', function(event) {
     event.preventDefault()
     const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
     const email = ''
@@ -626,7 +626,7 @@ function initEvents() {
     window.location = 'mailto:' + email + '?subject=' + subject + '&body=' + emailBody
   })
   // Twitter
-  jQuery('a.social-icons-twitter').click(function(event) {
+  jQuery('a.social-icons-twitter').on('click', function(event) {
     event.preventDefault()
     const text = encodeURIComponent(jQuery('#txt_name').val() + ' ♫ ')
     const url = encodeURIComponent(jQuery('#input_share_url').val())
@@ -635,7 +635,7 @@ function initEvents() {
 
   // TODO: need debouncing for these fields before using
   // parse tuning data when changes are made
-  // jQuery( "#txt_name, #txt_tuningData, #txt_baseFrequency, #txt_baseMidiNote, #input_select_newlines" ).change( function() {
+  // jQuery( "#txt_name, #txt_tuningData, #txt_baseFrequency, #txt_baseMidiNote, #input_select_newlines" ).on('change',  function() {
   //   parseTuningData();
   // } );
 

@@ -15,7 +15,7 @@ import { getRatioStructure } from './helpers/sequences.js'
 let currentRatioStructure
 
 // calculate and list rational approximations within user parameters
-jQuery('#input_interval_to_approximate').change(function() {
+jQuery('#input_interval_to_approximate').on('change', function() {
   const interval = lineToDecimal(jQuery('#input_interval_to_approximate').val())
   currentRatioStructure = getRatioStructure(interval)
   modifyUpdateApproximations()
