@@ -4,7 +4,7 @@
  */
 
 /* global jQuery */
-import { isNil, tap, debug, getCoordsFromKey } from './helpers/general.js'
+import { isNil, tap, getCoordsFromKey } from './helpers/general.js'
 import { model, synth } from './scaleworkshop.js'
 
 // keyCodeToMidiNote()
@@ -97,14 +97,14 @@ function initSynth() {
   jQuery('#virtual-keyboard').on('touchstart', 'td', function(event) {
     event.preventDefault()
     jQuery(event.originalEvent.targetTouches[0].target).addClass('active')
-    synth.noteOn(tap(debug, touchToMidiNote(getCoordsFromKey(event.target))))
+    synth.noteOn(tap(console.log, touchToMidiNote(getCoordsFromKey(event.target))))
   })
 
   // TOUCHEND -- virtual keyboard
   jQuery('#virtual-keyboard').on('touchend', 'td', function(event) {
     event.preventDefault()
     jQuery(event.originalEvent.changedTouches[0].target).removeClass('active')
-    synth.noteOff(tap(debug, touchToMidiNote(getCoordsFromKey(event.target))))
+    synth.noteOff(tap(console.log, touchToMidiNote(getCoordsFromKey(event.target))))
   })
 }
 

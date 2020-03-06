@@ -4,7 +4,7 @@
 
 /* global alert, jQuery */
 
-import { closePopup, debug, setTuningData, setScaleName } from './helpers/general.js'
+import { closePopup, setTuningData, setScaleName } from './helpers/general.js'
 import { lineToDecimal, decimalToRatio, lineToCents, getFloat, getString, getLine } from './helpers/converters.js'
 import { invertChord, mathModulo } from './helpers/numbers.js'
 import { UNIX_NEWLINE } from './constants.js'
@@ -108,7 +108,7 @@ function generateRank2TemperamentData(generator, period, size, up) {
     // calculate generators up
     if (i <= up) {
       aa[i] = mathModulo(aa[i - 1] + generator, period)
-      debug('up: ' + i + ': ' + aa[i])
+      console.log('up: ' + i + ': ' + aa[i])
     } else {
       // first down generator
       if (i === up + 1) {
@@ -119,7 +119,7 @@ function generateRank2TemperamentData(generator, period, size, up) {
       else {
         aa[i] = mathModulo(aa[i - 1] - generator, period)
       }
-      debug('down: ' + i + ': ' + aa[i])
+      console.log('down: ' + i + ': ' + aa[i])
     }
   }
 
@@ -272,11 +272,11 @@ function generateEnumerateChord({ rawChord, convertToRatios, inversionCheckboxCh
   // }
 
   if (isInversion) {
-    debug('This is an inversion. Chord is ' + chord)
+    console.log('This is an inversion. Chord is ' + chord)
     chord = invertChord(chord)
-    debug('Chord returned: ' + chord)
+    console.log('Chord returned: ' + chord)
     chordStr += ' (' + chord + ') '
-    debug('str = ' + chordStr)
+    console.log('str = ' + chordStr)
   }
 
   const pitches = chord.split(':')

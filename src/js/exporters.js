@@ -1,7 +1,7 @@
 /* global alert, MouseEvent, history, jQuery */
 
 import { model, synth } from './scaleworkshop.js'
-import { debug, isNil } from './helpers/general.js'
+import { isNil } from './helpers/general.js'
 import { decimalToCents, mtof, midiNoteNumberToName, ftom } from './helpers/converters.js'
 import { LINE_TYPE, APP_TITLE, TUNING_MAX_SIZE, UNIX_NEWLINE, WINDOWS_NEWLINE } from './constants.js'
 import { isEmpty } from './helpers/strings.js'
@@ -20,7 +20,7 @@ function saveFile(filename, contents) {
   const link = document.createElement('a')
   link.download = filename
   link.href = 'data:application/octet-stream,' + encodeURIComponent(contents)
-  debug(link.href)
+  console.log(link.href)
   link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })) // opens save dialog
 }
 
@@ -384,7 +384,7 @@ function exportUrl() {
 
   // copy url in to url field
   jQuery('#input_share_url').val(exportUrl)
-  debug('exportUrl = ' + exportUrl)
+  console.log('exportUrl = ' + exportUrl)
 
   jQuery('#input_share_url').trigger('select')
   jQuery('#modal_share_url').dialog({

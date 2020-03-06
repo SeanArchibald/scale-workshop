@@ -5,7 +5,7 @@
 /* global alert, jQuery */
 
 import { parseTuningData, model } from './scaleworkshop.js'
-import { trimSelf, debug } from './helpers/general.js'
+import { trimSelf } from './helpers/general.js'
 import { isEmpty, trim, toString } from './helpers/strings.js'
 import { getLineType } from './helpers/types.js'
 import { ratioToCents, lineToDecimal, decimalToCents, nOfEdoToCents } from './helpers/converters.js'
@@ -147,8 +147,8 @@ function modifyMode() {
 
   // split user's scale data into individual lines
   const lines = document.getElementById('txt_tuning_data').value.split(NEWLINE_REGEX)
-  debug(lines)
-  debug(mode)
+  console.log(lines)
+  console.log(mode)
 
   let newTuning = ''
 
@@ -242,14 +242,14 @@ function modifySyncBeating() {
 
   // get the fundamental frequency of the scale
   const fundamental = jQuery('#input_modify_sync_beating_bpm').val() / 60
-  debug(fundamental)
+  console.log(fundamental)
 
   const resolution = jQuery('#select_sync_beating_resolution').val()
-  debug(resolution)
+  console.log(resolution)
 
   // loop through all in the scale, convert to ratio, then quantize to fundamental, then convert to cents
   const lines = document.getElementById('txt_tuning_data').value.split(NEWLINE_REGEX)
-  debug(lines)
+  console.log(lines)
   let newTuning = ''
 
   for (let i = 0; i < lines.length; i++) {
@@ -258,7 +258,7 @@ function modifySyncBeating() {
   }
   newTuning = newTuning.trim() // remove final newline
 
-  debug(newTuning)
+  console.log(newTuning)
 
   // set tuning base frequency to some multiple of the fundamental, +/- 1 tritone from the old base frequency
   const baseFrequencyLowerBound = jQuery('#txt_base_frequency').val() * 0.7071067

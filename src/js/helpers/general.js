@@ -1,13 +1,6 @@
 /* global location, jQuery, localStorage, navigator */
 
 import { LOCALSTORAGE_PREFIX } from '../constants.js'
-import { debugEnabled } from '../scaleworkshop.js'
-
-function debug(msg = '') {
-  if (debugEnabled) {
-    console.debug(msg)
-  }
-}
 
 function setScaleName(title) {
   jQuery('#txt_name').val(title)
@@ -41,13 +34,13 @@ const roundToNDecimals = (decimals, number) => {
 // This is a great tool for injecting debugging in the middle of expressions
 // Note: fn does not need to return the value, tap will handle that
 //
-// example 1: const result = toString(tap(function(result){ debug(result) }, 3 * 5))
-// example 2: const result = toString(tap(result => debug(result), 3 * 5))
-// example 3: const result = toString(tap(debug, 3 * 5))
+// example 1: const result = toString(tap(function(result){ console.log(result) }, 3 * 5))
+// example 2: const result = toString(tap(result => console.log(result), 3 * 5))
+// example 3: const result = toString(tap(console.log, 3 * 5))
 //
 // the above examples are equal to:
 //   let result = 3 * 5
-//   debug(result)
+//   console.log(result)
 //   result = toString(result)
 function tap(fn, value) {
   fn(value)
@@ -130,7 +123,6 @@ const objectMap = (fn, obj) => {
 }
 
 export {
-  debug,
   setScaleName,
   closePopup,
   setTuningData,

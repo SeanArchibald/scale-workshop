@@ -5,7 +5,6 @@
 /* global location, localStorage, alert, FileReader, DOMParser, jQuery */
 
 import {
-  debug,
   redirectToHTTPS,
   getSearchParamOr,
   getSearchParamAsNumberOr,
@@ -48,7 +47,7 @@ import { mathModulo } from './helpers/numbers.js'
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
 jQuery(window).on('popstate', function() {
-  debug('Back/Forward navigation detected - reloading page')
+  console.log('Back/Forward navigation detected - reloading page')
   location.reload(true)
 })
 
@@ -300,8 +299,6 @@ let keyColors = [
   'black'
 ]
 
-const debugEnabled = true
-
 // take a tuning, do loads of calculations, then output the data to tuningTable
 function generateTuningTable(tuning) {
   const tuningTable = model.get('tuning table')
@@ -347,7 +344,7 @@ function setKeyColors(list) {
     const keynum = mathModulo(i - tuningTable.baseMidiNote, keyColors.length)
     // set the color of the key
     jQuery(ttkeys[i]).attr('style', 'background-color: ' + keyColors[keynum] + ' !important')
-    // debug( i + ": " + keyColors[keynum] );
+    // console.log( i + ": " + keyColors[keynum] );
   }
 }
 
@@ -490,7 +487,7 @@ function parseTuningData() {
 
   if (empty) {
     // if the input tuning is totally empty
-    debug('no tuning data')
+    console.log('no tuning data')
     jQuery('#txt_tuning_data')
       .parent()
       .addClass('has-error')
@@ -645,7 +642,7 @@ function parseImportedAnamarkTun(event) {
     }
     // If a name couldn't be found within the file, then just grab it from the filename
     if (name === true || name === false) {
-      debug("this shouldn't be happening right now")
+      console.log("this shouldn't be happening right now")
       name = input.files[0].name.slice(0, -4)
     }
 
@@ -806,4 +803,4 @@ jQuery(() => {
   initEvents()
 })
 
-export { keyColors, parseTuningData, debugEnabled, setKeyColors, parseUrl, clearAll, model, synth }
+export { keyColors, parseTuningData, setKeyColors, parseUrl, clearAll, model, synth }

@@ -5,7 +5,7 @@
 /* global alert, localStorage, jQuery, confirm */
 
 import { isEmpty } from './helpers/strings.js'
-import { debug, isNil, openDialog, trimSelf, isLocalStorageAvailable, closePopup } from './helpers/general.js'
+import { isNil, openDialog, trimSelf, isLocalStorageAvailable, closePopup } from './helpers/general.js'
 import { mtof, midiNoteNumberToName, degreesToSteps, stepsToDegrees, getString } from './helpers/converters.js'
 import { rotateArrayLeft, rotateArrayRight, getCoprimes } from './helpers/sequences.js'
 import { setKeyColors, parseTuningData, parseUrl, clearAll, model, synth } from './scaleworkshop.js'
@@ -80,7 +80,7 @@ function initEvents() {
       synth.keymap = Keymap[localStorage.getItem(`${LOCALSTORAGE_PREFIX}keyboard region`)]
     }
   } else {
-    debug(
+    console.log(
       'localStorage not supported in your browser. Please check your browser settings. If using Safari, you may need to disable private browsing mode.'
     )
   }
@@ -450,7 +450,7 @@ jQuery( '#input_rank-2_size' ).on('change',  function() {
 
   jQuery(document).on('input', '#input_range_feedback_gain', function() {
     synth.delay.gain = jQuery(this).val()
-    debug(synth.delay.gain)
+    console.log(synth.delay.gain)
     const now = synth.now()
     synth.delay.gainL.gain.setValueAtTime(synth.delay.gain, now)
     synth.delay.gainR.gain.setValueAtTime(synth.delay.gain, now)

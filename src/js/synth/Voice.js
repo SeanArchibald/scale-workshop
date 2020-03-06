@@ -122,7 +122,7 @@ class Voice {
     this.sustain = envelope.sustain
     this.releaseTime = envelope.releaseTime
 
-    // debug(envelope);
+    // console.log(envelope)
 
     this.oscillators = []
   }
