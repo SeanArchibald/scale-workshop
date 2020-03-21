@@ -63,7 +63,7 @@ function getConvergent(cf, depth = cf.length) {
 
     // calculate the convergent
     for (let i = d; i > 0; i--) {
-      ;[den, num] = [num, den]
+      [den, num] = [num, den]
       num += den * cf[i - 1]
     }
   }
@@ -90,7 +90,7 @@ function getConvergents(cf, maxPeriod = NaN, cnvgtIdxOut = null) {
 
     // calculate the convergent
     for (let i = d; i > 0; i--) {
-      ;[den, num] = [num, den]
+      [den, num] = [num, den]
       num += den * cf[i - 1]
     }
 

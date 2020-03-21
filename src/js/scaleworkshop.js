@@ -22,7 +22,7 @@ import {
   degreesToSteps,
   degreeModPeriodCents
 } from './helpers/converters.js'
-import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE, NEWLINE_REGEX, LOCALSTORAGE_PREFIX } from './constants.js'
+import { LINE_TYPE, TUNING_MAX_SIZE, UNIX_NEWLINE, NEWLINE_REGEX, LOCALSTORAGE_PREFIX, PRIMES } from './constants.js'
 import {
   getScaleUrl,
   updatePageUrl,
@@ -35,13 +35,13 @@ import {
   exportReferenceDeflemask,
   exportUrl
 } from './exporters.js'
-import { 
+import {
   getValidMOSSizes, 
   getCF, 
   getConvergents, 
-  get_rank2_mode, 
+  getRank2Mode, 
   getRatioStructure, 
-  getRatioStructurePrimeLimits 
+  getRatioStructurePrimeLimits
 } from './helpers/sequences.js'
 import Model from './helpers/Model.js'
 import Synth from './synth/Synth.js'
@@ -49,7 +49,6 @@ import MIDI from './helpers/MIDI.js'
 import { initUI } from './ui.js'
 import { initSynth } from './synth.js'
 import { initEvents } from './events.js'
-import { getValidMOSSizes, getCF, getConvergents, getRank2Mode } from './helpers/sequences.js'
 import { mathModulo } from './helpers/numbers.js'
 
 // check if coming from a Back/Forward history navigation.
@@ -212,8 +211,10 @@ model.on('change', (key, newValue) => {
       break
     case 'modify approx interval':
       jQuery('#input_interval_to_approximate').val(newValue)
+      break
     case 'modify approx ratio limits':
       updateApproximationOptions()
+      break
     case 'modify approx min error':
       updateApproximationOptions()
       break
@@ -300,7 +301,7 @@ function setDropdownOptions(element, optionsText, optionsValue = [], otherTags =
     jQuery(element).empty()
   }
 
-  optionsText.forEach(function(option, index, textArray) {
+  optionsText.forEach(function(option, index) {
     let injection = optionsValue ? optionsValue[index] : option
     injection += '" ' + otherTags[index]
     jQuery(element).append('<option value="' + injection + '>' + option + '</option>')
@@ -402,7 +403,7 @@ function updateApproximationOptions() {
     var ratioString = ratioStructure.ratioStrings[index]
     var decimal = ratioStructure.rationals[index] 
 
-    var centsDelta = decimal_to_cents(decimal/line_to_decimal(interval));
+    var centsDelta = decimalToCents(decimal/lineToDecimal(interval));
     var centsDeltaAbs = Math.abs(centsDelta);
     var centsRounded = roundToNDecimals(6, centsDelta);
 

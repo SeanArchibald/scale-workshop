@@ -5,7 +5,7 @@
 /* global alert, localStorage, jQuery, confirm */
 
 import { isEmpty } from './helpers/strings.js'
-import { isNil, openDialog, trimSelf, isLocalStorageAvailable, closePopup } from './helpers/general.js'
+import { isNil, openDialog, trimSelf, isTuningDataAvailable, isLocalStorageAvailable, closePopup } from './helpers/general.js'
 import { mtof, midiNoteNumberToName, degreesToSteps, stepsToDegrees, getString, lineToDecimal } from './helpers/converters.js'
 import { rotateArrayLeft, rotateArrayRight, getCoprimes } from './helpers/sequences.js'
 import { setKeyColors, parseTuningData, parseUrl, clearAll, model, synth } from './scaleworkshop.js'
@@ -15,12 +15,11 @@ import { touchKbdOpen, touchKbdClose } from './ui.js'
 import { isQueryActive } from './synth.js'
 import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, NEWLINE_REGEX, LOCALSTORAGE_PREFIX } from './constants.js'
 import {
-  modifyUpdateApproximations,
   modifyRandomVariance,
   modifyMode,
   modifySyncBeating,
   modifyStretch,
-  modifyReplaceWithApproximation
+  modifyReplaceWithApproximation,
 } from './modifiers.js'
 import { updatePageUrl } from './exporters.js'
 import { Keymap } from './keymap.js'
@@ -207,7 +206,7 @@ function initEvents() {
   // modifyMode option clicked
   jQuery('#modify_mode').on('click', function(event) {
     event.preventDefault()
-    if (tuningDataIsAvailable(true, "No tuning data to modify.")) {
+    if (isTuningDataAvailable(true, "No tuning data to modify.")) {
       // setup MOS options, and hide
       const modeType = document.querySelector('input[name="mode_type"]:checked').value
       // showModifyModeMosOptions(document.querySelector('input[name="mode_type"]:checked').value);
@@ -250,7 +249,7 @@ function initEvents() {
     inputScaleDegree.attr({ "min" : 1, "max" : model.get('tuning table').note_count - 1 })
     model.set('modify approx degree', 1)
     inputScaleDegree.select()
-    openDialog("#modal_approximate_intervals", modify_replace_with_approximation)
+    openDialog("#modal_approximate_intervals", modifyReplaceWithApproximation)
   })
 
   // calculate and list rational approximations within user parameters
@@ -324,7 +323,7 @@ function initEvents() {
     model.set('modify approx max prime', primeIndex)
   })
 
-  jQuery('#modal_modify_mode').on('change', function(newValue) {
+  jQuery('#modal_modify_mode').on('change', function() {
     model.set('modify mode type', document.querySelector('input[name="mode_type"]:checked').value)
     // showModifyModeMosOptions(document.querySelector('input[name="mode_type"]:checked').value)
   })

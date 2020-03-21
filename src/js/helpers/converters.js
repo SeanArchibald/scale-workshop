@@ -122,7 +122,7 @@ function nOfEdoToCents(rawInput) {
 }
 
 // convert a decimal (string '1.25') to ratio (array of int [5, 4]), may have rounding errors for irrationals
-function decimalToRatio(rawInput, iterations = 15, depth = 0) {
+function decimalToRatio(rawInput, iterations = 15) {
   const input = parseFloat(rawInput)
 
   if (input === 0 || isNaN(input)) {

@@ -1,6 +1,7 @@
 /* global location, jQuery, localStorage, navigator */
 
 import { LOCALSTORAGE_PREFIX } from '../constants.js'
+import { isEmpty } from './strings.js'
 
 function setScaleName(title) {
   jQuery('#txt_name').val(title)
@@ -14,10 +15,9 @@ function setTuningData(tuning) {
   jQuery('#txt_tuning_data').val(tuning)
 }
 
-<<<<<<< HEAD
-function tuningDataIsAvailable(alertIfNot=false, alertMsg="No tuning data.") {
-  trimSelf("#txt_tuning_data")
-  if (isEmpty(jQuery("#txt_tuning_data").val())) {
+function isTuningDataAvailable(alertIfNot=false, alertMsg='No tuning data.') {
+  trimSelf('#txt_tuning_data')
+  if (isEmpty(jQuery('#txt_tuning_data').val())) {
     if (alertIfNot) 
       alert(alertMsg)
     return false
@@ -25,10 +25,6 @@ function tuningDataIsAvailable(alertIfNot=false, alertMsg="No tuning data.") {
   return true
 }
 
-const isEmpty = string => string === ''
-
-=======
->>>>>>> b7053d587823cd96954f2d117bfe0829668aabde
 const isNil = x => typeof x === 'undefined' || x === null
 
 const isFunction = x => typeof x === 'function'
@@ -141,11 +137,7 @@ export {
   setScaleName,
   closePopup,
   setTuningData,
-<<<<<<< HEAD
-  tuningDataIsAvailable,
-  isEmpty,
-=======
->>>>>>> b7053d587823cd96954f2d117bfe0829668aabde
+  isTuningDataAvailable,
   isFunction,
   isNil,
   getCoordsFromKey,
