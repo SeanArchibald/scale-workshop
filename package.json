@@ -1,0 +1,59 @@
+{
+  "name": "scale-workshop",
+  "version": "1.0.4",
+  "description": "![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/src/assets/img/scale-workshop-og-image.png)",
+  "main": "src/js/ndex.js",
+  "scripts": {
+    "lint": "eslint \"src/js/**/*.{js,jsx}\"",
+    "lint:fix": "npm run lint -- --fix",
+    "host": "http-server . -o index.htm",
+    "lint-staged-files": "lint-staged",
+    "unit": "mocha test/**/*.spec.js --require @babel/register",
+    "unit:watch": "npm run unit -- --watch --watch-extensions js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeanArchibald/scale-workshop.git"
+  },
+  "author": "Sean Archibald <SeanArchibald@users.noreply.github.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SeanArchibald/scale-workshop/issues"
+  },
+  "homepage": "https://sevish.com/scaleworkshop/",
+  "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
+    "@babel/register": "^7.8.6",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-prettier-standard": "^3.0.1",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "expect": "^25.1.0",
+    "http-server": "^0.12.1",
+    "lint-staged": "^10.0.8",
+    "mocha": "^7.1.0",
+    "pre-commit": "^1.2.2",
+    "prettier": "1.19.1",
+    "prettier-config-standard": "^1.0.1"
+  },
+  "lint-staged": {
+    "src/js/**/*.{js,jsx}": [
+      "eslint --fix"
+    ]
+  },
+  "pre-commit": [
+    "unit",
+    "lint-staged-files"
+  ],
+  "dependencies": {
+    "eventemitter3": "^4.0.0",
+    "jquery": "^3.4.1"
+  }
+}
