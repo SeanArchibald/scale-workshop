@@ -5,21 +5,35 @@
 /* global alert, localStorage, jQuery, confirm */
 
 import { isEmpty } from './helpers/strings.js'
-import { isNil, openDialog, trimSelf, isTuningDataAvailable, isLocalStorageAvailable, closePopup } from './helpers/general.js'
-import { mtof, midiNoteNumberToName, degreesToSteps, stepsToDegrees, getString, lineToDecimal } from './helpers/converters.js'
+import {
+  isNil,
+  openDialog,
+  trimSelf,
+  isTuningDataAvailable,
+  isLocalStorageAvailable,
+  closePopup
+} from './helpers/general.js'
+import {
+  mtof,
+  midiNoteNumberToName,
+  degreesToSteps,
+  stepsToDegrees,
+  getString,
+  lineToDecimal
+} from './helpers/converters.js'
 import { rotateArrayLeft, rotateArrayRight, getCoprimes } from './helpers/sequences.js'
 import { setKeyColors, parseTuningData, parseUrl, clearAll, model, synth } from './scaleworkshop.js'
 import { importScalaScl, importAnamarkTun } from './helpers/importers.js'
 import { closestPrime } from './helpers/numbers.js'
 import { touchKbdOpen, touchKbdClose } from './ui.js'
 import { isQueryActive } from './synth.js'
-import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, NEWLINE_REGEX, LOCALSTORAGE_PREFIX } from './constants.js'
+import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, LOCALSTORAGE_PREFIX } from './constants.js'
 import {
   modifyRandomVariance,
   modifyMode,
   modifySyncBeating,
   modifyStretch,
-  modifyReplaceWithApproximation,
+  modifyReplaceWithApproximation
 } from './modifiers.js'
 import { updatePageUrl } from './exporters.js'
 import { Keymap } from './keymap.js'
@@ -206,7 +220,7 @@ function initEvents() {
   // modifyMode option clicked
   jQuery('#modify_mode').on('click', function(event) {
     event.preventDefault()
-    if (isTuningDataAvailable(true, "No tuning data to modify.")) {
+    if (isTuningDataAvailable(true, 'No tuning data to modify.')) {
       // setup MOS options
       model.set('modify mode mos degree selected', 0) // reset values
       model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').noteCount - 1).slice(1))
@@ -241,22 +255,22 @@ function initEvents() {
     event.preventDefault()
     trimSelf('#txt_tuning_data')
 
-    let inputScaleDegree = jQuery("#input_scale_degree")
+    const inputScaleDegree = jQuery('#input_scale_degree')
     model.set('modify approx degree', 0) // force update
-    inputScaleDegree.attr({ "min" : 1, "max" : model.get('tuning table').note_count - 1 })
+    inputScaleDegree.attr({ min: 1, max: model.get('tuning table').note_count - 1 })
     model.set('modify approx degree', 1)
     inputScaleDegree.select()
-    openDialog("#modal_approximate_intervals", modifyReplaceWithApproximation)
+    openDialog('#modal_approximate_intervals', modifyReplaceWithApproximation)
   })
 
   // calculate and list rational approximations within user parameters
-  jQuery( '#input_interval_to_approximate' ).change( function() {
-    model.set('modify approx interval', lineToDecimal(jQuery("#input_interval_to_approximate").val()))
+  jQuery('#input_interval_to_approximate').change(function() {
+    model.set('modify approx interval', lineToDecimal(jQuery('#input_interval_to_approximate').val()))
   })
 
   // recalculate approximations when scale degree changes
   jQuery('#input_scale_degree').on('change', function() {
-    var index = parseInt(jQuery('#input_scale_degree').val());
+    const index = parseInt(jQuery('#input_scale_degree').val())
     model.set('modify approx degree', index)
   })
 
@@ -268,7 +282,7 @@ function initEvents() {
   jQuery('#input_min_error').change(function() {
     model.set('modify approx min error', jQuery('#input_min_error').val())
   })
-  
+
   jQuery('#input_max_error').change(function() {
     model.set('modify approx max error', jQuery('#input_max_error').val())
   })
@@ -276,24 +290,24 @@ function initEvents() {
   jQuery('#input_show_convergents').change(function() {
     model.set('modify approx convergents', jQuery('#input_show_convergents')[0].checked)
   })
-  
+
   // refilter approximations when prime limit changes
   // can be improved, but it's a bit tricky!
   jQuery('#input_approx_min_prime').on('change', function() {
-    const numInput = parseInt(jQuery('#input_approx_min_prime').val());
+    const numInput = parseInt(jQuery('#input_approx_min_prime').val())
     let primeIndex = model.get('modify approx min prime')
     const numPrevious = PRIMES[primeIndex]
 
     // Find difference between last number and next number
-    let dif = numInput - numPrevious;
+    const dif = numInput - numPrevious
     if (Math.abs(dif) === 1) {
       if (numInput < numPrevious && primeIndex > 0) {
-        primeIndex--;
+        primeIndex--
       } else if (numInput > numPrevious) {
-        primeIndex++;
+        primeIndex++
       }
     } else {
-      primeIndex = PRIMES.indexOf(closestPrime(numInput));
+      primeIndex = PRIMES.indexOf(closestPrime(numInput))
     }
 
     model.set('modify approx min prime', primeIndex)
@@ -301,20 +315,20 @@ function initEvents() {
 
   // refilter approximations when prime limit changes
   jQuery('#input_approx_max_prime').on('change', function() {
-    const numInput = parseInt(jQuery('#input_approx_max_prime').val());
+    const numInput = parseInt(jQuery('#input_approx_max_prime').val())
     let primeIndex = model.get('modify approx max prime')
     const numPrevious = PRIMES[primeIndex]
 
     // Find difference between last number and next number
-    let dif = numInput - numPrevious;
+    const dif = numInput - numPrevious
     if (Math.abs(dif) === 1) {
       if (numInput < numPrevious && primeIndex > 0) {
-        primeIndex--;
+        primeIndex--
       } else if (numInput > numPrevious) {
-        primeIndex++;
+        primeIndex++
       }
     } else {
-      primeIndex = PRIMES.indexOf(closestPrime(numInput));
+      primeIndex = PRIMES.indexOf(closestPrime(numInput))
     }
 
     model.set('modify approx max prime', primeIndex)
