@@ -257,7 +257,7 @@ function initEvents() {
 
     const inputScaleDegree = jQuery('#input_scale_degree')
     model.set('modify approx degree', 0) // force update
-    inputScaleDegree.attr({ min: 1, max: model.get('tuning table').note_count - 1 })
+    inputScaleDegree.attr({ min: 1, max: model.get('tuning table').noteCount - 1 })
     model.set('modify approx degree', 1)
     inputScaleDegree.select()
     openDialog('#modal_approximate_intervals', modifyReplaceWithApproximation)

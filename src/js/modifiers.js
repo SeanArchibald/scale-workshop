@@ -341,16 +341,16 @@ function modify_key_transpose() {
 */
 
 // approximate rationals
-function modifyReplaceWithApproximation () {
+function modifyReplaceWithApproximation() {
   const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
   const degreeSelected = model.get('modify approx degree')
   const approximation = model.get('modify approx approximation')
 
-  if (degreeSelected < tuningTable.note_count && isRatio(approximation)) {
-    var tuningTextData = jQuery('#txt_tuning_data')[0]
-    var lines = tuningTextData.value.split(NEWLINE_REGEX)
+  if (degreeSelected < tuningTable.noteCount && isRatio(approximation)) {
+    const tuningTextData = jQuery('#txt_tuning_data')[0]
+    const lines = tuningTextData.value.split(NEWLINE_REGEX)
 
     if (degreeSelected - 1 < lines.length && lineToDecimal(approximation)) {
       lines[degreeSelected - 1] = approximation
@@ -361,14 +361,13 @@ function modifyReplaceWithApproximation () {
     // rebuild tuning with replaced value
     let linesToText = ''
     lines.forEach(function(item, index, array) {
-      linesToText += lines[index];
-      if (index + 1 < array.length) 
-        linesToText += newline;
-    } );
-    tuningTextData.value = linesToText;
+      linesToText += lines[index]
+      if (index + 1 < array.length) linesToText += newline
+    })
+    tuningTextData.value = linesToText
     parseTuningData()
 
-    if (degreeSelected < tuningTable.note_count - 1) {
+    if (degreeSelected < tuningTable.noteCount - 1) {
       model.set('modify approx degree', degreeSelected + 1)
     }
     // success
