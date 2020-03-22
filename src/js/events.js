@@ -207,13 +207,10 @@ function initEvents() {
   jQuery('#modify_mode').on('click', function(event) {
     event.preventDefault()
     if (isTuningDataAvailable(true, "No tuning data to modify.")) {
-      // setup MOS options, and hide
-      const modeType = document.querySelector('input[name="mode_type"]:checked').value
-      // showModifyModeMosOptions(document.querySelector('input[name="mode_type"]:checked').value);
-      model.set('modify mode type', modeType)
+      // setup MOS options
       model.set('modify mode mos degree selected', 0) // reset values
-      model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').note_count - 1).slice(1))
-      jQuery('#modal_modify_mos_degree').trigger('change') // make sizes available
+      model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').noteCount - 1).slice(1))
+      model.set('modify mode type', document.querySelector('input[name="mode_type"]:checked').value)
       jQuery('#input_modify_mode').trigger('select')
       openDialog('#modal_modify_mode', modifyMode)
     }

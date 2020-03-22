@@ -94,7 +94,7 @@ const model = new Model({
   'modify mode mos sizes': [2],
   'modify mode mos degree selected': 2,
   'modify mode mos size selected': 2,
-  'modify mode input': '',
+  'modify mode input': [],
   'modify mode mos structure': null,
   'modify approx degree': 1,
   'modify approx interval': 1,
@@ -104,7 +104,7 @@ const model = new Model({
   'modify approx max prime': 10,
   'modify approx convergents': false,
   'modify approx ratio structure': null,
-  'modify approx ratio limits': [],
+  'modify approx ratio limits': [0],
   'modify approx approximation': 0,
   'modify approx prime counters': [0, 10]
 })
@@ -136,16 +136,14 @@ model.on('change', (key, newValue) => {
       model.set('modify mode mos degree selected', newValue[0])
       break
     case 'modify mode mos degree selected':
-      model.set(
-        'modify mode mos sizes',
-        getConvergents(getCF(newValue / (model.get('tuning table').noteCount - 1)))
-          .slice(2)
-          .reverse()
-          .slice(1)
-          .reverse()
-        // is that discouraged?
-      )
-      break
+      {
+        let sizes = getConvergents(getCF(newValue / (model.get('tuning table').noteCount - 1)))
+        sizes = sizes.slice(2, sizes.length-1)
+        model.set('modify mode mos sizes', sizes)
+        if (model.get('modify mode type') === 'mos')
+          model.set('modify mode mos size selected', sizes[0])
+        break
+      }
     case 'modify mode mos size selected':
       model.set(
         'modify mode input',
@@ -300,6 +298,7 @@ function setDropdownOptions(element, optionsText, optionsValue = [], otherTags =
   if (clearExistingOptions) {
     jQuery(element).empty()
   }
+
 
   optionsText.forEach(function(option, index) {
     let injection = optionsValue ? optionsValue[index] : option
