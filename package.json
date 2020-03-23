@@ -4,6 +4,8 @@
   "description": "![Scale Workshop screenshot](https://raw.githubusercontent.com/SeanArchibald/scale-workshop/master/src/assets/img/scale-workshop-og-image.png)",
   "main": "src/js/ndex.js",
   "scripts": {
+    "dev": "npm run host",
+    "test": "npm run lint && npm run unit",
     "lint": "eslint \"src/js/**/*.{js,jsx}\"",
     "lint:fix": "npm run lint -- --fix",
     "host": "http-server . -o index.htm",
