@@ -7,6 +7,7 @@
 
 [Scale Workshop](http://sevish.com/scaleworkshop/) allows you to design microtonal scales and play them in your web browser. Export your scales for use with VST instruments. Convert Scala files to various tuning formats.
 
+[![Build Status](https://travis-ci.org/SeanArchibald/scale-workshop.svg?branch=master)](https://travis-ci.org/SeanArchibald/scale-workshop)
 
 ## Frequently Asked Questions
 
