@@ -36,11 +36,11 @@ import {
   exportUrl
 } from './exporters.js'
 import {
-  getValidMOSSizes, 
-  getCF, 
-  getConvergents, 
-  getRank2Mode, 
-  getRatioStructure, 
+  getValidMOSSizes,
+  getCF,
+  getConvergents,
+  getRank2Mode,
+  getRatioStructure,
   getRatioStructurePrimeLimits
 } from './helpers/sequences.js'
 import Model from './helpers/Model.js'
@@ -135,15 +135,13 @@ model.on('change', (key, newValue) => {
     case 'modify mode mos degrees':
       model.set('modify mode mos degree selected', newValue[0])
       break
-    case 'modify mode mos degree selected':
-      {
-        let sizes = getConvergents(getCF(newValue / (model.get('tuning table').noteCount - 1)))
-        sizes = sizes.slice(2, sizes.length-1)
-        model.set('modify mode mos sizes', sizes)
-        if (model.get('modify mode type') === 'mos')
-          model.set('modify mode mos size selected', sizes[0])
-        break
-      }
+    case 'modify mode mos degree selected': {
+      let sizes = getConvergents(getCF(newValue / (model.get('tuning table').noteCount - 1)))
+      sizes = sizes.slice(2, sizes.length - 1)
+      model.set('modify mode mos sizes', sizes)
+      if (model.get('modify mode type') === 'mos') model.set('modify mode mos size selected', sizes[0])
+      break
+    }
     case 'modify mode mos size selected':
       model.set(
         'modify mode input',
@@ -153,7 +151,7 @@ model.on('change', (key, newValue) => {
     case 'modify approx degree':
       model.set('modify approx interval', model.get('tuning table').scale_data[newValue])
       break
-    case 'modify approx interval': 
+    case 'modify approx interval':
       model.set('modify approx ratio structure', getRatioStructure(lineToDecimal(newValue)))
       break
     case 'modify approx ratio structure':
@@ -223,7 +221,7 @@ model.on('change', (key, newValue) => {
       jQuery('#input_approx_min_prime').val(PRIMES[newValue])
       updateApproximationOptions()
       break
-    case 'modify approx max prime': 
+    case 'modify approx max prime':
       jQuery('#input_approx_max_prime').val(PRIMES[newValue])
       updateApproximationOptions()
       break
@@ -298,7 +296,6 @@ function setDropdownOptions(element, optionsText, optionsValue = [], otherTags =
   if (clearExistingOptions) {
     jQuery(element).empty()
   }
-
 
   optionsText.forEach(function(option, index) {
     let injection = optionsValue ? optionsValue[index] : option
@@ -386,42 +383,45 @@ function updateApproximationOptions() {
   const ratioStructure = model.get('modify approx ratio structure')
   const ratioLimits = model.get('modify approx ratio limits')
   const menulength = semiconvergents ? ratioStructure.length : ratioStructure.cf.length
-  
-  let descriptions = []
-  let values = []
-  let tags = []
+
+  const descriptions = []
+  const values = []
+  const tags = []
 
   let index = 0
   for (let i = 0; i < menulength; i++) {
-    index = semiconvergents ? i : ratioStructure.convergentIndicies[i];
-    if (index > ratioStructure.length)
-      break
+    index = semiconvergents ? i : ratioStructure.convergentIndicies[i]
+    if (index > ratioStructure.length) break
 
-    var limit = ratioLimits[index][0]
+    const limit = ratioLimits[index][0]
 
-    var ratioString = ratioStructure.ratioStrings[index]
-    var decimal = ratioStructure.rationals[index] 
+    const ratioString = ratioStructure.ratioStrings[index]
+    const decimal = ratioStructure.rationals[index]
 
-    var centsDelta = decimalToCents(decimal/lineToDecimal(interval));
-    var centsDeltaAbs = Math.abs(centsDelta);
-    var centsRounded = roundToNDecimals(6, centsDelta);
+    const centsDelta = decimalToCents(decimal / lineToDecimal(interval))
+    const centsDeltaAbs = Math.abs(centsDelta)
+    const centsRounded = roundToNDecimals(6, centsDelta)
 
-    var centsSign = "";
-    if (centsDelta / centsDeltaAbs >= 0)
-      centsSign = "+";
+    let centsSign = ''
+    if (centsDelta / centsDeltaAbs >= 0) centsSign = '+'
 
-    var description = ratioString + " | " + centsSign + centsRounded.toString() + "c | " + limit + "-limit";
-    
+    const description = ratioString + ' | ' + centsSign + centsRounded.toString() + 'c | ' + limit + '-limit'
 
     if (!interval) {
-      tags.push("selected disabled");
-      descriptions.push("Error: Invalid interval")
-      break;
-    } else if (interval === decimal && interval) {  // for cases like 1200.0 === 2/1
+      tags.push('selected disabled')
+      descriptions.push('Error: Invalid interval')
+      break
+    } else if (interval === decimal && interval) {
+      // for cases like 1200.0 === 2/1
       descriptions.push(description)
       values.push(ratioString)
-      break;
-    } else if ((centsDeltaAbs >= minCentsError && centsDeltaAbs <= maxCentsError) && (limit >= minPrimeLimit && limit <= maxPrimeLimit)) {
+      break
+    } else if (
+      centsDeltaAbs >= minCentsError &&
+      centsDeltaAbs <= maxCentsError &&
+      limit >= minPrimeLimit &&
+      limit <= maxPrimeLimit
+    ) {
       descriptions.push(description)
       values.push(ratioString)
     }
@@ -430,18 +430,17 @@ function updateApproximationOptions() {
   // console.log("last index = " + index)
 
   if (descriptions.length === 0) {
-    semiconvergents ?
-      descriptions.push("None found, try to raise error tolerances.") :
-      descriptions.push("Try to  \"Show next best approximations\" or edit filters.")
-    tags.push("selected disabled");
+    semiconvergents
+      ? descriptions.push('None found, try to raise error tolerances.')
+      : descriptions.push('Try to  "Show next best approximations" or edit filters.')
+    tags.push('selected disabled')
   }
-  
+
   setDropdownOptions('#approximation_selection', descriptions, values, tags)
   model.set('modify approx approximation', jQuery('#approximation_selection')[0].options[0].value)
 }
 
 function parseUrl() {
-
   // ?name=16%20equal%20divisions%20of%202%2F1&data=75.%0A150.%0A225.%0A300.%0A375.%0A450.%0A525.%0A600.%0A675.%0A750.%0A825.%0A900.%0A975.%0A1050.%0A1125.%0A1200.&freq=440&midi=69&vert=5&horiz=1&colors=white%20black%20white%20black%20white%20black%20white%20white%20black%20white%20black%20white%20black%20white%20black%20white&waveform=sine&ampenv=pad
   const url = new URL(window.location.href)
 

@@ -15,11 +15,10 @@ function setTuningData(tuning) {
   jQuery('#txt_tuning_data').val(tuning)
 }
 
-function isTuningDataAvailable(alertIfNot=false, alertMsg='No tuning data.') {
+function isTuningDataAvailable(alertIfNot = false, alertMsg = 'No tuning data.') {
   trimSelf('#txt_tuning_data')
   if (isEmpty(jQuery('#txt_tuning_data').val())) {
-    if (alertIfNot) 
-      alert(alertMsg)
+    if (alertIfNot) alert(alertMsg)
     return false
   }
   return true
