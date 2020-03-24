@@ -192,6 +192,12 @@ div#splash-center img {
   box-shadow: #aaa 0px 0px 40px;
 }
 
+.btn-thinner {
+  height: 2vh;
+  line-height: 0vh;
+  margin-top: 6px;
+}
+
 
 /* Virtual keyboard */
 

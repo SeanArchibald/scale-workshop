@@ -649,8 +649,8 @@
                 <input id="input_modify_mode" name="" type="text" class="form-control" value=""
                     placeholder="2 2 1 2 2 2 1"></input>
                 <div class="form-row">
-                    <button class="btn btn-default" id="input_mode_step_left" type="button">&laquo</button>
-                    <button class="btn btn-default" id="input_mode_step_right" type="button">&raquo</button>
+                    <button class="btn btn-default btn-thinner" id="input_mode_step_left" type="button">&laquo</button>
+                    <button class="btn btn-default btn-thinner" id="input_mode_step_right" type="button">&raquo</button>
                 </div>
                 <div class="radio">
                     <label><input type="radio" name="mode_type" value="intervals" checked>Intervals (e.g. 2 2 1 2 2 2
@@ -663,7 +663,7 @@
                 <div class="radio">
                     <label><input type="radio" name="mode_type" value="mos">MOS Mode (select a degree to stack)</label>
                 </div>
-                <div id="mos_mode_options">
+                <div id="mos_mode_options" style="display:none;">
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label> Degree </label>
@@ -730,11 +730,11 @@
                 <label>Approximation</label>
                 <select class="form-control" id="approximation_selection"></select>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group" style="display:none;">
                 <label>
                     <input id="input_show_convergents" type="checkbox"> Only show convergents</input>
                 </label>
-            </div>
+            </div> -->
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Min Error</label>

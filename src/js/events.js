@@ -5,17 +5,30 @@
 /* global alert, localStorage, jQuery, confirm */
 
 import { isEmpty } from './helpers/strings.js'
-import { isNil, openDialog, trimSelf, isLocalStorageAvailable, closePopup } from './helpers/general.js'
-import { mtof, midiNoteNumberToName, degreesToSteps, stepsToDegrees, getString } from './helpers/converters.js'
+import {
+  isNil,
+  openDialog,
+  trimSelf,
+  isTuningDataAvailable,
+  isLocalStorageAvailable,
+  closePopup
+} from './helpers/general.js'
+import {
+  mtof,
+  midiNoteNumberToName,
+  degreesToSteps,
+  stepsToDegrees,
+  getString,
+  lineToDecimal
+} from './helpers/converters.js'
 import { rotateArrayLeft, rotateArrayRight, getCoprimes } from './helpers/sequences.js'
 import { setKeyColors, parseTuningData, parseUrl, clearAll, model, synth } from './scaleworkshop.js'
 import { importScalaScl, importAnamarkTun } from './helpers/importers.js'
 import { closestPrime } from './helpers/numbers.js'
 import { touchKbdOpen, touchKbdClose } from './ui.js'
 import { isQueryActive } from './synth.js'
-import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, NEWLINE_REGEX, LOCALSTORAGE_PREFIX } from './constants.js'
+import { PRIMES, APP_TITLE, WINDOWS_NEWLINE, UNIX_NEWLINE, LOCALSTORAGE_PREFIX } from './constants.js'
 import {
-  modifyUpdateApproximations,
   modifyRandomVariance,
   modifyMode,
   modifySyncBeating,
@@ -207,12 +220,16 @@ function initEvents() {
   // modifyMode option clicked
   jQuery('#modify_mode').on('click', function(event) {
     event.preventDefault()
-    // setup MOS options, and hide
-    model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').noteCount - 1).slice(1))
-    // showModifyModeMosOptions(document.querySelector('input[name="mode_type"]:checked').value);
-    jQuery('#modal_modify_mos_degree').trigger('change') // make sizes available
-    jQuery('#input_modify_mode').trigger('select')
-    openDialog('#modal_modify_mode', modifyMode)
+    if (isTuningDataAvailable()) {
+      // setup MOS options
+      model.set('modify mode mos degree selected', 0) // reset values
+      model.set('modify mode mos degrees', getCoprimes(model.get('tuning table').noteCount - 1).slice(1))
+      model.set('modify mode type', document.querySelector('input[name="mode_type"]:checked').value)
+      jQuery('#input_modify_mode').trigger('select')
+      openDialog('#modal_modify_mode', modifyMode)
+    } else {
+      alert('No tuning data to modify.')
+    }
   })
 
   // modifyStretch option clicked
@@ -236,83 +253,91 @@ function initEvents() {
   })
 
   // approximate option clicked
+  // hesitant to prevent this from opening if no tuning data exists, because the "Interval To Approximate"
+  // field doesn't need tuning data, and can be a useful tool if someone knows how to use it.
   jQuery('#modify_approximate').on('click', function(event) {
     event.preventDefault()
-    const tuningTable = model.get('tuning table')
     trimSelf('#txt_tuning_data')
+    const inputScaleDegree = jQuery('#input_scale_degree')
+    model.set('modify approx degree', 0) // force update
+    inputScaleDegree.attr({ min: 1, max: model.get('tuning table').noteCount - 1 })
+    model.set('modify approx degree', 1)
+    inputScaleDegree.select()
+    openDialog('#modal_approximate_intervals', modifyReplaceWithApproximation)
+  })
 
-    jQuery('#input_scale_degree').val(1)
-    jQuery('#input_scale_degree').attr({ min: 1, max: tuningTable.noteCount - 1 })
-
-    jQuery('#input_scale_degree').trigger('select')
-    jQuery('#input_scale_degree').trigger('change')
-
-    jQuery('#modal_approximate_intervals').dialog({
-      modal: true,
-      buttons: {
-        Apply: function() {
-          modifyReplaceWithApproximation()
-        },
-        Close: function() {
-          jQuery(this).dialog('close')
-        }
-      }
-    })
+  // calculate and list rational approximations within user parameters
+  jQuery('#input_interval_to_approximate').change(function() {
+    model.set('modify approx interval', lineToDecimal(jQuery('#input_interval_to_approximate').val()))
   })
 
   // recalculate approximations when scale degree changes
   jQuery('#input_scale_degree').on('change', function() {
-    trimSelf() // TODO: trim self requires a parameter to apply trim to, otherwise this is just a NOP
-    const index = parseInt(jQuery('#input_scale_degree').val()) - 1
-    const lines = document.getElementById('txt_tuning_data').value.split(NEWLINE_REGEX)
-    jQuery('#input_interval_to_approximate')
-      .val(lines[index])
-      .trigger('change')
+    const index = parseInt(jQuery('#input_scale_degree').val())
+    model.set('modify approx degree', index)
+  })
+
+  jQuery('#approximation_selection').change(function(element) {
+    model.set('modify approx approximation', element.target.options[element.target.selectedIndex].value)
   })
 
   // refilter approximations when fields change
-  jQuery('#input_min_error, #input_max_error, #input_show_convergents').on('change', modifyUpdateApproximations)
+  jQuery('#input_min_error').change(function() {
+    model.set('modify approx min error', jQuery('#input_min_error').val())
+  })
+
+  jQuery('#input_max_error').change(function() {
+    model.set('modify approx max error', jQuery('#input_max_error').val())
+  })
+
+  jQuery('#input_show_convergents').change(function() {
+    model.set('modify approx convergents', jQuery('#input_show_convergents')[0].checked)
+  })
 
   // refilter approximations when prime limit changes
   // can be improved, but it's a bit tricky!
   jQuery('#input_approx_min_prime').on('change', function() {
-    const num = parseInt(jQuery('#input_approx_min_prime').val())
-    const approximationFilterPrimeCount = model.get('modify approx prime counters')
-    const dif = num - PRIMES[approximationFilterPrimeCount[0]]
+    const numInput = parseInt(jQuery('#input_approx_min_prime').val())
+    let primeIndex = model.get('modify approx min prime')
+    const numPrevious = PRIMES[primeIndex]
+
+    // Find difference between last number and next number
+    const dif = numInput - numPrevious
     if (Math.abs(dif) === 1) {
-      if (num < PRIMES[approximationFilterPrimeCount[0]]) {
-        approximationFilterPrimeCount[0]--
-      } else {
-        approximationFilterPrimeCount[0]++
+      if (numInput < numPrevious && primeIndex > 0) {
+        primeIndex--
+      } else if (numInput > numPrevious) {
+        primeIndex++
       }
     } else {
-      approximationFilterPrimeCount[0] = PRIMES.indexOf(closestPrime(num))
+      primeIndex = PRIMES.indexOf(closestPrime(numInput))
     }
 
-    jQuery('#input_approx_min_prime').val(PRIMES[approximationFilterPrimeCount[0]])
-    modifyUpdateApproximations()
+    model.set('modify approx min prime', primeIndex)
   })
 
   // refilter approximations when prime limit changes
   jQuery('#input_approx_max_prime').on('change', function() {
-    const num = parseInt(jQuery('#input_approx_max_prime').val())
-    const approximationFilterPrimeCount = model.get('modify approx prime counters')
-    const dif = num - PRIMES[approximationFilterPrimeCount[1]]
+    const numInput = parseInt(jQuery('#input_approx_max_prime').val())
+    let primeIndex = model.get('modify approx max prime')
+    const numPrevious = PRIMES[primeIndex]
+
+    // Find difference between last number and next number
+    const dif = numInput - numPrevious
     if (Math.abs(dif) === 1) {
-      if (num < PRIMES[approximationFilterPrimeCount[1]]) {
-        approximationFilterPrimeCount[1]--
-      } else {
-        approximationFilterPrimeCount[1]++
+      if (numInput < numPrevious && primeIndex > 0) {
+        primeIndex--
+      } else if (numInput > numPrevious) {
+        primeIndex++
       }
     } else {
-      approximationFilterPrimeCount[1] = PRIMES.indexOf(closestPrime(num))
+      primeIndex = PRIMES.indexOf(closestPrime(numInput))
     }
 
-    jQuery('#input_approx_max_prime').val(PRIMES[approximationFilterPrimeCount[1]])
-    modifyUpdateApproximations()
+    model.set('modify approx max prime', primeIndex)
   })
 
-  jQuery('#modal_modify_mode').on('change', function(newValue) {
+  jQuery('#modal_modify_mode').on('change', function() {
     model.set('modify mode type', document.querySelector('input[name="mode_type"]:checked').value)
     // showModifyModeMosOptions(document.querySelector('input[name="mode_type"]:checked').value)
   })

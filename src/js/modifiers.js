@@ -7,7 +7,7 @@
 import { parseTuningData, model } from './scaleworkshop.js'
 import { trimSelf } from './helpers/general.js'
 import { isEmpty, trim, toString } from './helpers/strings.js'
-import { getLineType } from './helpers/types.js'
+import { getLineType, isRatio } from './helpers/types.js'
 import { ratioToCents, lineToDecimal, decimalToCents, nOfEdoToCents } from './helpers/converters.js'
 import { PRIMES, UNIX_NEWLINE, NEWLINE_REGEX, WINDOWS_NEWLINE } from './constants.js'
 import { getRatioStructure } from './helpers/sequences.js'
@@ -345,15 +345,12 @@ function modifyReplaceWithApproximation() {
   const tuningTable = model.get('tuning table')
   const newline = model.get('newline') === 'windows' ? WINDOWS_NEWLINE : UNIX_NEWLINE
 
-  const degreeSelected = parseInt(jQuery('#input_scale_degree').val())
+  const degreeSelected = model.get('modify approx degree')
+  const approximation = model.get('modify approx approximation')
 
-  if (degreeSelected < tuningTable.noteCount) {
-    const tuningData = document.getElementById('txt_tuning_data')
-    const lines = tuningData.value.split(NEWLINE_REGEX)
-
-    const aprxs = document.getElementById('approximation_selection')
-    let approximation = aprxs.options[aprxs.selectedIndex].text
-    approximation = approximation.slice(0, approximation.indexOf('|')).trim()
+  if (degreeSelected < tuningTable.noteCount && isRatio(approximation)) {
+    const tuningTextData = jQuery('#txt_tuning_data')[0]
+    const lines = tuningTextData.value.split(NEWLINE_REGEX)
 
     if (degreeSelected - 1 < lines.length && lineToDecimal(approximation)) {
       lines[degreeSelected - 1] = approximation
@@ -361,20 +358,17 @@ function modifyReplaceWithApproximation() {
       lines.push(approximation)
     }
 
+    // rebuild tuning with replaced value
     let linesToText = ''
     lines.forEach(function(item, index, array) {
       linesToText += lines[index]
-      if (index + 1 < array.length) {
-        linesToText += newline
-      }
+      if (index + 1 < array.length) linesToText += newline
     })
-    tuningData.value = linesToText
-
+    tuningTextData.value = linesToText
     parseTuningData()
 
     if (degreeSelected < tuningTable.noteCount - 1) {
-      jQuery('#input_scale_degree').val(degreeSelected + 1)
-      jQuery('#input_scale_degree').trigger('change')
+      model.set('modify approx degree', degreeSelected + 1)
     }
     // success
     return true
