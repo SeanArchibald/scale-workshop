@@ -32,7 +32,8 @@ import {
   exportMaxMspColl,
   exportPdText,
   exportKontaktScript,
-  exportImageLineHarmorPitchMap,
+  exportHarmorPitchMap,
+  exportSytrusPitchMap,
   exportReferenceDeflemask,
   exportUrl
 } from './exporters.js'
@@ -868,7 +869,10 @@ jQuery('#export-buttons').on('click', 'a', e => {
       exportKontaktScript()
       break
     case 'harmor-fnv':
-      exportImageLineHarmorPitchMap()
+      exportHarmorPitchMap()
+      break
+    case 'sytrus-fnv':
+      exportSytrusPitchMap()
       break
     case 'deflemask-reference':
       exportReferenceDeflemask()

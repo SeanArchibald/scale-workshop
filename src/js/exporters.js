@@ -25,7 +25,6 @@ function saveFile(filename, contents, raw) {
   } else {
     link.href = 'data:application/octet-stream,' + encodeURIComponent(contents)
   }
-  console.log(link.href)
   link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })) // opens save dialog
 }
 
@@ -277,51 +276,55 @@ function exportKontaktScript() {
   return true
 }
 
-function exportImageLineHarmorPitchMap() {
+function exportImageLinePitchMap(range) {
   if (exportError()) {
     return
   }
-  const NB_NOTES = 121 // harmor can only retune from C0 to C10
+  const NB_NOTES = 121 // IL products can only retune from C0 to C10
   const HEADER_BYTES = Uint8Array.from([3, 0, 0, 0, 3, 0, 0, 0, NB_NOTES, 0, 0, 0])
   const ENDING_BYTES = Uint8Array.from([0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255])
 
   const tuningTable = model.get('tuning table')
-  const baseFreqOffset = Math.log2(tuningTable.baseFrequency / 440)
-  const baseNote = tuningTable.baseMidiNote
+  const baseFreqOffset = Math.log2(tuningTable.baseFrequency / 440) // in number of octaves
 
   // construct point data
   let points = new ArrayBuffer(121 * 24)
   let pointsDoubles = new Float64Array(points)
   let pointsUint32 = new Uint32Array(points)
-  for (let i = 0; i < 121; i++) {
+  for (let i = 0; i < NB_NOTES; i++) {
     const edo12cents = (i - 69) * 100
     const offset = tuningTable.cents[i] - edo12cents
-    const yCoord = Math.max(0.0, Math.min(1.0, ((offset / 1200 + baseFreqOffset) / 5) * 0.5 + 0.5))
+    const normalizedOffset = ((offset / 1200 + baseFreqOffset) / range) * 0.5 + 0.5
+    const yCoord = Math.max(0.0, Math.min(1.0, normalizedOffset))
     pointsDoubles[i * 3 + 1] = yCoord
-    if (i !== 0) {
+    if (i !== 0) { // no x offset and no curve data for first point
       pointsDoubles[i * 3] = 0.0083333337679505 // constant x offset from previous point
-      pointsUint32[i * 6 + 4] = 0
-      pointsUint32[i * 6 + 5] = 33554432 // tension data
-
+      pointsUint32[i * 6 + 4] = 0        // |
+      pointsUint32[i * 6 + 5] = 33554432 // | no curve
     }
   }
 
+  // assemble .fnv file
   let file = new Uint8Array(HEADER_BYTES.length + points.byteLength + ENDING_BYTES.length)
   let offset = 0
   file.set(HEADER_BYTES, offset)
   offset += HEADER_BYTES.length
-  console.log(offset)
   file.set(new Uint8Array(points), offset)
   offset += points.byteLength
-  console.log(offset)
   file.set(ENDING_BYTES, offset)
-
-  console.log(file)
 
   saveFile(tuningTable.filename + '.fnv', file, true)
 
   // success
   return true
+}
+
+function exportHarmorPitchMap() {
+  exportImageLinePitchMap(5)
+}
+
+function exportSytrusPitchMap() {
+  exportImageLinePitchMap(4)
 }
 
 function exportReferenceDeflemask() {
@@ -468,7 +471,8 @@ export {
   exportMaxMspColl,
   exportPdText,
   exportKontaktScript,
-  exportImageLineHarmorPitchMap,
+  exportHarmorPitchMap,
+  exportSytrusPitchMap,
   exportReferenceDeflemask,
   exportUrl
 }
