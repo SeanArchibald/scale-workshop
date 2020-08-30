@@ -16,10 +16,15 @@ function exportError() {
   }
 }
 
-function saveFile(filename, contents) {
+function saveFile(filename, contents, raw) {
   const link = document.createElement('a')
   link.download = filename
-  link.href = 'data:application/octet-stream,' + encodeURIComponent(contents)
+  if (raw === true) {
+    const blob = new Blob([contents], { type: 'application/octet-stream' })
+    link.href = window.URL.createObjectURL(blob)
+  } else {
+    link.href = 'data:application/octet-stream,' + encodeURIComponent(contents)
+  }
   console.log(link.href)
   link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })) // opens save dialog
 }
@@ -272,6 +277,53 @@ function exportKontaktScript() {
   return true
 }
 
+function exportImageLineHarmorPitchMap() {
+  if (exportError()) {
+    return
+  }
+  const NB_NOTES = 121 // harmor can only retune from C0 to C10
+  const HEADER_BYTES = Uint8Array.from([3, 0, 0, 0, 3, 0, 0, 0, NB_NOTES, 0, 0, 0])
+  const ENDING_BYTES = Uint8Array.from([0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255])
+
+  const tuningTable = model.get('tuning table')
+  const baseFreqOffset = Math.log2(tuningTable.baseFrequency / 440)
+  const baseNote = tuningTable.baseMidiNote
+
+  // construct point data
+  let points = new ArrayBuffer(121 * 24)
+  let pointsDoubles = new Float64Array(points)
+  let pointsUint32 = new Uint32Array(points)
+  for (let i = 0; i < 121; i++) {
+    const edo12cents = (i - 69) * 100
+    const offset = tuningTable.cents[i] - edo12cents
+    const yCoord = Math.max(0.0, Math.min(1.0, ((offset / 1200 + baseFreqOffset) / 5) * 0.5 + 0.5))
+    pointsDoubles[i * 3 + 1] = yCoord
+    if (i !== 0) {
+      pointsDoubles[i * 3] = 0.0083333337679505 // constant x offset from previous point
+      pointsUint32[i * 6 + 4] = 0
+      pointsUint32[i * 6 + 5] = 33554432 // tension data
+
+    }
+  }
+
+  let file = new Uint8Array(HEADER_BYTES.length + points.byteLength + ENDING_BYTES.length)
+  let offset = 0
+  file.set(HEADER_BYTES, offset)
+  offset += HEADER_BYTES.length
+  console.log(offset)
+  file.set(new Uint8Array(points), offset)
+  offset += points.byteLength
+  console.log(offset)
+  file.set(ENDING_BYTES, offset)
+
+  console.log(file)
+
+  saveFile(tuningTable.filename + '.fnv', file, true)
+
+  // success
+  return true
+}
+
 function exportReferenceDeflemask() {
   // This exporter converts your tuning data into a readable format you can easily input manually into Deflemask.
   // For example if you have a note 50 cents below A4, you would input that into Deflemask as A-4 -- - E5 40
@@ -390,7 +442,7 @@ function exportUrl() {
   jQuery('#modal_share_url').dialog({
     modal: true,
     buttons: {
-      'Copy URL': function() {
+      'Copy URL': function () {
         jQuery('#input_share_url').trigger('select')
         document.execCommand('Copy')
         jQuery(this).dialog('close')
@@ -399,7 +451,7 @@ function exportUrl() {
   })
 
   // url field clicked
-  jQuery('#input_share_url').on('click', function(event) {
+  jQuery('#input_share_url').on('click', function (event) {
     jQuery(this).trigger('select')
   })
 
@@ -416,6 +468,7 @@ export {
   exportMaxMspColl,
   exportPdText,
   exportKontaktScript,
+  exportImageLineHarmorPitchMap,
   exportReferenceDeflemask,
   exportUrl
 }
