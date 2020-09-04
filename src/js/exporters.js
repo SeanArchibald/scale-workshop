@@ -6,6 +6,7 @@ import { decimalToCents, mtof, midiNoteNumberToName, ftom } from './helpers/conv
 import { LINE_TYPE, APP_TITLE, TUNING_MAX_SIZE, UNIX_NEWLINE, WINDOWS_NEWLINE } from './constants.js'
 import { isEmpty } from './helpers/strings.js'
 import { getLineType } from './helpers/types.js'
+import { clamp } from './helpers/numbers.js'
 
 function exportError() {
   const tuningTable = model.get('tuning table')
@@ -283,6 +284,8 @@ function exportImageLinePitchMap(range) {
   const NB_NOTES = 121 // IL products can only retune from C0 to C10
   const HEADER_BYTES = Uint8Array.from([3, 0, 0, 0, 3, 0, 0, 0, NB_NOTES, 0, 0, 0])
   const ENDING_BYTES = Uint8Array.from([0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255])
+  const X_STRIDE = 1/121 // constant x offset from one point to the next
+  const CURVE_DATA = 33554432 // curve data for straight line, observed experimentally
 
   const tuningTable = model.get('tuning table')
   const baseFreqOffset = Math.log2(tuningTable.baseFrequency / 440) // in number of octaves
@@ -295,12 +298,12 @@ function exportImageLinePitchMap(range) {
     const edo12cents = (i - 69) * 100
     const offset = tuningTable.cents[i] - edo12cents
     const normalizedOffset = ((offset / 1200 + baseFreqOffset) / range) * 0.5 + 0.5
-    const yCoord = Math.max(0.0, Math.min(1.0, normalizedOffset))
+    const yCoord = clamp(0, 1, normalizedOffset)
     pointsDoubles[i * 3 + 1] = yCoord
     if (i !== 0) { // no x offset and no curve data for first point
-      pointsDoubles[i * 3] = 0.0083333337679505 // constant x offset from previous point
-      pointsUint32[i * 6 + 4] = 0        // |
-      pointsUint32[i * 6 + 5] = 33554432 // | no curve
+      pointsDoubles[i * 3] = X_STRIDE
+      pointsUint32[i * 6 + 4] = 0
+      pointsUint32[i * 6 + 5] = CURVE_DATA
     }
   }
 
@@ -445,7 +448,7 @@ function exportUrl() {
   jQuery('#modal_share_url').dialog({
     modal: true,
     buttons: {
-      'Copy URL': function () {
+      'Copy URL': function() {
         jQuery('#input_share_url').trigger('select')
         document.execCommand('Copy')
         jQuery(this).dialog('close')
@@ -454,7 +457,7 @@ function exportUrl() {
   })
 
   // url field clicked
-  jQuery('#input_share_url').on('click', function (event) {
+  jQuery('#input_share_url').on('click', function(event) {
     jQuery(this).trigger('select')
   })
 
