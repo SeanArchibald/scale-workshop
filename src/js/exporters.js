@@ -284,7 +284,7 @@ function exportImageLinePitchMap(range) {
   const NB_NOTES = 121 // IL products can only retune from C0 to C10
   const HEADER_BYTES = Uint8Array.from([3, 0, 0, 0, 3, 0, 0, 0, NB_NOTES, 0, 0, 0])
   const ENDING_BYTES = Uint8Array.from([0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255])
-  const X_STRIDE = 1/121 // constant x offset from one point to the next
+  const X_STRIDE = 1/NB_NOTES // constant x offset from one point to the next
   const CURVE_DATA = 33554432 // curve data for straight line, observed experimentally
 
   const tuningTable = model.get('tuning table')
