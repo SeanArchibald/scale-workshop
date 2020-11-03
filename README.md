@@ -285,6 +285,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 * Carl Lumma
 * Tobia
 * Vincenzo Sicurella
+* Azorlogh
 
 
 ## License
