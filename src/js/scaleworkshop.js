@@ -539,3 +539,36 @@ function parse_imported_anamark_tun( event ) {
   };
 
 }
+
+const onModeChange = input => {
+  const { sum } = R
+
+  const cntr = $('#input_modify_mode_counter')
+
+  const updateCntr = (value) => {
+    cntr.text(value)
+  }
+
+  const isInputEmpty = input === ''
+  if (isInputEmpty) {
+    updateCntr('0')
+    return
+  }
+
+  const isInputValid = /^(\d+\s+)*\d+$/.test(input)
+  if (!isInputValid) {
+    updateCntr('×')
+    return
+  }
+
+  const numbers = input.split(/\s+/).map(numberString => parseInt(numberString))
+  updateCntr(`${sum(numbers)}`)
+}
+
+$(() => {
+  $('#input_modify_mode').on('input', e => {
+    onModeChange(e.target.value.trim())
+  })
+
+  onModeChange($('#input_modify_mode').val())
+})

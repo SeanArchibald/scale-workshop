@@ -564,8 +564,12 @@
     <form>
       <label>Mode</label>
       <div class="form-group">
-        <input id="input_modify_mode" name="" type="text" class="form-control" value=""
-          placeholder="2 2 1 2 2 2 1"></input>
+        <div class="input-group">
+          <input id="input_modify_mode" name="" type="text" class="form-control" value="" placeholder="2 2 1 2 2 2 1" />
+          <div class="input-group-addon">
+            <span id="input_modify_mode_counter"></span>
+          </div>
+        </div>
         <div class="form-row">
           <button class="btn btn-default" id="input_mode_step_left" type="button">&laquo</button>
           <button class="btn btn-default" id="input_mode_step_right" type="button">&raquo</button>
