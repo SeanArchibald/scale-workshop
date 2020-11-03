@@ -61,7 +61,7 @@ class Synth {
         this.active_voices[midinote] = voice;
         jQuery("#tuning-table-row-" + midinote).addClass("bg-playnote");
 
-        debug("Play note " + midinote + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
+        console.log("Play note " + midinote + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
       }
     }
   }
@@ -71,7 +71,7 @@ class Synth {
       delete this.active_voices[midinote];
       jQuery("#tuning-table-row-" + midinote).removeClass("bg-playnote");
 
-      debug("Stop note " + midinote);
+      console.log("Stop note " + midinote);
     }
   }
 
@@ -82,7 +82,7 @@ class Synth {
   // this function stops all active voices and cuts the delay
   panic() {
     // show which voices are active (playing)
-    debug(this.active_voices);
+    console.log(this.active_voices);
 
     // loop through active voices
     for (let i = 0; i < 127; i++) {

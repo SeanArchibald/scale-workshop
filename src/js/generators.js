@@ -106,7 +106,7 @@ function generate_rank_2_temperament_data(generator, period, size, up) {
     if (i <= up) {
 
       aa[i] = (aa[i - 1] + generator).mod(period);
-      debug('up: ' + i + ': ' + aa[i]);
+      console.log('up: ' + i + ': ' + aa[i]);
 
     }
 
@@ -121,7 +121,7 @@ function generate_rank_2_temperament_data(generator, period, size, up) {
       else {
         aa[i] = (aa[i - 1] - generator).mod(period);
       }
-      debug('down: ' + i + ': ' + aa[i]);
+      console.log('down: ' + i + ': ' + aa[i]);
     }
 
   }
@@ -269,11 +269,11 @@ function generate_enumerate_chord() {
   //}
 
   if (isInversion) {
-    debug("This is an inversion. Chord is " + chord);
+    console.log("This is an inversion. Chord is " + chord);
     chord = invert_chord(chord);
-    debug("Chord returned: " + chord);
+    console.log("Chord returned: " + chord);
     chordStr += (" (" + chord + ") ");
-    debug("str = " + chordStr);
+    console.log("str = " + chordStr);
   }
 
   var pitches = chord.split(":");

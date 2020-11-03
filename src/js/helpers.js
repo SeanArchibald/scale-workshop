@@ -763,15 +763,6 @@ function invert_chord(chord) {
   return chord.join(":");
 }
 
-function debug(msg = "") {
-  if (debug_enabled) {
-    msg = R.isEmpty(msg) ? "Debug" : msg;
-    console.log(msg);
-    return true;
-  }
-  return false;
-}
-
 function getFloat(id, errorMessage) {
   var value = parseFloat(jQuery(id).val());
 

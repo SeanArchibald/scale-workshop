@@ -140,8 +140,8 @@ function modify_mode() {
 
   // split user's scale data into individual lines
   var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
-  debug(lines);
-  debug(mode);
+  console.log(lines);
+  console.log(mode);
 
   // mode_type will be either intervals (e.g. 2 2 1 2 2 2 1) or from_base (e.g. 2 4 5 7 9 11 12)
   var mode_type = jQuery("#modal_modify_mode input[type='radio']:checked").val();
@@ -240,14 +240,14 @@ function modify_sync_beating() {
 
   // get the fundamental frequency of the scale
   var fundamental = jQuery("#input_modify_sync_beating_bpm").val() / 60;
-  debug(fundamental);
+  console.log(fundamental);
 
   var resolution = jQuery("#select_sync_beating_resolution").val();
-  debug(resolution);
+  console.log(resolution);
 
   // loop through all in the scale, convert to ratio, then quantize to fundamental, then convert to cents
   var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
-  debug(lines);
+  console.log(lines);
   var new_tuning = "";
 
   for (let i = 0; i < lines.length; i++) {
@@ -258,7 +258,7 @@ function modify_sync_beating() {
   }
   new_tuning = new_tuning.trim(); // remove final newline
 
-  debug(new_tuning);
+  console.log(new_tuning);
 
   // set tuning base frequency to some multiple of the fundamental, +/- 1 tritone from the old base frequency
   var basefreq_lowbound = jQuery('#txt_base_frequency').val() * 0.7071067;
@@ -446,8 +446,6 @@ function modify_update_approximations() {
         break;
       } else if ((centsdabs >= mincentsd && centsdabs <= maxcentsd) && (prime_limit >= minprime && prime_limit <= maxprime)) {
         jQuery("#approximation_selection").append("<option>" + description + "</option>");
-      } else {
-        //debug("Option excluded: " + description);
       }
     }
 

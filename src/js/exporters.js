@@ -405,7 +405,7 @@ function export_url() {
 
   // copy url in to url field
   jQuery("#input_share_url").val(export_url);
-  debug("export_url = " + export_url);
+  console.log("export_url = " + export_url);
 
   jQuery("#input_share_url").select();
   jQuery("#modal_share_url").dialog({

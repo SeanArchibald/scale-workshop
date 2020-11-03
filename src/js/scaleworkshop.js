@@ -5,7 +5,7 @@
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
 jQuery(window).on('popstate', function () {
-  debug('Back/Forward navigation detected - reloading page');
+  console.log('Back/Forward navigation detected - reloading page');
   location.reload(true);
 });
 
@@ -45,7 +45,6 @@ var current_approximations = {
   ratio_limits: [] // the prime limit of each ratio
 }
 var prime_counter = [0, 10];
-var debug_enabled = true;
 
 /**
  * SCALE WORKSHOP FUNCTIONS
@@ -95,7 +94,6 @@ function set_key_colors(list) {
     var keynum = (i - tuning_table['base_midi_note']).mod(key_colors.length);
     // set the color of the key
     jQuery(ttkeys[i]).attr("style", "background-color: " + key_colors[keynum] + " !important");
-    //debug( i + ": " + key_colors[keynum] );
   }
 }
 
@@ -245,7 +243,7 @@ function parse_tuning_data() {
 
   if (empty) {
     // if the input tuning is totally empty
-    debug("no tuning data");
+    console.log("no tuning data");
     jQuery("#txt_tuning_data").parent().addClass("has-error");
     return false;
   }
@@ -410,7 +408,7 @@ function parse_imported_anamark_tun(event) {
     }
     // If a name couldn't be found within the file, then just grab it from the filename
     if (name === true || name === false) {
-      debug("this shouldn't be happening right now");
+      console.log("this shouldn't be happening right now");
       name = input.files[0].name.slice(0, -4);
     }
 

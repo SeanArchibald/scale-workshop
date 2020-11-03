@@ -91,12 +91,12 @@ document.addEventListener("keyup", function (event) {
 jQuery('#virtual-keyboard').on('touchstart', 'td', function (event) {
   event.preventDefault();
   jQuery(event.originalEvent.targetTouches[0].target).addClass('active');
-  synth.noteOn(R.tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
+  synth.noteOn(R.tap(console.log.bind(console), touch_to_midinote(getCoordsFromKey(event.target))));
 });
 
 // TOUCHEND -- virtual keyboard
 jQuery('#virtual-keyboard').on('touchend', 'td', function (event) {
   event.preventDefault();
   jQuery(event.originalEvent.changedTouches[0].target).removeClass('active');
-  synth.noteOff(R.tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
+  synth.noteOff(R.tap(console.log.bind(console), touch_to_midinote(getCoordsFromKey(event.target))));
 });

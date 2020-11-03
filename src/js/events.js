@@ -11,7 +11,7 @@ jQuery(document).ready(function () {
     if (!R.isNil(localStorage.getItem("newline"))) {
       jQuery('#input_select_newlines').val(localStorage.getItem("newline"));
     } else {
-      debug("localStorage: assuming default of windows");
+      console.log("localStorage: assuming default of windows");
       jQuery('#input_select_newlines').val("windows");
     }
 
@@ -28,7 +28,7 @@ jQuery(document).ready(function () {
     }
 
   } else {
-    debug('localStorage not supported in your browser. Please check your browser settings. If using Safari, you may need to disable private browsing mode.');
+    console.log('localStorage not supported in your browser. Please check your browser settings. If using Safari, you may need to disable private browsing mode.');
   }
 
   // get data encoded in url
@@ -437,7 +437,7 @@ jQuery(document).ready(function () {
       newline = "\n"; // unix
       localStorage.setItem('newline', 'unix');
     }
-    debug(jQuery('#input_select_newlines').val() + ' line endings selected');
+    console.log(jQuery('#input_select_newlines').val() + ' line endings selected');
   });
 
   // General Settings - Night mode
@@ -511,7 +511,7 @@ jQuery(document).ready(function () {
 
   jQuery(document).on('input', '#input_range_feedback_gain', function () {
     synth.delay.gain = jQuery(this).val();
-    debug(synth.delay.gain);
+    console.log(synth.delay.gain);
     const now = synth.now()
     synth.delay.gainL.gain.setValueAtTime(synth.delay.gain, now);
     synth.delay.gainR.gain.setValueAtTime(synth.delay.gain, now);

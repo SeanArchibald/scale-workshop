@@ -96,8 +96,6 @@ class Voice {
     this.sustain = envelope.sustain
     this.releaseTime = envelope.releaseTime
 
-    // debug(envelope);
-
     this.oscillators = [];
   }
 
