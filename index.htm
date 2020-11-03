@@ -139,6 +139,10 @@
               <li><a href="#" onclick="event.preventDefault(); export_kontakt_script();"><span
                     class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Kontakt Tuning Script
                   (.txt)</a></li>
+              <li><a href="#" onclick="event.preventDefault(); exportHarmorPitchMap();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download
+                  Harmor Pitch Map (.fnv)</a></li>
+              <li><a href="#" onclick="event.preventDefault(); exportSytrusPitchMap();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download
+                  Sytrus Pitch Map (.fnv)</a></li>
               <li class="divider"></li>
               <li><a href="#" onclick="event.preventDefault(); export_reference_deflemask();"><span
                     class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Deflemask 'fine tune'
@@ -798,6 +802,7 @@
   <script src="src/lib/jquery-ui-1.12.1/external/jquery/jquery.js"></script>
   <script src="src/lib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
   <script src="src/lib/eventemitter3.js"></script>
+  <script src="src/lib/ramda-0.27.1.min.js"></script>
 
   <!-- Scale Workshop scripts -->
   <script src="src/js/model.js"></script>

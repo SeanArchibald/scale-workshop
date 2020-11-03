@@ -11,11 +11,17 @@ function export_error() {
   }
 }
 
-function save_file( filename, contents ) {
+function save_file( filename, contents, raw ) {
   var link = document.createElement('a');
   link.download = filename;
-  link.href = "data:application/octet-stream," + encodeURIComponent( contents );
-  debug( link.href );
+
+  if (raw === true) {
+    const blob = new Blob([contents], { type: 'application/octet-stream' })
+    link.href = window.URL.createObjectURL(blob)
+  } else {
+    link.href = "data:application/octet-stream," + encodeURIComponent( contents );
+  }
+
   link.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window})); // opens save dialog
 }
 
@@ -260,6 +266,60 @@ function export_kontakt_script() {
   // success
   return true;
 
+}
+
+function exportImageLinePitchMap(range) {
+  const { clamp } = R
+
+  if ( export_error() ) {
+    return
+  }
+  const NB_NOTES = 121 // IL products can only retune from C0 to C10
+  const HEADER_BYTES = Uint8Array.from([3, 0, 0, 0, 3, 0, 0, 0, NB_NOTES, 0, 0, 0])
+  const ENDING_BYTES = Uint8Array.from([0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255])
+  const X_STRIDE = 1/NB_NOTES // constant x offset from one point to the next
+  const CURVE_DATA = 33554432 // curve data for straight line, observed experimentally
+
+  const baseFreqOffset = Math.log2(tuning_table.base_frequency / 440) // in number of octaves
+
+  // construct point data
+  let points = new ArrayBuffer(121 * 24)
+  let pointsDoubles = new Float64Array(points)
+  let pointsUint32 = new Uint32Array(points)
+  for (let i = 0; i < NB_NOTES; i++) {
+    const edo12cents = (i - 69) * 100
+    const offset = tuning_table.cents[i] - edo12cents
+    const normalizedOffset = ((offset / 1200 + baseFreqOffset) / range) * 0.5 + 0.5
+    const yCoord = clamp(0, 1, normalizedOffset)
+    pointsDoubles[i * 3 + 1] = yCoord
+    if (i !== 0) { // no x offset and no curve data for first point
+      pointsDoubles[i * 3] = X_STRIDE
+      pointsUint32[i * 6 + 4] = 0
+      pointsUint32[i * 6 + 5] = CURVE_DATA
+    }
+  }
+
+  // assemble .fnv file
+  let file = new Uint8Array(HEADER_BYTES.length + points.byteLength + ENDING_BYTES.length)
+  let offset = 0
+  file.set(HEADER_BYTES, offset)
+  offset += HEADER_BYTES.length
+  file.set(new Uint8Array(points), offset)
+  offset += points.byteLength
+  file.set(ENDING_BYTES, offset)
+
+  save_file(tuning_table.filename + '.fnv', file, true)
+
+  // success
+  return true
+}
+
+function exportHarmorPitchMap() {
+  exportImageLinePitchMap(5)
+}
+
+function exportSytrusPitchMap() {
+  exportImageLinePitchMap(4)
 }
 
 function export_reference_deflemask() {
