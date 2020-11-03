@@ -109,15 +109,18 @@ function isRatio(input) {
 function getLineType(input) {
   if (isCent(input)) {
     return LINE_TYPE.CENTS
-  } else if (isCommaDecimal(input)) {
-    return LINE_TYPE.DECIMAL
-  } else if (isNOfEdo(input)) {
-    return LINE_TYPE.N_OF_EDO
-  } else if (isRatio(input)) {
-    return LINE_TYPE.RATIO
-  } else {
-    return LINE_TYPE.INVALID
   }
+  if (isCommaDecimal(input)) {
+    return LINE_TYPE.DECIMAL
+  }
+  if (isNOfEdo(input)) {
+    return LINE_TYPE.N_OF_EDO
+  }
+  if (isRatio(input)) {
+    return LINE_TYPE.RATIO
+  }
+
+  return LINE_TYPE.INVALID
 }
 
 // convert any input 'line' to decimal
