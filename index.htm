@@ -179,7 +179,7 @@
         <form>
           <label>Scale name/description</label>
           <div class="form-group">
-            <input id="txt_name" name="base_frequency" type="text" class="form-control"></input>
+            <input id="txt_name" name="base_frequency" type="text" class="form-control" />
           </div>
 
           <label>Scale data <a href="guide.htm#manual-data-entry" target="_blank"><span
@@ -196,11 +196,11 @@
             <label>Base frequency (note 1/1)</label>
             <div class="input-group">
               <input id="txt_base_frequency" name="base_frequency" type="number" min="0.0001" max="999999"
-                class="form-control" value="440" title="Set the frequency (in Hz) of note 1/1"></input>
+                class="form-control" value="440" title="Set the frequency (in Hz) of note 1/1" />
               <div class="input-group-addon">Hz</div>
             </div>
             <input name="Auto" id="btn_frequency_auto" type="button" value="Auto" class="btn btn-default pull-right"
-              title="Automatically set base frequency from the MIDI note, assuming 12-EDO A440Hz"></input>
+              title="Automatically set base frequency from the MIDI note, assuming 12-EDO A440Hz" />
           </div>
 
           <div class="form-group">
@@ -208,13 +208,13 @@
             <div class="input-group"
               title="Set the MIDI note number to be note 1/1. By default this is 69 (A above middle C).">
               <input id="txt_base_midi_note" name="base_midi_note" type="number" min="0" max="127" step="1"
-                class="form-control" value="69"></input>
+                class="form-control" value="69" />
               <div id="base_midi_note_name" class="input-group-addon" style="min-width:5em;">A5</div>
             </div>
           </div>
 
           <div class="form-group">
-            <input name="Clear" id="btn_clear" type="button" value="Clear scale" class="btn btn-danger"></input>
+            <input name="Clear" id="btn_clear" type="button" value="Clear scale" class="btn btn-danger" />
           </div>
         </form>
       </div>
@@ -250,7 +250,7 @@
 
                       <div class="checkbox">
                         <label>
-                          <input id="input_checkbox_night_mode" type="checkbox"></input> <label>Night mode</label>
+                          <input id="input_checkbox_night_mode" type="checkbox" /> <label>Night mode</label>
                         </label>
                       </div>
                     </div>
@@ -296,7 +296,7 @@
                       <label>Delay effect</label>
                       <div class="checkbox">
                         <label>
-                          <input id="input_checkbox_delay_on" type="checkbox"></input> On
+                          <input id="input_checkbox_delay_on" type="checkbox" /> On
                         </label>
                       </div>
                     </div>
@@ -372,7 +372,7 @@
                         title="Examples: black grey white red green blue palevioletred antiquewhite steelblue olive">white black white white black white black white white black white black</textarea>
                       <input name="Auto" id="btn_key_colors_auto" type="button" value="Auto"
                         class="btn btn-default pull-right"
-                        title="Automatically colour keys based on your scale size. Auto colouring is not optimal but a good starting point."></input>
+                        title="Automatically colour keys based on your scale size. Auto colouring is not optimal but a good starting point." />
                     </div>
                   </form>
                 </div>
@@ -406,12 +406,12 @@
       <label>Number of divisions</label>
       <div class="form-group">
         <input id="input_number_of_divisions" name="" type="number" min="1" max="999999" class="form-control"
-          value="5"></input>
+          value="5" />
       </div>
 
       <label>Interval to divide</label>
       <div class="form-group">
-        <input id="input_interval_to_divide" name="" type="text" class="form-control" value="2/1"></input>
+        <input id="input_interval_to_divide" name="" type="text" class="form-control" value="2/1" />
       </div>
     </form>
   </div>
@@ -420,30 +420,30 @@
     <form>
       <label>Generator</label>
       <div class="form-group">
-        <input id="input_rank-2_generator" name="" type="text" class="form-control" value="3/2"></input>
+        <input id="input_rank-2_generator" name="" type="text" class="form-control" value="3/2" />
       </div>
 
       <label>Period</label>
       <div class="form-group">
-        <input id="input_rank-2_period" name="" type="text" class="form-control" value="2/1"></input>
+        <input id="input_rank-2_period" name="" type="text" class="form-control" value="2/1" />
       </div>
 
       <label>Scale size</label>
       <div class="form-group">
         <input id="input_rank-2_size" name="" type="number" min="2" max="99999" step="1" class="form-control"
-          value="7"></input>
+          value="7" />
       </div>
 
       <label>Generators up/down from 1/1</label>
       <div class="form-group form-inline">
         <div class="input-group">
           <input id="input_rank-2_up" name="" type="number" min="0" max="6" step="1" class="form-control" value="6"
-            title="Number of generators up" style="min-width:5em;"></input>
+            title="Number of generators up" style="min-width:5em;" />
           <div class="input-group-addon">Up</div>
         </div>
         <div class="input-group">
           <input id="input_rank-2_down" name="" type="number" min="0" max="99999" step="1" class="form-control"
-            value="0" disabled></input>
+            value="0" disabled />
           <div class="input-group-addon">Down</div>
         </div>
       </div>
@@ -453,7 +453,7 @@
       onclick="show_mos_cf( jQuery('#input_rank-2_period').val(), jQuery('#input_rank-2_generator').val(), jQuery('#input_rank-2_size').val(), jQuery('#input_rank-2_mos_threshold').val() );"
       style="float:left;">Show MOS</button>
     <p style="text-align:right;">(ignore MOS with steps smaller than <input id="input_rank-2_mos_threshold" name=""
-        type="number" min="0.1" max="600" value="2.5" style="width:4em;"></input> cents)</p>
+        type="number" min="0.1" max="600" value="2.5" style="width:4em;" /> cents)</p>
     <span id="info_rank_2_mos" style="display:block;margin-top:10px;"></span>
   </div>
 
@@ -462,13 +462,13 @@
       <label>Lowest harmonic</label>
       <div class="form-group">
         <input id="input_lowest_harmonic" name="" type="number" min="1" max="999999" step="1" class="form-control"
-          value="8"></input>
+          value="8" />
       </div>
 
       <label>Highest harmonic</label>
       <div class="form-group">
         <input id="input_highest_harmonic" name="" type="number" min="1" max="999999" step="1" class="form-control"
-          value="16"></input>
+          value="16" />
       </div>
     </form>
   </div>
@@ -478,13 +478,13 @@
       <label>Lowest subharmonic</label>
       <div class="form-group">
         <input id="input_lowest_subharmonic" name="" type="number" min="1" max="999999" step="1" class="form-control"
-          value="8"></input>
+          value="8" />
       </div>
 
       <label>Highest subharmonic</label>
       <div class="form-group">
         <input id="input_highest_subharmonic" name="" type="number" min="1" max="999999" step="1" class="form-control"
-          value="16"></input>
+          value="16" />
       </div>
     </form>
   </div>
@@ -493,15 +493,15 @@
     <form>
       <label>Chord</label>
       <div class="form-group">
-        <input id="input_chord" name="" type="text" class="form-control" value="4:5:6:7:8"></input>
+        <input id="input_chord" name="" type="text" class="form-control" value="4:5:6:7:8" />
       </div>
       <div class="form-group">
         <label>
-          <input id="input_invert_chord" type="checkbox"></input> Invert chord
+          <input id="input_invert_chord" type="checkbox" /> Invert chord
         </label>
       </div>
       <label>
-        <input id="input_convert_to_ratios" type="checkbox"></input> Convert all to ratios
+        <input id="input_convert_to_ratios" type="checkbox" /> Convert all to ratios
       </label>
     </form>
   </div>
@@ -536,7 +536,7 @@
       <label>Stretch ratio</label>
       <div class="form-group">
         <input id="input_stretch_ratio" name="" type="number" class="form-control" value="1.005" min="0.0001"
-          max="99999"></input>
+          max="99999" />
       </div>
     </form>
   </div>
@@ -547,13 +547,13 @@
       <label>Maximum variance in cents</label>
       <div class="form-group">
         <input id="input_cents_max_variance" name="" type="number" class="form-control" value="10" min="0"
-          max="99999"></input>
+          max="99999" />
       </div>
 
       <div class="checkbox"
         title="By default, the 'octave' won't be detuned. This prevents the scale sound progressively more out-of-tune as you go up/down by octaves. Check this box option to over-ride this.">
         <label>
-          <input id="input_checkbox_vary_period" type="checkbox"></input> Vary the octave
+          <input id="input_checkbox_vary_period" type="checkbox" /> Vary the octave
         </label>
       </div>
     </form>
@@ -606,7 +606,7 @@
       <label>BPM</label>
       <div class="form-group">
         <input id="input_modify_sync_beating_bpm" name="" type="number" class="form-control" value="100"
-          placeholder="100"></input>
+          placeholder="100" />
       </div>
 
       <label>Resolution</label>
@@ -638,11 +638,11 @@
     <form>
       <label>Scale Degree</label>
       <div class="form-group">
-        <input id="input_scale_degree" name="" type="number" class="form-control" value="1" min="1" max="128"></input>
+        <input id="input_scale_degree" name="" type="number" class="form-control" value="1" min="1" max="128" />
       </div>
       <label>Interval</label>
       <div class="form-group">
-        <input id="input_interval_to_approximate" name="" tyep="number" class="form-control" value=""></input>
+        <input id="input_interval_to_approximate" name="" tyep="number" class="form-control" value="" />
       </div>
       <div class="form-group">
         <label>Approximation</label>
@@ -669,12 +669,12 @@
         <div class="form-group col-md-6">
           <label>Min Prime Limit</label>
           <input id="input_approx_min_prime" name="" type="number" class="form-control" value="2" min="0"
-            max="7919"></input>
+            max="7919" />
         </div>
         <div class="form-group col-md-6">
           <label>Max Prime Limit</label>
           <input id="input_approx_max_prime" name="" type="number" class="form-control" value="31" min="0"
-            max="7919"></input>
+            max="7919" />
         </div>
       </div>
     </form>
@@ -685,7 +685,7 @@
     <p>Share your scale using the sharing link.</p>
     <form>
       <div class="form-group">
-        <input id="input_share_url" name="" type="text" class="form-control" value="" readonly></input>
+        <input id="input_share_url" name="" type="text" class="form-control" value="" readonly />
       </div>
     </form>
     <p class="social-icons">
