@@ -18,7 +18,7 @@ function keycode_to_midinote(keycode) {
   // get row/col vals from the keymap
   var key = synth.keymap[keycode];
 
-  if ( isNil(key) ) {
+  if ( R.isNil(key) ) {
     // return false if there is no note assigned to this key
     return false;
   } else {
@@ -28,7 +28,7 @@ function keycode_to_midinote(keycode) {
 }
 
 function touch_to_midinote([ row, col ]) {
-  if (isNil(row) || isNil(col)) {
+  if (R.isNil(row) || R.isNil(col)) {
     return false
   } else {
     return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
@@ -91,12 +91,12 @@ document.addEventListener( "keyup", function(event) {
 jQuery( '#virtual-keyboard' ).on('touchstart', 'td', function (event) {
   event.preventDefault();
   jQuery(event.originalEvent.targetTouches[0].target).addClass('active');
-  synth.noteOn(tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
+  synth.noteOn(R.tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
 });
 
 // TOUCHEND -- virtual keyboard
 jQuery( '#virtual-keyboard' ).on('touchend', 'td', function (event) {
   event.preventDefault();
   jQuery(event.originalEvent.changedTouches[0].target).removeClass('active');
-  synth.noteOff(tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
+  synth.noteOff(R.tap(debug, touch_to_midinote(getCoordsFromKey(event.target))));
 });

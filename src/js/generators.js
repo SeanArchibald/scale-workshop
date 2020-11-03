@@ -6,12 +6,12 @@ function generate_equal_temperament() {
 
   var divider = getFloat('#input_number_of_divisions', 'Warning: no divider')
   var period = getString('#input_interval_to_divide', 'Warning: no interval to divide')
-
+  
   // convert period to cents
   var period_cents = line_to_cents(period);
 
   // bail if period is invalid
-  if (!period_cents) {
+  if (period_cents === false) {
     return false;
   }
 

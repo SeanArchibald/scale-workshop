@@ -8,7 +8,7 @@ function modify_stretch() {
   // remove white space from tuning data field
   trimSelf("#txt_tuning_data")
 
-  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+  if ( R.isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -25,8 +25,8 @@ function modify_stretch() {
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
   for ( let i = 0; i < lines.length; i++ ) {
-    const line = trim(toString(lines[i]))
-    if ( !isEmpty(line) ) {
+    const line = R.trim(R.toString(lines[i]))
+    if ( !R.isEmpty(line) ) {
       switch (getLineType(line)) {
         case "invalid":
           return false;
@@ -60,7 +60,7 @@ function modify_random_variance() {
   // remove white space from tuning data field
   trimSelf("#txt_tuning_data")
 
-  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+  if ( R.isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -117,7 +117,7 @@ function modify_mode() {
   // remove white space from tuning data field
   trimSelf("#txt_tuning_data")
 
-  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+  if ( R.isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -224,14 +224,14 @@ function modify_sync_beating() {
   // remove white space from tuning data field
   trimSelf("#txt_tuning_data")
 
-  if ( isEmpty( jQuery( "#txt_tuning_data" ).val() ) ) {
+  if ( R.isEmpty( jQuery( "#txt_tuning_data" ).val() ) ) {
 
     alert( "No tuning data to modify." );
     return false;
 
   }
 
-  if ( isEmpty( jQuery( "#input_modify_sync_beating_bpm" ).val() ) ) {
+  if ( R.isEmpty( jQuery( "#input_modify_sync_beating_bpm" ).val() ) ) {
 
     alert( "Please enter a BPM value." );
     return false;
@@ -253,7 +253,7 @@ function modify_sync_beating() {
   for ( let i = 0; i < lines.length; i++ ) {
 
     lines[i] = line_to_decimal( lines[i] );
-    new_tuning += toString(Math.round(lines[i] * resolution)) + "/" + toString(resolution) + unix_newline;
+    new_tuning += R.toString(Math.round(lines[i] * resolution)) + "/" + R.toString(resolution) + unix_newline;
 
   }
   new_tuning = new_tuning.trim(); // remove final newline
@@ -288,7 +288,7 @@ function modify_key_transpose() {
   // remove white space from tuning data field
   trimSelf("#txt_tuning_data")
 
-  if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+  if ( R.isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
     alert( "No tuning data to modify." );
     return false;
@@ -388,7 +388,7 @@ function modify_update_approximations() {
     
     jQuery("#approximation_selection").empty();
 
-    if (!(isEmpty(current_approximations))) {
+    if (!(R.isEmpty(current_approximations))) {
         
         var interval = line_to_decimal( jQuery ("#input_interval_to_approximate").val() );
         var mincentsd = parseFloat( jQuery ( "#input_min_error").val() );

@@ -49,9 +49,9 @@ class Synth {
   noteOn ( midinote, velocity = 127 ) {
     const frequency = tuning_table.freq[ midinote ];
 
-    if ( !isNil(frequency) ) {
+    if ( !R.isNil(frequency) ) {
       // make sure note triggers only on first input (prevent duplicate notes)
-      if ( isNil(this.active_voices[midinote]) ) {
+      if ( R.isNil(this.active_voices[midinote]) ) {
         this.init()
 
         const voice = new Voice( this.audioCtx, frequency, velocity );
@@ -66,7 +66,7 @@ class Synth {
     }
   }
   noteOff ( midinote ) {
-    if ( !isNil(this.active_voices[midinote]) ) {
+    if ( !R.isNil(this.active_voices[midinote]) ) {
       this.active_voices[midinote].stop();
       delete this.active_voices[midinote];
       jQuery( "#tuning-table-row-" + midinote ).removeClass( "bg-playnote" );

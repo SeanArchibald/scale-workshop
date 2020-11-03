@@ -5,10 +5,10 @@
 jQuery( document ).ready( function() {
 
   // automatically load generatal options saved in localStorage (if available)
-  if (!isNil(Storage)) {
+  if (!R.isNil(Storage)) {
 
     // recall newline format
-    if ( !isNil(localStorage.getItem("newline")) ) {
+    if ( !R.isNil(localStorage.getItem("newline")) ) {
       jQuery( '#input_select_newlines' ).val( localStorage.getItem("newline") );
     } else {
       debug("localStorage: assuming default of windows");
@@ -22,7 +22,7 @@ jQuery( document ).ready( function() {
     }
 
     // recall computer keyboard layout
-    if ( !isNil(localStorage.getItem( 'keybd_region' )) ) {
+    if ( !R.isNil(localStorage.getItem( 'keybd_region' )) ) {
       jQuery( "#input_select_keyboard_layout" ).val( localStorage.getItem( 'keybd_region' ) );
       synth.keymap = Keymap[localStorage.getItem( 'keybd_region' )];
     }
@@ -192,7 +192,7 @@ jQuery( document ).ready( function() {
                                         
 	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim());
 
-	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+	if ( R.isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 		alert( "No tuning data to modify." );
 		return false;
 	 }
@@ -243,7 +243,7 @@ jQuery( document ).ready( function() {
   jQuery( "#input_scale_degree").change( function() {
 	jQuery( "#txt_tuning_data" ).val( jQuery( "#txt_tuning_data" ).val().trim() );
 
-	if ( isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
+	if ( R.isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 		alert( "No tuning data to modify." );
 		return false;
 	 }
@@ -570,7 +570,7 @@ jQuery( document ).ready( function() {
     // fall back in some situations
     if ( size < 2 ) {
 
-      if ( isEmpty(jQuery( "#input_key_colors" ).val()) ) {
+      if ( R.isEmpty(jQuery( "#input_key_colors" ).val()) ) {
         // field is empty so we'll apply a sensible default key colouring
         jQuery( "#input_key_colors" ).val( "white black white white black white black white white black white black" );
         set_key_colors( jQuery( "#input_key_colors" ).val() );

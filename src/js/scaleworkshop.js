@@ -2,26 +2,6 @@
  * INIT
  */
 
-/* global location, localStorage, alert, FileReader, DOMParser */
-/*
-import jQuery from 'jquery'
-import {
-  debug,
-  redirectToHTTPS,
-  decimal_to_cents,
-  isEmpty,
-  getSearchParamOr,
-  getSearchParamAsNumberOr,
-  sanitize_filename,
-  getLineType,
-  line_to_decimal,
-  isNil
-} from './helpers'
-import synth from './synth'
-import { LINE_TYPE } from './constants'
-import { get_scale_url, update_page_url } from './exporters'
-*/
-
 // check if coming from a Back/Forward history navigation.
 // need to reload the page so that url params take effect
 jQuery(window).on('popstate', function() {
@@ -99,7 +79,7 @@ function generate_tuning_table( tuning ) {
 function set_key_colors( list ) {
 
   // check if the list of colors is empty
-  if ( isEmpty(list) ) {
+  if ( R.isEmpty(list) ) {
     // bail, leaving the previous colors in place
     return false;
   }
@@ -162,7 +142,7 @@ function parse_url() {
     var s = decodeHTML(str);
     s = s.replace(/[_ ]+/g, ''); // remove underscores and spaces
     var a = s.split(newlineTest); // split by line into an array
-    a = a.filter(line => !line.startsWith('<') && !line.startsWith('{') && !isEmpty(line)); // remove <nowiki> tag, wiki templates and blank lines
+    a = a.filter(line => !line.startsWith('<') && !line.startsWith('{') && !R.isEmpty(line)); // remove <nowiki> tag, wiki templates and blank lines
     a = a.map(line => line.split('!')[0]); // remove .scl comments
     a = a.slice(2); // remove .scl metadata
     return a.join(unix_newline);
@@ -244,7 +224,7 @@ function parse_tuning_data() {
   for ( let i = 0; i < lines.length; i++ ) {
 
     // check that line is not empty
-    if ( !isEmpty(lines[i]) ) {
+    if ( !R.isEmpty(lines[i]) ) {
 
       if ( getLineType( lines[i] ) === LINE_TYPE.INVALID ) {
         jQuery("#txt_tuning_data").parent().addClass("has-error");
@@ -354,7 +334,7 @@ function parse_imported_scala_scl( event ) {
   var input = event.target;
 
   // bail if user didn't actually load a file
-  if ( isNil(input.files[0]) ) {
+  if ( R.isNil(input.files[0]) ) {
     return false;
   }
 
@@ -395,7 +375,7 @@ function parse_imported_anamark_tun( event ) {
   var input = event.target;
 
   // bail if user didn't actually load a file
-  if ( isNil(input.files[0]) ) {
+  if ( R.isNil(input.files[0]) ) {
     return false;
   }
 

@@ -1,7 +1,7 @@
 function export_error() {
 
   // no tuning data to export
-  if ( isNil(tuning_table['freq'][ tuning_table['base_midi_note'] ]) ) {
+  if ( R.isNil(tuning_table['freq'][ tuning_table['base_midi_note'] ]) ) {
     alert( "No tuning data to export." );
     return true;
   }
@@ -94,7 +94,7 @@ function export_scala_scl() {
   var file = "! " + tuning_table['filename'] + ".scl" + newline;
   file += "! Created using " + APP_TITLE + newline;
   file += "!" + newline;
-  if ( isEmpty( jQuery( "#txt_name" ).val() ) ) {
+  if ( R.isEmpty( jQuery( "#txt_name" ).val() ) ) {
     file += "Untitled tuning";
   }
   else {
@@ -364,10 +364,10 @@ function export_reference_deflemask() {
 function get_scale_url() {
 
   var url = new URL( window.location.href );
-  var protocol = !isEmpty(url.protocol) ? url.protocol + '//' : 'http://';
+  var protocol = !R.isEmpty(url.protocol) ? url.protocol + '//' : 'http://';
   var host = url.host;
-  var pathname = !isEmpty(url.pathname) ? url.pathname : '/scaleworkshop/';
-  // var domain = !isNil(window.location.href) ? window.location.href : 'http://sevish.com/scaleworkshop';
+  var pathname = !R.isEmpty(url.pathname) ? url.pathname : '/scaleworkshop/';
+  // var domain = !R.isNil(window.location.href) ? window.location.href : 'http://sevish.com/scaleworkshop';
   var name = encodeURIComponent( jQuery("#txt_name").val() );
   var data = encodeURIComponent( jQuery("#txt_tuning_data").val() );
   var freq = encodeURIComponent( jQuery("#txt_base_frequency").val() );

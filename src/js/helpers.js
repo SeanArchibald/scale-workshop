@@ -8,55 +8,52 @@ Number.prototype.mod = function (n) {
 };
 
 // convert a cents value to decimal
-function cents_to_decimal(rawInput) {
-  const input = trim(toString(rawInput))
+function cents_to_decimal(input) {
   return Math.pow(2, (parseFloat(input) / 1200.0));
 }
 
 // convert a ratio (string 'x/y') to decimal
-function ratio_to_decimal(rawInput) {
-  if (isRatio(rawInput)) {
-    const input = trim(toString(rawInput))
+function ratio_to_decimal(input) {
+  if (isRatio(input)) {
     const [val1, val2] = input.split('/')
     return val1 / val2
   } else {
-    alert("Invalid input: " + rawInput);
+    alert("Invalid input: " + input);
     return false
   }
 }
 
 // convert a comma decimal (1,25) to decimal
-function commadecimal_to_decimal(rawInput) {
-  if (isCommaDecimal(rawInput)) {
-    const input = parseFloat(rawInput.toString().replace(',', '.'));
+function commadecimal_to_decimal(input) {
+  if (isCommaDecimal(input)) {
+    input = parseFloat(input.toString().replace(',', '.'));
     if (input === 0 || isNaN(input)) {
       return false;
     } else {
       return input;
     }
   } else {
-    alert("Invalid input: " + rawInput);
+    alert("Invalid input: " + input);
     return false;
   }
 }
 
 // convert a decimal (1.25) into commadecimal (1,25)
-function decimal_to_commadecimal(rawInput) {
-  if (isCents(rawInput)) { // a bit misleading
-    const input = rawInput.toString().replace('.', ',');
-    return input;
+function decimal_to_commadecimal(input) {
+  if (isCents(input)) { // a bit misleading
+    return input.toString().replace('.', ',');
   } else {
-    alert("Invalid input: " + rawInput);
+    alert("Invalid input: " + input);
     return false;
   }
 }
 
 // convert a decimal into cents
-function decimal_to_cents(rawInput) {
-  if (rawInput === false) {
+function decimal_to_cents(input) {
+  if (input === false) {
     return false
   }
-  const input = parseFloat(rawInput);
+  input = parseFloat(input);
   if (input === 0 || isNaN(input)) {
     return false;
   } else {
@@ -65,63 +62,58 @@ function decimal_to_cents(rawInput) {
 }
 
 // convert a ratio to cents
-function ratio_to_cents(rawInput) {
-  return decimal_to_cents(ratio_to_decimal(rawInput));
+function ratio_to_cents(input) {
+  return decimal_to_cents(ratio_to_decimal(input));
 }
 
 // convert an n-of-m-edo (string 'x\y') to decimal
-function n_of_edo_to_decimal(rawInput) {
-  if (isNOfEdo(rawInput)) {
-    const input = trim(toString(rawInput))
+function n_of_edo_to_decimal(input) {
+  if (isNOfEdo(input)) {
     const [val1, val2] = input.split('\\').map(x => parseInt(x))
     return Math.pow(2, val1 / val2);
   } else {
-    alert("Invalid input: " + rawInput);
+    alert("Invalid input: " + input);
     return false
   }
 }
 
 // convert an n-of-m-edo (string 'x\y') to cents
-function n_of_edo_to_cents(rawInput) {
-  return decimal_to_cents(n_of_edo_to_decimal(rawInput));
+function n_of_edo_to_cents(input) {
+  return decimal_to_cents(n_of_edo_to_decimal(input));
 }
 
-function isCent(rawInput) {
+function isCent(input) {
   // true, when the input has numbers at the beginning, followed by a dot, ending with any number of numbers
   // for example: 700.00
-  const input = trim(toString(rawInput))
   return /^\d+\.\d*$/.test(input)
 }
 
-function isCommaDecimal(rawInput) {
+function isCommaDecimal(input) {
   // true, when the input has numbers at the beginning, followed by a comma, ending with any number of numbers
   // for example: 1,25
-  const input = trim(toString(rawInput))
   return /^\d+\,\d*$/.test(input);
 }
 
-function isNOfEdo(rawInput) {
+function isNOfEdo(input) {
   // true, when the input has numbers at the beginning and the end, separated by a single backslash
   // for example: 7\12
-  const input = trim(toString(rawInput))
   return /^\d+\\\d+$/.test(input)
 }
 
-function isRatio(rawInput) {
+function isRatio(input) {
   // true, when the input has numbers at the beginning and the end, separated by a single slash
   // for example: 3/2
-  const input = trim(toString(rawInput))
   return /^\d+\/\d+$/.test(input)
 }
 
-function getLineType(rawInput) {
-  if (isCent(rawInput)) {
+function getLineType(input) {
+  if (isCent(input)) {
     return LINE_TYPE.CENTS
-  } else if (isCommaDecimal(rawInput)) {
+  } else if (isCommaDecimal(input)) {
     return LINE_TYPE.DECIMAL
-  } else if (isNOfEdo(rawInput)) {
+  } else if (isNOfEdo(input)) {
     return LINE_TYPE.N_OF_EDO
-  } else if (isRatio(rawInput)) {
+  } else if (isRatio(input)) {
     return LINE_TYPE.RATIO
   } else {
     return LINE_TYPE.INVALID
@@ -129,10 +121,10 @@ function getLineType(rawInput) {
 }
 
 // convert any input 'line' to decimal
-function line_to_decimal(rawInput) {
+function line_to_decimal(input) {
   let converterFn = () => false
 
-  switch (getLineType(rawInput)) {
+  switch (getLineType(input)) {
     case LINE_TYPE.CENTS:
       converterFn = cents_to_decimal
       break
@@ -147,12 +139,12 @@ function line_to_decimal(rawInput) {
       break
   }
 
-  return converterFn(rawInput)
+  return converterFn(input)
 }
 
 // convert any input 'line' to a cents value
-function line_to_cents(rawInput) {
-  return decimal_to_cents(line_to_decimal(rawInput));
+function line_to_cents(input) {
+  return decimal_to_cents(line_to_decimal(input));
 }
 
 // convert a midi note number to a frequency in Hertz
@@ -175,7 +167,7 @@ function ftom(input) {
 // convert an input string into a filename-sanitized version
 // if input is empty, returns "tuning" as a fallback
 function sanitize_filename(input) {
-  if (isEmpty(input.trim())) {
+  if (R.isEmpty(input.trim())) {
     return "tuning";
   }
   return input.replace(/[|&;$%@"<>()+,?]/g, "").replace(/\//g, "_");
@@ -304,12 +296,12 @@ function get_convergent(cf, depth = 0) {
 }
 
 // convert a decimal to ratio (string 'x/y'), may have rounding errors for irrationals
-function decimal_to_ratio(rawInput, iterations = 15, depth = 0) {
+function decimal_to_ratio(input, iterations = 15, depth = 0) {
 
-  if (rawInput === false)
+  if (input === false)
     return false;
 
-  const input = parseFloat(rawInput);
+  input = parseFloat(input);
 
   if (input === 0 || isNaN(input)) {
     return false;
@@ -320,12 +312,12 @@ function decimal_to_ratio(rawInput, iterations = 15, depth = 0) {
   }
 }
 
-function cents_to_ratio(rawInput, iterations = 15, depth = 0) {
-  return decimal_to_ratio(cents_to_decimal(rawInput), iterations, depth);
+function cents_to_ratio(input, iterations = 15, depth = 0) {
+  return decimal_to_ratio(cents_to_decimal(input), iterations, depth);
 }
 
-function n_of_edo_to_ratio(rawInput, iterations = 15, depth = 0) {
-  return decimal_to_ratio(n_of_edo_to_decimal(rawInput), iterations, depth);
+function n_of_edo_to_ratio(input, iterations = 15, depth = 0) {
+  return decimal_to_ratio(n_of_edo_to_decimal(input), iterations, depth);
 }
 
 // calculate all best rational approximations given a continued fraction
@@ -769,7 +761,7 @@ function invert_chord(chord) {
 
 function debug(msg = "") {
   if (debug_enabled) {
-    msg = isEmpty(msg) ? "Debug" : msg;
+    msg = R.isEmpty(msg) ? "Debug" : msg;
     console.log(msg);
     return true;
   }
@@ -790,7 +782,7 @@ function getFloat(id, errorMessage) {
 function getString(id, errorMessage) {
   var value = jQuery(id).val();
 
-  if (isEmpty(value) || isNil(value)) {
+  if (R.isEmpty(value) || R.isNil(value)) {
     alert(errorMessage);
     return false;
   }
@@ -801,7 +793,7 @@ function getString(id, errorMessage) {
 function getLine(id, errorMessage) {
   var value = jQuery(id).val();
 
-  if (isEmpty(value) || parseFloat(value) <= 0 || isNil(value) || getLineType(value) === LINE_TYPE.INVALID) {
+  if (R.isEmpty(value) || parseFloat(value) <= 0 || R.isNil(value) || getLineType(value) === LINE_TYPE.INVALID) {
     alert(errorMessage);
     return false;
   }
@@ -821,15 +813,7 @@ function setTuningData(tuning) {
   jQuery("#txt_tuning_data").val(tuning)
 }
 
-const isEmpty = string => string === ''
-
-const isNil = x => typeof x === 'undefined' || x === null
-
 const isFunction = x => typeof x === 'function'
-
-const toString = input => input + ''
-
-const trim = input => input.trim()
 
 function getCoordsFromKey(tdOfKeyboard) {
   try {
@@ -838,24 +822,6 @@ function getCoordsFromKey(tdOfKeyboard) {
     return []
   }
 }
-
-// Runs the given function with the supplied value, then returns the value
-// This is a great tool for injecting debugging in the middle of expressions
-// Note: fn does not need to return the value, tap will handle that
-//
-// example 1: const result = toString(tap(function(result){ debug(result) }, 3 * 5))
-// example 2: const result = toString(tap(result => debug(result), 3 * 5))
-// example 3: const result = toString(tap(debug, 3 * 5))
-//
-// the above examples are equal to:
-//   let result = 3 * 5
-//   debug(result)
-//   result = toString(result)
-function tap(fn, value) {
-  fn(value)
-  return value
-}
-
 
 function getSearchParamOr(valueIfMissing, key, url) {
   return url.searchParams.has(key) ? url.searchParams.get(key) : valueIfMissing
