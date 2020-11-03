@@ -706,33 +706,26 @@ jQuery( document ).ready( function() {
   run_user_scripts_on_document_ready();
 
   const onModeChange = input => {
-    const { sum } = R
-  
     const cntr = $('#input_modify_mode_counter')
   
-    const updateCntr = (value) => {
+    const updateCntr = value => {
       cntr.text(value)
     }
   
     const isInputEmpty = input === ''
-    if (isInputEmpty) {
-      updateCntr('0')
-      return
-    }
-  
     const isInputValid = /^(\d+\s+)*\d+$/.test(input)
-    if (!isInputValid) {
-      updateCntr('×')
-      return
+
+    let sum = 0
+    if (!isInputEmpty && isInputValid) {
+      const numbers = input.split(/\s+/).map(numberString => parseInt(numberString))
+      sum = R.sum(numbers)
     }
-  
-    const numbers = input.split(/\s+/).map(numberString => parseInt(numberString))
-    updateCntr(`${sum(numbers)}`)
+    updateCntr(sum)
   }
   
   $('#input_modify_mode').on('input', e => {
     onModeChange(e.target.value.trim())
   })
 
-  onModeChange($('#input_modify_mode').val())
+  onModeChange($('#input_modify_mode').val().trim())
 } ); // end of document ready block
