@@ -150,15 +150,16 @@ function line_to_cents(input) {
 // convert a midi note number to a frequency in Hertz
 // assuming 12-edo at 440Hz
 function mtof(input) {
-  return 8.17579891564 * Math.pow(SEMITONE_RATIO_IN_12_EDO, parseInt(input));
+  const frequencyOfC0 = 8.17579891564
+  return frequencyOfC0 * Math.pow(SEMITONE_RATIO_IN_12_EDO, parseInt(input));
 }
 
 // convert a frequency to a midi note number and cents offset
 // assuming 12-edo at 440Hz
 // returns an array [midi_note_number, cents_offset]
 function ftom(input) {
-  input = parseFloat(input);
-  var midi_note_number = 69 + (12 * Math.log2(input / 440));
+  const midiNoteNumberOfA4 = 69
+  var midi_note_number = midiNoteNumberOfA4 + (12 * Math.log2(parseFloat(input) / 440));
   var cents_offset = (midi_note_number - Math.round(midi_note_number)) * 100;
   midi_note_number = Math.round(midi_note_number);
   return [midi_note_number, cents_offset];
@@ -175,7 +176,7 @@ function sanitize_filename(input) {
 
 // clear all inputted scale data
 function clear_all() {
-
+  const midiNoteNumberOfA4 = 69
   // empty text fields
   jQuery("#txt_tuning_data").val("");
   jQuery("#txt_name").val("");
@@ -185,7 +186,7 @@ function clear_all() {
 
   // restore default base tuning
   jQuery("#txt_base_frequency").val(440);
-  jQuery("#txt_base_midi_note").val(69);
+  jQuery("#txt_base_midi_note").val(midiNoteNumberOfA4);
 
   // re-init tuning_table
   tuning_table = {
@@ -196,7 +197,7 @@ function clear_all() {
     cents: [], // an array containing the cents value for each MIDI note
     decimal: [], // an array containing the frequency ratio expressed as decimal for each MIDI note
     base_frequency: 440, // init val
-    base_midi_note: 69, // init val
+    base_midi_note: midiNoteNumberOfA4, // init val
     description: "",
     filename: ""
   };
