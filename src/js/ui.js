@@ -3,10 +3,6 @@
  * User interface
  */
 
-/*
-import jQuery from 'jquery'
-*/
-
 // use jQuery UI tooltips instead of default browser tooltips
 jQuery( function() {
   jQuery( document ).tooltip();

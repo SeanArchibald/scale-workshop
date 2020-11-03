@@ -1,7 +1,3 @@
-/*
-import jQuery from 'jquery'
-*/
-
 class Delay {
   constructor (synth) {
     this.time = 0.3
@@ -81,7 +77,3 @@ class Delay {
     }
   }
 }
-
-/*
-export default Delay
-*/

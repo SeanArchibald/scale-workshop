@@ -3,10 +3,6 @@
  * Capture MIDI input for synth
  */
 
-/*
-import jQuery from 'jquery'
-*/
-
 // https://www.midi.org/specifications/item/table-1-summary-of-midi-message
 const commands = {
   noteOn: 0b1001,

@@ -1,7 +1,3 @@
-/*
-import jQuery from 'jquery'
-*/
-
 class Synth {
   constructor() {
     this.keymap = Keymap.EN
@@ -102,7 +98,3 @@ class Synth {
     this.delay.gainR.gain.setValueAtTime(this.delay.gain, now);
   }
 }
-
-/*
-export default Synth
-*/

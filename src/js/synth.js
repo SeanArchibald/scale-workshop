@@ -4,10 +4,6 @@
  * Web audio synth
  */
 
-/*
-import jQuery from 'jquery'
-*/
-
 const synth = new Synth()
 
 // keycode_to_midinote()

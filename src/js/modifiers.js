@@ -2,10 +2,6 @@
  * TUNING DATA MODIFIERS
  */
 
-/*
-import jQuery from 'jquery'
-*/
-
 // stretch/compress tuning
 function modify_stretch() {
 

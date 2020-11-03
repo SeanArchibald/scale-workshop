@@ -2,10 +2,6 @@
  * EVENT HANDLERS AND OTHER DOCUMENT READY STUFF
  */
 
-/*
-import jQuery from 'jquery'
-*/
-
 jQuery( document ).ready( function() {
 
   // automatically load generatal options saved in localStorage (if available)
@@ -708,4 +704,35 @@ jQuery( document ).ready( function() {
 
   // now everything is initialised we finally run any custom user scripts
   run_user_scripts_on_document_ready();
+
+  const onModeChange = input => {
+    const { sum } = R
+  
+    const cntr = $('#input_modify_mode_counter')
+  
+    const updateCntr = (value) => {
+      cntr.text(value)
+    }
+  
+    const isInputEmpty = input === ''
+    if (isInputEmpty) {
+      updateCntr('0')
+      return
+    }
+  
+    const isInputValid = /^(\d+\s+)*\d+$/.test(input)
+    if (!isInputValid) {
+      updateCntr('×')
+      return
+    }
+  
+    const numbers = input.split(/\s+/).map(numberString => parseInt(numberString))
+    updateCntr(`${sum(numbers)}`)
+  }
+  
+  $('#input_modify_mode').on('input', e => {
+    onModeChange(e.target.value.trim())
+  })
+
+  onModeChange($('#input_modify_mode').val())
 } ); // end of document ready block

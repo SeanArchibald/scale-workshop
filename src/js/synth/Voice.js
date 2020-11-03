@@ -1,7 +1,3 @@
-/*
-import jQuery from 'jquery'
-*/
-
 const getEnvelopeByName = name => {
   const envelope = {
     attackTime: 0,

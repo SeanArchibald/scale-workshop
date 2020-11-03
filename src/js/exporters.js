@@ -1,7 +1,3 @@
-/*
-import jQuery from 'jquery'
-*/
-
 function export_error() {
 
   // no tuning data to export

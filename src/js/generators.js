@@ -2,10 +2,6 @@
  * TUNING DATA GENERATORS
  */
 
-/*
-import jQuery from 'jquery'
-*/
-
 function generate_equal_temperament() {
 
   var divider = getFloat('#input_number_of_divisions', 'Warning: no divider')

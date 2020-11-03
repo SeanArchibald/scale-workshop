@@ -2,10 +2,6 @@
  * HELPER FUNCTIONS
  */
 
-/*
-import jQuery from 'jquery'
-*/
-
 // modulo function
 Number.prototype.mod = function (n) {
   return ((this % n) + n) % n;
