@@ -7,6 +7,11 @@ Number.prototype.mod = function (n) {
   return ((this % n) + n) % n;
 };
 
+// modulo function (forward compatibility)
+function mathModulo(n, d) {
+  return ((n % d) + d) % d
+}
+
 // convert a cents value to decimal
 function cents_to_decimal(input) {
   return Math.pow(2, (parseFloat(input) / 1200.0));
@@ -218,16 +223,7 @@ function midi_note_number_to_name(input) {
 
 // calculate the sum of the values in a given array given a stopping index
 function sum_array(array, index) {
-  var sum = 0;
-
-  if (array.length <= index)
-    index = array.length - 1;
-
-  for (var i = 0; i < index; i++) {
-    sum += array[i];
-  }
-
-  return sum;
+  return array.reduce((sum, x) => sum + x, 0)
 }
 
 // rotates the array by given steps
@@ -694,7 +690,24 @@ function reduce_ratio(numerator, denominator) {
   return [nn, dd];
 }
 
-function get_lcm(array) {
+function getGCD(num1, num2) {
+  if (num1 === 0 || num2 === 0) return num1 + num2
+  else if (num1 === 1 || num2 === 1) return 1
+  else if (num1 === num2) return num1
+
+  return getGCD(num2, num1 % num2)
+}
+
+// TODO: GCD of an array
+
+function getLCM(num1, num2) {
+  if (num1 === 0 || num2 === 0) return 0
+
+  const gcd = getGCD(num1, num2)
+  return Math.trunc((Math.max(num1, num2) / gcd) * Math.min(num1, num2))
+}
+
+function getLCMArray(array) {
   let primecounts = [];
   let primefactors = [];
   var f;
@@ -729,6 +742,105 @@ function get_lcm(array) {
   return lcm;
 }
 
+// returns array of the numerator and denominator of the reduced form of given ratio
+function simplifyRatio(numerator, denominator) {
+  const gcd = getGCD(numerator, denominator)
+  return [numerator, denominator].map(x => x / gcd)
+}
+
+function simplifyRatioString(ratio) {
+  const [n, d] = ratio.split('/').map(x => parseInt(x))
+  return simplifyRatio(n, d).join('/')
+}
+
+function stackRatios(ratioStr1, ratioStr2) {
+  const [n1, d1] = ratioStr1.split('/').map(x => parseInt(x))
+  const [n2, d2] = ratioStr2.split('/').map(x => parseInt(x))
+  return simplifyRatio(n1 * n2, d1 * d2).join('/')
+}
+
+function stackNOfEDOs(nOfEdo1Str, nOfEdo2Str) {
+  const [deg1, edo1] = nOfEdo1Str.split('\\').map(x => parseInt(x))
+  const [deg2, edo2] = nOfEdo2Str.split('\\').map(x => parseInt(x))
+  const newEdo = getLCM(edo1, edo2)
+  const newDegree = (newEdo / edo1) * deg1 + (newEdo / edo2) * deg2
+  return simplifyRatio(newDegree, newEdo).join('\\')
+}
+
+function stackLines(line1, line2) {
+  const line1Type = getLineType(line1)
+  const line2Type = getLineType(line2)
+
+  // If both are ratios, preserve ratio notation
+  if (line1Type === LINE_TYPE.RATIO && line2Type === LINE_TYPE.RATIO) {
+    return stackRatios(line1, line2)
+
+    // If both are N of EDOs, preserve N of EDO notation
+  } else if (line1Type === LINE_TYPE.N_OF_EDO && line2Type === LINE_TYPE.N_OF_EDO) {
+    return stackNOfEDOs(line1, line2)
+
+    // If the first line is a decimal type, keep decimals
+  } else if (line1Type === LINE_TYPE.DECIMAL) {
+    return decimal_to_commadecimal(line_to_decimal(line1) * line_to_decimal(line2))
+
+    // All other cases convert to cents
+  } else {
+    const value = line_to_cents(line1) + line_to_cents(line2)
+    return value.toFixed(6)
+  }
+}
+
+// stacks an interval on itself. for ratios and decimals, it is a power function
+function stackSelf(line, numStacks) {
+  const lineType = getLineType(line)
+  const wholeExp = numStacks === Math.trunc(numStacks)
+
+  if (lineType === LINE_TYPE.DECIMAL) {
+    return decimal_to_commadecimal(Math.pow(line_to_decimal(line), numStacks))
+  } else if (wholeExp && lineType === LINE_TYPE.RATIO) {
+    let ratio = '1/1'
+    if (numStacks > 0) ratio = line.split('/')
+    else if (numStacks < 0) ratio = line.split('/').reverse()
+    else return ratio
+    return ratio.map(x => parseInt(Math.pow(x, Math.abs(numStacks)))).join('/')
+  } else if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
+    const [deg, edo] = line.split('\\')
+    return deg * numStacks + '\\' + edo
+  } else {
+    const value = line_to_cents(line) * (1 + numStacks)
+    return value.toFixed(6)
+  }
+}
+
+function moduloLine(line, modLine) {
+  const numType = getLineType(line)
+  const modType = getLineType(modLine)
+
+  if (numType === LINE_TYPE.RATIO && modType === LINE_TYPE.RATIO) {
+    const periods = Math.floor([line, modLine].map(ratioToDecimal).reduce((a, b) => Math.log(a) / Math.log(b)))
+    return stackRatios(line, stackSelf(modLine, -periods))
+  } else if (numType === LINE_TYPE.N_OF_EDO && modType === LINE_TYPE.N_OF_EDO) {
+    const [numDeg, numEdo] = line.split('\\').map(x => parseInt(x))
+    const [modDeg, modEdo] = modLine.slip('\\').map(x => parseInt(x))
+    const lcmEdo = getLCM(numEdo, modEdo)
+    return (((numDeg * lcmEdo) / numEdo) % ((modDeg * lcmEdo) / modEdo)) + '\\' + lcmEdo
+  } else if (numType === LINE_TYPE.DECIMAL) {
+    const num = commadecimal_to_decimal(line)
+    const mod = line_to_decimal(modLine)
+    const periods = Math.floor(num / mod)
+    return decimal_to_commadecimal(num / Math.pow(mod, -periods))
+  } else if (numType === LINE_TYPE.N_OF_EDO && line_to_decimal(modLine) === 2) {
+    const [num, mod] = line.split('\\').map(x => parseInt(x))
+    return parseInt(mathModulo(num, mod)) + '\\' + mod
+  } else {
+    return [line, modLine]
+      .map(line_to_cents)
+      .reduce(mathModulo)
+      .toFixed(6)
+  }
+}
+
+// TODO: functional improvements
 function invert_chord(chord) {
   if (!/^(\d+:)+\d+$/.test(chord)) {
     alert("Warning: invalid chord " + chord);
@@ -753,7 +865,7 @@ function invert_chord(chord) {
     denominators.push(reduced_interval[1]);
   });
 
-  var lcm = get_lcm(denominators);
+  var lcm = getLCMArray(denominators);
 
   chord = [];
   intervals.forEach(function (x) {
@@ -761,6 +873,10 @@ function invert_chord(chord) {
   });
 
   return chord.join(":");
+}
+
+const roundToNDecimals = (decimals, number) => {
+  return Math.round(number * 10 ** decimals) / 10 ** decimals
 }
 
 function getFloat(id, errorMessage) {
