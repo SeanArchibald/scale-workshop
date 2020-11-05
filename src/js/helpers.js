@@ -45,7 +45,7 @@ function commadecimal_to_decimal(input) {
 
 // convert a decimal (1.25) into commadecimal (1,25)
 function decimal_to_commadecimal(input) {
-  if (isCents(input)) { // a bit misleading
+  if (/^\d+\.?\d*$/.test(input)) {
     return input.toString().replace('.', ',');
   } else {
     alert("Invalid input: " + input);
@@ -767,47 +767,62 @@ function stackNOfEDOs(nOfEdo1Str, nOfEdo2Str) {
   return simplifyRatio(newDegree, newEdo).join('\\')
 }
 
+// TODO: proper regex tests for +/- lines
 function stackLines(line1, line2) {
   const line1Type = getLineType(line1)
   const line2Type = getLineType(line2)
 
   // If both are ratios, preserve ratio notation
-  if (line1Type === LINE_TYPE.RATIO && line2Type === LINE_TYPE.RATIO) {
+  if (line1Type === LINE_TYPE.RATIO && line2Type === LINE_TYPE.RATIO)
     return stackRatios(line1, line2)
 
-    // If both are N of EDOs, preserve N of EDO notation
-  } else if (line1Type === LINE_TYPE.N_OF_EDO && line2Type === LINE_TYPE.N_OF_EDO) {
+  // If both are N of EDOs, preserve N of EDO notation
+  if (line1Type === LINE_TYPE.N_OF_EDO && line2Type === LINE_TYPE.N_OF_EDO)
     return stackNOfEDOs(line1, line2)
 
-    // If the first line is a decimal type, keep decimals
-  } else if (line1Type === LINE_TYPE.DECIMAL) {
+  // If the first line is a decimal type, keep decimals
+  if (line1Type === LINE_TYPE.DECIMAL)
     return decimal_to_commadecimal(line_to_decimal(line1) * line_to_decimal(line2))
 
-    // All other cases convert to cents
-  } else {
-    const value = line_to_cents(line1) + line_to_cents(line2)
-    return value.toFixed(6)
-  }
+  // All other cases convert to cents, allow negative values
+  let val1 = line_to_cents(line1)
+  if (!val1 && line1.startsWith('-'))
+    val1 = parseFloat(line1)
+
+  let val2 = line_to_cents(line2)
+  if (!val2 && line2.startsWith('-'))
+    val2 = parseFloat(line2)
+
+  const valueOut = val1 + val2
+  return valueOut.toFixed(6)
 }
 
-// stacks an interval on itself. for ratios and decimals, it is a power function
+// stacks an interval on itself
 function stackSelf(line, numStacks) {
   const lineType = getLineType(line)
   const wholeExp = numStacks === Math.trunc(numStacks)
 
-  if (lineType === LINE_TYPE.DECIMAL) {
+  // power function
+  if (lineType === LINE_TYPE.DECIMAL)
     return decimal_to_commadecimal(Math.pow(line_to_decimal(line), numStacks))
-  } else if (wholeExp && lineType === LINE_TYPE.RATIO) {
+
+  // power function on numerator and denominator
+  if (wholeExp && lineType === LINE_TYPE.RATIO) {
     let ratio = '1/1'
     if (numStacks > 0) ratio = line.split('/')
     else if (numStacks < 0) ratio = line.split('/').reverse()
     else return ratio
     return ratio.map(x => parseInt(Math.pow(x, Math.abs(numStacks)))).join('/')
-  } else if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
+  } 
+
+  // multiply degree by stack amount
+  if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
     const [deg, edo] = line.split('\\')
     return deg * numStacks + '\\' + edo
-  } else {
-    const value = line_to_cents(line) * (1 + numStacks)
+  } 
+
+  else {
+    const value = line_to_cents(line) * numStacks
     return value.toFixed(6)
   }
 }
@@ -816,28 +831,36 @@ function moduloLine(line, modLine) {
   const numType = getLineType(line)
   const modType = getLineType(modLine)
 
+  // If both are ratios, preserve ratio notation
   if (numType === LINE_TYPE.RATIO && modType === LINE_TYPE.RATIO) {
     const periods = Math.floor([line, modLine].map(ratioToDecimal).reduce((a, b) => Math.log(a) / Math.log(b)))
     return stackRatios(line, stackSelf(modLine, -periods))
-  } else if (numType === LINE_TYPE.N_OF_EDO && modType === LINE_TYPE.N_OF_EDO) {
+  } 
+  
+  // If both are N of EDOs, preserve N of EDO notation
+  if (numType === LINE_TYPE.N_OF_EDO && modType === LINE_TYPE.N_OF_EDO) {
     const [numDeg, numEdo] = line.split('\\').map(x => parseInt(x))
     const [modDeg, modEdo] = modLine.slip('\\').map(x => parseInt(x))
     const lcmEdo = getLCM(numEdo, modEdo)
     return (((numDeg * lcmEdo) / numEdo) % ((modDeg * lcmEdo) / modEdo)) + '\\' + lcmEdo
-  } else if (numType === LINE_TYPE.DECIMAL) {
+  }
+  
+  // If the first line is a decimal type, keep decimals
+  if (numType === LINE_TYPE.DECIMAL) {
     const num = commadecimal_to_decimal(line)
     const mod = line_to_decimal(modLine)
     const periods = Math.floor(num / mod)
     return decimal_to_commadecimal(num / Math.pow(mod, -periods))
-  } else if (numType === LINE_TYPE.N_OF_EDO && line_to_decimal(modLine) === 2) {
+  } 
+  
+  // If the first line is N of EDO and the second line is an octave, simply octave reduce
+  if (numType === LINE_TYPE.N_OF_EDO && line_to_decimal(modLine) === 2) {
     const [num, mod] = line.split('\\').map(x => parseInt(x))
     return parseInt(mathModulo(num, mod)) + '\\' + mod
-  } else {
-    return [line, modLine]
-      .map(line_to_cents)
-      .reduce(mathModulo)
-      .toFixed(6)
   }
+
+  // All other cases convert to cents
+  return [line, modLine].map(line_to_cents).reduce(mathModulo).toFixed(6)
 }
 
 // TODO: functional improvements
