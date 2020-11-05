@@ -833,7 +833,7 @@ function moduloLine(line, modLine) {
 
   // If both are ratios, preserve ratio notation
   if (numType === LINE_TYPE.RATIO && modType === LINE_TYPE.RATIO) {
-    const periods = Math.floor([line, modLine].map(ratioToDecimal).reduce((a, b) => Math.log(a) / Math.log(b)))
+    const periods = Math.floor([line, modLine].map(ratio_to_decimal).reduce((a, b) => Math.log(a) / Math.log(b)))
     return stackRatios(line, stackSelf(modLine, -periods))
   } 
   
