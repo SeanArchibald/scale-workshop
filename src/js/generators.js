@@ -53,19 +53,19 @@ function generate_rank_2_temperament() {
 
   var generator = getLine('#input_rank-2_generator', 'Warning: no generator')
 
-  var generator_cents = line_to_cents(generator);
+  var generatorType = getLineType(generator)
 
   // bail if generator is invalid
-  if (!generator_cents) {
+  if (generatorType === 'invalid') {
     return false;
   }
 
   var period = getLine('#input_rank-2_period', 'Warning: no period')
 
-  var period_cents = line_to_cents(period);
+  var periodType = getLineType(period)
 
   // bail if period is invalid
-  if (!period_cents) {
+  if (periodType === 'invalid') {
     return false;
   }
 
@@ -81,7 +81,7 @@ function generate_rank_2_temperament() {
     return false;
   }
 
-  setTuningData(generate_rank_2_temperament_data(parseFloat(generator_cents), parseFloat(period_cents), size, up))
+  setTuningData(generate_rank_2_temperament_data(generator, period, size, up))
 
   setScaleName("Rank 2 scale (" + generator + ", " + period + ")");
 
@@ -94,47 +94,24 @@ function generate_rank_2_temperament() {
 }
 
 function generate_rank_2_temperament_data(generator, period, size, up) {
-
   // empty existing tuning data
-  var tuning_data = "";
+  let tuningData = ''
 
-  // array aa stores the scale data, starting from 1/1 (0.0 cents)
-  var aa = [0.0];
-  for (i = 1; i < size; i++) {
+  const scale = [moduloLine(stackSelf(generator, up - size + 1), period)]
 
-    // calculate generators up
-    if (i <= up) {
-
-      aa[i] = (aa[i - 1] + generator).mod(period);
-      console.log('up: ' + i + ': ' + aa[i]);
-
-    }
-
-    else {
-
-      // first down generator
-      if (i == up + 1) {
-        aa[i] = (aa[0] - generator).mod(period);
-      }
-
-      // subsequent down generators
-      else {
-        aa[i] = (aa[i - 1] - generator).mod(period);
-      }
-      console.log('down: ' + i + ': ' + aa[i]);
-    }
-
+  for (let i = 1; i < size; i++) {
+    scale.push(moduloLine(stackLines(scale[i - 1], generator), period))
   }
 
   // sort the scale ascending
-  aa.sort(function (a, b) { return a - b });
+  scale.sort((a, b) => [a, b].map(line_to_decimal).reduce((a, b) => a - b))
 
   // add the period to the scale
-  aa.push(period);
+  scale.push(period)
 
-  tuning_data += aa.slice(1, size + 1).map(num => num.toFixed(6)).join(unix_newline)
+  tuningData += scale.slice(1, size + 1).join(newline)
 
-  return tuning_data
+  return tuningData
 }
 
 function generate_harmonic_series_segment() {
