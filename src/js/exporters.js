@@ -357,6 +357,123 @@ function export_reference_deflemask() {
 
 }
 
+// TODO: improve with currying?
+function exportReaperNamedNotes(
+  pitchFormat = 'scale data',
+  showPeriodNumbers = true,
+  calculatePeriodInPitch = false,
+  rootPeriod = 0,
+  centsRoot = 0,
+  degreeRoot = 0
+) {
+  // This exporter enumerates the scale data to 128 MIDI notes in a readable format
+  // that can be loaded into Reaper's piano roll in "Named Note" mode.
+  //  - 'pitchFormat' can either be 'scale data', 'cents', 'freq', 'decimal', or 'degree'
+  //  - 'showPeriodNumbers' if true will put the period (or octave) number by each pitch
+  //  - 'calculatePeriodInPitch' if true will preserve the period value in the pitch value
+  //  - 'rootPeriod' is for if the root should start on a certain period number
+  //  - 'centsRoot' is the cent value used for the root note of the scale
+
+  if (export_error()) {
+    return false
+  }
+
+  // general properties
+  const period = tuning_table.scale_data.slice(-1)[0]
+  const tuningSize = tuning_table.note_count - 1
+
+  // line building functions
+  const prepend = (num, line) => num + ' ' + line
+  const rootOffset = num => num - tuning_table.base_midi_note
+  const circularIndex = num => mathModulo(rootOffset(num), tuningSize)
+  const periodNumber = num => Math.floor(rootOffset(num) / tuningSize + rootPeriod)
+  const appendPeriodNum = (line, num) => line + ' (' + periodNumber(num) + ')'
+  const calcPeriod = (line, ind) => stackLines(line, stackSelf(period, periodNumber(ind) + rootPeriod))
+  const addCentsRoot = cents => parseFloat(cents) + centsRoot
+
+  let fileFunction, pitchTable
+
+  // start file
+  let file = '# MIDI note / CC name map' + newline
+
+  let pitchLine = (line, ind) => line
+  if (showPeriodNumbers) pitchLine = (line, ind) => appendPeriodNum(line, ind)
+
+  if (pitchFormat === 'scale data') {
+    const unison = stackSelf(period, 0) // use a 1/1 in the line type of the period
+    pitchTable = [unison, ...tuning_table.scale_data.slice(1, -1)]
+
+    let scalePitch = (line, ind) => pitchLine(line, ind)
+    if (calculatePeriodInPitch) scalePitch = (line, ind) => pitchLine(calcPeriod(line, ind), ind)
+
+    // Iterate over scale data, applying periods if chosen
+    const scaleData = (num, array, table) => {
+      const ind = array.length - num - 1
+      return prepend(ind, scalePitch(table[circularIndex(ind)], ind))
+    }
+
+    fileFunction = table => tuning_table.cents.map((x, i, a) => scaleData(i, a, table)).join(newline)
+  } else if (pitchFormat !== 'degree') {
+    let pitchOffset = (line, ind) => pitchLine(roundToNDecimals(6, parseFloat(line)), ind)
+
+    // assign proper pitch table
+    // will have 6 decimal places of precision, except for cents which is 3
+    switch (pitchFormat) {
+      case 'freq':
+        pitchTable = tuning_table.freq
+        break
+      case 'decimal':
+        pitchTable = tuning_table.decimal
+        break
+      default:
+        pitchTable = tuning_table.cents
+        pitchOffset = (line, ind) => pitchLine(roundToNDecimals(3, addCentsRoot(line)), ind)
+        break
+    }
+
+    // iterate over the first period of the table
+    if (!calculatePeriodInPitch) {
+      const pitchValue = (i, table) => {
+        const ind = table.length - i - 1
+        return prepend(ind, pitchOffset(table[circularIndex(ind) + tuning_table.base_midi_note], ind))
+      }
+
+      fileFunction = table => table.map((x, i, a) => pitchValue(i, a)).join(newline)
+
+      // iterate over the whole table
+    } else {
+      const pitchValue = (i, table) => {
+        const ind = table.length - i - 1
+        return prepend(ind, pitchOffset(table[ind], ind))
+      }
+
+      fileFunction = table => table.map((x, i) => pitchValue(i, table)).join(newline)
+    }
+
+    // enumerate scale degrees
+  } else {
+    pitchTable = tuning_table.cents
+    const degreeLine = (num, table) => {
+      const ind = table.length - num - 1
+      let deg = rootOffset(ind) + degreeRoot + tuningSize * rootPeriod
+      
+      if (!calculatePeriodInPitch) 
+        deg = mathModulo(deg, tuningSize)
+
+      return prepend(ind, pitchLine(deg + '\\' + tuningSize, ind))
+    }
+
+    fileFunction = table => table.map((x, i) => degreeLine(i, table)).join(newline)
+  }
+
+  file += fileFunction(pitchTable)
+
+  save_file(tuning_table.filename + '.txt', file)
+
+  // success
+  return true
+}
+
 /**
  * get_export_url()
  */
