@@ -543,32 +543,34 @@ function parseImportedMnlgtun(event) {
     if (bin.name.endsWith('_bin') && bin._data.uncompressedSize % 3 === 0) {
       const binaryString = bin._data.compressedContent.reduce((a, b) => a + String.fromCharCode(b), '')
 
-      // extract bin info to string
+      // extract tuning data
       let cents = mnlgBinaryToCents(binaryString)
       if (cents.length > 0) {
         const octaveFormat = cents.length === MNLG_OCTAVESIZE
 
-        // extract tuning base info as best we can using A = 440hz and C = 261.63hz
-        const refNotes = Object.keys(MNLG_HZREF)
-        const refValues = refNotes.map(n => MNLG_HZREF[n].int)
-        const closestNotes = refValues.map(x => findIndexClosestTo(x, cents))
-        const differences = refValues.map((x, ind) => Math.abs(x - closestNotes[ind]))
-        const bestIndex = differences.indexOf(Math.min.apply(Math, differences))
-        const reference = MNLG_HZREF[refNotes[bestIndex]]
+        // fix octave overflow
+        if (octaveFormat)
+          cents = cents.map(c=>(c > MNLG_OCTAVESIZE * 200) ? c - MNLG_MAXCENTS : c)   
 
-        const baseNote = closestNotes[bestIndex]
-        const baseFrequency = roundToNDecimals(6, cents_to_decimal(cents[baseNote] - reference.int) * reference.freq)
+        // to always play at the right frequencies, we have to use the first midi note
+        let octaveExp = octaveFormat ? cents[0] - 900 : cents[0] - MNLG_A_REF.val
+          
+        // derive frequency from A440
+        const baseFrequency = MNLG_A_REF.freq * 2 ** (octaveExp / 1200)
 
-        // normalize, which is needed if A440 was not the tuning reference
-        const minCents = Math.min.apply(Math, cents)
-        if (minCents !== 0) {
-          cents = cents.map(c => c - minCents)
+        // normalize so scale starts on unison
+        if (octaveFormat) {
+          let negCents = Math.min(...cents)
+          if (negCents < 0) cents = cents.map(c => c - negCents)
+        } else {
+          cents = cents.map(c => c - cents[0])
         }
 
-        // remove unison
-        if (cents[0] === 0) cents.shift()
+        // remove unison (but may have other unison lines to preserve mapping)
+        cents.shift()
+
         // add period
-        else if (cents.length === 12) cents.push(1200)
+        if (octaveFormat) cents.push(1200)
 
         jQuery('#txt_tuning_data').val(
           cents
@@ -577,7 +579,8 @@ function parseImportedMnlgtun(event) {
         )
 
         jQuery('#txt_base_frequency').val(baseFrequency)
-        jQuery('#txt_base_midi_note').val(baseNote)
+        jQuery('#txt_base_midi_note').val(octaveFormat ? 60 : 0)
+        jQuery('#txt_name').val(input.files[0].name.slice(0, -9))
 
         if (parse_tuning_data())
           return true

@@ -374,19 +374,11 @@ function exportMnlgtun(useScaleFormat) {
     return
   }
 
-  const baseFreq = tuning_table.base_frequency
+  // the index of the table that's equal to the baseNote should have the following value
+  const refOffsetCents = MNLG_A_REF.val + decimal_to_cents(tuning_table.base_frequency / MNLG_A_REF.freq)
 
-  // find closest reference note to baseFreq
-  const refNotes = Object.keys(MNLG_HZREF)
-  const refValues = refNotes.map(n => MNLG_HZREF[n].freq)
-  const bestIndex = findIndexClosestTo(baseFreq, refValues)
-  const reference = MNLG_HZREF[refNotes[bestIndex]]
-
-  // the index of the scale dump that's equal to the baseNote should have the following value
-  const baseOffsetValue = reference.int + Math.round(decimal_to_cents(baseFreq / reference.freq))
-
-  // build cents array for binary conversion
-  let centsTable = tuning_table.cents.map(c => c + baseOffsetValue)
+  // offset cents array for binary conversion
+  let centsTable = tuning_table.cents.map(c => roundToNDecimals(3, c + refOffsetCents))
 
   if (useScaleFormat) {
     // ensure table length is exactly 128
@@ -403,7 +395,7 @@ function exportMnlgtun(useScaleFormat) {
     // normalize around root, truncate to 12 notes, and wrap flattened Cs
     let cNote = parseInt(tuning_table.base_midi_note / MNLG_OCTAVESIZE) * MNLG_OCTAVESIZE
     centsTable = centsTable.slice(cNote, cNote + MNLG_OCTAVESIZE)
-                           .map(cents => mathModulo(cents - MNLG_HZREF.c.int, MNLG_MAXCENTS))
+                           .map(cents => mathModulo(cents - MNLG_C_REF.val, MNLG_MAXCENTS))
   }
 
   // convert to binary

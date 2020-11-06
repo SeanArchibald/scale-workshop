@@ -996,8 +996,6 @@ function redirectToHTTPS() {
 }
 
 
-// These were previously in js/helpers/converters.js
-
 // converts a cents array into a uint8 array for the mnlgtun exporter
 function centsTableToMnlgBinary(centsTableIn) {
   const dataSize = centsTableIn.length * 3
@@ -1009,14 +1007,13 @@ function centsTableToMnlgBinary(centsTableIn) {
     if (cents < 0) cents = 0
     else if (cents >= MNLG_MAXCENTS) cents = MNLG_MAXCENTS
 
-    const semitones = parseInt(cents) / 100.0
-    const hundreds = Math.trunc(semitones)
+    const semitones = cents / 100.0
+    const microtones = Math.trunc(semitones)
 
-    const tens = semitones - hundreds
-    const u16a = new Uint16Array([Math.round(0x8000 * tens)])
+    const u16a = new Uint16Array([Math.round(0x8000 * (semitones - microtones))])
     const u8a = new Uint8Array(u16a.buffer)
 
-    data[dataIndex] = hundreds
+    data[dataIndex] = microtones
     data[dataIndex + 1] = u8a[1]
     data[dataIndex + 2] = u8a[0]
     dataIndex += 3
@@ -1032,7 +1029,7 @@ function mnlgBinaryToCents(binaryData) {
     const str = binaryData.slice(i * 3, i * 3 + 3)
     const hundreds = str.charCodeAt(0) * 100
     let tens = new Uint8Array([str.charCodeAt(2), str.charCodeAt(1)])
-    tens = Math.trunc((parseInt(new Uint16Array(tens.buffer)) / 0x8000) * 100)
+    tens = Math.round((parseInt(new Uint16Array(tens.buffer)) / 0x8000) * 100)
     centsOut.push(hundreds + tens)
   }
   return centsOut
