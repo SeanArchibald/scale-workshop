@@ -326,6 +326,14 @@ function import_anamark_tun() {
   }
 }
 
+function importMnlgtun() {
+  // check File API is supported
+  if (is_file_api_supported()) {
+    // trigger load file dialog
+    jQuery('#mnlgtun-file').trigger('click')
+  }
+}
+
 // after a scala file is loaded, this function will be called
 function parse_imported_scala_scl(event) {
 
@@ -538,6 +546,8 @@ function parseImportedMnlgtun(event) {
       // extract bin info to string
       let cents = mnlgBinaryToCents(binaryString)
       if (cents.length > 0) {
+        const octaveFormat = cents.length === MNLG_OCTAVESIZE
+
         // extract tuning base info as best we can using A = 440hz and C = 261.63hz
         const refNotes = Object.keys(MNLG_HZREF)
         const refValues = refNotes.map(n => MNLG_HZREF[n].int)
@@ -562,14 +572,7 @@ function parseImportedMnlgtun(event) {
 
         jQuery('#txt_tuning_data').val(
           cents
-            .map(c => {
-              // make sure they get are cent values
-              if (!(c + '').includes('.')) {
-                return c + '.'
-              }
-
-              return c
-            })
+            .map(c => c.toFixed(6))
             .join(newline)
         )
 
