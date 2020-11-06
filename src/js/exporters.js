@@ -7,18 +7,12 @@ function export_error() {
   }
 }
 
-function save_file(filename, contents, raw) {
-  var link = document.createElement('a');
-  link.download = filename;
-
-  if (raw === true) {
-    const blob = new Blob([contents], { type: 'application/octet-stream' })
-    link.href = window.URL.createObjectURL(blob)
-  } else {
-    link.href = "data:application/octet-stream," + encodeURIComponent(contents);
-  }
-
-  link.dispatchEvent(new MouseEvent(`click`, { bubbles: true, cancelable: true, view: window })); // opens save dialog
+function save_file(filename, contents, mimeType = 'application/octet-stream,') {
+  const link = document.createElement('a')
+  link.download = filename
+  link.href = 'data:' + mimeType + encodeURIComponent(contents)
+  console.log(link.href)
+  link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })) // opens save dialog
 }
 
 function export_anamark_tun() {
