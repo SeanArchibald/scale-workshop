@@ -76,6 +76,12 @@ jQuery(document).ready(function () {
     import_anamark_tun();
   });
 
+  // import mnlgtun option clicked
+  jQuery('#import-mnlgtun-file').on('click', function(event) {
+    event.preventDefault()
+    importMnlgtun()
+  })
+
   // generate_equal_temperament option clicked
   jQuery("#generate_equal_temperament").click(function (event) {
     event.preventDefault();

@@ -902,6 +902,10 @@ const roundToNDecimals = (decimals, number) => {
   return Math.round(number * 10 ** decimals) / 10 ** decimals
 }
 
+const findIndexClosestTo = (value, array) => {
+  return array.map(x => Math.abs(value - x)).reduce((ci, d, i, a) => (d < a[ci] ? i : ci), 0)
+}
+
 function getFloat(id, errorMessage) {
   var value = parseFloat(jQuery(id).val());
 
@@ -989,4 +993,47 @@ function redirectToHTTPS() {
   if (location.protocol !== 'https:') {
     location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
   }
+}
+
+
+// These were previously in js/helpers/converters.js
+
+// converts a cents array into a uint8 array for the mnlgtun exporter
+function centsTableToMnlgBinary(centsTableIn) {
+  const dataSize = centsTableIn.length * 3
+  const data = new Uint8Array(dataSize)
+  let dataIndex = 0
+  centsTableIn.forEach(c => {
+    // restrict to valid values
+    let cents = c
+    if (cents < 0) cents = 0
+    else if (cents >= MNLG_MAXCENTS) cents = MNLG_MAXCENTS
+
+    const semitones = parseInt(cents) / 100.0
+    const hundreds = Math.trunc(semitones)
+
+    const tens = semitones - hundreds
+    const u16a = new Uint16Array([Math.round(0x8000 * tens)])
+    const u8a = new Uint8Array(u16a.buffer)
+
+    data[dataIndex] = hundreds
+    data[dataIndex + 1] = u8a[1]
+    data[dataIndex + 2] = u8a[0]
+    dataIndex += 3
+  })
+  return data
+}
+
+// converts a mnlgtun binary string into an array of cents
+function mnlgBinaryToCents(binaryData) {
+  const centsOut = []
+  const tuningSize = binaryData.length / 3
+  for (let i = 0; i < tuningSize; i++) {
+    const str = binaryData.slice(i * 3, i * 3 + 3)
+    const hundreds = str.charCodeAt(0) * 100
+    let tens = new Uint8Array([str.charCodeAt(2), str.charCodeAt(1)])
+    tens = Math.trunc((parseInt(new Uint16Array(tens.buffer)) / 0x8000) * 100)
+    centsOut.push(hundreds + tens)
+  }
+  return centsOut
 }

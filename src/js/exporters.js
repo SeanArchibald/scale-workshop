@@ -318,6 +318,124 @@ function exportSytrusPitchMap() {
   exportImageLinePitchMap(4)
 }
 
+function getMnlgtunTuningInfoXML(useScaleFormat, programmer, comment) {
+  // Builds an XML file necessary for the .mnlgtun file format
+  const rootName = useScaleFormat ? 'minilogue_TuneScaleInformation' : 'minilogue_TuneOctInformation'
+  const xml = document.implementation.createDocument(null, rootName)
+
+  const Programmer = xml.createElement('Programmer')
+  Programmer.textContent = programmer
+  xml.documentElement.appendChild(Programmer)
+
+  const Comment = xml.createElement('Comment')
+  Comment.textContent = comment
+  xml.documentElement.appendChild(Comment)
+
+  return xml
+}
+
+function getMnlgtunFileInfoXML(useScaleFormat, product = 'minilogue') {
+  // Builds an XML file necessary for the .mnlgtun file format
+  const rootName = 'KorgMSLibrarian_Data'
+  const xml = document.implementation.createDocument(null, rootName)
+
+  const Product = xml.createElement('Product')
+  Product.textContent = product
+  xml.documentElement.appendChild(Product)
+
+  const Contents = xml.createElement('Contents')
+  Contents.setAttribute('NumProgramData', 0)
+  Contents.setAttribute('NumPresetInformation', 0)
+  Contents.setAttribute('NumTuneScaleData', 1 * useScaleFormat)
+  Contents.setAttribute('NumTuneOctData', 1 * !useScaleFormat)
+
+  const [fileNameHeader, dataName, binName] = useScaleFormat
+    ? ['TunS_000.TunS_', 'TuneScaleData', 'TuneScaleBinary']
+    : ['TunO_000.TunO_', 'TuneOctData', 'TuneOctBinary']
+
+  const TuneData = xml.createElement(dataName)
+
+  const Information = xml.createElement('Information')
+  Information.textContent = fileNameHeader + 'info'
+  TuneData.appendChild(Information)
+
+  const BinData = xml.createElement(binName)
+  BinData.textContent = fileNameHeader + 'bin'
+  TuneData.appendChild(BinData)
+
+  Contents.appendChild(TuneData)
+  xml.documentElement.appendChild(Contents)
+
+  return xml
+}
+
+function exportMnlgtun(useScaleFormat) {
+  // This exporter converts tuning data into a zip-compressed file for use with Korg's
+  // 'logue Sound Librarian software, supporting their 'logue series of synthesizers.
+  // While this exporter preserves accuracy as much as possible, the Sound Librarian software
+  // unforunately truncates cent values to 1 cent precision. It's unknown whether the tuning accuracy
+  // from this exporter is written to the synthesizer and used in the synthesis.
+
+  if (export_error()) {
+    return
+  }
+
+  const baseFreq = tuning_table.base_frequency
+
+  // find closest reference note to baseFreq
+  const refNotes = Object.keys(MNLG_HZREF)
+  const refValues = refNotes.map(n => MNLG_HZREF[n].freq)
+  const bestIndex = findIndexClosestTo(baseFreq, refValues)
+  const reference = MNLG_HZREF[refNotes[bestIndex]]
+
+  // the index of the scale dump that's equal to the baseNote should have the following value
+  const baseOffsetValue = reference.int + Math.round(decimal_to_cents(baseFreq / reference.freq))
+
+  // build cents array for binary conversion
+  let centsTable = tuning_table.cents.map(c => c + baseOffsetValue)
+
+  if (useScaleFormat) {
+    // ensure table length is exactly 128
+    centsTable = centsTable.slice(0, MNLG_SCALESIZE)
+
+    // this shouldn't happen unless something goes really wrong
+    if (centsTable.length !== MNLG_SCALESIZE) {
+      console.log('Somehow the mnlgtun table was less than 128 values, the end will be padded with 0s.')
+      const padding = new Array(MNLG_SCALESIZE - centsTable.length).fill(0)
+      centsTable = [...centsTable, ...padding]
+    }
+    
+  } else {
+    // normalize around root, truncate to 12 notes, and wrap flattened Cs
+    let cNote = parseInt(tuning_table.base_midi_note / MNLG_OCTAVESIZE) * MNLG_OCTAVESIZE
+    centsTable = centsTable.slice(cNote, cNote + MNLG_OCTAVESIZE)
+                           .map(cents => mathModulo(cents - MNLG_HZREF.c.int, MNLG_MAXCENTS))
+  }
+
+  // convert to binary
+  const binaryData = centsTableToMnlgBinary(centsTable)
+
+  // prepare files for zipping
+  const tuningInfo = getMnlgtunTuningInfoXML(useScaleFormat, 'ScaleWorkshop', tuning_table.filename)
+  const fileInfo = getMnlgtunFileInfoXML(useScaleFormat)
+  const [fileNameHeader, fileType] = useScaleFormat ? ['TunS_000.TunS_', '.mnlgtuns'] : ['TunO_000.TunO_', '.mnlgtuno']
+
+  // build zip
+  const zip = new JSZip()
+  zip.file(fileNameHeader + 'bin', binaryData)
+  zip.file(fileNameHeader + 'info', tuningInfo.documentElement.outerHTML)
+  zip.file('FileInformation.xml', fileInfo.documentElement.outerHTML)
+  zip.generateAsync({ type: 'base64' }).then(
+    base64 => {
+      save_file(tuning_table.filename + fileType, base64, 'application/zip;base64,')
+    },
+    err => alert(err)
+  )
+
+  // success
+  return true
+}
+
 function export_reference_deflemask() {
 
   // This exporter converts your tuning data into a readable format you can easily input manually into Deflemask.

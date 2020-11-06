@@ -92,6 +92,8 @@
                   Import .scl</a></li>
               <li><a href="#" id="import-anamark-tun"><span class="glyphicon glyphicon-log-in"
                     aria-hidden="true"></span> Import .tun</a></li>
+              <li><a href="#" id="import-mnlgtun-file"><span class="glyphicon glyphicon-log-in" 
+                    aria-hidden="true"></span> Import .mnlgtuns / .mnlgtuno</a></li>
               <li class="divider"></li>
               <li><a href="#" id="load-preset"><span class="glyphicon glyphicon-cd" aria-hidden="true"></span> Load
                   preset scale</a></li>
@@ -143,6 +145,10 @@
                   Harmor Pitch Map (.fnv)</a></li>
               <li><a href="#" onclick="event.preventDefault(); exportSytrusPitchMap();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download
                   Sytrus Pitch Map (.fnv)</a></li>
+              <li><a href="#" onclick="event.preventDefault(); exportMnlgtun(true);"><span class="glyphicon glyphicon-download"
+                    aria-hidden="true"></span> Download Korg 'logue Sound Librarian Scale (.mnlgtuns)</a></li>
+              <li><a href="#" onclick="event.preventDefault(); exportMnlgtun(false);"><span class="glyphicon glyphicon-download"
+                    aria-hidden="true"></span> Download Korg 'logue Sound Librarian Octave (.mnlgtuno)</a></li>
               <li class="divider"></li>
               <li><a href="#" onclick="event.preventDefault(); export_reference_deflemask();"><span
                     class="glyphicon glyphicon-download" aria-hidden="true"></span> Download Deflemask 'fine tune'

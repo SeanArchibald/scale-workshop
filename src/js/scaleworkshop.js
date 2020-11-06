@@ -517,3 +517,78 @@ function parse_imported_anamark_tun(event) {
   };
 
 }
+
+function parseImportedMnlgtun(event) {
+  // TODO: Add features for extracting scale information to reduce a table of 128 values into a periodic scale
+
+  const input = event.target
+
+  // bail if no file was uploaded
+  if (R.isNil(input.files[0])) {
+    return false
+  }
+
+  const zip = new JSZip()
+  zip.loadAsync(input.files[0]).then(result => {
+    // check if meets size requirements
+    const bin = result.files[Object.keys(result.files)[0]]
+    if (bin.name.endsWith('_bin') && bin._data.uncompressedSize % 3 === 0) {
+      const binaryString = bin._data.compressedContent.reduce((a, b) => a + String.fromCharCode(b), '')
+
+      // extract bin info to string
+      let cents = mnlgBinaryToCents(binaryString)
+      if (cents.length > 0) {
+        // extract tuning base info as best we can using A = 440hz and C = 261.63hz
+        const refNotes = Object.keys(MNLG_HZREF)
+        const refValues = refNotes.map(n => MNLG_HZREF[n].int)
+        const closestNotes = refValues.map(x => findIndexClosestTo(x, cents))
+        const differences = refValues.map((x, ind) => Math.abs(x - closestNotes[ind]))
+        const bestIndex = differences.indexOf(Math.min.apply(Math, differences))
+        const reference = MNLG_HZREF[refNotes[bestIndex]]
+
+        const baseNote = closestNotes[bestIndex]
+        const baseFrequency = roundToNDecimals(6, cents_to_decimal(cents[baseNote] - reference.int) * reference.freq)
+
+        // normalize, which is needed if A440 was not the tuning reference
+        const minCents = Math.min.apply(Math, cents)
+        if (minCents !== 0) {
+          cents = cents.map(c => c - minCents)
+        }
+
+        // remove unison
+        if (cents[0] === 0) cents.shift()
+        // add period
+        else if (cents.length === 12) cents.push(1200)
+
+        jQuery('#txt_tuning_data').val(
+          cents
+            .map(c => {
+              // make sure they get are cent values
+              if (!(c + '').includes('.')) {
+                return c + '.'
+              }
+
+              return c
+            })
+            .join(newline)
+        )
+
+        jQuery('#txt_base_frequency').val(baseFrequency)
+        jQuery('#txt_base_midi_note').val(baseNote)
+
+        if (parse_tuning_data())
+          return true
+        else {
+          alert('Data parsing failed.')
+          return false
+        }
+      } else {
+        alert('File does not contain tuning data.')
+        return false
+      }
+    } else {
+      alert('Not a valid mnlgtun file.')
+      return false
+    }
+  })
+}
