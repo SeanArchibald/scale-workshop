@@ -222,8 +222,8 @@ function midi_note_number_to_name(input) {
 }
 
 // calculate the sum of the values in a given array given a stopping index
-function sum_array(array, index) {
-  return array.reduce((sum, x) => sum + x, 0)
+function sum_array(array, endIndex) {
+  return array.slice(0, endIndex).reduce((sum, x) => sum + x, 0)
 }
 
 // rotates the array by given steps
