@@ -7,11 +7,17 @@ function export_error() {
   }
 }
 
-function save_file(filename, contents, mimeType = 'application/octet-stream,') {
+function save_file(filename, contents, raw, mimeType = 'application/octet-stream,') {
   const link = document.createElement('a')
   link.download = filename
-  link.href = 'data:' + mimeType + encodeURIComponent(contents)
-  console.log(link.href)
+
+  if (raw === true) {
+    const blob = new Blob([contents], { type: 'application/octet-stream' })
+    link.href = window.URL.createObjectURL(blob)
+  } else {
+    link.href = 'data:' + mimeType + encodeURIComponent(contents);
+  }
+
   link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })) // opens save dialog
 }
 
@@ -413,7 +419,7 @@ function exportMnlgtun(useScaleFormat) {
   zip.file('FileInformation.xml', fileInfo.documentElement.outerHTML)
   zip.generateAsync({ type: 'base64' }).then(
     base64 => {
-      save_file(tuning_table.filename + fileType, base64, 'application/zip;base64,')
+      save_file(tuning_table.filename + fileType, base64, false, 'application/zip;base64,')
     },
     err => alert(err)
   )
