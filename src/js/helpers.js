@@ -46,7 +46,7 @@ function commadecimal_to_decimal(input) {
 // convert a decimal (1.25) into commadecimal (1,25)
 function decimal_to_commadecimal(input) {
   if (/^\d+\.?\d*$/.test(input)) {
-    return input.toString().replace('.', ',');
+    return input.toFixed(6).replace('.', ',');
   } else {
     alert("Invalid input: " + input);
     return false;
@@ -836,6 +836,12 @@ function moduloLine(line, modLine) {
     const periods = Math.floor([line, modLine].map(ratio_to_decimal).reduce((a, b) => Math.log(a) / Math.log(b)))
     return stackRatios(line, stackSelf(modLine, -periods))
   } 
+
+  // If the first line is N of EDO and the second line is an octave, simply octave reduce
+  if (numType === LINE_TYPE.N_OF_EDO && line_to_decimal(modLine) === 2) {
+    const [num, mod] = line.split('\\').map(x => parseInt(x))
+    return parseInt(mathModulo(num, mod)) + '\\' + mod
+  }
   
   // If both are N of EDOs, preserve N of EDO notation
   if (numType === LINE_TYPE.N_OF_EDO && modType === LINE_TYPE.N_OF_EDO) {
@@ -850,14 +856,8 @@ function moduloLine(line, modLine) {
     const num = commadecimal_to_decimal(line)
     const mod = line_to_decimal(modLine)
     const periods = Math.floor(num / mod)
-    return decimal_to_commadecimal(num / Math.pow(mod, -periods))
+    return decimal_to_commadecimal(num / Math.pow(mod, periods))
   } 
-  
-  // If the first line is N of EDO and the second line is an octave, simply octave reduce
-  if (numType === LINE_TYPE.N_OF_EDO && line_to_decimal(modLine) === 2) {
-    const [num, mod] = line.split('\\').map(x => parseInt(x))
-    return parseInt(mathModulo(num, mod)) + '\\' + mod
-  }
 
   // All other cases convert to cents
   return [line, modLine].map(line_to_cents).reduce(mathModulo).toFixed(6)
