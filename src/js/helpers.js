@@ -46,7 +46,7 @@ function commadecimal_to_decimal(input) {
 // convert a decimal (1.25) into commadecimal (1,25)
 function decimal_to_commadecimal(input) {
   if (/^\d+\.?\d*$/.test(input)) {
-    return input.toString().replace('.', ',');
+    return input.toFixed(6).replace('.', ',');
   } else {
     alert("Invalid input: " + input);
     return false;
