@@ -96,6 +96,8 @@ function export_scala_scl() {
   var file = "! " + tuning_table['filename'] + ".scl" + newline;
   file += "! Created using " + APP_TITLE + newline;
   file += "!" + newline;
+  file += "! " + get_scale_url() + newline;
+  file += "!" + newline;
   if (R.isEmpty(jQuery("#txt_name").val())) {
     file += "Untitled tuning";
   }
