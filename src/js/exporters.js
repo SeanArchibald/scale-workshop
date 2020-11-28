@@ -223,7 +223,8 @@ function export_kontakt_script() {
   var file = "{**************************************" + newline;
   file += jQuery("#txt_name").val() + newline;
   file += "MIDI note " + tuning_table['base_midi_note'] + " (" + midi_note_number_to_name(tuning_table['base_midi_note']) + ") = " + parseFloat(tuning_table['base_frequency']) + " Hz" + newline;
-  file += "Created using " + APP_TITLE + newline;
+  file += "Created using " + APP_TITLE + newline + newline;
+  file += get_scale_url() + newline;
   file += "****************************************}" + newline + newline;
 
   file += "on init" + newline;
