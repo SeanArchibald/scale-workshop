@@ -34,6 +34,8 @@ function export_anamark_tun() {
   var file = "; VAZ Plus/AnaMark softsynth tuning file" + newline;
   file += "; " + jQuery("#txt_name").val() + newline;
   file += ";" + newline;
+  file += "; " + get_scale_url() + newline;
+  file += ";" + newline;
   file += "; VAZ Plus section" + newline;
   file += "[Tuning]" + newline;
 
