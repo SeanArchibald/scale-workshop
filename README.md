@@ -87,6 +87,10 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.1
+* New feature: Export tuning files for Harmor and Sytrus synths (thanks to Azorlogh)
+* Improvement: 'Mode' feature now shows a counter while you input a subset
+
 ### 1.0.4
 * New feature: 'Approximate' method for modifying scales can produce rational approximations of your scale
 * Improvement: Enumerate Chord method of scale generation now allows for inverted chords (e.g. 4:5:6 inverted would give 10:12:15)
