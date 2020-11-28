@@ -90,6 +90,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 ### 1.1
 * New feature: Export tuning files for Harmor and Sytrus synths (thanks to Azorlogh)
 * Improvement: 'Mode' feature now shows a counter while you input a subset
+* Improvement: Include scale URL in a comment within exported TUN, scl, Max/MSP txt and Kontakt script exports (issue #66)
 
 ### 1.0.4
 * New feature: 'Approximate' method for modifying scales can produce rational approximations of your scale
