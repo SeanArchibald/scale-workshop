@@ -180,6 +180,8 @@ function export_maxmsp_coll() {
   var file = "# Tuning file for Max/MSP coll objects. - Created using " + APP_TITLE + newline;
   file += "# " + jQuery("#txt_name").val() + newline;
   file += "#" + newline;
+  file += "# " + get_scale_url() + newline;
+  file += "#" + newline;
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
     file += i + ", " + tuning_table['freq'][i].toFixed(7) + ";" + newline;
