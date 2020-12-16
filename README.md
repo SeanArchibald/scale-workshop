@@ -87,6 +87,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.1.1
+* Improvement: When sharing a Scale Workshop link (on Discord, Facebook, etc.) the site description is now much shorter so takes less space
+
 ### 1.1
 * New feature: Export tuning files for Harmor and Sytrus synths (thanks to Azorlogh)
 * Improvement: 'Mode' feature now shows a counter while you input a subset
