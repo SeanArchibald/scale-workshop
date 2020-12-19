@@ -94,6 +94,7 @@
               <li><a href="#" id="import-anamark-tun"><span class="glyphicon glyphicon-log-in"
                     aria-hidden="true"></span> Import .tun</a></li>
               <li class="divider"></li>
+              <li><a href="#" id="clear-scale"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Clear scale</a></li>
               <li><a href="#" id="load-preset"><span class="glyphicon glyphicon-cd" aria-hidden="true"></span> Load
                   preset scale</a></li>
             </ul>
@@ -104,7 +105,7 @@
             <ul class="dropdown-menu" id="modify-buttons">
               <!--<li><a href="#" id="modify_key_transpose"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span> Key transpose</a></li>-->
               <li><a href="#" id="modify_mode"><span class="glyphicon glyphicon-equalizer" aria-hidden="true"></span>
-                  Mode</a></li>
+                  Subset</a></li>
               <!--<li><a href="#" id="modify_extend">Extend/repeat</a></li>-->
               <li><a href="#" id="modify_stretch"><span class="glyphicon glyphicon-compressed"
                     aria-hidden="true"></span> Stretch/compress</a></li>
@@ -114,7 +115,13 @@
                     aria-hidden="true"></span> Tempo-sync beating</a></li>
               <!--<li><a href="#" id="modify_octave_reduce">Octave reduce</a></li>-->
               <li><a href="#" id="modify_approximate"><span class="glyphicon glyphicon-list-alt"
-                    aria-hidden="true"></span> Approximate</a></li>
+                    aria-hidden="true"></span> Approximate by ratios</a></li>
+              <li><a href="#" id="modify_approximate_harmonics"><span class="glyphicon glyphicon-list-alt"
+                    aria-hidden="true"></span> Approximate by harmonics</a></li>
+              <li><a href="#" id="modify_approximate_subharmonics"><span class="glyphicon glyphicon-list-alt"
+                    aria-hidden="true"></span> Approximate by subharmonics</a></li>
+              <li><a href="#" id="modify_equalize"><span class="glyphicon glyphicon-th"
+                    aria-hidden="true"></span> Equalize</a></li>
             </ul>
           </li>
           <li><a href="#" id="nav_play"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> Touch Kbd</a>
@@ -212,10 +219,6 @@
                 class="form-control" value="69" />
               <div id="base_midi_note_name" class="input-group-addon" style="min-width:5em;">A5</div>
             </div>
-          </div>
-
-          <div class="form-group">
-            <input name="Clear" id="btn_clear" type="button" value="Clear scale" class="btn btn-danger" />
           </div>
         </form>
       </div>
@@ -560,8 +563,8 @@
     </form>
   </div>
 
-  <div id="modal_modify_mode" class="modal" title="Mode">
-    <p>Create a subset of a scale.</p>
+  <div id="modal_modify_mode" class="modal" title="Subset">
+    <p>Select a subset from the current scale.</p>
     <form>
       <label>Mode</label>
       <div class="form-group">
@@ -634,7 +637,7 @@
     </form>
   </div>
 
-  <div id="modal_approximate_intervals" class="modal" title="Mode">
+  <div id="modal_approximate_intervals" class="modal" title="Approximate by ratios">
     <p>Select a ratio that approximates the interval.</p>
     <form>
       <label>Scale Degree</label>
@@ -677,6 +680,35 @@
           <input id="input_approx_max_prime" name="" type="number" class="form-control" value="31" min="0"
             max="7919" />
         </div>
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_approximate_harmonics" class="modal" title="Approximate by harmonics">
+    <form>
+      <label>Denonimator</label>
+      <div class="form-group">
+        <input id="input_approx_harm_denominator" name="" type="number" class="form-control" value="128" min="1" max="1000000" />
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_approximate_subharmonics" class="modal" title="Approximate by subharmonics">
+    <p>Note: if you enter an odd number, the interval of equivalence will change (e.g. mistuned octaves)</p>
+    <form>
+      <label>Numerator</label>
+      <div class="form-group">
+        <input id="input_approx_subharm_numerator" name="" type="number" class="form-control" value="128" min="1" max="1000000" />
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_equalize" class="modal" title="Equalize">
+    <p>Divides your interval of equivalence into an equal number of steps, then rounds each interval in your scale to the nearest equal step.</p>
+    <form>
+      <label>Equal divisions</label>
+      <div class="form-group">
+        <input id="input_equalize_divisions" name="" type="number" class="form-control" value="128" min="1" max="1000000" />
       </div>
     </form>
   </div>
@@ -810,21 +842,21 @@
   <script src="src/lib/ramda-0.27.1.min.js"></script>
 
   <!-- Scale Workshop scripts -->
-  <script src="src/js/model.js"></script>
-  <script src="src/js/constants.js"></script>
-  <script src="src/js/helpers.js"></script>
-  <script src="src/js/scaleworkshop.js"></script>
-  <script src="src/js/ui.js"></script>
-  <script src="src/js/generators.js"></script>
-  <script src="src/js/modifiers.js"></script>
-  <script src="src/js/exporters.js"></script>
-  <script src="src/js/keymap.js"></script>
-  <script src="src/js/synth/Voice.js"></script>
-  <script src="src/js/synth/Delay.js"></script>
-  <script src="src/js/synth/Synth.js"></script>
-  <script src="src/js/synth.js"></script>
-  <script src="src/js/midi.js"></script>
-  <script src="src/js/events.js"></script>
-  <script src="src/js/user.js"></script>
+  <script src="src/js/model.js?v=1.2"></script>
+  <script src="src/js/constants.js?v=1.2"></script>
+  <script src="src/js/helpers.js?v=1.2"></script>
+  <script src="src/js/scaleworkshop.js?v=1.2"></script>
+  <script src="src/js/ui.js?v=1.2"></script>
+  <script src="src/js/generators.js?v=1.2"></script>
+  <script src="src/js/modifiers.js?v=1.2"></script>
+  <script src="src/js/exporters.js?v=1.2"></script>
+  <script src="src/js/keymap.js?v=1.2"></script>
+  <script src="src/js/synth/Voice.js?v=1.2"></script>
+  <script src="src/js/synth/Delay.js?v=1.2"></script>
+  <script src="src/js/synth/Synth.js?v=1.2"></script>
+  <script src="src/js/synth.js?v=1.2"></script>
+  <script src="src/js/midi.js?v=1.2"></script>
+  <script src="src/js/events.js?v=1.2"></script>
+  <script src="src/js/user.js?v=1.2"></script>
 </body>
 </html>

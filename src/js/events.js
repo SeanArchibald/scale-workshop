@@ -43,7 +43,7 @@ jQuery(document).ready(function () {
   });
 
   // clear button clicked
-  jQuery("#btn_clear").click(function (event) {
+  jQuery("#clear-scale").click(function (event) {
 
     event.preventDefault();
 
@@ -217,6 +217,29 @@ jQuery(document).ready(function () {
     });
 
   });
+
+  // modify_approximate_harmonics option clicked
+  jQuery("#modify_approximate_harmonics").click(function (event) {
+    event.preventDefault();
+    jQuery("#input_approx_harm_denominator").select();
+    openDialog("#modal_approximate_harmonics", modify_approximate_harmonics);
+  });
+
+  // modify_approximate_subharmonics option clicked
+  jQuery("#modify_approximate_subharmonics").click(function (event) {
+    event.preventDefault();
+    jQuery("#input_approx_subharm_numerator").select();
+    openDialog("#modal_approximate_subharmonics", modify_approximate_subharmonics);
+  });
+
+  // modify_equalize option clicked
+  jQuery("#modify_equalize").click(function (event) {
+    event.preventDefault();
+    jQuery("#input_equalize_divisions").select();
+    openDialog("#modal_equalize", modify_equalize);
+  });
+
+  
 
   // calculate and list rational approximations within user parameters
   jQuery("#input_interval_to_approximate").change(function () {
