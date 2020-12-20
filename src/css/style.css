@@ -136,6 +136,11 @@ input#btn_frequency_auto, input#btn_key_colors_auto {
   margin-top: 3px;
 }
 
+#txt_name {
+  font-size: 1.4em;
+  background-color: unset;
+}
+
 #col-tuning-table {
   padding-left: 0px;
   padding-right: 0px;

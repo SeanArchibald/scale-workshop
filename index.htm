@@ -56,7 +56,10 @@
   </div>
 
   <div id="header-mobile" class="visible-xs-block">
-    <h1>Scale Workshop</h1>
+    <h1 style="line-height:0.6em;text-align:center;">
+      <span style="font-size:1em;">Scale</span><br/>
+      <span style="font-size:0.7em;">Workshop</span>
+    </h1>
   </div>
 
   <nav class="navbar navbar-inverse bg-inverse">
@@ -188,9 +191,8 @@
     <div class="row">
       <div class="col-sm-6 col-md-4 col-lg-4 col-main">
         <form>
-          <label>Scale name/description</label>
           <div class="form-group">
-            <input id="txt_name" name="base_frequency" type="text" class="form-control" />
+            <textarea id="txt_name" name="name" placeholder="Untitled scale" class="form-control" rows="1"></textarea>
           </div>
 
           <label>Scale data <a href="guide.htm#manual-data-entry" target="_blank"><span
