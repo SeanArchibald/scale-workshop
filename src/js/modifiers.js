@@ -10,7 +10,7 @@ function modify_stretch() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }
@@ -58,7 +58,7 @@ function modify_random_variance() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }
@@ -115,7 +115,7 @@ function modify_mode() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }
@@ -222,7 +222,7 @@ function modify_sync_beating() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }
@@ -286,7 +286,7 @@ function modify_key_transpose() {
 
   if ( R.isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
-    alert( "No tuning data to modify." );
+    alert( "No scale data to modify." );
     return false;
 
   }
@@ -463,7 +463,7 @@ function modify_approximate_harmonics() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }
@@ -509,7 +509,7 @@ function modify_approximate_subharmonics() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }
@@ -555,7 +555,7 @@ function modify_equalize() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }

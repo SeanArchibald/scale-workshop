@@ -21,7 +21,7 @@ function save_file(filename, contents, raw) {
   link.dispatchEvent(new MouseEvent(`click`, { bubbles: true, cancelable: true, view: window })); // opens save dialog
 }
 
-function export_anamark_tun() {
+function export_anamark_tun(version) {
 
   if (export_error()) {
     return;
@@ -29,6 +29,9 @@ function export_anamark_tun() {
 
   // TUN format spec:
   // http://www.mark-henning.de/files/am/Tuning_File_V2_Doc.pdf
+  if (version === undefined) {
+    version = 100;
+  } 
 
   // assemble the .tun file contents
   var file = "; VAZ Plus/AnaMark softsynth tuning file" + newline;
@@ -46,7 +49,7 @@ function export_anamark_tun() {
   file += newline + "; AnaMark section" + newline;
   file += "[Scale Begin]" + newline;
   file += 'Format= "AnaMark-TUN"' + newline;
-  file += "FormatVersion= 200" + newline;
+  file += "FormatVersion= " + version + newline;
   file += 'FormatSpecs= "http://www.mark-henning.de/eternity/tuningspecs.html"' + newline + newline;
   file += "[Info]" + newline;
   file += 'Name= "' + tuning_table['filename'] + '.tun"' + newline;
@@ -62,21 +65,27 @@ function export_anamark_tun() {
     file += "note " + i + "= " + decimal_to_cents(parseFloat(tuning_table['freq'][i]) / mtof(0)).toFixed(6) + newline;
   }
 
-  file += newline + "[Functional Tuning]" + newline;
+  // version 2.00 only
+  if (version >= 200) {
 
-  for (let i = 1; i < tuning_table['note_count']; i++) {
+    file += newline + "[Functional Tuning]" + newline;
 
-    if (i == tuning_table['note_count'] - 1) {
-      file += "note " + i + '="#>-' + i + ' % ' + decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) + ' ~999"' + newline;
+    for (let i = 1; i < tuning_table['note_count']; i++) {
+  
+      if (i == tuning_table['note_count'] - 1) {
+        file += "note " + i + '="#>-' + i + ' % ' + decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) + ' ~999"' + newline;
+      }
+      else {
+        file += "note " + i + '="#=0 % ' + decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) + '"' + newline;
+      }
+  
     }
-    else {
-      file += "note " + i + '="#=0 % ' + decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) + '"' + newline;
-    }
+  
+    file += newline + "; Set reference key to absolute frequency (not scale note but midi key)" + newline;
+    file += "note " + tuning_table['base_midi_note'] + '="! ' + tuning_table['base_frequency'].toFixed(6) + '"' + newline;
 
   }
 
-  file += newline + "; Set reference key to absolute frequency (not scale note but midi key)" + newline;
-  file += "note " + tuning_table['base_midi_note'] + '="! ' + tuning_table['base_frequency'].toFixed(6) + '"' + newline;
   file += "[Scale End]" + newline;
 
   save_file(tuning_table['filename'] + '.tun', file);

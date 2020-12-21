@@ -87,6 +87,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.3
+* AnaMark TUN export now contains v1 data only. This should improve compatibility with synths (e.g. Omnisphere and Quanta)
+
 ### 1.2
 * New feature: Approximate scale by harmonics of an arbitrary denominator
 * New feature: Approximate scale by subharmonics of an arbitrary numerator
