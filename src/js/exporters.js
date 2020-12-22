@@ -82,7 +82,7 @@ function export_anamark_tun(version) {
     }
   
     file += newline + "; Set reference key to absolute frequency (not scale note but midi key)" + newline;
-    file += "note " + tuning_table['base_midi_note'] + '="! ' + tuning_table['base_frequency'].toFixed(6) + '"' + newline;
+    file += "note " + tuning_table['base_midi_note'] + '="! ' + tuning_table['base_frequency'].toFixed(6) + '"' + newline + newline;
 
   }
 
