@@ -76,6 +76,12 @@ jQuery(document).ready(function () {
     import_anamark_tun();
   });
 
+  // import mnlgtun option clicked
+  jQuery('#import-mnlgtun-file').on('click', function(event) {
+    event.preventDefault()
+    importMnlgtun()
+  })
+
   // generate_equal_temperament option clicked
   jQuery("#generate_equal_temperament").click(function (event) {
     event.preventDefault();
@@ -394,6 +400,29 @@ jQuery(document).ready(function () {
     jQuery("#input_modify_mode").val(mode.join(" "));
   })
 
+  // open dialog for Reaper named notes exporter and call with selected parameters
+  jQuery("#export_reaper_note_name_map").click(function(event) {
+    event.preventDefault();
+    jQuery('#input_reaper_pitch_format').trigger('change');
+    openDialog('#modal_reaper_named_notes', event => {
+      const pitchFormat = jQuery('#input_reaper_pitch_format').val();
+      const showPeriodNumbers = jQuery('#input_reaper_show_period_numbers').is(':checked');
+      const calculatePeriodInPitch = jQuery('#input_reaper_calculate_periods').is(':checked');
+      const rootPeriodNumber = parseInt(jQuery('#input_reaper_root_period').val());
+      const rootCentsValue = parseFloat(jQuery('#input_reaper_root_cents').val());
+      const rootDegreeValue = parseInt(jQuery('#input_reaper_root_degree').val());
+
+      exportReaperNamedNotes(
+        pitchFormat,
+        showPeriodNumbers,
+        calculatePeriodInPitch,
+        rootPeriodNumber,
+        rootCentsValue,
+        rootDegreeValue
+      );
+    })
+  })
+
   /*
     // rank-2 temperament generator - scale size changed
   jQuery( '#input_rank-2_size' ).change( function() {
@@ -407,6 +436,20 @@ jQuery(document).ready(function () {
     jQuery( '#input_rank-2_down' ).val( 0 );
   } );
   */
+
+  // Reaper Exporter interactions
+  // Disable 'Root Cents Value' if not using cents, and 'Root Degree Value' if not using scale degrees
+  jQuery('#input_reaper_pitch_format').on('change', function(event) {
+    jQuery('#modal_reaper_root_cents_group').css('display', event.target.value === 'cents' ? 'block' : 'none')
+    jQuery('#modal_reaper_root_degree_group').css('display', event.target.value === 'degree' ? 'block' : 'none')
+  })
+
+  // Disable 'Root Period Number' if not showing period numbers
+  jQuery('#input_reaper_show_period_numbers').on('click', function(event) {
+    jQuery('#input_reaper_root_period').prop('disabled', !event.target.checked)
+  })
+
+
   // Touch keyboard (#nav_play) option clicked
   jQuery("#nav_play, #launch-kbd").click(function (event) {
 

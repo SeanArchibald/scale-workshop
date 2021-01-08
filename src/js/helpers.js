@@ -7,6 +7,11 @@ Number.prototype.mod = function (n) {
   return ((this % n) + n) % n;
 };
 
+// modulo function (forward compatibility)
+function mathModulo(n, d) {
+  return ((n % d) + d) % d
+}
+
 // convert a cents value to decimal
 function cents_to_decimal(input) {
   return Math.pow(2, (parseFloat(input) / 1200.0));
@@ -217,17 +222,8 @@ function midi_note_number_to_name(input) {
 }
 
 // calculate the sum of the values in a given array given a stopping index
-function sum_array(array, index) {
-  var sum = 0;
-
-  if (array.length <= index)
-    index = array.length - 1;
-
-  for (var i = 0; i < index; i++) {
-    sum += array[i];
-  }
-
-  return sum;
+function sum_array(array, endIndex) {
+  return array.slice(0, endIndex).reduce((sum, x) => sum + x, 0)
 }
 
 // rotates the array by given steps
@@ -694,7 +690,24 @@ function reduce_ratio(numerator, denominator) {
   return [nn, dd];
 }
 
-function get_lcm(array) {
+function getGCD(num1, num2) {
+  if (num1 === 0 || num2 === 0) return num1 + num2
+  else if (num1 === 1 || num2 === 1) return 1
+  else if (num1 === num2) return num1
+
+  return getGCD(num2, num1 % num2)
+}
+
+// TODO: GCD of an array
+
+function getLCM(num1, num2) {
+  if (num1 === 0 || num2 === 0) return 0
+
+  const gcd = getGCD(num1, num2)
+  return Math.trunc((Math.max(num1, num2) / gcd) * Math.min(num1, num2))
+}
+
+function getLCMArray(array) {
   let primecounts = [];
   let primefactors = [];
   var f;
@@ -729,6 +742,128 @@ function get_lcm(array) {
   return lcm;
 }
 
+// returns array of the numerator and denominator of the reduced form of given ratio
+function simplifyRatio(numerator, denominator) {
+  const gcd = getGCD(numerator, denominator)
+  return [numerator, denominator].map(x => x / gcd)
+}
+
+function simplifyRatioString(ratio) {
+  const [n, d] = ratio.split('/').map(x => parseInt(x))
+  return simplifyRatio(n, d).join('/')
+}
+
+function stackRatios(ratioStr1, ratioStr2) {
+  const [n1, d1] = ratioStr1.split('/').map(x => parseInt(x))
+  const [n2, d2] = ratioStr2.split('/').map(x => parseInt(x))
+  return simplifyRatio(n1 * n2, d1 * d2).join('/')
+}
+
+function stackNOfEDOs(nOfEdo1Str, nOfEdo2Str) {
+  const [deg1, edo1] = nOfEdo1Str.split('\\').map(x => parseInt(x))
+  const [deg2, edo2] = nOfEdo2Str.split('\\').map(x => parseInt(x))
+  const newEdo = getLCM(edo1, edo2)
+  const newDegree = (newEdo / edo1) * deg1 + (newEdo / edo2) * deg2
+  return simplifyRatio(newDegree, newEdo).join('\\')
+}
+
+// TODO: proper regex tests for +/- lines
+function stackLines(line1, line2) {
+  const line1Type = getLineType(line1)
+  const line2Type = getLineType(line2)
+
+  // If both are ratios, preserve ratio notation
+  if (line1Type === LINE_TYPE.RATIO && line2Type === LINE_TYPE.RATIO)
+    return stackRatios(line1, line2)
+
+  // If both are N of EDOs, preserve N of EDO notation
+  if (line1Type === LINE_TYPE.N_OF_EDO && line2Type === LINE_TYPE.N_OF_EDO)
+    return stackNOfEDOs(line1, line2)
+
+  // If the first line is a decimal type, keep decimals
+  if (line1Type === LINE_TYPE.DECIMAL)
+    return decimal_to_commadecimal(line_to_decimal(line1) * line_to_decimal(line2))
+
+  // All other cases convert to cents, allow negative values
+  let val1 = line_to_cents(line1)
+  if (!val1 && line1.startsWith('-'))
+    val1 = parseFloat(line1)
+
+  let val2 = line_to_cents(line2)
+  if (!val2 && line2.startsWith('-'))
+    val2 = parseFloat(line2)
+
+  const valueOut = val1 + val2
+  return valueOut.toFixed(6)
+}
+
+// stacks an interval on itself
+function stackSelf(line, numStacks) {
+  const lineType = getLineType(line)
+  const wholeExp = numStacks === Math.trunc(numStacks)
+
+  // power function
+  if (lineType === LINE_TYPE.DECIMAL)
+    return decimal_to_commadecimal(Math.pow(line_to_decimal(line), numStacks))
+
+  // power function on numerator and denominator
+  if (wholeExp && lineType === LINE_TYPE.RATIO) {
+    let ratio = '1/1'
+    if (numStacks > 0) ratio = line.split('/')
+    else if (numStacks < 0) ratio = line.split('/').reverse()
+    else return ratio
+    return ratio.map(x => parseInt(Math.pow(x, Math.abs(numStacks)))).join('/')
+  } 
+
+  // multiply degree by stack amount
+  if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
+    const [deg, edo] = line.split('\\')
+    return deg * numStacks + '\\' + edo
+  } 
+
+  else {
+    const value = line_to_cents(line) * numStacks
+    return value.toFixed(6)
+  }
+}
+
+function moduloLine(line, modLine) {
+  const numType = getLineType(line)
+  const modType = getLineType(modLine)
+
+  // If both are ratios, preserve ratio notation
+  if (numType === LINE_TYPE.RATIO && modType === LINE_TYPE.RATIO) {
+    const periods = Math.floor([line, modLine].map(ratio_to_decimal).reduce((a, b) => Math.log(a) / Math.log(b)))
+    return stackRatios(line, stackSelf(modLine, -periods))
+  } 
+  
+  // If both are N of EDOs, preserve N of EDO notation
+  if (numType === LINE_TYPE.N_OF_EDO && modType === LINE_TYPE.N_OF_EDO) {
+    const [numDeg, numEdo] = line.split('\\').map(x => parseInt(x))
+    const [modDeg, modEdo] = modLine.slip('\\').map(x => parseInt(x))
+    const lcmEdo = getLCM(numEdo, modEdo)
+    return (((numDeg * lcmEdo) / numEdo) % ((modDeg * lcmEdo) / modEdo)) + '\\' + lcmEdo
+  }
+  
+  // If the first line is a decimal type, keep decimals
+  if (numType === LINE_TYPE.DECIMAL) {
+    const num = commadecimal_to_decimal(line)
+    const mod = line_to_decimal(modLine)
+    const periods = Math.floor(num / mod)
+    return decimal_to_commadecimal(num / Math.pow(mod, -periods))
+  } 
+  
+  // If the first line is N of EDO and the second line is an octave, simply octave reduce
+  if (numType === LINE_TYPE.N_OF_EDO && line_to_decimal(modLine) === 2) {
+    const [num, mod] = line.split('\\').map(x => parseInt(x))
+    return parseInt(mathModulo(num, mod)) + '\\' + mod
+  }
+
+  // All other cases convert to cents
+  return [line, modLine].map(line_to_cents).reduce(mathModulo).toFixed(6)
+}
+
+// TODO: functional improvements
 function invert_chord(chord) {
   if (!/^(\d+:)+\d+$/.test(chord)) {
     alert("Warning: invalid chord " + chord);
@@ -753,7 +888,7 @@ function invert_chord(chord) {
     denominators.push(reduced_interval[1]);
   });
 
-  var lcm = get_lcm(denominators);
+  var lcm = getLCMArray(denominators);
 
   chord = [];
   intervals.forEach(function (x) {
@@ -761,6 +896,14 @@ function invert_chord(chord) {
   });
 
   return chord.join(":");
+}
+
+const roundToNDecimals = (decimals, number) => {
+  return Math.round(number * 10 ** decimals) / 10 ** decimals
+}
+
+const findIndexClosestTo = (value, array) => {
+  return array.map(x => Math.abs(value - x)).reduce((ci, d, i, a) => (d < a[ci] ? i : ci), 0)
 }
 
 function getFloat(id, errorMessage) {
@@ -850,4 +993,44 @@ function redirectToHTTPS() {
   if (location.protocol !== 'https:') {
     location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
   }
+}
+
+
+// converts a cents array into a uint8 array for the mnlgtun exporter
+function centsTableToMnlgBinary(centsTableIn) {
+  const dataSize = centsTableIn.length * 3
+  const data = new Uint8Array(dataSize)
+  let dataIndex = 0
+  centsTableIn.forEach(c => {
+    // restrict to valid values
+    let cents = c
+    if (cents < 0) cents = 0
+    else if (cents >= MNLG_MAXCENTS) cents = MNLG_MAXCENTS
+
+    const semitones = cents / 100.0
+    const microtones = Math.trunc(semitones)
+
+    const u16a = new Uint16Array([Math.round(0x8000 * (semitones - microtones))])
+    const u8a = new Uint8Array(u16a.buffer)
+
+    data[dataIndex] = microtones
+    data[dataIndex + 1] = u8a[1]
+    data[dataIndex + 2] = u8a[0]
+    dataIndex += 3
+  })
+  return data
+}
+
+// converts a mnlgtun binary string into an array of cents
+function mnlgBinaryToCents(binaryData) {
+  const centsOut = []
+  const tuningSize = binaryData.length / 3
+  for (let i = 0; i < tuningSize; i++) {
+    const str = binaryData.slice(i * 3, i * 3 + 3)
+    const hundreds = str.charCodeAt(0) * 100
+    let tens = new Uint8Array([str.charCodeAt(2), str.charCodeAt(1)])
+    tens = Math.round((parseInt(new Uint16Array(tens.buffer)) / 0x8000) * 100)
+    centsOut.push(hundreds + tens)
+  }
+  return centsOut
 }

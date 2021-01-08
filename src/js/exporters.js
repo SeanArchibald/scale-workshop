@@ -7,18 +7,18 @@ function export_error() {
   }
 }
 
-function save_file(filename, contents, raw) {
-  var link = document.createElement('a');
-  link.download = filename;
+function save_file(filename, contents, raw, mimeType = 'application/octet-stream,') {
+  const link = document.createElement('a')
+  link.download = filename
 
   if (raw === true) {
     const blob = new Blob([contents], { type: 'application/octet-stream' })
     link.href = window.URL.createObjectURL(blob)
   } else {
-    link.href = "data:application/octet-stream," + encodeURIComponent(contents);
+    link.href = 'data:' + mimeType + encodeURIComponent(contents);
   }
 
-  link.dispatchEvent(new MouseEvent(`click`, { bubbles: true, cancelable: true, view: window })); // opens save dialog
+  link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })) // opens save dialog
 }
 
 function export_anamark_tun(version) {
@@ -334,6 +334,116 @@ function exportSytrusPitchMap() {
   exportImageLinePitchMap(4)
 }
 
+function getMnlgtunTuningInfoXML(useScaleFormat, programmer, comment) {
+  // Builds an XML file necessary for the .mnlgtun file format
+  const rootName = useScaleFormat ? 'minilogue_TuneScaleInformation' : 'minilogue_TuneOctInformation'
+  const xml = document.implementation.createDocument(null, rootName)
+
+  const Programmer = xml.createElement('Programmer')
+  Programmer.textContent = programmer
+  xml.documentElement.appendChild(Programmer)
+
+  const Comment = xml.createElement('Comment')
+  Comment.textContent = comment
+  xml.documentElement.appendChild(Comment)
+
+  return xml
+}
+
+function getMnlgtunFileInfoXML(useScaleFormat, product = 'minilogue') {
+  // Builds an XML file necessary for the .mnlgtun file format
+  const rootName = 'KorgMSLibrarian_Data'
+  const xml = document.implementation.createDocument(null, rootName)
+
+  const Product = xml.createElement('Product')
+  Product.textContent = product
+  xml.documentElement.appendChild(Product)
+
+  const Contents = xml.createElement('Contents')
+  Contents.setAttribute('NumProgramData', 0)
+  Contents.setAttribute('NumPresetInformation', 0)
+  Contents.setAttribute('NumTuneScaleData', 1 * useScaleFormat)
+  Contents.setAttribute('NumTuneOctData', 1 * !useScaleFormat)
+
+  const [fileNameHeader, dataName, binName] = useScaleFormat
+    ? ['TunS_000.TunS_', 'TuneScaleData', 'TuneScaleBinary']
+    : ['TunO_000.TunO_', 'TuneOctData', 'TuneOctBinary']
+
+  const TuneData = xml.createElement(dataName)
+
+  const Information = xml.createElement('Information')
+  Information.textContent = fileNameHeader + 'info'
+  TuneData.appendChild(Information)
+
+  const BinData = xml.createElement(binName)
+  BinData.textContent = fileNameHeader + 'bin'
+  TuneData.appendChild(BinData)
+
+  Contents.appendChild(TuneData)
+  xml.documentElement.appendChild(Contents)
+
+  return xml
+}
+
+function exportMnlgtun(useScaleFormat) {
+  // This exporter converts tuning data into a zip-compressed file for use with Korg's
+  // 'logue Sound Librarian software, supporting their 'logue series of synthesizers.
+  // While this exporter preserves accuracy as much as possible, the Sound Librarian software
+  // unforunately truncates cent values to 1 cent precision. It's unknown whether the tuning accuracy
+  // from this exporter is written to the synthesizer and used in the synthesis.
+
+  if (export_error()) {
+    return
+  }
+
+  // the index of the table that's equal to the baseNote should have the following value
+  const refOffsetCents = MNLG_A_REF.val + decimal_to_cents(tuning_table.base_frequency / MNLG_A_REF.freq)
+
+  // offset cents array for binary conversion
+  let centsTable = tuning_table.cents.map(c => roundToNDecimals(3, c + refOffsetCents))
+
+  if (useScaleFormat) {
+    // ensure table length is exactly 128
+    centsTable = centsTable.slice(0, MNLG_SCALESIZE)
+
+    // this shouldn't happen unless something goes really wrong
+    if (centsTable.length !== MNLG_SCALESIZE) {
+      console.log('Somehow the mnlgtun table was less than 128 values, the end will be padded with 0s.')
+      const padding = new Array(MNLG_SCALESIZE - centsTable.length).fill(0)
+      centsTable = [...centsTable, ...padding]
+    }
+    
+  } else {
+    // normalize around root, truncate to 12 notes, and wrap flattened Cs
+    let cNote = parseInt(tuning_table.base_midi_note / MNLG_OCTAVESIZE) * MNLG_OCTAVESIZE
+    centsTable = centsTable.slice(cNote, cNote + MNLG_OCTAVESIZE)
+                           .map(cents => mathModulo(cents - MNLG_C_REF.val, MNLG_MAXCENTS))
+  }
+
+  // convert to binary
+  const binaryData = centsTableToMnlgBinary(centsTable)
+
+  // prepare files for zipping
+  const tuningInfo = getMnlgtunTuningInfoXML(useScaleFormat, 'ScaleWorkshop', tuning_table.filename)
+  const fileInfo = getMnlgtunFileInfoXML(useScaleFormat)
+  const [fileNameHeader, fileType] = useScaleFormat ? ['TunS_000.TunS_', '.mnlgtuns'] : ['TunO_000.TunO_', '.mnlgtuno']
+
+  // build zip
+  const zip = new JSZip()
+  zip.file(fileNameHeader + 'bin', binaryData)
+  zip.file(fileNameHeader + 'info', tuningInfo.documentElement.outerHTML)
+  zip.file('FileInformation.xml', fileInfo.documentElement.outerHTML)
+  zip.generateAsync({ type: 'base64' }).then(
+    base64 => {
+      save_file(tuning_table.filename + fileType, base64, false, 'application/zip;base64,')
+    },
+    err => alert(err)
+  )
+
+  // success
+  return true
+}
+
 function export_reference_deflemask() {
 
   // This exporter converts your tuning data into a readable format you can easily input manually into Deflemask.
@@ -373,6 +483,123 @@ function export_reference_deflemask() {
   // success
   return true;
 
+}
+
+// TODO: improve with currying?
+function exportReaperNamedNotes(
+  pitchFormat = 'scale data',
+  showPeriodNumbers = true,
+  calculatePeriodInPitch = false,
+  rootPeriod = 0,
+  centsRoot = 0,
+  degreeRoot = 0
+) {
+  // This exporter enumerates the scale data to 128 MIDI notes in a readable format
+  // that can be loaded into Reaper's piano roll in "Named Note" mode.
+  //  - 'pitchFormat' can either be 'scale data', 'cents', 'freq', 'decimal', or 'degree'
+  //  - 'showPeriodNumbers' if true will put the period (or octave) number by each pitch
+  //  - 'calculatePeriodInPitch' if true will preserve the period value in the pitch value
+  //  - 'rootPeriod' is for if the root should start on a certain period number
+  //  - 'centsRoot' is the cent value used for the root note of the scale
+
+  if (export_error()) {
+    return false
+  }
+
+  // general properties
+  const period = tuning_table.scale_data.slice(-1)[0]
+  const tuningSize = tuning_table.note_count - 1
+
+  // line building functions
+  const prepend = (num, line) => num + ' ' + line
+  const rootOffset = num => num - tuning_table.base_midi_note
+  const circularIndex = num => mathModulo(rootOffset(num), tuningSize)
+  const periodNumber = num => Math.floor(rootOffset(num) / tuningSize + rootPeriod)
+  const appendPeriodNum = (line, num) => line + ' (' + periodNumber(num) + ')'
+  const calcPeriod = (line, ind) => stackLines(line, stackSelf(period, periodNumber(ind) + rootPeriod))
+  const addCentsRoot = cents => parseFloat(cents) + centsRoot
+
+  let fileFunction, pitchTable
+
+  // start file
+  let file = '# MIDI note / CC name map' + newline
+
+  let pitchLine = (line, ind) => line
+  if (showPeriodNumbers) pitchLine = (line, ind) => appendPeriodNum(line, ind)
+
+  if (pitchFormat === 'scale data') {
+    const unison = stackSelf(period, 0) // use a 1/1 in the line type of the period
+    pitchTable = [unison, ...tuning_table.scale_data.slice(1, -1)]
+
+    let scalePitch = (line, ind) => pitchLine(line, ind)
+    if (calculatePeriodInPitch) scalePitch = (line, ind) => pitchLine(calcPeriod(line, ind), ind)
+
+    // Iterate over scale data, applying periods if chosen
+    const scaleData = (num, array, table) => {
+      const ind = array.length - num - 1
+      return prepend(ind, scalePitch(table[circularIndex(ind)], ind))
+    }
+
+    fileFunction = table => tuning_table.cents.map((x, i, a) => scaleData(i, a, table)).join(newline)
+  } else if (pitchFormat !== 'degree') {
+    let pitchOffset = (line, ind) => pitchLine(roundToNDecimals(6, parseFloat(line)), ind)
+
+    // assign proper pitch table
+    // will have 6 decimal places of precision, except for cents which is 3
+    switch (pitchFormat) {
+      case 'freq':
+        pitchTable = tuning_table.freq
+        break
+      case 'decimal':
+        pitchTable = tuning_table.decimal
+        break
+      default:
+        pitchTable = tuning_table.cents
+        pitchOffset = (line, ind) => pitchLine(roundToNDecimals(3, addCentsRoot(line)), ind)
+        break
+    }
+
+    // iterate over the first period of the table
+    if (!calculatePeriodInPitch) {
+      const pitchValue = (i, table) => {
+        const ind = table.length - i - 1
+        return prepend(ind, pitchOffset(table[circularIndex(ind) + tuning_table.base_midi_note], ind))
+      }
+
+      fileFunction = table => table.map((x, i, a) => pitchValue(i, a)).join(newline)
+
+      // iterate over the whole table
+    } else {
+      const pitchValue = (i, table) => {
+        const ind = table.length - i - 1
+        return prepend(ind, pitchOffset(table[ind], ind))
+      }
+
+      fileFunction = table => table.map((x, i) => pitchValue(i, table)).join(newline)
+    }
+
+    // enumerate scale degrees
+  } else {
+    pitchTable = tuning_table.cents
+    const degreeLine = (num, table) => {
+      const ind = table.length - num - 1
+      let deg = rootOffset(ind) + degreeRoot + tuningSize * rootPeriod
+      
+      if (!calculatePeriodInPitch) 
+        deg = mathModulo(deg, tuningSize)
+
+      return prepend(ind, pitchLine(deg + '\\' + tuningSize, ind))
+    }
+
+    fileFunction = table => table.map((x, i) => degreeLine(i, table)).join(newline)
+  }
+
+  file += fileFunction(pitchTable)
+
+  save_file(tuning_table.filename + '.txt', file)
+
+  // success
+  return true
 }
 
 /**
