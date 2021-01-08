@@ -179,7 +179,7 @@
   <header>
     <p><img src="src/assets/favicon/apple-touch-icon.png" alt="Scale Workshop logo" id="logo" /></p>
     <h1>Scale Workshop</h1>
-    <h4>User guide 1.0.2</h4>
+    <h4>User guide 1.2</h4>
     <p class="lead">Scale Workshop allows you to design microtonal scales and play them in your web browser. Export your
       scales for use with VST instruments. Convert Scala files to various tuning formats.</p>
     <a href="#overview" class="sr-only">Skip to main content</a>
@@ -213,6 +213,7 @@
           <li><a href="#rank-2-temperaments">Rank-2 temperaments</a></li>
           <li><a href="#harmonic-series-segments">Harmonic series segments</a></li>
           <li><a href="#subharmonic-series-segments">Subharmonic series segments</a></li>
+          <li><a href="#enumerate-chord">Enumerate chord</a></li>
           <li><a href="#manual-data-entry">Manual data entry</a>
             <ul>
               <li><a href="#just-intonation">Just intonation</a></li>
@@ -222,10 +223,14 @@
           </li>
           <li><a href="#modify-scales">Modify scales</a>
             <ul>
-              <li><a href="#mode">Mode</a></li>
+              <li><a href="#subset">Subset</a></li>
               <li><a href="#stretch-compress">Stretch/compress</a></li>
               <li><a href="#random-variance">Random variance</a></li>
               <li><a href="#tempo-sync-beating">Tempo-sync beating</a></li>
+              <li><a href="#approximate-by-ratios">Approximate by ratios</a></li>
+              <li><a href="#approximate-by-harmonics">Approximate by harmonics</a></li>
+              <li><a href="#approximate-by-subharmonics">Approximate by subharmonics</a></li>
+              <li><a href="#equalize">Equalize</a></li>
             </ul>
           </li>
         </ul>
@@ -373,6 +378,9 @@
     <p class="text-center"><a href="src/assets/img/guide/subharmonic-series.png" target="_blank"><img
           src="src/assets/img/guide/subharmonic-series.png" /></a></p>
 
+    <h3 id="enumerate-chord">Enumerate chord</h3>
+    <p>Create a scale from a list of harmonics separated by colons.<br/>E.g. 4:5:6:7:8</p>
+
     <h3 id="manual-data-entry">Manual data entry</h3>
     <p>Scales can be written manually by typing them in to the <strong>Scale data</strong> text field. Enter one
       interval per line. Do not enter 1/1 on the first line as it is already assumed that the first note is 1/1.</p>
@@ -439,8 +447,8 @@
     <p class="text-center"><a href="src/assets/img/guide/menu-modify.png" target="_blank"><img
           src="src/assets/img/guide/menu-modify.png" /></a></p>
 
-    <h3 id="mode">Mode</h3>
-    <p>Takes a subset of the current scale. Modes are entered numerically.</p>
+    <h3 id="subset">Subset</h3>
+    <p>Takes a subset of the current scale. Subsets are entered numerically.</p>
     <p class="text-center"><a href="src/assets/img/guide/mode.png" target="_blank"><img
           src="src/assets/img/guide/mode.png" /></a></p>
 
@@ -466,6 +474,18 @@
       of your original scale; in some cases this will result in notes converging on the same note, resulting in
       duplicates. For more obvious tempo-synced effects, choose a resolution that is a power of 2, e.g. 32, 64, or 128.
     </p>
+
+    <h3 id="approximate-by-ratios">Approximate by ratios</h3>
+    <p>This steps you through each interval of your scale, shows you a selection of ratios that are close to your interval, and allows you to choose the ratio for each.</p>
+
+    <h3 id="approximate-by-harmonics">Approximate by harmonics</h3>
+    <p>This retunes each interval in your scale to the nearest harmonic. You select the denominator.</p>
+
+    <h3 id="approximate-by-subharmonics">Approximate by subharmonics</h3>
+    <p>This retunes each interval in your scale to the nearest subharmonic. You select the numerator.</p>
+
+    <h3 id="equalize">Equalize</h3>
+    <p>This retunes each interval in your scale to the nearest equal step. You select the number of steps to equally divide the interval of equivalence.</p>    
 
     <h2 id="synthesizer">Synthesizer</h2>
     <p>Scale Workshop has a built-in synth so that you can play and hear your scales. This is useful for auditioning the

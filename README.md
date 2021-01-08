@@ -87,6 +87,27 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.3
+* AnaMark TUN export now contains v1 data only. This should improve compatibility with synths (e.g. Omnisphere and Quanta)
+
+### 1.2
+* New feature: Approximate scale by harmonics of an arbitrary denominator
+* New feature: Approximate scale by subharmonics of an arbitrary numerator
+* New feature: Approximate scale to equal divisions
+* Improvement: 'Clear scale' function now moved into 'New' menu
+* Improvement: 'Mode' renamed to 'Subset'
+* Improvement: Various updates to the user guide
+* Bug fix: 'Stretch/compress' now works as it should
+* Bug fix: 'Tempo-sync beating' now works as it should
+
+### 1.1.1
+* Improvement: When sharing a Scale Workshop link (on Discord, Facebook, etc.) the site description is now much shorter so takes less space
+
+### 1.1
+* New feature: Export tuning files for Harmor and Sytrus synths (thanks to Azorlogh)
+* Improvement: 'Mode' feature now shows a counter while you input a subset
+* Improvement: Include scale URL in a comment within exported TUN, scl, Max/MSP txt and Kontakt script exports (issue #66)
+
 ### 1.0.4
 * New feature: 'Approximate' method for modifying scales can produce rational approximations of your scale
 * Improvement: Enumerate Chord method of scale generation now allows for inverted chords (e.g. 4:5:6 inverted would give 10:12:15)

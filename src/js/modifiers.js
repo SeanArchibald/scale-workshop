@@ -10,13 +10,11 @@ function modify_stretch() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }
 
-  var octave_size; // (pseudo)octave size in cents
-  var stretch_size; // size of new pseudo-octave after stretching
   var stretch_ratio = parseFloat(jQuery("#input_stretch_ratio").val()); // amount of stretching, ratio
 
   // split user data into individual lines
@@ -25,20 +23,18 @@ function modify_stretch() {
   // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
   let new_tuning_lines = [];
   for (let i = 0; i < lines.length; i++) {
-    const line = R.trim(R.toString(lines[i]))
-    if (!R.isEmpty(line)) {
-      switch (getLineType(line)) {
-        case "invalid":
-          return false;
-        case "cents":
-          new_tuning_lines.push((parseFloat(line) * stretch_ratio).toFixed(5));
-          break;
-        case "n of edo":
-          new_tuning_lines.push((n_of_edo_to_cents(line) * stretch_ratio).toFixed(5));
-          break;
-        case "ratio":
-          new_tuning_lines.push((ratio_to_cents(line) * stretch_ratio).toFixed(5));
-      }
+    switch (getLineType(lines[i])) {
+      case "invalid":
+        alert("Scale data looks invalid: " + lines[i]);
+        return false;
+      case "cents":
+        new_tuning_lines.push((parseFloat(lines[i]) * stretch_ratio).toFixed(5));
+        break;
+      case "n of edo":
+        new_tuning_lines.push((n_of_edo_to_cents(lines[i]) * stretch_ratio).toFixed(5));
+        break;
+      case "ratio":
+        new_tuning_lines.push((ratio_to_cents(lines[i]) * stretch_ratio).toFixed(5));
     }
   }
 
@@ -62,7 +58,7 @@ function modify_random_variance() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }
@@ -119,7 +115,7 @@ function modify_mode() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }
@@ -226,7 +222,7 @@ function modify_sync_beating() {
 
   if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
 
-    alert("No tuning data to modify.");
+    alert("No scale data to modify.");
     return false;
 
   }
@@ -253,7 +249,7 @@ function modify_sync_beating() {
   for (let i = 0; i < lines.length; i++) {
 
     lines[i] = line_to_decimal(lines[i]);
-    new_tuning += R.toString(Math.round(lines[i] * resolution)) + "/" + R.toString(resolution) + unix_newline;
+    new_tuning += R.toString(Math.round(lines[i] * resolution)) + "/" + resolution + unix_newline;
 
   }
   new_tuning = new_tuning.trim(); // remove final newline
@@ -290,7 +286,7 @@ function modify_key_transpose() {
 
   if ( R.isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
 
-    alert( "No tuning data to modify." );
+    alert( "No scale data to modify." );
     return false;
 
   }
@@ -455,4 +451,152 @@ function modify_update_approximations() {
         jQuery("#approximation_selection").append("<option selected disabled> Try to  \"Show next best approximations\" or edit filters.</option>")
     }
   }
+}
+
+
+
+// approximate by harmonics
+function modify_approximate_harmonics() {
+
+  // remove white space from tuning data field
+  trimSelf("#txt_tuning_data")
+
+  if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
+
+    alert("No scale data to modify.");
+    return false;
+
+  }
+
+  if (R.isEmpty(jQuery("#input_approx_harm_denominator").val())) {
+
+    alert("Please enter a denominator value.");
+    return false;
+
+  }
+
+  var denominator = jQuery("#input_approx_harm_denominator").val();
+
+  // loop through all intervals and approximate each with nearest harmonic
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  console.log(lines);
+  var new_tuning = "";
+
+  for (let i = 0; i < lines.length; i++) {
+
+    lines[i] = line_to_decimal(lines[i]);
+    new_tuning += R.toString(Math.round(lines[i] * denominator)) + "/" + denominator + unix_newline;
+
+  }
+  new_tuning = new_tuning.trim(); // remove final newline
+
+  console.log(new_tuning);
+
+  // update fields and parse
+  jQuery("#txt_tuning_data").val(new_tuning);
+  parse_tuning_data();
+
+  jQuery("#modal_approximate_harmonics").dialog("close");
+
+  // success
+  return true;
+}
+
+function modify_approximate_subharmonics() {
+
+  // remove white space from tuning data field
+  trimSelf("#txt_tuning_data")
+
+  if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
+
+    alert("No scale data to modify.");
+    return false;
+
+  }
+
+  if (R.isEmpty(jQuery("#input_approx_subharm_numerator").val())) {
+
+    alert("Please enter a numerator value.");
+    return false;
+
+  }
+
+  var numerator = jQuery("#input_approx_subharm_numerator").val();
+
+  // loop through all intervals and approximate each with nearest harmonic
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  console.log(lines);
+  var new_tuning = "";
+
+  for (let i = 0; i < lines.length; i++) {
+
+    lines[i] = line_to_decimal(lines[i]);
+    new_tuning += numerator + "/" + R.toString(Math.round(numerator / lines[i])) + unix_newline;
+
+  }
+  new_tuning = new_tuning.trim(); // remove final newline
+
+  console.log(new_tuning);
+
+  // update fields and parse
+  jQuery("#txt_tuning_data").val(new_tuning);
+  parse_tuning_data();
+
+  jQuery("#modal_approximate_subharmonics").dialog("close");
+
+  // success
+  return true;
+}
+
+function modify_equalize() {
+
+  // remove white space from tuning data field
+  trimSelf("#txt_tuning_data")
+
+  if (R.isEmpty(jQuery("#txt_tuning_data").val())) {
+
+    alert("No scale data to modify.");
+    return false;
+
+  }
+
+  if (R.isEmpty(jQuery("#input_equalize_divisions").val())) {
+
+    alert("Please enter the number of divisions.");
+    return false;
+
+  }
+
+  // loop through all intervals and approximate each with nearest harmonic
+  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  console.log(lines);
+  var new_tuning = "";
+
+  var divisions = jQuery("#input_equalize_divisions").val();
+  var step_size = line_to_cents(lines[lines.length-1]) / divisions;
+
+  for (let i = 0; i < lines.length-1; i++) {
+
+    // round to nearest step_size
+    lines[i] = Math.round(line_to_cents(lines[i]) / step_size) * step_size;
+
+    // ensure that line result has a . at the end
+    if ( R.toString(lines[i]).indexOf(".") == -1 ) {
+      lines[i] = R.toString(lines[i]) + ".";
+    }
+    new_tuning += lines[i] + unix_newline;
+
+  }
+  new_tuning += lines[lines.length-1]; // leave last line unchanged
+
+  console.log(new_tuning);
+
+  // update fields and parse
+  jQuery("#txt_tuning_data").val(new_tuning);
+  parse_tuning_data();
+
+  jQuery("#modal_equalize").dialog("close");
+
+  // success
+  return true;
 }

@@ -177,7 +177,7 @@ function ftom(input) {
 // if input is empty, returns "tuning" as a fallback
 function sanitize_filename(input) {
   if (R.isEmpty(input.trim())) {
-    return "tuning";
+    return "untitled scale";
   }
   return input.replace(/[|&;$%@"<>()+,?]/g, "").replace(/\//g, "_");
 }
