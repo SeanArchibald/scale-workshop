@@ -89,6 +89,10 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ### 1.3
 * AnaMark TUN export now contains v1 data only. This should improve compatibility with synths (e.g. Omnisphere and Quanta)
+* New feature: Export Korg Minilogue & Monologue tuning formats (.mnlgtuns & .mnlgtuno)
+* New feature: Export Soniccouture tuning format (.nka)
+* New feature: Export Reaper Note Name Map (.txt)
+* Bug fix: AnaMark TUN export is now v1 compliant - fixes compatibility with Spectrasonics Omnisphere
 
 ### 1.2
 * New feature: Approximate scale by harmonics of an arbitrary denominator

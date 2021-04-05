@@ -280,6 +280,60 @@ function export_kontakt_script() {
 
 }
 
+function export_soniccouture_nka() {
+
+  if (export_error()) {
+    return;
+  }
+
+  // assemble the nka contents
+  // first line should always be "%XenSetup"
+  var file = "%XenSetup" + newline;
+
+  // loop through 128 notes to get semitone offset
+  for (let i = 0; i < TUNING_MAX_SIZE; i++) {
+
+    var this_note = ftom(tuning_table['freq'][i]);
+
+    // if we're out of MIDI note range, leave semitone offset as default
+    if (this_note[0] < 0 || this_note[0] >= TUNING_MAX_SIZE) {
+      file += "0" + newline;
+    }
+
+    // success, we're in range of another note, so get the semitone offset
+    else {
+      file += (this_note[0]-i) + newline;
+    }
+
+  }
+
+  // loop through 128 notes to get cents offset
+  for (let i = 0; i < TUNING_MAX_SIZE; i++) {
+
+    var this_note = ftom(tuning_table['freq'][i]);
+
+    // if we're out of MIDI note range, leave semitone offset as default
+    if (this_note[0] < 0 || this_note[0] >= TUNING_MAX_SIZE) {
+      file += "0" + newline;
+    }
+
+    // success, we're in range of another note, so we'll change the tuning +/- 5000 hundredths of a cent
+    else {
+      file += parseInt(this_note[1] * 100) + newline;
+    }
+    
+  }
+
+  // Soniccouture .nka format requires 0 followed by newline to end the file
+  file += "0" + newline;
+
+  save_file(tuning_table['filename'] + '.nka', file);
+
+  // success
+  return true;
+
+}
+
 function exportImageLinePitchMap(range) {
   const { clamp } = R
 
