@@ -87,6 +87,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.3.1
+* AnaMark TUN export now supports a choice of v1 or v2 as different synths require a certain version.
+
 ### 1.3
 * AnaMark TUN export now contains v1 data only. This should improve compatibility with synths (e.g. Omnisphere and Quanta)
 * New feature: Export Korg Minilogue & Monologue tuning formats (.mnlgtuns & .mnlgtuno)

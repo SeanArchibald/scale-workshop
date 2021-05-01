@@ -17,7 +17,7 @@ if (window.location.hostname.endsWith('.github.com') || window.location.hostname
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 1.3";
+const APP_TITLE = "Scale Workshop 1.3.1";
 const TUNING_MAX_SIZE = 128;
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
