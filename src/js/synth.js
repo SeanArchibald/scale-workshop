@@ -14,9 +14,29 @@ const synth = new Synth()
 //     A  S  D  F  G  H  J  K  L  ;  '  \
 //      Z  X  C  V  B  N  M  ,  .  /
 //
+const layout = [
+  "Digit1 Digit2 Digit3 Digit4 Digit5 Digit6 Digit7 Digit8 Digit9 Digit0 Minus Equal",
+  "KeyQ KeyW KeyE KeyR KeyT KeyY KeyU KeyI KeyO KeyP BracketLeft BracketRight",
+  "KeyA KeyS KeyD KeyF KeyG KeyH KeyJ KeyK KeyL Semicolon Quote Backquote",
+  "KeyZ KeyX KeyC KeyV KeyB KeyN KeyM Comma Period Slash",
+]
+function buildKeymapFromLayout(rows) {
+  var map = {}
+  for (var r = rows.length - 1; r >= 0; r--) {
+    var row = rows[r].split(" ");
+    var rowId = rows.length - r - 2;
+    for (var c = 0; c < row.length; c++) {
+      var keycode = row[c];
+      map[keycode] = [rowId, c];
+    }
+  }
+  return map;
+}
+const keymap = buildKeymapFromLayout(layout)
 function keycode_to_midinote(keycode) {
   // get row/col vals from the keymap
-  var key = synth.keymap[keycode];
+
+  var key = keymap[keycode];
 
   if (R.isNil(key)) {
     // return false if there is no note assigned to this key
@@ -61,11 +81,11 @@ document.addEventListener("keydown", function (event) {
   }
 
   // bail, if a modifier is pressed alongside the key
-  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey || event.repeat) {
     return false;
   }
 
-  const midiNote = keycode_to_midinote(event.which); // midi note number 0-127
+  const midiNote = keycode_to_midinote(event.code); // midi note number 0-127
   const velocity = 100
 
   if (midiNote !== false) {
@@ -77,10 +97,10 @@ document.addEventListener("keydown", function (event) {
 // KEYUP -- capture keyboard input
 document.addEventListener("keyup", function (event) {
   // bail, if a modifier is pressed alongside the key
-  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey || event.repeat) {
     return false;
   }
-  const midiNote = keycode_to_midinote(event.which)
+  const midiNote = keycode_to_midinote(event.code)
   if (midiNote !== false) {
     event.preventDefault();
     synth.noteOff(midiNote);
