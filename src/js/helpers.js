@@ -9,29 +9,29 @@ Number.prototype.mod = function (n) {
 
 // modulo function (forward compatibility)
 function mathModulo(n, d) {
-  return ((n % d) + d) % d
+  return ((n % d) + d) % d;
 }
 
 // convert a cents value to decimal
 function cents_to_decimal(input) {
-  return Math.pow(2, (parseFloat(input) / 1200.0));
+  return Math.pow(2, parseFloat(input) / 1200.0);
 }
 
 // convert a ratio (string 'x/y') to decimal
 function ratio_to_decimal(input) {
   if (isRatio(input)) {
-    const [val1, val2] = input.split('/')
-    return val1 / val2
+    const [val1, val2] = input.split("/");
+    return val1 / val2;
   } else {
     alert("Invalid input: " + input);
-    return false
+    return false;
   }
 }
 
 // convert a comma decimal (1,25) to decimal
 function commadecimal_to_decimal(input) {
   if (isCommaDecimal(input)) {
-    input = parseFloat(input.toString().replace(',', '.'));
+    input = parseFloat(input.toString().replace(",", "."));
     if (input === 0 || isNaN(input)) {
       return false;
     } else {
@@ -46,7 +46,7 @@ function commadecimal_to_decimal(input) {
 // convert a decimal (1.25) into commadecimal (1,25)
 function decimal_to_commadecimal(input) {
   if (/^\d+\.?\d*$/.test(input)) {
-    return input.toFixed(6).replace('.', ',');
+    return input.toFixed(6).replace(".", ",");
   } else {
     alert("Invalid input: " + input);
     return false;
@@ -56,7 +56,7 @@ function decimal_to_commadecimal(input) {
 // convert a decimal into cents
 function decimal_to_cents(input) {
   if (input === false) {
-    return false
+    return false;
   }
   input = parseFloat(input);
   if (input === 0 || isNaN(input)) {
@@ -74,11 +74,11 @@ function ratio_to_cents(input) {
 // convert an n-of-m-edo (string 'x\y') to decimal
 function n_of_edo_to_decimal(input) {
   if (isNOfEdo(input)) {
-    const [val1, val2] = input.split('\\').map(x => parseInt(x))
+    const [val1, val2] = input.split("\\").map((x) => parseInt(x));
     return Math.pow(2, val1 / val2);
   } else {
     alert("Invalid input: " + input);
-    return false
+    return false;
   }
 }
 
@@ -90,7 +90,10 @@ function n_of_edo_to_cents(input) {
 function isCent(input) {
   // true, when the input has numbers at the beginning, followed by a dot, ending with any number of numbers
   // for example: 700.00
-  return /^\d+\.\d*$/.test(input)
+  if (typeof input !== "string") {
+    return false;
+  }
+  return /^\d+\.\d*$/.test(input.trim());
 }
 
 function isCommaDecimal(input) {
@@ -102,52 +105,52 @@ function isCommaDecimal(input) {
 function isNOfEdo(input) {
   // true, when the input has numbers at the beginning and the end, separated by a single backslash
   // for example: 7\12
-  return /^\d+\\\d+$/.test(input)
+  return /^\d+\\\d+$/.test(input);
 }
 
 function isRatio(input) {
   // true, when the input has numbers at the beginning and the end, separated by a single slash
   // for example: 3/2
-  return /^\d+\/\d+$/.test(input)
+  return /^\d+\/\d+$/.test(input);
 }
 
 function getLineType(input) {
   if (isCent(input)) {
-    return LINE_TYPE.CENTS
+    return LINE_TYPE.CENTS;
   }
   if (isCommaDecimal(input)) {
-    return LINE_TYPE.DECIMAL
+    return LINE_TYPE.DECIMAL;
   }
   if (isNOfEdo(input)) {
-    return LINE_TYPE.N_OF_EDO
+    return LINE_TYPE.N_OF_EDO;
   }
   if (isRatio(input)) {
-    return LINE_TYPE.RATIO
+    return LINE_TYPE.RATIO;
   }
 
-  return LINE_TYPE.INVALID
+  return LINE_TYPE.INVALID;
 }
 
 // convert any input 'line' to decimal
 function line_to_decimal(input) {
-  let converterFn = () => false
+  let converterFn = () => false;
 
   switch (getLineType(input)) {
     case LINE_TYPE.CENTS:
-      converterFn = cents_to_decimal
-      break
+      converterFn = cents_to_decimal;
+      break;
     case LINE_TYPE.DECIMAL:
-      converterFn = commadecimal_to_decimal
-      break
+      converterFn = commadecimal_to_decimal;
+      break;
     case LINE_TYPE.N_OF_EDO:
-      converterFn = n_of_edo_to_decimal
-      break
+      converterFn = n_of_edo_to_decimal;
+      break;
     case LINE_TYPE.RATIO:
-      converterFn = ratio_to_decimal
-      break
+      converterFn = ratio_to_decimal;
+      break;
   }
 
-  return converterFn(input)
+  return converterFn(input);
 }
 
 // convert any input 'line' to a cents value
@@ -158,7 +161,7 @@ function line_to_cents(input) {
 // convert a midi note number to a frequency in Hertz
 // assuming 12-edo at 440Hz
 function mtof(input) {
-  const frequencyOfC0 = 8.17579891564
+  const frequencyOfC0 = 8.17579891564;
   return frequencyOfC0 * Math.pow(SEMITONE_RATIO_IN_12_EDO, parseInt(input));
 }
 
@@ -166,8 +169,9 @@ function mtof(input) {
 // assuming 12-edo at 440Hz
 // returns an array [midi_note_number, cents_offset]
 function ftom(input) {
-  const midiNoteNumberOfA4 = 69
-  var midi_note_number = midiNoteNumberOfA4 + (12 * Math.log2(parseFloat(input) / 440));
+  const midiNoteNumberOfA4 = 69;
+  var midi_note_number =
+    midiNoteNumberOfA4 + 12 * Math.log2(parseFloat(input) / 440);
   var cents_offset = (midi_note_number - Math.round(midi_note_number)) * 100;
   midi_note_number = Math.round(midi_note_number);
   return [midi_note_number, cents_offset];
@@ -184,7 +188,7 @@ function sanitize_filename(input) {
 
 // clear all inputted scale data
 function clear_all() {
-  const midiNoteNumberOfA4 = 69
+  const midiNoteNumberOfA4 = 69;
   // empty text fields
   jQuery("#txt_tuning_data").val("");
   jQuery("#txt_name").val("");
@@ -207,9 +211,8 @@ function clear_all() {
     base_frequency: 440, // init val
     base_midi_note: midiNoteNumberOfA4, // init val
     description: "",
-    filename: ""
+    filename: "",
   };
-
 }
 
 // find MIDI note name from MIDI note number
@@ -217,13 +220,13 @@ function midi_note_number_to_name(input) {
   var n = parseInt(input);
   var quotient = Math.floor(n / 12);
   var remainder = n % 12;
-  var name = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  var name = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
   return name[remainder] + quotient;
 }
 
 // calculate the sum of the values in a given array given a stopping index
 function sum_array(array, endIndex) {
-  return array.slice(0, endIndex).reduce((sum, x) => sum + x, 0)
+  return array.slice(0, endIndex).reduce((sum, x) => sum + x, 0);
 }
 
 // rotates the array by given steps
@@ -244,7 +247,7 @@ function rotate(array, steps) {
 
 // calculate a continued fraction for the given number
 function get_cf(num, maxiterations, roundf) {
-  var cf = [] // the continued fraction
+  var cf = []; // the continued fraction
   var digit;
 
   var roundinv = 1.0 / roundf;
@@ -269,14 +272,12 @@ function get_cf(num, maxiterations, roundf) {
 
 // calculate a single convergent for a given continued fraction
 function get_convergent(cf, depth = 0) {
-
   var cfdigit; // the continued fraction digit
   var num; // the convergent numerator
   var den; // the convergent denominator
   var tmp; // for easy reciprocation
 
-  if (depth >= cf.length || depth == 0)
-    depth = cf.length;
+  if (depth >= cf.length || depth == 0) depth = cf.length;
 
   for (var d = 0; d < depth; d++) {
     cfdigit = cf[d];
@@ -292,21 +293,18 @@ function get_convergent(cf, depth = 0) {
     }
   }
 
-  return num + '/' + den;
+  return num + "/" + den;
 }
 
 // convert a decimal to ratio (string 'x/y'), may have rounding errors for irrationals
 function decimal_to_ratio(input, iterations = 15, depth = 0) {
-
-  if (input === false)
-    return false;
+  if (input === false) return false;
 
   input = parseFloat(input);
 
   if (input === 0 || isNaN(input)) {
     return false;
-  }
-  else {
+  } else {
     var inputcf = get_cf(input, iterations, 100000);
     return get_convergent(inputcf, depth);
   }
@@ -336,7 +334,7 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut = null) {
 
     // calculate the convergent
     for (var i = d; i > 0; i--) {
-      [den, num] = [num, den]
+      [den, num] = [num, den];
       num += den * cf[i - 1];
     }
 
@@ -345,16 +343,14 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut = null) {
         scnum = num - (cfdigit - i) * numarray[cind[d - 1]];
         scden = den - (cfdigit - i) * denarray[cind[d - 1]];
 
-        if (scden > perlimit)
-          break;
+        if (scden > perlimit) break;
 
         numarray.push(scnum);
         denarray.push(scden);
       }
     }
 
-    if (den > perlimit)
-      break;
+    if (den > perlimit) break;
 
     cind.push(numarray.length);
     numarray.push(num);
@@ -411,8 +407,8 @@ function show_mos_cf(per, gen, ssz, threshold) {
     c = L - s;
 
     // break if g is some equal division of period
-    if (c < (1 / roundf) && cf.length < maxcfsize) {
-      // add size-1 
+    if (c < 1 / roundf && cf.length < maxcfsize) {
+      // add size-1
       // not sure if flaw in the algorithm or weird edge case
 
       if (dd[dd.length - 2] != dd[dd.length - 1] - 1)
@@ -436,9 +432,17 @@ function show_mos_cf(per, gen, ssz, threshold) {
 }
 
 // helper function to simply pass in an interval and get an array of ratios returned
-function get_rational_approximations(intervalIn, numerators, denominators, roundf = 999999,
-  cidxOut = null, ratiosOut = null, numlimits = null, denlimits = null, ratiolimits = null) {
-
+function get_rational_approximations(
+  intervalIn,
+  numerators,
+  denominators,
+  roundf = 999999,
+  cidxOut = null,
+  ratiosOut = null,
+  numlimits = null,
+  denlimits = null,
+  ratiolimits = null
+) {
   var cf = []; // continued fraction
 
   cf = get_cf(intervalIn, 15, roundf);
@@ -455,17 +459,15 @@ function get_rational_approximations(intervalIn, numerators, denominators, round
     var rlim;
 
     for (var i = 0; i < numerators.length; i++) {
-      numerators[i] == 1 ? nlim = 1 : nlim = get_prime_limit(numerators[i]);
-      denominators[i] == 1 ? dlim = 1 : dlim = get_prime_limit(denominators[i]);
+      numerators[i] == 1 ? (nlim = 1) : (nlim = get_prime_limit(numerators[i]));
+      denominators[i] == 1
+        ? (dlim = 1)
+        : (dlim = get_prime_limit(denominators[i]));
 
-      if (doRatios)
-        ratiosOut.push(numerators[i] + "/" + denominators[i]);
-      if (doNumLim)
-        numlimits.push(nlim);
-      if (doDenLim)
-        denlimits.push(dlim);
-      if (doRatioLim)
-        ratiolimits.push(Math.max(nlim, dlim));
+      if (doRatios) ratiosOut.push(numerators[i] + "/" + denominators[i]);
+      if (doNumLim) numlimits.push(nlim);
+      if (doDenLim) denlimits.push(dlim);
+      if (doRatioLim) ratiolimits.push(Math.max(nlim, dlim));
     }
   }
 }
@@ -489,7 +491,9 @@ function get_rank2_mode(period, generator, size, numdown = 0) {
     interval += generator;
   }
 
-  degrees.sort(function (a, b) { return a - b });
+  degrees.sort(function (a, b) {
+    return a - b;
+  });
   for (var n = 1; n < degrees.length; n++) {
     modeOut.push(degrees[n] - degrees[n - 1]);
   }
@@ -513,8 +517,7 @@ function get_prime_factors(number) {
   var loop;
 
   for (var i = 0; i < PRIMES.length; i++) {
-    if (PRIMES[i] > n)
-      break;
+    if (PRIMES[i] > n) break;
 
     factorsout.push(0);
 
@@ -545,12 +548,10 @@ function get_prime_factors_string(number) {
   var str_out = "";
 
   for (var i = 0; i < factors.length; i++) {
-
     if (factors[i] != 0) {
       str_out += PRIMES[i] + "^" + factors[i];
 
-      if (i < factors.length - 1)
-        str_out += " * ";
+      if (i < factors.length - 1) str_out += " * ";
     }
   }
   return str_out;
@@ -560,8 +561,7 @@ function isPrime(number) {
   var sqrtnum = Math.floor(Math.sqrt(number));
 
   for (var i = 0; i < PRIMES.length; i++) {
-    if (PRIMES[i] >= sqrtnum)
-      break;
+    if (PRIMES[i] >= sqrtnum) break;
 
     if (number % PRIMES[i] == 0) {
       return false;
@@ -571,16 +571,14 @@ function isPrime(number) {
 }
 
 function prevPrime(number) {
-  if (number < 2)
-    return 2;
+  if (number < 2) return 2;
   var i = 0;
   while (i < PRIMES.length && PRIMES[i++] <= number);
   return PRIMES[i - 2];
 }
 
 function nextPrime(number) {
-  if (number < 2)
-    return 2;
+  if (number < 2) return 2;
   var i = 0;
   while (i < PRIMES.length && PRIMES[i++] <= number);
   return PRIMES[i - 1];
@@ -589,25 +587,19 @@ function nextPrime(number) {
 function closestPrime(number) {
   var thisPrime = isPrime(number);
 
-  if (number < 2)
-    return 2;
-  else if (thisPrime)
-    return number;
+  if (number < 2) return 2;
+  else if (thisPrime) return number;
 
   var np = nextPrime(number);
   var pp = prevPrime(number);
 
-  if (Math.abs(np - number) < Math.abs(pp - number))
-    return np;
-  else
-    return pp;
+  if (Math.abs(np - number) < Math.abs(pp - number)) return np;
+  else return pp;
 }
 
 function scrollToPrime(number, scrollDown) {
-  if (scrollDown)
-    return prevPrime(number);
-  else
-    return nextPrime(number);
+  if (scrollDown) return prevPrime(number);
+  else return nextPrime(number);
 }
 
 function get_prime_limit(number) {
@@ -649,12 +641,13 @@ function get_factors(number) {
     var q = number / n;
     if (Math.floor(q) == q) {
       factors.push(n);
-      if (n != q)
-        factors.push(q);
+      if (n != q) factors.push(q);
     }
   }
 
-  return factors.sort(function (a, b) { return a - b });;
+  return factors.sort(function (a, b) {
+    return a - b;
+  });
 }
 
 // returns array of the numerator and denominator of the reduced form of given ratio
@@ -681,30 +674,28 @@ function reduce_ratio(numerator, denominator) {
   var dd = 1;
 
   for (var i = 0; i < maxlength; i++) {
-    if (r_pf[i] > 0)
-      nn *= Math.pow(PRIMES[i], r_pf[i]);
-    else
-      dd *= Math.pow(PRIMES[i], r_pf[i] * -1);
+    if (r_pf[i] > 0) nn *= Math.pow(PRIMES[i], r_pf[i]);
+    else dd *= Math.pow(PRIMES[i], r_pf[i] * -1);
   }
 
   return [nn, dd];
 }
 
 function getGCD(num1, num2) {
-  if (num1 === 0 || num2 === 0) return num1 + num2
-  else if (num1 === 1 || num2 === 1) return 1
-  else if (num1 === num2) return num1
+  if (num1 === 0 || num2 === 0) return num1 + num2;
+  else if (num1 === 1 || num2 === 1) return 1;
+  else if (num1 === num2) return num1;
 
-  return getGCD(num2, num1 % num2)
+  return getGCD(num2, num1 % num2);
 }
 
 // TODO: GCD of an array
 
 function getLCM(num1, num2) {
-  if (num1 === 0 || num2 === 0) return 0
+  if (num1 === 0 || num2 === 0) return 0;
 
-  const gcd = getGCD(num1, num2)
-  return Math.trunc((Math.max(num1, num2) / gcd) * Math.min(num1, num2))
+  const gcd = getGCD(num1, num2);
+  return Math.trunc((Math.max(num1, num2) / gcd) * Math.min(num1, num2));
 }
 
 function getLCMArray(array) {
@@ -718,8 +709,7 @@ function getLCMArray(array) {
 
   var maxlength = 0;
   primefactors.forEach(function (item, index, array) {
-    if (item.length > maxlength)
-      maxlength = item.length;
+    if (item.length > maxlength) maxlength = item.length;
   });
 
   // find the min power of each primes in numbers' factorization
@@ -728,8 +718,7 @@ function getLCMArray(array) {
     for (var n = 0; n < primefactors.length; n++) {
       f = primefactors[n];
       if (p < f.length) {
-        if (primecounts[p] < f[p])
-          primecounts[p] = f[p];
+        if (primecounts[p] < f[p]) primecounts[p] = f[p];
       }
     }
   }
@@ -744,123 +733,131 @@ function getLCMArray(array) {
 
 // returns array of the numerator and denominator of the reduced form of given ratio
 function simplifyRatio(numerator, denominator) {
-  const gcd = getGCD(numerator, denominator)
-  return [numerator, denominator].map(x => x / gcd)
+  const gcd = getGCD(numerator, denominator);
+  return [numerator, denominator].map((x) => x / gcd);
 }
 
 function simplifyRatioString(ratio) {
-  const [n, d] = ratio.split('/').map(x => parseInt(x))
-  return simplifyRatio(n, d).join('/')
+  const [n, d] = ratio.split("/").map((x) => parseInt(x));
+  return simplifyRatio(n, d).join("/");
 }
 
 function stackRatios(ratioStr1, ratioStr2) {
-  const [n1, d1] = ratioStr1.split('/').map(x => parseInt(x))
-  const [n2, d2] = ratioStr2.split('/').map(x => parseInt(x))
-  return simplifyRatio(n1 * n2, d1 * d2).join('/')
+  const [n1, d1] = ratioStr1.split("/").map((x) => parseInt(x));
+  const [n2, d2] = ratioStr2.split("/").map((x) => parseInt(x));
+  return simplifyRatio(n1 * n2, d1 * d2).join("/");
 }
 
 function stackNOfEDOs(nOfEdo1Str, nOfEdo2Str) {
-  const [deg1, edo1] = nOfEdo1Str.split('\\').map(x => parseInt(x))
-  const [deg2, edo2] = nOfEdo2Str.split('\\').map(x => parseInt(x))
-  const newEdo = getLCM(edo1, edo2)
-  const newDegree = (newEdo / edo1) * deg1 + (newEdo / edo2) * deg2
-  return simplifyRatio(newDegree, newEdo).join('\\')
+  const [deg1, edo1] = nOfEdo1Str.split("\\").map((x) => parseInt(x));
+  const [deg2, edo2] = nOfEdo2Str.split("\\").map((x) => parseInt(x));
+  const newEdo = getLCM(edo1, edo2);
+  const newDegree = (newEdo / edo1) * deg1 + (newEdo / edo2) * deg2;
+  return simplifyRatio(newDegree, newEdo).join("\\");
 }
 
 // TODO: proper regex tests for +/- lines
 function stackLines(line1, line2) {
-  const line1Type = getLineType(line1)
-  const line2Type = getLineType(line2)
+  const line1Type = getLineType(line1);
+  const line2Type = getLineType(line2);
 
   // If both are ratios, preserve ratio notation
   if (line1Type === LINE_TYPE.RATIO && line2Type === LINE_TYPE.RATIO)
-    return stackRatios(line1, line2)
+    return stackRatios(line1, line2);
 
   // If both are N of EDOs, preserve N of EDO notation
   if (line1Type === LINE_TYPE.N_OF_EDO && line2Type === LINE_TYPE.N_OF_EDO)
-    return stackNOfEDOs(line1, line2)
+    return stackNOfEDOs(line1, line2);
 
   // If the first line is a decimal type, keep decimals
   if (line1Type === LINE_TYPE.DECIMAL)
-    return decimal_to_commadecimal(line_to_decimal(line1) * line_to_decimal(line2))
+    return decimal_to_commadecimal(
+      line_to_decimal(line1) * line_to_decimal(line2)
+    );
 
   // All other cases convert to cents, allow negative values
-  let val1 = line_to_cents(line1)
-  if (!val1 && line1.startsWith('-'))
-    val1 = parseFloat(line1)
+  let val1 = line_to_cents(line1);
+  if (!val1 && line1.startsWith("-")) val1 = parseFloat(line1);
 
-  let val2 = line_to_cents(line2)
-  if (!val2 && line2.startsWith('-'))
-    val2 = parseFloat(line2)
+  let val2 = line_to_cents(line2);
+  if (!val2 && line2.startsWith("-")) val2 = parseFloat(line2);
 
-  const valueOut = val1 + val2
-  return valueOut.toFixed(6)
+  const valueOut = val1 + val2;
+  return valueOut.toFixed(6);
 }
 
 // stacks an interval on itself
 function stackSelf(line, numStacks) {
-  const lineType = getLineType(line)
-  const wholeExp = numStacks === Math.trunc(numStacks)
+  const lineType = getLineType(line);
+  const wholeExp = numStacks === Math.trunc(numStacks);
 
   // power function
   if (lineType === LINE_TYPE.DECIMAL)
-    return decimal_to_commadecimal(Math.pow(line_to_decimal(line), numStacks))
+    return decimal_to_commadecimal(Math.pow(line_to_decimal(line), numStacks));
 
   // power function on numerator and denominator
   if (wholeExp && lineType === LINE_TYPE.RATIO) {
-    let ratio = '1/1'
-    if (numStacks > 0) ratio = line.split('/')
-    else if (numStacks < 0) ratio = line.split('/').reverse()
-    else return ratio
-    return ratio.map(x => parseInt(Math.pow(x, Math.abs(numStacks)))).join('/')
-  } 
+    let ratio = "1/1";
+    if (numStacks > 0) ratio = line.split("/");
+    else if (numStacks < 0) ratio = line.split("/").reverse();
+    else return ratio;
+    return ratio
+      .map((x) => parseInt(Math.pow(x, Math.abs(numStacks))))
+      .join("/");
+  }
 
   // multiply degree by stack amount
   if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
-    const [deg, edo] = line.split('\\')
-    return deg * numStacks + '\\' + edo
-  } 
-
-  else {
-    const value = line_to_cents(line) * numStacks
-    return value.toFixed(6)
+    const [deg, edo] = line.split("\\");
+    return deg * numStacks + "\\" + edo;
+  } else {
+    const value = line_to_cents(line) * numStacks;
+    return value.toFixed(6);
   }
 }
 
 function moduloLine(line, modLine) {
-  const numType = getLineType(line)
-  const modType = getLineType(modLine)
+  const numType = getLineType(line);
+  const modType = getLineType(modLine);
 
   // If both are ratios, preserve ratio notation
   if (numType === LINE_TYPE.RATIO && modType === LINE_TYPE.RATIO) {
-    const periods = Math.floor([line, modLine].map(ratio_to_decimal).reduce((a, b) => Math.log(a) / Math.log(b)))
-    return stackRatios(line, stackSelf(modLine, -periods))
-  } 
-  
+    const periods = Math.floor(
+      [line, modLine]
+        .map(ratio_to_decimal)
+        .reduce((a, b) => Math.log(a) / Math.log(b))
+    );
+    return stackRatios(line, stackSelf(modLine, -periods));
+  }
+
   // If both are N of EDOs, preserve N of EDO notation
   if (numType === LINE_TYPE.N_OF_EDO && modType === LINE_TYPE.N_OF_EDO) {
-    const [numDeg, numEdo] = line.split('\\').map(x => parseInt(x))
-    const [modDeg, modEdo] = modLine.slip('\\').map(x => parseInt(x))
-    const lcmEdo = getLCM(numEdo, modEdo)
-    return (((numDeg * lcmEdo) / numEdo) % ((modDeg * lcmEdo) / modEdo)) + '\\' + lcmEdo
+    const [numDeg, numEdo] = line.split("\\").map((x) => parseInt(x));
+    const [modDeg, modEdo] = modLine.slip("\\").map((x) => parseInt(x));
+    const lcmEdo = getLCM(numEdo, modEdo);
+    return (
+      (((numDeg * lcmEdo) / numEdo) % ((modDeg * lcmEdo) / modEdo)) +
+      "\\" +
+      lcmEdo
+    );
   }
-  
+
   // If the first line is a decimal type, keep decimals
   if (numType === LINE_TYPE.DECIMAL) {
-    const num = commadecimal_to_decimal(line)
-    const mod = line_to_decimal(modLine)
-    const periods = Math.floor(num / mod)
-    return decimal_to_commadecimal(num / Math.pow(mod, -periods))
-  } 
-  
+    const num = commadecimal_to_decimal(line);
+    const mod = line_to_decimal(modLine);
+    const periods = Math.floor(num / mod);
+    return decimal_to_commadecimal(num / Math.pow(mod, -periods));
+  }
+
   // If the first line is N of EDO and the second line is an octave, simply octave reduce
   if (numType === LINE_TYPE.N_OF_EDO && line_to_decimal(modLine) === 2) {
-    const [num, mod] = line.split('\\').map(x => parseInt(x))
-    return parseInt(mathModulo(num, mod)) + '\\' + mod
+    const [num, mod] = line.split("\\").map((x) => parseInt(x));
+    return parseInt(mathModulo(num, mod)) + "\\" + mod;
   }
 
   // All other cases convert to cents
-  return [line, modLine].map(line_to_cents).reduce(mathModulo).toFixed(6)
+  return [line, modLine].map(line_to_cents).reduce(mathModulo).toFixed(6);
 }
 
 // TODO: functional improvements
@@ -871,19 +868,22 @@ function invert_chord(chord) {
   }
 
   let inverted = chord;
-  let intervals = chord.split(":").map(x => parseInt(x));
+  let intervals = chord.split(":").map((x) => parseInt(x));
   let steps = [];
   intervals.forEach(function (item, index, array) {
     if (index > 0) {
       steps.push([item, array[index - 1]]);
     }
-  })
+  });
   steps.reverse();
   intervals = [[1, 1]];
 
   let denominators = [];
   steps.forEach(function (item, index) {
-    var reduced_interval = reduce_ratio(item[0] * intervals[index][0], item[1] * intervals[index][1]);
+    var reduced_interval = reduce_ratio(
+      item[0] * intervals[index][0],
+      item[1] * intervals[index][1]
+    );
     intervals.push(reduced_interval);
     denominators.push(reduced_interval[1]);
   });
@@ -892,19 +892,21 @@ function invert_chord(chord) {
 
   chord = [];
   intervals.forEach(function (x) {
-    chord.push(x[0] * lcm / x[1]);
+    chord.push((x[0] * lcm) / x[1]);
   });
 
   return chord.join(":");
 }
 
 const roundToNDecimals = (decimals, number) => {
-  return Math.round(number * 10 ** decimals) / 10 ** decimals
-}
+  return Math.round(number * 10 ** decimals) / 10 ** decimals;
+};
 
 const findIndexClosestTo = (value, array) => {
-  return array.map(x => Math.abs(value - x)).reduce((ci, d, i, a) => (d < a[ci] ? i : ci), 0)
-}
+  return array
+    .map((x) => Math.abs(value - x))
+    .reduce((ci, d, i, a) => (d < a[ci] ? i : ci), 0);
+};
 
 function getFloat(id, errorMessage) {
   var value = parseFloat(jQuery(id).val());
@@ -914,7 +916,7 @@ function getFloat(id, errorMessage) {
     return false;
   }
 
-  return value
+  return value;
 }
 
 function getString(id, errorMessage) {
@@ -925,18 +927,23 @@ function getString(id, errorMessage) {
     return false;
   }
 
-  return value
+  return value;
 }
 
 function getLine(id, errorMessage) {
   var value = jQuery(id).val();
 
-  if (R.isEmpty(value) || parseFloat(value) <= 0 || R.isNil(value) || getLineType(value) === LINE_TYPE.INVALID) {
+  if (
+    R.isEmpty(value) ||
+    parseFloat(value) <= 0 ||
+    R.isNil(value) ||
+    getLineType(value) === LINE_TYPE.INVALID
+  ) {
     alert(errorMessage);
     return false;
   }
 
-  return value
+  return value;
 }
 
 function setScaleName(title) {
@@ -948,31 +955,33 @@ function closePopup(id) {
 }
 
 function setTuningData(tuning) {
-  jQuery("#txt_tuning_data").val(tuning)
+  jQuery("#txt_tuning_data").val(tuning);
 }
 
-const isFunction = x => typeof x === 'function'
+const isFunction = (x) => typeof x === "function";
 
 function getCoordsFromKey(tdOfKeyboard) {
   try {
-    return JSON.parse(tdOfKeyboard.getAttribute('data-coord'))
+    return JSON.parse(tdOfKeyboard.getAttribute("data-coord"));
   } catch (e) {
-    return []
+    return [];
   }
 }
 
 function getSearchParamOr(valueIfMissing, key, url) {
-  return url.searchParams.has(key) ? url.searchParams.get(key) : valueIfMissing
+  return url.searchParams.has(key) ? url.searchParams.get(key) : valueIfMissing;
 }
 
 function getSearchParamAsNumberOr(valueIfMissingOrNan, key, url) {
-  return (url.searchParams.has(key) && !isNaN(url.searchParams.get(key))) ? parseFloat(url.searchParams.get(key)) : valueIfMissingOrNan;
+  return url.searchParams.has(key) && !isNaN(url.searchParams.get(key))
+    ? parseFloat(url.searchParams.get(key))
+    : valueIfMissingOrNan;
 }
 
 function trimSelf(el) {
   jQuery(el).val(function (idx, val) {
-    return val.trim()
-  })
+    return val.trim();
+  });
 }
 
 function openDialog(el, onOK) {
@@ -981,56 +990,59 @@ function openDialog(el, onOK) {
     buttons: {
       OK: onOK,
       Cancel: function () {
-        jQuery(this).dialog('close');
-      }
-    }
-  })
+        jQuery(this).dialog("close");
+      },
+    },
+  });
 }
 
 // redirect all traffic to https, if not there already
 // source: https://stackoverflow.com/a/4723302/1806628
 function redirectToHTTPS() {
-  if (location.protocol !== 'https:') {
-    location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+  if (location.protocol !== "https:") {
+    location.href =
+      "https:" +
+      window.location.href.substring(window.location.protocol.length);
   }
 }
 
-
 // converts a cents array into a uint8 array for the mnlgtun exporter
 function centsTableToMnlgBinary(centsTableIn) {
-  const dataSize = centsTableIn.length * 3
-  const data = new Uint8Array(dataSize)
-  let dataIndex = 0
-  centsTableIn.forEach(c => {
+  const dataSize = centsTableIn.length * 3;
+  const data = new Uint8Array(dataSize);
+  let dataIndex = 0;
+  centsTableIn.forEach((c) => {
     // restrict to valid values
-    let cents = c
-    if (cents < 0) cents = 0
-    else if (cents >= MNLG_MAXCENTS) cents = MNLG_MAXCENTS
+    let cents = c;
+    if (cents < 0) cents = 0;
+    else if (cents >= MNLG_MAXCENTS) cents = MNLG_MAXCENTS;
 
-    const semitones = cents / 100.0
-    const microtones = Math.trunc(semitones)
+    const semitones = cents / 100.0;
+    const microtones = Math.trunc(semitones);
 
-    const u16a = new Uint16Array([Math.round(0x8000 * (semitones - microtones))])
-    const u8a = new Uint8Array(u16a.buffer)
+    const u16a = new Uint16Array([
+      Math.round(0x8000 * (semitones - microtones)),
+    ]);
+    const u8a = new Uint8Array(u16a.buffer);
 
-    data[dataIndex] = microtones
-    data[dataIndex + 1] = u8a[1]
-    data[dataIndex + 2] = u8a[0]
-    dataIndex += 3
-  })
-  return data
+    data[dataIndex] = microtones;
+    data[dataIndex + 1] = u8a[1];
+    data[dataIndex + 2] = u8a[0];
+    dataIndex += 3;
+  });
+  return data;
 }
 
 // converts a mnlgtun binary string into an array of cents
 function mnlgBinaryToCents(binaryData) {
-  const centsOut = []
-  const tuningSize = binaryData.length / 3
+  const centsOut = [];
+  const tuningSize = binaryData.length / 3;
   for (let i = 0; i < tuningSize; i++) {
-    const str = binaryData.slice(i * 3, i * 3 + 3)
-    const hundreds = str.charCodeAt(0) * 100
-    let tens = new Uint8Array([str.charCodeAt(2), str.charCodeAt(1)])
-    tens = Math.round((parseInt(new Uint16Array(tens.buffer)) / 0x8000) * 100)
-    centsOut.push(hundreds + tens)
+    const str = binaryData.slice(i * 3, i * 3 + 3);
+    const hundreds = str.charCodeAt(0) * 100;
+    let tens = new Uint8Array([str.charCodeAt(2), str.charCodeAt(1)]);
+    tens = Math.round((parseInt(new Uint16Array(tens.buffer)) / 0x8000) * 100);
+    centsOut.push(hundreds + tens);
   }
-  return centsOut
+  return centsOut;
 }
