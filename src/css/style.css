@@ -201,6 +201,10 @@ div#splash-center img {
   box-shadow: #aaa 0px 0px 40px;
 }
 
+#modal_load_preset_scale optgroup + optgroup {
+  margin-top: 1em;
+}
+
 
 /* Virtual keyboard */
 

@@ -87,6 +87,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.3.2
+* Many more preset scales added. Happy exploring!
+
 ### 1.3.1
 * AnaMark TUN export now supports a choice of v1 or v2 as different synths require a certain version.
 

@@ -32,8 +32,8 @@
   <link rel="stylesheet" href="src/lib/bootstrap-3.3.7-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="src/lib/jquery-ui-1.12.1/jquery-ui.min.css">
   <link rel="stylesheet" href="src/lib/socicon/style.css">
-  <link rel="stylesheet" href="src/css/style.css?v=1.3.1">
-  <link rel="stylesheet" href="src/css/style-dark.css?v=1.3.1">
+  <link rel="stylesheet" href="src/css/style.css?v=1.3.2">
+  <link rel="stylesheet" href="src/css/style-dark.css?v=1.3.2">
 
   <!-- Favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="src/assets/favicon/apple-touch-icon.png">
@@ -534,21 +534,61 @@
 
   <div id="modal_load_preset_scale" class="modal" title="Load preset scale">
     <form>
-      <label>Choose a scale</label>
       <div class="form-group">
         <select id="select_preset_scale" name="" size="10" class="form-control">
-          <option value="12edo">12-tone equal temperament</option>
-          <option value="partch43">Partch 43-tone JI</option>
-          <option value="bohlenpierce">Bohlen-Pierce (equal)</option>
-          <option value="pelog">Pelog</option>
-          <option value="slendro">Slendro</option>
-          <option value="werckmeisteriii">Werckmeister III (1691)</option>
-          <option value="young1799">Young (1799)</option>
-          <option value="snakeoil">Pythagorean 432Hz</option>
-          <option value="313island9">313edo island[9]</option>
-          <option value="17superpyth12">17edo superpyth[12]</option>
-          <option value="15blackwood10">15edo blackwood[10]</option>
-          <option value="26flattone12">26edo flattone[12]</option>
+          <optgroup label="Traditional scales">
+            <option value="pelog">Pelog</option>
+            <option value="slendro">Slendro</option>
+            <option value="ragabageshri">Raga Bageshri</option>
+            <option value="ragabhairavi">Raga Bhairavi</option>
+            <option value="ragakafi">Raga Kafi</option>
+            <option value="ragatodi">Raga Todi</option>
+            <option value="ragayaman">Raga Yaman</option>
+            <option value="22shruti">22 Shruti</option>
+            <option value="hirajoshi">Hirajoshi</option>
+            <option value="archytasdiatonic">Archytas Diatonic</option>
+            <option value="archytasenharmonic">Archytas Enharmonic</option>
+            <option value="didymuschromatic">Didymus Chromatic</option>
+            <option value="ptolemydiatonicditoniaion">Ptolemy Diatonic Ditoniaion</option>
+            <option value="ptolemydiatonichemiolion">Ptolemy Diatonic Hemiolion</option>
+            <option value="pythagorean">Pythagorean</option>
+            <option value="werckmeisteriii">Werckmeister III (1691)</option>
+            <option value="young1799">Young (1799)</option>
+            <option value="12edo">12-tone equal temperament</option>
+          </optgroup>
+          <optgroup label="Just intonation scales">
+            <option value="partch43">Harry Partch 43-tone</option>
+            <option value="carlossuperjust">Wendy Carlos Super Just</option>
+            <option value="gradycentaur">Kraig Grady Centaur (7-limit)</option>
+            <option value="gradycentauras">Kraig Grady Centaura Subharmonic (11-limit)</option>
+            <option value="gradycentaurah">Kraig Grady Centaura Harmonic (11-limit)</option>
+          </optgroup>
+          <optgroup label="Equal temperament subsets">
+            <option value="11machine6">11edo machine[6]</option>
+            <option value="13glacial7">13edo glacial[7]</option>
+            <option value="13father8">13edo father[8]</option>
+            <option value="15blackwood10">15edo blackwood[10]</option>
+            <option value="16mavila7">16edo mavila[7]</option>
+            <option value="17superpyth12">17edo superpyth[12]</option>
+            <option value="17rast">17edo Rast</option>
+            <option value="22porcupine8">22edo porcupine[8]</option>
+            <option value="22orwell9">22edo orwell[9]</option>
+            <option value="22pajara12">22edo pajara[12]</option>
+            <option value="26lemba10">26edo lemba[10]</option>
+            <option value="26flattone12">26edo flattone[12]</option>
+            <option value="31meantone19">31edo meantone[19]</option>
+            <option value="46sensi11">46edo sensi[11]</option>
+            <option value="313island9">313edo island[9]</option>
+          </optgroup>
+          <optgroup label="Non-octave scales">
+            <option value="bohlenpierceeq">Bohlen-Pierce equal (13ed3)</option>
+            <option value="bohlenpierceji">Bohlen-Pierce just</option>
+            <option value="carlosalpha">Wendy Carlos Alpha</option>
+            <option value="carlosbeta">Wendy Carlos Beta</option>
+            <option value="carlosgamma">Wendy Carlos Gamma</option>
+            <option value="65cet">65 cent Equal Temperament</option>
+            <option value="88cet">88 cent Equal Temperament</option>
+          </optgroup>
         </select>
       </div>
     </form>
@@ -901,21 +941,21 @@
   <script src="src/lib/jszip.min.js"></script>
 
   <!-- Scale Workshop scripts -->
-  <script src="src/js/model.js?v=1.3.1"></script>
-  <script src="src/js/constants.js?v=1.3.1"></script>
-  <script src="src/js/helpers.js?v=1.3.1"></script>
-  <script src="src/js/scaleworkshop.js?v=1.3.1"></script>
-  <script src="src/js/ui.js?v=1.3.1"></script>
-  <script src="src/js/generators.js?v=1.3.1"></script>
-  <script src="src/js/modifiers.js?v=1.3.1"></script>
-  <script src="src/js/exporters.js?v=1.3.1"></script>
-  <script src="src/js/keymap.js?v=1.3.1"></script>
-  <script src="src/js/synth/Voice.js?v=1.3.1"></script>
-  <script src="src/js/synth/Delay.js?v=1.3.1"></script>
-  <script src="src/js/synth/Synth.js?v=1.3.1"></script>
-  <script src="src/js/synth.js?v=1.3.1"></script>
-  <script src="src/js/midi.js?v=1.3.1"></script>
-  <script src="src/js/events.js?v=1.3.1"></script>
-  <script src="src/js/user.js?v=1.3.1"></script>
+  <script src="src/js/model.js?v=1.3.2"></script>
+  <script src="src/js/constants.js?v=1.3.2"></script>
+  <script src="src/js/helpers.js?v=1.3.2"></script>
+  <script src="src/js/scaleworkshop.js?v=1.3.2"></script>
+  <script src="src/js/ui.js?v=1.3.2"></script>
+  <script src="src/js/generators.js?v=1.3.2"></script>
+  <script src="src/js/modifiers.js?v=1.3.2"></script>
+  <script src="src/js/exporters.js?v=1.3.2"></script>
+  <script src="src/js/keymap.js?v=1.3.2"></script>
+  <script src="src/js/synth/Voice.js?v=1.3.2"></script>
+  <script src="src/js/synth/Delay.js?v=1.3.2"></script>
+  <script src="src/js/synth/Synth.js?v=1.3.2"></script>
+  <script src="src/js/synth.js?v=1.3.2"></script>
+  <script src="src/js/midi.js?v=1.3.2"></script>
+  <script src="src/js/events.js?v=1.3.2"></script>
+  <script src="src/js/user.js?v=1.3.2"></script>
 </body>
 </html>
