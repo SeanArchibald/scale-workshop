@@ -87,6 +87,9 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.4
+* New feature: generate Combination Product Set (CPS) scales
+
 ### 1.3.2
 * Many more preset scales added. Happy exploring!
 
