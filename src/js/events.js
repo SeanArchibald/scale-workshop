@@ -146,6 +146,13 @@ jQuery(document).ready(function () {
 
   });
 
+  // generate_cps option clicked
+  jQuery("#generate_cps").click(function (event) {
+    event.preventDefault();
+    jQuery("#input_cps_factors").select();
+    openDialog("#modal_generate_cps", generate_cps)
+  });
+
   // load-preset option clicked
   jQuery("#load-preset").click(function (event) {
     event.preventDefault();

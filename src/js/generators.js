@@ -321,6 +321,99 @@ function generate_enumerate_chord_data(pitches, convertToRatios = false) {
   return ratios.join(unix_newline)
 }
 
+function generate_cps() {
+
+  // get factors and combination count
+  var f = getString('#input_cps_factors', 'Warning: no factors');
+  var cc = getFloat('#input_cps_combination_count', 'Warning: combination count should be minimum of 2 and less than the number of factors.');
+
+  // bail on missing input
+  if (f === false || cc === false) {
+    return false;
+  }
+
+  // convert input factors to array
+  var factors = f.split(" ");
+
+  // cc must be integer. discard anything after decimal point
+  cc = parseInt(cc);
+
+  // bail on invalid combination count
+  if ( cc < 2 || cc >= factors.length ) {
+    alert("Combination count should be minimum of 2 and less than the number of factors.");
+    return false;
+  }
+
+  // loop through the array of factors
+  for (let i=0; i < factors.length; i++) {
+
+    // only allow integers - these will treated as harmonics
+    factors[i] = parseInt(factors[i]);
+
+    // future improvement - floats to be allowed. non-integers to be treated as decimals or cents?
+    // factors[i] = parseFloat(factors[i]);
+
+    // bail if any of the factors aren't a number
+    if ( isNaN(factors[i]) ) {
+      alert("Factors should be a list of integers e.g. '1 3 7 9'");
+      return false;
+    }
+
+  }
+
+  // do combinations
+  var products = cps(factors,cc);
+  
+  // remove 1/1 from scale by dividing all products by one of the factors
+  if (document.getElementById("input_cps_remove_1").checked) {
+
+    // remove first product from the set
+    var divisor = products.shift();
+
+    // divide remaining products by the removed product
+    for (let i=0; i<products.length; i++) {
+      products[i] = products[i] + "/" + divisor;
+    }
+    
+  }
+  else {
+    for (let i=0; i<products.length; i++) {
+      products[i] = products[i] + "/1";
+    }
+  }
+
+  // octave reduce
+  if (document.getElementById("input_cps_reduce").checked) {
+
+    // each line modulo with 2/1 (this has the side effect of simplifying the ratios)
+    for (let i=0; i<products.length; i++) {
+      products[i] = moduloLine(products[i], "2/1");
+    }
+
+    // make the scale repeat at the octave
+    products.push("2/1");
+
+  }
+  else {
+
+    // simplify the ratios
+    for (let i=0; i<products.length; i++) {
+      products[i] = simplifyRatioString(products[i]);
+    }
+
+  }
+
+  // sort ascending
+  products = scaleSort(products);
+
+  setScaleName(cc + ")" + factors.length + " CPS " + factors.join(" "));
+  setTuningData(products.join(unix_newline));
+  parse_tuning_data();
+  closePopup("#modal_generate_cps");
+  return true;
+}
+
+
 function load_preset_scale(a) {
 
   var data = "";

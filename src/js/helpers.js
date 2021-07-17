@@ -1046,3 +1046,42 @@ function mnlgBinaryToCents(binaryData) {
   }
   return centsOut;
 }
+
+
+// cps_combinations()
+// adapted from https://www.geeksforgeeks.org/print-all-possible-combinations-of-r-elements-in-a-given-array-of-size-n/
+function cps_combinations(factors,data,start,end,index,cc,products) {
+  // Current combination is ready to be printed, print it
+  if (index == cc) {
+      var combination = [];
+      for (let j=0; j<cc; j++) {
+          combination.push(data[j]);
+      }
+      products.push(combination.reduce( function(accumulator, currentValue) {
+          return accumulator * currentValue;
+      }));
+  }
+  // replace index with all possible elements. The condition "end-i+1 >= cc-index" makes sure that including one element at index will make a combination with remaining elements at remaining positions
+  for (let i=start; i<=end && end-i+1 >= cc-index; i++) {
+      data[index] = factors[i];
+      cps_combinations(factors, data, i+1, end, index+1, cc, products);
+  }
+}
+// Combination Product Set function
+// returns all combination products of size cc from factors array
+function cps(factors,cc) {
+  let products = [];
+  // store all combinations one by one
+  let data = new Array(cc);
+  // Print all combination using temporary array 'data[]'
+  cps_combinations(factors, data, 0, factors.length-1, 0, cc, products);
+  return products;
+}
+
+// scaleSort()
+// takes an array of lines and returns it in ascending order
+function scaleSort(scale = []) {
+  return scale.sort( function(a,b) {
+    return line_to_decimal(a)-line_to_decimal(b);
+  });
+}

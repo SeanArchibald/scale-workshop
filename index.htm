@@ -94,6 +94,7 @@
                     aria-hidden="true"></span> Subharmonic series segment</a></li>
               <li><a href="#" id="enumerate_chord"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
                   Enumerate chord</a></li>
+              <li><a href="#" id="generate_cps"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Combination product set</a></li>
               <li class="divider"></li>
               <li><a href="#" id="import-scala-scl"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
                   Import .scl</a></li>
@@ -529,6 +530,44 @@
       <label>
         <input id="input_convert_to_ratios" type="checkbox" /> Convert all to ratios
       </label>
+    </form>
+  </div>
+
+  <div id="modal_generate_cps" class="modal" title="Generate combination product set">
+    <form>
+      <label>Factors</label>
+      <div class="form-group">
+        <input id="input_cps_factors" name="" type="text" min="1" max="999999" step="1" class="form-control"
+          placeholder="1 3 5 7" list="input_cps_factors_list" />
+        <datalist id="input_cps_factors_list">
+          <option value="1 3 5 7" />
+          <option value="1 3 7 9" />
+          <option value="3 5 7 9" />
+          <option value="1 3 5 121" />
+          <option value="1 3 5 7 9" />
+          <option value="2 3 5 7 11" />
+          <option value="1 3 5 7 9 11" />
+          <option value="2 3 5 7 11 13" />
+        </datalist>   
+      </div>
+
+      <label>Combination count</label>
+      <div class="form-group">
+        <input id="input_cps_combination_count" name="" type="number" pattern="[0-9]" min="2" max="9" step="1" class="form-control"
+          value="2" />
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input id="input_cps_remove_1" type="checkbox" checked="checked" /> Remove 1/1 from scale
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input id="input_cps_reduce" type="checkbox" checked="checked" /> Octave reduce
+        </label>
+      </div>
     </form>
   </div>
 
