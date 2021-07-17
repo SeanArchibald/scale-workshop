@@ -122,7 +122,6 @@
                     aria-hidden="true"></span> Random variance</a></li>
               <li><a href="#" id="modify_sync_beating"><span class="glyphicon glyphicon-magnet"
                     aria-hidden="true"></span> Tempo-sync beating</a></li>
-              <!--<li><a href="#" id="modify_octave_reduce">Octave reduce</a></li>-->
               <li><a href="#" id="modify_approximate"><span class="glyphicon glyphicon-list-alt"
                     aria-hidden="true"></span> Approximate by ratios</a></li>
               <li><a href="#" id="modify_approximate_harmonics"><span class="glyphicon glyphicon-list-alt"
@@ -131,6 +130,7 @@
                     aria-hidden="true"></span> Approximate by subharmonics</a></li>
               <li><a href="#" id="modify_equalize"><span class="glyphicon glyphicon-th"
                     aria-hidden="true"></span> Equalize</a></li>
+              <li><a href="#" id="modify_octave_reduce"><span class="glyphicon glyphicon-resize-small"></span> Reduce</a></li>
             </ul>
           </li>
           <li><a href="#" id="nav_play"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> Touch Kbd</a>
@@ -810,6 +810,21 @@
       <label>Equal divisions</label>
       <div class="form-group">
         <input id="input_equalize_divisions" name="" type="number" class="form-control" value="" min="1" max="1000000" />
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_modify_octave_reduce" class="modal" title="Reduce">
+    <p>Makes your entire scale fit within a desired interval. Typically an octave.</p>
+    <form>
+      <label>Interval to reduce to</label>
+      <div class="form-group">
+        <input id="input_reduce_octave" name="" type="text" class="form-control" value="2/1" placeholder="2/1" />
+      </div>
+      <div class="form-group">
+        <label>
+          <input id="input_reduce_also_sort" type="checkbox" checked="checked" /> Sort resulting scale ascending
+        </label>
       </div>
     </form>
   </div>

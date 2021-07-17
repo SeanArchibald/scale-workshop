@@ -600,3 +600,46 @@ function modify_equalize() {
   // success
   return true;
 }
+
+function modify_octave_reduce() {
+
+  // remove white space from tuning data field
+  trimSelf("#txt_tuning_data")
+
+  // get current scale as array
+  var scale = jQuery("#txt_tuning_data").val();
+  var octave = jQuery("#input_reduce_octave").val();
+
+  // bail if input invalid
+  if (R.isEmpty(scale)) {
+    alert("No scale data to modify.");
+    return false;
+  }
+  if ( getLineType(octave) === LINE_TYPE.INVALID ) {
+    alert("Warning: Interval to reduce to is invalid. Input must be ratio (e.g. 2/1), cents (e.g. 1200.0), n\\m (e.g. 12\\12) or decimal (e.g. 2,0)");
+    return false;
+  }
+
+  scale = scale.split(unix_newline)
+
+  // each line modulo with the octave
+  for (let i=0; i<scale.length; i++) {
+    if (scale[i] !== octave) {
+      scale[i] = moduloLine(scale[i], octave);
+    }
+  }
+
+  // sort resulting scale in ascending order
+  if (document.getElementById("input_reduce_also_sort").checked) {
+    scale = scaleSort(scale);
+  }
+
+  // update fields and parse
+  jQuery("#txt_tuning_data").val(scale.join(unix_newline));
+  parse_tuning_data();
+
+  jQuery("#modal_modify_octave_reduce").dialog("close");
+
+  // success
+  return true;
+}

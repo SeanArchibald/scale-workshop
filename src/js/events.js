@@ -252,6 +252,12 @@ jQuery(document).ready(function () {
     openDialog("#modal_equalize", modify_equalize);
   });
 
+  // modify_octave_reduce option clicked
+  jQuery("#modify_octave_reduce").click(function (event) {
+    event.preventDefault();
+    openDialog("#modal_modify_octave_reduce", modify_octave_reduce)
+  });
+
   
 
   // calculate and list rational approximations within user parameters
