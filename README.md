@@ -91,6 +91,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 * New generator: Combination Product Set (CPS) scales
 * New modifier: octave reduce
 * New modifier: sort ascending
+* More preset scales added
 
 ### 1.3.2
 * Many more preset scales added. Happy exploring!

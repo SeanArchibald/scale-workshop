@@ -470,6 +470,51 @@ function load_preset_scale(a) {
     data = ["185.", "337.", "683.", "790.", "2/1"];
     break;
 
+    case "balafon":
+    name = "Observed balafon tuning from Patna, Helmholtz/Ellis p. 518, nr.81";
+    data = ["187.", "356.", "526.", "672.", "856.", "985.", "1222."];
+    break;
+
+    case "balafon2":
+    name = "Observed balafon tuning from West-Africa, Helmholtz/Ellis p. 518, nr.86";
+    data = ["152.", "287.", "533.", "724.", "890.", "1029.", "2/1"];
+    break;
+
+    case "balafon3":
+    name = "Pitt-River's balafon tuning from West-Africa, Helmholtz/Ellis p. 518, nr.87";
+    data = ["195.", "289.", "513.", "686.", "796.", "1008.", "1209."];
+    break;
+
+    case "balafon4":
+    name = "Mandinka balafon scale from Gambia";
+    data = ["151.", "345.", "526.", "660.", "861.", "1025.", "1141."];
+    break;
+
+    case "balafon5":
+    name = "An observed balafon tuning from Singapore, Helmholtz/Ellis p. 518, nr.82";
+    data = ["169.", "350.", "543.", "709.", "894.", "1040.", "1205."];
+    break;
+
+    case "balafon6":
+    name = "Observed balafon tuning from Burma, Helmholtz/Ellis p. 518, nr.84";
+    data = ["114.", "350.", "550.", "687.", "838.", "1032.", "1196."];
+    break;
+
+    case "balafon7":
+    name = "Observed South Pacific pentatonic balafon tuning, Helmholtz/Ellis p. 518, nr.93";
+    data = ["202.", "370.", "685.", "903.", "2/1"];
+    break;
+
+    case "5edo":
+    name = "Equal pentatonic (5edo)";
+    data = ["1\\5", "2\\5", "3\\5", "4\\5", "5\\5"];
+    break;
+
+    case "7edo":
+    name = "Equal heptatonic (7edo)";
+    data = ["1\\7", "2\\7", "3\\7", "4\\7", "5\\7", "6\\7", "7\\7"];
+    break;
+
     case "archytasdiatonic":
     name = "Archytas Diatonic";
     data = ["28/27", "32/27", "4/3", "3/2", "14/9", "16/9", "2/1"];
