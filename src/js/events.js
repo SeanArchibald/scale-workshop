@@ -258,6 +258,14 @@ jQuery(document).ready(function () {
     openDialog("#modal_modify_octave_reduce", modify_octave_reduce)
   });
 
+  // modify_sort_ascending option clicked
+  jQuery("#modify_sort_ascending").click(function (event) {
+    event.preventDefault();
+    var scale = jQuery("#txt_tuning_data").val().trim().split(unix_newline);
+    scale = scaleSort(scale).join(unix_newline).trim();
+    jQuery("#txt_tuning_data").val(scale);
+    parse_tuning_data();
+  });
   
 
   // calculate and list rational approximations within user parameters
