@@ -833,7 +833,7 @@ function moduloLine(line, modLine) {
   // If both are N of EDOs, preserve N of EDO notation
   if (numType === LINE_TYPE.N_OF_EDO && modType === LINE_TYPE.N_OF_EDO) {
     const [numDeg, numEdo] = line.split("\\").map((x) => parseInt(x));
-    const [modDeg, modEdo] = modLine.slip("\\").map((x) => parseInt(x));
+    const [modDeg, modEdo] = modLine.split("\\").map((x) => parseInt(x));
     const lcmEdo = getLCM(numEdo, modEdo);
     return (
       (((numDeg * lcmEdo) / numEdo) % ((modDeg * lcmEdo) / modEdo)) +
@@ -858,6 +858,38 @@ function moduloLine(line, modLine) {
 
   // All other cases convert to cents
   return [line, modLine].map(line_to_cents).reduce(mathModulo).toFixed(6);
+}
+
+function transposeLine(line,transposer) {
+  const lineType = getLineType(line);
+  const transposerType = getLineType(transposer);
+
+  // If both are ratios, preserve ratio notation
+  if (lineType === LINE_TYPE.RATIO && transposerType === LINE_TYPE.RATIO) {
+    const [lineNum, lineDen] = line.split("/").map((x) => parseInt(x));
+    const [transposerNum, transposerDen] = transposer.split("/").map((x) => parseInt(x));
+    return reduce_ratio(lineNum*transposerNum,lineDen*transposerDen).join("/");
+  }
+
+  // If both are N of EDOs, preserve N of EDO notation
+  if (lineType === LINE_TYPE.N_OF_EDO && transposerType === LINE_TYPE.N_OF_EDO) {
+    const [lineDeg, lineEdo] = line.split("\\").map((x) => parseInt(x));
+    const [transposerDeg, transposerEdo] = transposer.split("\\").map((x) => parseInt(x));
+    const lcmEdo = getLCM(lineEdo, transposerEdo);
+    return (
+      (((lineDeg * lcmEdo) / lineEdo) + ((transposerDeg * lcmEdo) / transposerEdo)) +
+      "\\" +
+      lcmEdo
+    );
+  }
+
+  // If the first line is a decimal type, keep decimals
+  if (lineType === LINE_TYPE.DECIMAL) {
+    return decimal_to_commadecimal(line_to_decimal(line) * line_to_decimal(transposer));
+  }
+
+  // All other cases convert to cents
+  return line_to_cents(line) + line_to_cents(transposer);
 }
 
 // TODO: functional improvements
