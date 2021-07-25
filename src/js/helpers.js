@@ -650,37 +650,6 @@ function get_factors(number) {
   });
 }
 
-// returns array of the numerator and denominator of the reduced form of given ratio
-function reduce_ratio(numerator, denominator) {
-  var num_pf = get_prime_factors(numerator);
-  var den_pf = get_prime_factors(denominator);
-  let r_pf = [];
-  var maxlength = Math.max(num_pf.length, den_pf.length);
-  for (var i = 0; i < maxlength; i++) {
-    var sum = 0;
-
-    if (i < num_pf.length) {
-      sum = num_pf[i];
-    }
-
-    if (i < den_pf.length) {
-      sum -= den_pf[i];
-    }
-
-    r_pf.push(sum);
-  }
-
-  var nn = 1;
-  var dd = 1;
-
-  for (var i = 0; i < maxlength; i++) {
-    if (r_pf[i] > 0) nn *= Math.pow(PRIMES[i], r_pf[i]);
-    else dd *= Math.pow(PRIMES[i], r_pf[i] * -1);
-  }
-
-  return [nn, dd];
-}
-
 function getGCD(num1, num2) {
   if (num1 === 0 || num2 === 0) return num1 + num2;
   else if (num1 === 1 || num2 === 1) return 1;
@@ -733,8 +702,8 @@ function getLCMArray(array) {
 
 // returns array of the numerator and denominator of the reduced form of given ratio
 function simplifyRatio(numerator, denominator) {
-  const gcd = getGCD(numerator, denominator);
-  return [numerator, denominator].map((x) => x / gcd);
+  const gcdScalar = 1.0 / getGCD(numerator, denominator);
+  return [numerator, denominator].map((x) => x * gcdScalar);
 }
 
 function simplifyRatioString(ratio) {
@@ -868,7 +837,7 @@ function transposeLine(line,transposer) {
   if (lineType === LINE_TYPE.RATIO && transposerType === LINE_TYPE.RATIO) {
     const [lineNum, lineDen] = line.split("/").map((x) => parseInt(x));
     const [transposerNum, transposerDen] = transposer.split("/").map((x) => parseInt(x));
-    return reduce_ratio(lineNum*transposerNum,lineDen*transposerDen).join("/");
+    return simplifyRatio(lineNum*transposerNum,lineDen*transposerDen).join("/");
   }
 
   // If both are N of EDOs, preserve N of EDO notation
@@ -912,7 +881,7 @@ function invert_chord(chord) {
 
   let denominators = [];
   steps.forEach(function (item, index) {
-    var reduced_interval = reduce_ratio(
+    var reduced_interval = simplifyRatio(
       item[0] * intervals[index][0],
       item[1] * intervals[index][1]
     );
