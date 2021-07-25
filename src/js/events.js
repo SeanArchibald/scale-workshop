@@ -43,7 +43,7 @@ jQuery(document).ready(function () {
   });
 
   // clear button clicked
-  jQuery("#btn_clear").click(function (event) {
+  jQuery("#clear-scale").click(function (event) {
 
     event.preventDefault();
 
@@ -75,6 +75,12 @@ jQuery(document).ready(function () {
     event.preventDefault();
     import_anamark_tun();
   });
+
+  // import mnlgtun option clicked
+  jQuery('#import-mnlgtun-file').on('click', function(event) {
+    event.preventDefault()
+    importMnlgtun()
+  })
 
   // generate_equal_temperament option clicked
   jQuery("#generate_equal_temperament").click(function (event) {
@@ -138,6 +144,13 @@ jQuery(document).ready(function () {
       }
     });
 
+  });
+
+  // generate_cps option clicked
+  jQuery("#generate_cps").click(function (event) {
+    event.preventDefault();
+    jQuery("#input_cps_factors").select();
+    openDialog("#modal_generate_cps", generate_cps)
   });
 
   // load-preset option clicked
@@ -217,6 +230,43 @@ jQuery(document).ready(function () {
     });
 
   });
+
+  // modify_approximate_harmonics option clicked
+  jQuery("#modify_approximate_harmonics").click(function (event) {
+    event.preventDefault();
+    jQuery("#input_approx_harm_denominator").select();
+    openDialog("#modal_approximate_harmonics", modify_approximate_harmonics);
+  });
+
+  // modify_approximate_subharmonics option clicked
+  jQuery("#modify_approximate_subharmonics").click(function (event) {
+    event.preventDefault();
+    jQuery("#input_approx_subharm_numerator").select();
+    openDialog("#modal_approximate_subharmonics", modify_approximate_subharmonics);
+  });
+
+  // modify_equalize option clicked
+  jQuery("#modify_equalize").click(function (event) {
+    event.preventDefault();
+    jQuery("#input_equalize_divisions").select();
+    openDialog("#modal_equalize", modify_equalize);
+  });
+
+  // modify_octave_reduce option clicked
+  jQuery("#modify_octave_reduce").click(function (event) {
+    event.preventDefault();
+    openDialog("#modal_modify_octave_reduce", modify_octave_reduce)
+  });
+
+  // modify_sort_ascending option clicked
+  jQuery("#modify_sort_ascending").click(function (event) {
+    event.preventDefault();
+    var scale = jQuery("#txt_tuning_data").val().trim().split(unix_newline);
+    scale = scaleSort(scale).join(unix_newline).trim();
+    jQuery("#txt_tuning_data").val(scale);
+    parse_tuning_data();
+  });
+  
 
   // calculate and list rational approximations within user parameters
   jQuery("#input_interval_to_approximate").change(function () {

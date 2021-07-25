@@ -106,6 +106,10 @@ textarea {
   display: inline-block;
 }
 
+.nav>li:hover, .navbar-brand:hover {
+  background-color: #222;
+}
+
 .nav>li.open {
   width: 100%;
 }
@@ -130,6 +134,11 @@ body > .container-fluid > .row {
 
 input#btn_frequency_auto, input#btn_key_colors_auto {
   margin-top: 3px;
+}
+
+#txt_name {
+  font-size: 1.4em;
+  background-color: unset;
 }
 
 #col-tuning-table {
@@ -190,6 +199,10 @@ div#splash-center img {
   max-width: 70vw;
   height: auto;
   box-shadow: #aaa 0px 0px 40px;
+}
+
+#modal_load_preset_scale optgroup + optgroup {
+  margin-top: 1em;
 }
 
 

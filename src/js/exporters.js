@@ -7,21 +7,21 @@ function export_error() {
   }
 }
 
-function save_file(filename, contents, raw) {
-  var link = document.createElement('a');
-  link.download = filename;
+function save_file(filename, contents, raw, mimeType = 'application/octet-stream,') {
+  const link = document.createElement('a')
+  link.download = filename
 
   if (raw === true) {
     const blob = new Blob([contents], { type: 'application/octet-stream' })
     link.href = window.URL.createObjectURL(blob)
   } else {
-    link.href = "data:application/octet-stream," + encodeURIComponent(contents);
+    link.href = 'data:' + mimeType + encodeURIComponent(contents);
   }
 
-  link.dispatchEvent(new MouseEvent(`click`, { bubbles: true, cancelable: true, view: window })); // opens save dialog
+  link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })) // opens save dialog
 }
 
-function export_anamark_tun() {
+function export_anamark_tun(version) {
 
   if (export_error()) {
     return;
@@ -29,10 +29,15 @@ function export_anamark_tun() {
 
   // TUN format spec:
   // http://www.mark-henning.de/files/am/Tuning_File_V2_Doc.pdf
+  if (version === undefined) {
+    version = 100;
+  } 
 
   // assemble the .tun file contents
   var file = "; VAZ Plus/AnaMark softsynth tuning file" + newline;
   file += "; " + jQuery("#txt_name").val() + newline;
+  file += ";" + newline;
+  file += "; " + get_scale_url() + newline;
   file += ";" + newline;
   file += "; VAZ Plus section" + newline;
   file += "[Tuning]" + newline;
@@ -44,7 +49,7 @@ function export_anamark_tun() {
   file += newline + "; AnaMark section" + newline;
   file += "[Scale Begin]" + newline;
   file += 'Format= "AnaMark-TUN"' + newline;
-  file += "FormatVersion= 200" + newline;
+  file += "FormatVersion= " + version + newline;
   file += 'FormatSpecs= "http://www.mark-henning.de/eternity/tuningspecs.html"' + newline + newline;
   file += "[Info]" + newline;
   file += 'Name= "' + tuning_table['filename'] + '.tun"' + newline;
@@ -60,22 +65,28 @@ function export_anamark_tun() {
     file += "note " + i + "= " + decimal_to_cents(parseFloat(tuning_table['freq'][i]) / mtof(0)).toFixed(6) + newline;
   }
 
-  file += newline + "[Functional Tuning]" + newline;
+  // version 2.00 only
+  if (version >= 200) {
 
-  for (let i = 1; i < tuning_table['note_count']; i++) {
+    file += newline + "[Functional Tuning]" + newline;
 
-    if (i == tuning_table['note_count'] - 1) {
-      file += "note " + i + '="#>-' + i + ' % ' + decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) + ' ~999"' + newline;
+    for (let i = 1; i < tuning_table['note_count']; i++) {
+  
+      if (i == tuning_table['note_count'] - 1) {
+        file += "note " + i + '="#>-' + i + ' % ' + decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) + ' ~999"' + newline;
+      }
+      else {
+        file += "note " + i + '="#=0 % ' + decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) + '"' + newline;
+      }
+  
     }
-    else {
-      file += "note " + i + '="#=0 % ' + decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) + '"' + newline;
-    }
+  
+    file += newline + "; Set reference key to absolute frequency (not scale note but midi key)" + newline;
+    file += "note " + tuning_table['base_midi_note'] + '="! ' + tuning_table['base_frequency'].toFixed(6) + '"' + newline;
 
   }
 
-  file += newline + "; Set reference key to absolute frequency (not scale note but midi key)" + newline;
-  file += "note " + tuning_table['base_midi_note'] + '="! ' + tuning_table['base_frequency'].toFixed(6) + '"' + newline;
-  file += "[Scale End]" + newline;
+  file += newline + "[Scale End]" + newline;
 
   save_file(tuning_table['filename'] + '.tun', file);
 
@@ -93,6 +104,8 @@ function export_scala_scl() {
   // assemble the .scl file contents
   var file = "! " + tuning_table['filename'] + ".scl" + newline;
   file += "! Created using " + APP_TITLE + newline;
+  file += "!" + newline;
+  file += "! " + get_scale_url() + newline;
   file += "!" + newline;
   if (R.isEmpty(jQuery("#txt_name").val())) {
     file += "Untitled tuning";
@@ -176,6 +189,8 @@ function export_maxmsp_coll() {
   var file = "# Tuning file for Max/MSP coll objects. - Created using " + APP_TITLE + newline;
   file += "# " + jQuery("#txt_name").val() + newline;
   file += "#" + newline;
+  file += "# " + get_scale_url() + newline;
+  file += "#" + newline;
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
     file += i + ", " + tuning_table['freq'][i].toFixed(7) + ";" + newline;
@@ -217,7 +232,8 @@ function export_kontakt_script() {
   var file = "{**************************************" + newline;
   file += jQuery("#txt_name").val() + newline;
   file += "MIDI note " + tuning_table['base_midi_note'] + " (" + midi_note_number_to_name(tuning_table['base_midi_note']) + ") = " + parseFloat(tuning_table['base_frequency']) + " Hz" + newline;
-  file += "Created using " + APP_TITLE + newline;
+  file += "Created using " + APP_TITLE + newline + newline;
+  file += get_scale_url() + newline;
   file += "****************************************}" + newline + newline;
 
   file += "on init" + newline;
@@ -258,6 +274,60 @@ function export_kontakt_script() {
   file += "end on" + newline;
 
   save_file(tuning_table['filename'] + '.txt', file);
+
+  // success
+  return true;
+
+}
+
+function export_soniccouture_nka() {
+
+  if (export_error()) {
+    return;
+  }
+
+  // assemble the nka contents
+  // first line should always be "%XenSetup"
+  var file = "%XenSetup" + newline;
+
+  // loop through 128 notes to get semitone offset
+  for (let i = 0; i < TUNING_MAX_SIZE; i++) {
+
+    var this_note = ftom(tuning_table['freq'][i]);
+
+    // if we're out of MIDI note range, leave semitone offset as default
+    if (this_note[0] < 0 || this_note[0] >= TUNING_MAX_SIZE) {
+      file += "0" + newline;
+    }
+
+    // success, we're in range of another note, so get the semitone offset
+    else {
+      file += (this_note[0]-i) + newline;
+    }
+
+  }
+
+  // loop through 128 notes to get cents offset
+  for (let i = 0; i < TUNING_MAX_SIZE; i++) {
+
+    var this_note = ftom(tuning_table['freq'][i]);
+
+    // if we're out of MIDI note range, leave semitone offset as default
+    if (this_note[0] < 0 || this_note[0] >= TUNING_MAX_SIZE) {
+      file += "0" + newline;
+    }
+
+    // success, we're in range of another note, so we'll change the tuning +/- 5000 hundredths of a cent
+    else {
+      file += parseInt(this_note[1] * 100) + newline;
+    }
+    
+  }
+
+  // Soniccouture .nka format requires 0 followed by newline to end the file
+  file += "0" + newline;
+
+  save_file(tuning_table['filename'] + '.nka', file);
 
   // success
   return true;
@@ -318,6 +388,116 @@ function exportSytrusPitchMap() {
   exportImageLinePitchMap(4)
 }
 
+function getMnlgtunTuningInfoXML(useScaleFormat, programmer, comment) {
+  // Builds an XML file necessary for the .mnlgtun file format
+  const rootName = useScaleFormat ? 'minilogue_TuneScaleInformation' : 'minilogue_TuneOctInformation'
+  const xml = document.implementation.createDocument(null, rootName)
+
+  const Programmer = xml.createElement('Programmer')
+  Programmer.textContent = programmer
+  xml.documentElement.appendChild(Programmer)
+
+  const Comment = xml.createElement('Comment')
+  Comment.textContent = comment
+  xml.documentElement.appendChild(Comment)
+
+  return xml
+}
+
+function getMnlgtunFileInfoXML(useScaleFormat, product = 'minilogue') {
+  // Builds an XML file necessary for the .mnlgtun file format
+  const rootName = 'KorgMSLibrarian_Data'
+  const xml = document.implementation.createDocument(null, rootName)
+
+  const Product = xml.createElement('Product')
+  Product.textContent = product
+  xml.documentElement.appendChild(Product)
+
+  const Contents = xml.createElement('Contents')
+  Contents.setAttribute('NumProgramData', 0)
+  Contents.setAttribute('NumPresetInformation', 0)
+  Contents.setAttribute('NumTuneScaleData', 1 * useScaleFormat)
+  Contents.setAttribute('NumTuneOctData', 1 * !useScaleFormat)
+
+  const [fileNameHeader, dataName, binName] = useScaleFormat
+    ? ['TunS_000.TunS_', 'TuneScaleData', 'TuneScaleBinary']
+    : ['TunO_000.TunO_', 'TuneOctData', 'TuneOctBinary']
+
+  const TuneData = xml.createElement(dataName)
+
+  const Information = xml.createElement('Information')
+  Information.textContent = fileNameHeader + 'info'
+  TuneData.appendChild(Information)
+
+  const BinData = xml.createElement(binName)
+  BinData.textContent = fileNameHeader + 'bin'
+  TuneData.appendChild(BinData)
+
+  Contents.appendChild(TuneData)
+  xml.documentElement.appendChild(Contents)
+
+  return xml
+}
+
+function exportMnlgtun(useScaleFormat) {
+  // This exporter converts tuning data into a zip-compressed file for use with Korg's
+  // 'logue Sound Librarian software, supporting their 'logue series of synthesizers.
+  // While this exporter preserves accuracy as much as possible, the Sound Librarian software
+  // unforunately truncates cent values to 1 cent precision. It's unknown whether the tuning accuracy
+  // from this exporter is written to the synthesizer and used in the synthesis.
+
+  if (export_error()) {
+    return
+  }
+
+  // the index of the table that's equal to the baseNote should have the following value
+  const refOffsetCents = MNLG_A_REF.val + decimal_to_cents(tuning_table.base_frequency / MNLG_A_REF.freq)
+
+  // offset cents array for binary conversion
+  let centsTable = tuning_table.cents.map(c => roundToNDecimals(3, c + refOffsetCents))
+
+  if (useScaleFormat) {
+    // ensure table length is exactly 128
+    centsTable = centsTable.slice(0, MNLG_SCALESIZE)
+
+    // this shouldn't happen unless something goes really wrong
+    if (centsTable.length !== MNLG_SCALESIZE) {
+      console.log('Somehow the mnlgtun table was less than 128 values, the end will be padded with 0s.')
+      const padding = new Array(MNLG_SCALESIZE - centsTable.length).fill(0)
+      centsTable = [...centsTable, ...padding]
+    }
+    
+  } else {
+    // normalize around root, truncate to 12 notes, and wrap flattened Cs
+    let cNote = parseInt(tuning_table.base_midi_note / MNLG_OCTAVESIZE) * MNLG_OCTAVESIZE
+    centsTable = centsTable.slice(cNote, cNote + MNLG_OCTAVESIZE)
+                           .map(cents => mathModulo(cents - MNLG_C_REF.val, MNLG_MAXCENTS))
+  }
+
+  // convert to binary
+  const binaryData = centsTableToMnlgBinary(centsTable)
+
+  // prepare files for zipping
+  const tuningInfo = getMnlgtunTuningInfoXML(useScaleFormat, 'ScaleWorkshop', tuning_table.filename)
+  const fileInfo = getMnlgtunFileInfoXML(useScaleFormat)
+  const [fileNameHeader, fileType] = useScaleFormat ? ['TunS_000.TunS_', '.mnlgtuns'] : ['TunO_000.TunO_', '.mnlgtuno']
+
+  // build zip
+  const zip = new JSZip()
+  zip.file(fileNameHeader + 'bin', binaryData)
+  zip.file(fileNameHeader + 'info', tuningInfo.documentElement.outerHTML)
+  zip.file('FileInformation.xml', fileInfo.documentElement.outerHTML)
+  zip.generateAsync({ type: 'base64' }).then(
+    base64 => {
+      save_file(tuning_table.filename + fileType, base64, false, 'application/zip;base64,')
+    },
+    err => alert(err)
+  )
+
+  // success
+  return true
+}
+
 function export_reference_deflemask() {
 
   // This exporter converts your tuning data into a readable format you can easily input manually into Deflemask.
@@ -330,6 +510,8 @@ function export_reference_deflemask() {
 
   // assemble the text file contents
   var file = tuning_table['description'] + newline + "Reference for Deflemask note input - generated by " + APP_TITLE + newline + newline;
+  file += get_scale_url() + newline + newline;
+
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
 
     // convert frequency into midi note number + cents offset

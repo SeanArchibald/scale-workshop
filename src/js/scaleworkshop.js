@@ -17,7 +17,7 @@ if (window.location.hostname.endsWith('.github.com') || window.location.hostname
  * GLOBALS
  */
 
-const APP_TITLE = "Scale Workshop 1.0.4";
+const APP_TITLE = "Scale Workshop 1.4";
 const TUNING_MAX_SIZE = 128;
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/;
@@ -326,6 +326,14 @@ function import_anamark_tun() {
   }
 }
 
+function importMnlgtun() {
+  // check File API is supported
+  if (is_file_api_supported()) {
+    // trigger load file dialog
+    jQuery('#mnlgtun-file').trigger('click')
+  }
+}
+
 // after a scala file is loaded, this function will be called
 function parse_imported_scala_scl(event) {
 
@@ -516,4 +524,77 @@ function parse_imported_anamark_tun(event) {
 
   };
 
+}
+
+function parseImportedMnlgtun(event) {
+  // TODO: Add features for extracting scale information to reduce a table of 128 values into a periodic scale
+
+  const input = event.target
+
+  // bail if no file was uploaded
+  if (R.isNil(input.files[0])) {
+    return false
+  }
+
+  const zip = new JSZip()
+  zip.loadAsync(input.files[0]).then(result => {
+    // check if meets size requirements
+    const bin = result.files[Object.keys(result.files)[0]]
+    if (bin.name.endsWith('_bin') && bin._data.uncompressedSize % 3 === 0) {
+      const binaryString = bin._data.compressedContent.reduce((a, b) => a + String.fromCharCode(b), '')
+
+      // extract tuning data
+      let cents = mnlgBinaryToCents(binaryString)
+      if (cents.length > 0) {
+        const octaveFormat = cents.length === MNLG_OCTAVESIZE
+
+        // fix octave overflow
+        if (octaveFormat)
+          cents = cents.map(c=>(c > MNLG_OCTAVESIZE * 200) ? c - MNLG_MAXCENTS : c)   
+
+        // to always play at the right frequencies, we have to use the first midi note
+        let octaveExp = octaveFormat ? cents[0] - 900 : cents[0] - MNLG_A_REF.val
+          
+        // derive frequency from A440
+        const baseFrequency = MNLG_A_REF.freq * 2 ** (octaveExp / 1200)
+
+        // normalize so scale starts on unison
+        if (octaveFormat) {
+          let negCents = Math.min(...cents)
+          if (negCents < 0) cents = cents.map(c => c - negCents)
+        } else {
+          cents = cents.map(c => c - cents[0])
+        }
+
+        // remove unison (but may have other unison lines to preserve mapping)
+        cents.shift()
+
+        // add period
+        if (octaveFormat) cents.push(1200)
+
+        jQuery('#txt_tuning_data').val(
+          cents
+            .map(c => c.toFixed(6))
+            .join(newline)
+        )
+
+        jQuery('#txt_base_frequency').val(baseFrequency)
+        jQuery('#txt_base_midi_note').val(octaveFormat ? 60 : 0)
+        jQuery('#txt_name').val(input.files[0].name.slice(0, -9))
+
+        if (parse_tuning_data())
+          return true
+        else {
+          alert('Data parsing failed.')
+          return false
+        }
+      } else {
+        alert('File does not contain tuning data.')
+        return false
+      }
+    } else {
+      alert('Not a valid mnlgtun file.')
+      return false
+    }
+  })
 }
