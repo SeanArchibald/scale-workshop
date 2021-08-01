@@ -676,6 +676,14 @@ function get_factors(number) {
 }
 
 function getGCD(num1, num2) {
+  // Check types
+  let areNums = [num1, num2].reduce((result, num) => result && typeof num === 'number', true);
+  if (!areNums)
+    return NaN;
+
+  num1 = Math.abs(num1);
+  num2 = Math.abs(num2);
+
   if (num1 === 0 || num2 === 0) return num1 + num2;
   else if (num1 === 1 || num2 === 1) return 1;
   else if (num1 === num2) return num1;
@@ -727,27 +735,51 @@ function getLCMArray(array) {
 
 // returns array of the numerator and denominator of the reduced form of given ratio
 function simplifyRatio(numerator, denominator) {
+  if (denominator === 0)
+    return NaN;
+
   const gcdScalar = 1.0 / getGCD(numerator, denominator);
+  if (!gcdScalar)
+    return NaN;
+
+  numerator *= (Math.abs(denominator) / denominator);
+  denominator = Math.abs(denominator);
   return [numerator, denominator].map((x) => x * gcdScalar);
 }
 
 function simplifyRatioString(ratio) {
   const [n, d] = ratio.split("/").map((x) => parseInt(x));
+  if (!d || (n !== 0 && !n))
+    return NaN;
   return simplifyRatio(n, d).join("/");
 }
 
 function stackRatios(ratioStr1, ratioStr2) {
+  if (typeof ratioStr1 !== "string" || typeof ratioStr2 !== "string")
+    return NaN;
+
   const [n1, d1] = ratioStr1.split("/").map((x) => parseInt(x));
   const [n2, d2] = ratioStr2.split("/").map((x) => parseInt(x));
+
+  if ((!d1 || !d2) || (n1 !== 0 && !n1) || (n2 !== 0 && !n2))
+    return NaN;
+
   return simplifyRatio(n1 * n2, d1 * d2).join("/");
 }
 
 function stackNOfEDOs(nOfEdo1Str, nOfEdo2Str) {
+  if (typeof nOfEdo1Str !== "string" || typeof nOfEdo2Str !== "string")
+    return NaN;
+
   const [deg1, edo1] = nOfEdo1Str.split("\\").map((x) => parseInt(x));
   const [deg2, edo2] = nOfEdo2Str.split("\\").map((x) => parseInt(x));
+
+  if ((!edo1 || !edo2) || (deg1 !== 0 && !deg1) || (deg2 !== 0 && !deg2))
+    return NaN;
+
   const newEdo = getLCM(edo1, edo2);
   const newDegree = (newEdo / edo1) * deg1 + (newEdo / edo2) * deg2;
-  return simplifyRatio(newDegree, newEdo).join("\\");
+  return [newDegree, newEdo].join("\\");
 }
 
 // TODO: proper regex tests for +/- lines
