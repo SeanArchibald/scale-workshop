@@ -234,18 +234,11 @@ function sum_array(array, endIndex) {
 
 // rotates the array by given steps
 function rotate(array, steps) {
-  var i = Math.abs(steps);
-  while (i > 0) {
-    var x;
-    if (steps < 0) {
-      x = array.shift();
-      array.push(x);
-    } else if (steps > 0) {
-      x = array.pop();
-      array.unshift(x);
-    }
-    i--;
-  }
+  let startInd = array.length - mathModulo(steps, array.length);
+  return [
+    ...array.slice(startInd),
+    ...array.slice(0, startInd)
+  ];
 }
 
 // calculate a continued fraction for the given number
