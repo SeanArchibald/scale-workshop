@@ -199,28 +199,28 @@ describe("helpers.js", () => {
     });
     it("returns the largest number if 0 is an argument", () => {
       expect(getGCD(0, 4)).toBe(4);
-    })
+    });
     it("returns a positive integer regardless of input signs", () => {
       expect(getGCD(-1, -1)).toBe(1);
       expect(getGCD(-21, 15)).toBe(3);
       expect(getGCD(-4, 20)).toBe(4);
-    })
-  })
+    });
+  });
 
   describe("simplifyRatio", () => {
     it("returns a reduced [numerator, denominator] pair given a numerator and denominator", () => {
-      expect(simplifyRatio(2, 4)).toBe([1, 2]);
-      expect(simplifyRatio(17, 51)).toBe([1, 3]);
-      expect(simplifyRatio(0, 100), toBe([0, 1]));
+      expect(simplifyRatio(2, 4)).toEqual([1, 2]);
+      expect(simplifyRatio(17, 51)).toEqual([1, 3]);
+      expect(simplifyRatio(0, 100)).toEqual([0, 1]);
     });
     it("returns a negative numerator if computed value is negative", () => {
-      expect(simplifyRatio(4, -4)).toBe([-1, 1]);
-      expect(simplifyRatio(-4, 4)).toBe([-1, 1]);
+      expect(simplifyRatio(4, -4)).toEqual([-1, 1]);
+      expect(simplifyRatio(-4, 4)).toEqual([-1, 1]);
     });
     it("returns NaN if given a non-numerical value", () => {
       expect(simplifyRatio(1, "foo")).toBeNaN();
     });
-    it("returns NAN if given a denominator of 0", () => {
+    it("returns NaN if given a denominator of 0", () => {
       expect(simplifyRatio(1, 0)).toBeNaN();
     });
   });
@@ -229,7 +229,7 @@ describe("helpers.js", () => {
     it("returns a reduced ratio string given a ratio string", () => {
       expect(simplifyRatioString("2/4")).toBe("1/2");
       expect(simplifyRatioString("17/51")).toBe("1/3");
-      expect(simplifyRatioString("0/100"), toBe("0/1"));
+      expect(simplifyRatioString("0/100")).toBe("0/1");
     });
     it("returns a negative numerator if computed value is negative", () => {
       expect(simplifyRatioString("4/-4")).toBe("-1/1");
@@ -284,23 +284,23 @@ describe("helpers.js", () => {
     it("takes two generic interval values and returns their combination, preserving the first interval type when possible", () => {
       expect(stackLines("100.0", "200.0")).toBe("300.0");
       expect(stackLines("100.0", "7\\12")).toBe("800.0");
-      expect(stackLines("100.0", "4/3")).toBe("598.0449991346125");
-      expect(stackLines("100.0", "1,25")).toBe("486.31371386483477");
+      expect(stackLines("100.0", "4/3")).toBe("598.044999");
+      expect(stackLines("100.0", "1,25")).toBe("486.313714");
       expect(stackLines("1\\12", "1\\6")).toBe("3\\12");
       expect(stackLines("12\\12", "2,1")).toBe("24\\12");
       expect(stackLines("1,25", "1,3")).toBe("1,625");
       expect(stackLines("1,25", "13/10")).toBe("1,625");
-      expect(stackLines("1,25", "300.0")).toBe("1,189207115");
-      expect(stackLines("1,25", "1\\4")).toBe("1,189207115");
+      expect(stackLines("1,25", "300.0")).toBe("1,189207");
+      expect(stackLines("1,25", "1\\4")).toBe("1,189207");
       expect(stackLines("3/2", "4/3")).toBe("2/1");
       expect(stackLines("4/3", "1,5")).toBe("2/1");
     });
     it("preserves decimal if combined with N of EDO", () => {
       expect(stackLines("12\\12", "1,5")).toBe("3,1");
-      expect(stackLines("1\\12", "1,5")).toBe("1,5891946415389429");
+      expect(stackLines("1\\12", "1,5")).toBe("1,589195");
     });
     it("returns cents if N of EDO is combined with cents or ratio", () => {
-      expect(stackLines("1\\12", "3/2")).toBe("801.9550008653874");
+      expect(stackLines("1\\12", "3/2")).toBe("801.955001");
       expect(stackLines("1\\12", "700.0")).toBe("800.0");
     });
     it ("returns cents when a ratio is combined with N of EDO or cents", () => {
