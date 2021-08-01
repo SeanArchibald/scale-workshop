@@ -99,7 +99,10 @@ function isCent(input) {
 function isCommaDecimal(input) {
   // true, when the input has numbers at the beginning, followed by a comma, ending with any number of numbers
   // for example: 1,25
-  return /^\d+\,\d*$/.test(input);
+  if (typeof input !== "string") {
+    return false;
+  }
+  return /^\d+\,\d*$/.test(input.trim());
 }
 
 function isNOfEdo(input) {
@@ -226,7 +229,7 @@ function midi_note_number_to_name(input) {
 
 // calculate the sum of the values in a given array given a stopping index
 function sum_array(array, endIndex) {
-  return array.slice(0, endIndex).reduce((sum, x) => sum + x, 0);
+  return array.slice(0, endIndex).reduce((sum, x) => sum + parseInt(x), 0);
 }
 
 // rotates the array by given steps
