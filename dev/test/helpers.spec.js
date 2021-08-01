@@ -78,7 +78,7 @@ describe("helpers.js", () => {
 
   describe("sum_array", () => {
     it("takes an array of numbers and returns a number", () => {
-      expect(typeof sum_array([1, 2, 3, 4]).toBe("number"));
+      expect(typeof sum_array([1, 2, 3, 4])).toBe("number");
     });
     it("sums the numbers in an array", () => {
       expect(sum_array([1, 2, 3, 4])).toBe(10);
@@ -87,7 +87,7 @@ describe("helpers.js", () => {
       expect(sum_array([1, 2, 3, 4], 3)).toBe(6);
     });
     it("returns NaN, when array contains non-numeric values", () => {
-      expect(sum_arrray([1, "foo"])).toBeNaN();
+      expect(sum_array([1, "foo"])).toBeNaN();
     });
   });
 
@@ -239,4 +239,189 @@ describe("helpers.js", () => {
     });
   });
   
+  describe("stackRatios", () => {
+    it("takes two ratios and returns their simplified product", () => {
+      expect(stackRatios("1/1", "3/2")).toBe("3/2");
+      expect(stackRatios("3/2", "3/2")).toBe("9/4");
+      expect(stackRatios("5/4", "16/15").toBe("4/3"));
+    });
+    // it("returns a negative numerator if computed value is negative", () => {
+    //   expect(simplifyRatioString("4/-4")).toBe("-1/1");
+    //   expect(simplifyRatioString("-4/4")).toBe("-1/1");
+    // });
+    it("returns NaN if given a non-numerical value", () => {
+      expect(stackRatios("foo")).toBeNaN();
+    });
+    it("returns NAN if given a denominator of 0", () => {
+      expect(stackRatios("1/0")).toBeNaN();
+    });
+  });
+
+  describe("stackNOfEDOs", () => {
+    it("takes two n-of-EDO values and returns their sum", () => {
+      expect(stackNOfEDOs("1\\12", "1\\12")).toBe("2\\12");
+      expect(stackNOfEDOs("12\\22", "-3\\22")).toBe("9\\22");
+      expect(stackNOfEDOs("1\\5", "1\\7").toBe("12\\35"));
+      expect(stackNOfEDOs("3\\8", "5\\12").toBe("19\\24"));
+    });
+    // it("returns a negative numerator if computed value is negative", () => {
+    //   expect(stackNOfEDOs("4/-4")).toBe("-1/1");
+    //   expect(stackNOfEDOs("-4/4")).toBe("-1/1");
+    // });
+    it("returns NaN if given a non-numerical value", () => {
+      expect(stackNOfEDOs("foo")).toBeNaN();
+    });
+    it("returns NAN if given a denominator of 0", () => {
+      expect(stackNOfEDOs("1/0")).toBeNaN();
+    });
+  });
+
+  describe("stackLines", () => {
+    it("takes two generic interval values and returns their combination, preserving the first interval type when possible", () => {
+      expect(stackLines("100.0", "200.0")).toBe("300.0");
+      expect(stackLines("100.0", "7\\12")).toBe("800.0");
+      expect(stackLines("100.0", "4/3")).toBe("598.0449991346125");
+      expect(stackLines("100.0", "1,25")).toBe("486.31371386483477");
+      expect(stackLines("1\\12", "1\\6").toBe("3\\12"));
+      expect(stackLines("12\\12", "2,1").toBe("24\\12"));
+      expect(stackLines("1,25", "1,3").toBe("1,625"));
+      expect(stackLines("1,25", "13/10").toBe("1,625"));
+      expect(stackLines("1,25", "300.0").toBe("1,189207115"));
+      expect(stackLines("1,25", "1\\4").toBe("1,189207115"));
+      expect(stackLines("3/2", "4/3")).toBe("2/1");
+      expect(stackLines("4/3", "1,5")).toBe("2/1");
+    });
+    it("preserves decimal if combined with N of EDO", () => {
+      expect(stackLines("12\\12", "1,5")).toBe("3,1");
+      expect(stackLines("1\\12", "1,5")).toBe("1,5891946415389429");
+    });
+    it("returns cents if N of EDO is combined with cents or ratio", () => {
+      expect(stackLines("1\\12", "3/2")).toBe("801.9550008653874");
+      expect(stackLines("1\\12", "700.0")).toBe("800.0");
+    });
+    it ("returns cents when a ratio is combined with N of EDO or cents", () => {
+      expect(stackLines("2/1", "1\\12")).toBe("1300.0");
+      expect(stackLines("2/1", "700.0")).toBe("1900.0");
+    })
+    // it("returns a negative numerator if computed value is negative", () => {
+    //   expect(stackLines("4/-4")).toBe("-1/1");
+    //   expect(stackLines("-4/4")).toBe("-1/1");
+    // });
+    it("returns NaN if given a non-numerical value", () => {
+      expect(stackLines("foo")).toBeNaN();
+    });
+    it("returns NAN if given a denominator of 0", () => {
+      expect(stackLines("1/0")).toBeNaN();
+    });
+  });
+
+  describe("stackSelf", () => {
+    it("returns the interval produced from stacking itself a number of times ", () => {
+      expect(stackSelf("100.0", 2)).toBe("300.0");
+      expect(stackSelf("3/2", 2)).toBe("27/8");
+      expect(stackSelf("1,5", 2)).toBe("3,375");
+      expect(stackSelf("3\\31", 2)).toBe("9\\31");
+    });
+    it("returns the given interval unchanged if stacked 0 times", () => {
+      expect(stackSelf("100.0", 0)).toBe("100.0");
+      expect(stackSelf("3/2", 0)).toBe("3/2");
+      expect(stackSelf("1,5", 0)).toBe("1,5");
+      expect(stackSelf("3\\31", 0)).toBe("3\\31");
+    });
+    // it("returns a negative numerator if computed value is negative", () => {
+    //   expect(simplifyRatioString("4/-4")).toBe("-1/1");
+    //   expect(simplifyRatioString("-4/4")).toBe("-1/1");
+    // });
+    it("returns NaN if given a non-numerical value", () => {
+      expect(stackSelf("foo", 1)).toBeNaN();
+      expect(stackSelf("2/1", "foo")).toBeNaN();
+    });
+  });
+
+  describe("moduloLine", () => {
+    it("returns the remaining interval when multiples of the modulo value are removed from the line interval, retaining line's type if possible", () => {
+      expect(moduloLine("100.0", "1200.0")).toBe("100.0");
+      expect(moduloLine("1300.0", "1200.0")).toBe("100.0");
+      expect(moduloLine("100.0", "7\\12")).toBe("100.0");
+      expect(moduloLine("800.0", "7\\12")).toBe("100.0");
+      expect(moduloLine("1300.0", "2/1")).toBe("100.0");
+      expect(moduloLine("1300.0", "2,0")).toBe("100.0");
+      expect(moduloLine("8\\12", "11\\12").toBe("8\\12"));
+      expect(moduloLine("8\\12", "3\\6").toBe("1\\6"));
+      expect(moduloLine("4\\5", "3\\7").toBe("13\\35"));
+      expect(moduloLine("13\\12", "1200").toBe("1\\12"));
+      expect(moduloLine("13\\12", "2/1").toBe("1\\12"));
+      expect(moduloLine("13\\12", "2,0").toBe("1\\12"));
+      expect(moduloLine("1,25", "1,3").toBe("1,25"));
+      expect(moduloLine("1,5", "1,25").toBe("1,2"));
+      expect(moduloLine("3,0", "1200.0").toBe("1,5"));
+      expect(moduloLine("3,0", "12\\12").toBe("1,5"));
+      expect(moduloLine("3,0", "2/1").toBe("1,5"));
+      expect(moduloLine("1,7", "3/2").toBe("1,1333333333333333"));
+      expect(moduloLine("3/2", "4/3")).toBe("9/8");
+      expect(moduloLine("3/1", "2,0")).toBe("3/2");
+      expect(moduloLine("3/1", "1200.0")).toBe("3/2");
+      expect(moduloLine("3/1", "12\\12")).toBe("3/2");
+    });
+    it("returns decimal if combined with N of EDO", () => {
+      expect(moduloLine("1\\12", "1,5")).toBe("1,5");
+      expect(moduloLine("9\\12", "1,5")).toBe("1.121195220338286");
+    });
+    it("returns cents if N of EDO is combined with cents or ratio", () => {
+      expect(moduloLine("1\\12", "700.0")).toBe("100.0");
+      expect(moduloLine("9\\12", "3/2")).toBe("198.04499913461257");
+    });
+    it ("returns cents when a ratio is combined with N of EDO or cents", () => {
+      expect(moduloLine("2/1", "1\\12")).toBe("0.0");
+      expect(moduloLine("2/1", "700.0")).toBe("500.0");
+    })
+    // it("returns a negative numerator if computed value is negative", () => {
+    //   expect(simplifyRatioString("4/-4")).toBe("-1/1");
+    //   expect(simplifyRatioString("-4/4")).toBe("-1/1");
+    // });
+    it("returns NaN if given a non-numerical value", () => {
+      expect(moduloLine("foo", "2/1")).toBeNaN();
+      expect(moduloLine("2/1", "foo")).toBeNaN();
+    });
+  });
+
+  describe("transposeLine", () => {
+    it("takes two generic interval values and returns their combination, preserving the first interval type when possible", () => {
+      expect(transposeLine("100.0", "200.0")).toBe("300.0");
+      expect(transposeLine("100.0", "7\\12")).toBe("800.0");
+      expect(transposeLine("100.0", "4/3")).toBe("598.0449991346125");
+      expect(transposeLine("100.0", "1,25")).toBe("486.31371386483477");
+      expect(transposeLine("1\\12", "1\\6").toBe("3\\12"));
+      expect(transposeLine("12\\12", "2,1").toBe("24\\12"));
+      expect(transposeLine("1,25", "1,3").toBe("1,625"));
+      expect(transposeLine("1,25", "13/10").toBe("1,625"));
+      expect(transposeLine("1,25", "300.0").toBe("1,189207115"));
+      expect(transposeLine("1,25", "1\\4").toBe("1,189207115"));
+      expect(transposeLine("3/2", "4/3")).toBe("2/1");
+      expect(transposeLine("4/3", "1,5")).toBe("2/1");
+    });
+    it("preserves decimal if combined with N of EDO", () => {
+      expect(transposeLine("12\\12", "1,5")).toBe("3,1");
+      expect(transposeLine("1\\12", "1,5")).toBe("1,5891946415389429");
+    });
+    it("returns cents if N of EDO is combined with cents or ratio", () => {
+      expect(transposeLine("1\\12", "3/2")).toBe("801.9550008653874");
+      expect(transposeLine("1\\12", "700.0")).toBe("800.0");
+    });
+    it ("returns cents when a ratio is combined with N of EDO or cents", () => {
+      expect(transposeLine("2/1", "1\\12")).toBe("1300.0");
+      expect(transposeLine("2/1", "700.0")).toBe("1900.0");
+    })
+    // it("returns a negative numerator if computed value is negative", () => {
+    //   expect(transposeLine("4/-4")).toBe("-1/1");
+    //   expect(transposeLine("-4/4")).toBe("-1/1");
+    // });
+    it("returns NaN if given a non-numerical value", () => {
+      expect(transposeLine("foo")).toBeNaN();
+    });
+    it("returns NAN if given a denominator of 0", () => {
+      expect(transposeLine("1/0")).toBeNaN();
+    });
+  })
+
 });
