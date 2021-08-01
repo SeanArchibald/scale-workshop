@@ -242,11 +242,19 @@ function rotate(array, steps) {
 }
 
 // calculate a continued fraction for the given number
-function get_cf(num, maxiterations, roundf) {
+function get_cf(num, maxiterations=15, roundf=10) {
+  num = parseFloat(num);
+
+  if (num === 0 || maxiterations < 1)
+    return [0];
+
+  else if (!num)
+    return NaN;
+
   var cf = []; // the continued fraction
   var digit;
 
-  var roundinv = 1.0 / roundf;
+  var roundinv = Math.pow(0.1, roundf);
 
   var iterations = 0;
   while (iterations < maxiterations) {
@@ -268,15 +276,36 @@ function get_cf(num, maxiterations, roundf) {
 
 // calculate a single convergent for a given continued fraction
 function get_convergent(cf, depth = 0) {
+  
+  // Return whole number if cf is a number
+  if (typeof cf === 'number') {
+      let cfNum = parseInt(cf)
+      if (cfNum === 0)
+        return "0/1";
+      else if (!cfNum)
+        return NaN;
+      else
+        return `${cfNum}/1`;
+  }
+
+  // Make sure indicies are valid
+  let parsedCf = [];
+  for (let num of cf) {
+    num = parseInt(num);
+    if (num !== 0 && !num)
+      return NaN;
+    parsedCf.push(num);
+  }
+  
   var cfdigit; // the continued fraction digit
   var num; // the convergent numerator
   var den; // the convergent denominator
   var tmp; // for easy reciprocation
 
-  if (depth >= cf.length || depth == 0) depth = cf.length;
+  if (depth >= parsedCf.length || depth == 0) depth = parsedCf.length;
 
   for (var d = 0; d < depth; d++) {
-    cfdigit = cf[d];
+    cfdigit = parsedCf[d];
     num = cfdigit;
     den = 1;
 
@@ -285,7 +314,7 @@ function get_convergent(cf, depth = 0) {
       tmp = den;
       den = num;
       num = tmp;
-      num += den * cf[i - 1];
+      num += den * parsedCf[i - 1];
     }
   }
 
@@ -301,7 +330,7 @@ function decimal_to_ratio(input, iterations = 15, depth = 0) {
   if (input === 0 || isNaN(input)) {
     return false;
   } else {
-    var inputcf = get_cf(input, iterations, 100000);
+    var inputcf = get_cf(input, iterations, 6);
     return get_convergent(inputcf, depth);
   }
 }
@@ -367,7 +396,7 @@ function get_convergents(cf, numarray, denarray, perlimit, cindOut = null) {
 function show_mos_cf(per, gen, ssz, threshold) {
   var maxsize = 400; // maximum period size
   var maxcfsize = 12; // maximum continued fraction length
-  var roundf = 1000; // rounding factor in case continued fraction blows up
+  var roundf = 4; // rounding factor in case continued fraction blows up
 
   per = line_to_decimal(per);
   if (per <= 0 || isNaN(per)) {
