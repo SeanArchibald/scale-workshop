@@ -321,8 +321,9 @@ function get_convergent(cf, depth = 0) {
   return num + "/" + den;
 }
 
-// convert a decimal to ratio (string 'x/y'), may have rounding errors for irrationals
+// convert a decimal or commadecimal to ratio (string 'x/y'), may have rounding errors for irrationals
 function decimal_to_ratio(input, iterations = 15, depth = 0) {
+  if (isCommaDecimal(input)) input = commadecimal_to_decimal(input);
   if (input === false) return false;
 
   input = parseFloat(input);
@@ -787,16 +788,40 @@ function stackLines(line1, line2) {
   const line1Type = getLineType(line1);
   const line2Type = getLineType(line2);
 
-  // If both are ratios, preserve ratio notation
-  if (line1Type === LINE_TYPE.RATIO && line2Type === LINE_TYPE.RATIO)
-    return stackRatios(line1, line2);
+  if (line1Type === LINE_TYPE.INVALID || line2Type === LINE_TYPE.INVALID)
+    return NaN;
 
-  // If both are N of EDOs, preserve N of EDO notation
-  if (line1Type === LINE_TYPE.N_OF_EDO && line2Type === LINE_TYPE.N_OF_EDO)
-    return stackNOfEDOs(line1, line2);
+  // If both are ratios, preserve ratio notation
+  if (line1Type === LINE_TYPE.RATIO) {
+    if (line2Type === LINE_TYPE.RATIO)
+      return stackRatios(line1, line2);
+
+    else if (line2Type === LINE_TYPE.DECIMAL) {
+      let ratio2 = decimal_to_ratio(line2);
+      console.log(ratio2);
+      return stackRatios(line1, ratio2);
+      }
+  }
+
+  else if (line1Type === LINE_TYPE.N_OF_EDO) {
+    
+    // If both are N of EDOs, preserve N of EDO notation
+    if (line2Type === LINE_TYPE.N_OF_EDO)
+      return stackNOfEDOs(line1, line2);
+    
+    // See if second type is a power of two
+    const line2Ratio = roundToNDecimals(6, line_to_decimal(line2));
+    const octs = Math.log2(line2Ratio);
+    if (octs === Math.trunc(octs))
+      return stackNOfEDOs(line1, `${octs}\\1`);
+
+    // Return result as commadecimal type
+    if (line2Type === LINE_TYPE.DECIMAL)
+      return decimal_to_commadecimal(n_of_edo_to_decimal(line1) * line2Ratio);
+  }
 
   // If the first line is a decimal type, keep decimals
-  if (line1Type === LINE_TYPE.DECIMAL)
+  else if (line1Type === LINE_TYPE.DECIMAL)
     return decimal_to_commadecimal(
       line_to_decimal(line1) * line_to_decimal(line2)
     );
@@ -809,12 +834,16 @@ function stackLines(line1, line2) {
   if (!val2 && line2.startsWith("-")) val2 = parseFloat(line2);
 
   const valueOut = val1 + val2;
-  return valueOut.toFixed(6);
+  return roundToNDecimals(6, valueOut).toFixed(6);
 }
 
 // stacks an interval on itself
 function stackSelf(line, numStacks) {
   const lineType = getLineType(line);
+
+  if (lineType === LINE_TYPE.INVALID || typeof numStacks !== "number")
+    return NaN;
+
   const wholeExp = numStacks === Math.trunc(numStacks);
 
   // power function
@@ -822,24 +851,28 @@ function stackSelf(line, numStacks) {
     return decimal_to_commadecimal(Math.pow(line_to_decimal(line), numStacks));
 
   // power function on numerator and denominator
-  if (wholeExp && lineType === LINE_TYPE.RATIO) {
+  else if (wholeExp && lineType === LINE_TYPE.RATIO) {
     let ratio = "1/1";
-    if (numStacks > 0) ratio = line.split("/");
-    else if (numStacks < 0) ratio = line.split("/").reverse();
-    else return ratio;
-    return ratio
-      .map((x) => parseInt(Math.pow(x, Math.abs(numStacks))))
-      .join("/");
+
+    if (numStacks > 0) 
+      ratio = line.split("/");
+    else if 
+      (numStacks < 0) ratio = line.split("/").reverse();
+    else 
+      return ratio;
+    
+    return ratio.map((x) => parseInt(Math.pow(x, Math.abs(numStacks))))
+                .join("/");
   }
 
   // multiply degree by stack amount
-  if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
+  else if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
     const [deg, edo] = line.split("\\");
     return deg * numStacks + "\\" + edo;
-  } else {
-    const value = line_to_cents(line) * numStacks;
-    return value.toFixed(6);
   }
+    
+  const value = line_to_cents(line) * numStacks;
+  return value.toFixed(6);
 }
 
 function moduloLine(line, modLine) {
