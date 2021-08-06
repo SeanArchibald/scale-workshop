@@ -351,25 +351,27 @@ describe("helpers.js", () => {
       expect(moduloLine("1300.0", "2/1")).toBe("100.000000");
       expect(moduloLine("1300.0", "2,0")).toBe("100.000000");
       expect(moduloLine("8\\12", "11\\12")).toBe("8\\12");
-      expect(moduloLine("8\\12", "3\\6")).toBe("1\\6");
-      expect(moduloLine("4\\5", "3\\7")).toBe("13\\35");
-      expect(moduloLine("13\\12", "1200")).toBe("1\\12");
-      expect(moduloLine("13\\12", "2/1")).toBe("1\\12");
-      expect(moduloLine("13\\12", "2,0")).toBe("1\\12");
-      expect(moduloLine("1,25", "1,3")).toBe("1,2500000");
+      expect(moduloLine("61\\12", "1200.0")).toBe("1\\12");
+      expect(moduloLine("61\\12", "2/1")).toBe("1\\12");
+      expect(moduloLine("61\\12", "2,0")).toBe("1\\12");
+      expect(moduloLine("1,25", "1,3")).toBe("1,250000");
       expect(moduloLine("1,5", "1,25")).toBe("1,200000");
       expect(moduloLine("3,0", "1200.0")).toBe("1,500000");
       expect(moduloLine("3,0", "12\\12")).toBe("1,500000");
       expect(moduloLine("3,0", "2/1")).toBe("1,500000");
-      expect(moduloLine("1,7", "3/2")).toBe("1,1333333");
-      expect(moduloLine("3/2", "4/3")).toBe("9/8");
+      expect(moduloLine("1,7", "3/2")).toBe("1,133333");
+      expect(moduloLine("12/8", "4/3")).toBe("9/8");
       expect(moduloLine("3/1", "2,0")).toBe("3/2");
       expect(moduloLine("3/1", "1200.0")).toBe("3/2");
       expect(moduloLine("3/1", "12\\12")).toBe("3/2");
     });
+    it("returns LCM EDO if two N of EDOs are combined", () => {
+      expect(moduloLine("8\\12", "3\\6")).toBe("2\\12");
+      expect(moduloLine("4\\5", "3\\7")).toBe("13\\35");
+    });
     it("returns decimal if combined with N of EDO", () => {
-      expect(moduloLine("1\\12", "1,5")).toBe("1,500000");
-      expect(moduloLine("9\\12", "1,5")).toBe("1.121195");
+      expect(moduloLine("1\\12", "1,5")).toBe("1,059463");
+      expect(moduloLine("9\\12", "1,5")).toBe("1,121195");
     });
     it("returns cents if N of EDO is combined with cents or ratio", () => {
       expect(moduloLine("1\\12", "700.0")).toBe("100.000000");
