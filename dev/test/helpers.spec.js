@@ -365,6 +365,10 @@ describe("helpers.js", () => {
       expect(moduloLine("3/1", "1200.0")).toBe("3/2");
       expect(moduloLine("3/1", "12\\12")).toBe("3/2");
     });
+    it("returns an octave-based interval if number is below unison", () => {
+      expect(moduloLine("0,5", "2/1")).toBe("1,000000");
+      expect(moduloLine("2/3", "2/1")).toBe("4/3");
+    });
     it("returns LCM EDO if two N of EDOs are combined", () => {
       expect(moduloLine("8\\12", "3\\6")).toBe("2\\12");
       expect(moduloLine("4\\5", "3\\7")).toBe("13\\35");
