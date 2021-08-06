@@ -12,6 +12,11 @@ function mathModulo(n, d) {
   return ((n % d) + d) % d;
 }
 
+// logarithm-based modulo function
+function logModulo(n, d) {
+  return n * Math.pow(d, -Math.trunc(Math.log2(n)/Math.log2(d)));
+}
+
 // convert a cents value to decimal
 function cents_to_decimal(input) {
   return Math.pow(2, parseFloat(input) / 1200.0);
@@ -318,7 +323,7 @@ function get_convergent(cf, depth = 0) {
     }
   }
 
-  return num + "/" + den;
+  return `${num}/${den}`;
 }
 
 // convert a decimal or commadecimal to ratio (string 'x/y'), may have rounding errors for irrationals
@@ -798,7 +803,6 @@ function stackLines(line1, line2) {
 
     else if (line2Type === LINE_TYPE.DECIMAL) {
       let ratio2 = decimal_to_ratio(line2);
-      console.log(ratio2);
       return stackRatios(line1, ratio2);
       }
   }
@@ -861,7 +865,7 @@ function stackSelf(line, numStacks) {
     else 
       return ratio;
     
-    return ratio.map((x) => parseInt(Math.pow(x, Math.abs(numStacks))))
+    return ratio.map((x) => Math.trunc(Math.pow(x, Math.abs(numStacks))))
                 .join("/");
   }
 
@@ -879,44 +883,67 @@ function moduloLine(line, modLine) {
   const numType = getLineType(line);
   const modType = getLineType(modLine);
 
-  // If both are ratios, preserve ratio notation
-  if (numType === LINE_TYPE.RATIO && modType === LINE_TYPE.RATIO) {
-    const periods = Math.floor(
-      [line, modLine]
-      .map(ratio_to_decimal)
-      .reduce((a, b) => Math.log(a) / Math.log(b))
-    );
-    return stackRatios(line, stackSelf(modLine, -periods))
-  } 
+  if (numType === LINE_TYPE.INVALID || modType === LINE_TYPE.INVALID)
+    return NaN;
 
-  // If the first line is N of EDO and the second line is an octave, simply octave reduce
-  if (numType === LINE_TYPE.N_OF_EDO && line_to_decimal(modLine) === 2) {
-    const [num, mod] = line.split('\\').map(x => parseInt(x))
-    return parseInt(mathModulo(num, mod)) + '\\' + mod
-  }
-  
-  // If both are N of EDOs, preserve N of EDO notation
-  if (numType === LINE_TYPE.N_OF_EDO && modType === LINE_TYPE.N_OF_EDO) {
-    const [numDeg, numEdo] = line.split("\\").map((x) => parseInt(x));
-    const [modDeg, modEdo] = modLine.split("\\").map((x) => parseInt(x));
-    const lcmEdo = getLCM(numEdo, modEdo);
-    return (
-      (((numDeg * lcmEdo) / numEdo) % ((modDeg * lcmEdo) / modEdo)) +
-      "\\" +
-      lcmEdo
-    );
-  }
+  if (numType !== LINE_TYPE.CENTS) {
+    // If both are ratios, preserve ratio notation
+    if (numType === LINE_TYPE.RATIO && modType === LINE_TYPE.RATIO) {
+      const periods = [line, modLine].map(ratio_to_decimal)
+                                     .reduce(logModulo);
+      return stackRatios(line, stackSelf(modLine, -Math.trunc(periods)))
+    } 
 
-  // If the first line is a decimal type, keep decimals
-  if (numType === LINE_TYPE.DECIMAL) {
-    const num = commadecimal_to_decimal(line)
-    const mod = line_to_decimal(modLine)
-    const periods = Math.floor(num / mod)
-    return decimal_to_commadecimal(num / Math.pow(mod, periods))
-  } 
+    // If the first line is N of EDO and the second line is an octave, simply octave reduce
+    // if (numType === LINE_TYPE.N_OF_EDO && line_to_decimal(modLine) === 2) {
+    //   const [num, mod] = line.split('\\').map(x => parseInt(x))
+    //   return parseInt(mathModulo(num, mod)) + '\\' + mod
+    // }
+    
+    if (numType === LINE_TYPE.N_OF_EDO) {
+      const [numDeg, numEdo] = line.split("\\").map((x) => parseInt(x));
+
+      // If both are N of EDOs, preserve N of EDO notation
+      if (modType === LINE_TYPE.N_OF_EDO) {
+        const [modDeg, modEdo] = modLine.split("\\").map((x) => parseInt(x));
+        const lcmEdo = getLCM(numEdo, modEdo);
+        const numLcm = numDeg * lcmEdo / numEdo;
+        const modLcm = modDeg * lcmEdo / modEdo;
+        return `${numLcm % modLcm}\\${lcmEdo}`
+      }
+
+      // See if mod is a power of 2
+      const modDecimal = line_to_decimal(modLine);
+      const modLog2 = roundToNDecimals(6, Math.log2(modDecimal));
+      if (modLog2 === Math.trunc(modLog2)) {
+        const octs = Math.trunc(Math.log2(n_of_edo_to_decimal(line)));
+        return `${numDeg - numEdo * octs}\\${numEdo}`
+      }
+    }
+
+    // Preserve ratio type if possible
+    if (numType === LINE_TYPE.RATIO) {
+      // See if mod type is a reasonable whole number ratio
+      const modDecimal = roundToNDecimals(6, line_to_decimal(modLine));
+      const mod_cf = get_cf(modDecimal);
+      if (mod_cf.length < 12) { // Maybe less than 15 is sufficient
+        const lineDecimal = ratio_to_decimal(line);
+        return get_convergent(get_cf(logModulo(lineDecimal, modDecimal)));
+      }
+    }
+
+    // Preserve decimal type
+    else if (numType === LINE_TYPE.DECIMAL || modType === LINE_TYPE.DECIMAL) {
+      const num = line_to_decimal(line);
+      const mod = line_to_decimal(modLine);
+      return decimal_to_commadecimal(logModulo(num, mod));
+    }
+  }
 
   // All other cases convert to cents
-  return [line, modLine].map(line_to_cents).reduce(mathModulo).toFixed(6);
+  return [line, modLine].map(x => roundToNDecimals(6, line_to_cents(x)))
+                        .reduce(mathModulo)
+                        .toFixed(6);
 }
 
 function transposeLine(line,transposer) {
