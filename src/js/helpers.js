@@ -14,7 +14,13 @@ function mathModulo(n, d) {
 
 // logarithm-based modulo function
 function logModulo(n, d) {
-  return n * Math.pow(d, -Math.trunc(Math.log2(n)/Math.log2(d)));
+  const powers = Math.log2(n)/Math.log2(d);
+  let powerMod = Math.trunc(powers);
+  if (n < d && powers === powerMod)
+    powerMod += 1;
+  if (powers < 0)
+      powerMod -= 1;
+  return n * Math.pow(d, -powerMod);
 }
 
 // convert a cents value to decimal
@@ -887,29 +893,16 @@ function moduloLine(line, modLine) {
     return NaN;
 
   if (numType !== LINE_TYPE.CENTS) {
-    // If both are ratios, preserve ratio notation
-    if (numType === LINE_TYPE.RATIO && modType === LINE_TYPE.RATIO) {
-      const periods = [line, modLine].map(ratio_to_decimal)
-                                     .reduce(logModulo);
-      return stackRatios(line, stackSelf(modLine, -Math.trunc(periods)))
-    } 
 
-    // If the first line is N of EDO and the second line is an octave, simply octave reduce
-    // if (numType === LINE_TYPE.N_OF_EDO && line_to_decimal(modLine) === 2) {
-    //   const [num, mod] = line.split('\\').map(x => parseInt(x))
-    //   return parseInt(mathModulo(num, mod)) + '\\' + mod
-    // }
-    
+    // Preserve N of EDO notation
     if (numType === LINE_TYPE.N_OF_EDO) {
       const [numDeg, numEdo] = line.split("\\").map((x) => parseInt(x));
 
-      // If both are N of EDOs, preserve N of EDO notation
+      // If both are N of EDOs, get LCM edo
       if (modType === LINE_TYPE.N_OF_EDO) {
         const [modDeg, modEdo] = modLine.split("\\").map((x) => parseInt(x));
         const lcmEdo = getLCM(numEdo, modEdo);
-        const numLcm = numDeg * lcmEdo / numEdo;
-        const modLcm = modDeg * lcmEdo / modEdo;
-        return `${numLcm % modLcm}\\${lcmEdo}`
+        return `${(numDeg * lcmEdo / numEdo) % (modDeg * lcmEdo / modEdo)}\\${lcmEdo}`;
       }
 
       // See if mod is a power of 2
@@ -924,7 +917,7 @@ function moduloLine(line, modLine) {
     // Preserve ratio type if possible
     if (numType === LINE_TYPE.RATIO) {
       // See if mod type is a reasonable whole number ratio
-      const modDecimal = roundToNDecimals(6, line_to_decimal(modLine));
+      const modDecimal = line_to_decimal(modLine);
       const mod_cf = get_cf(modDecimal);
       if (mod_cf.length < 12) { // Maybe less than 15 is sufficient
         const lineDecimal = ratio_to_decimal(line);
@@ -934,9 +927,9 @@ function moduloLine(line, modLine) {
 
     // Preserve decimal type
     else if (numType === LINE_TYPE.DECIMAL || modType === LINE_TYPE.DECIMAL) {
-      const num = line_to_decimal(line);
-      const mod = line_to_decimal(modLine);
-      return decimal_to_commadecimal(logModulo(num, mod));
+      return decimal_to_commadecimal(
+               [line, modLine].map(line_to_decimal)
+                              .reduce(logModulo));
     }
   }
 
