@@ -14,12 +14,10 @@ function mathModulo(n, d) {
 
 // logarithm-based modulo function
 function logModulo(n, d) {
+  if (n === 0 || d === 0)
+    return NaN;
   const powers = Math.log2(n)/Math.log2(d);
-  let powerMod = Math.trunc(powers);
-  if (n < d && powers === powerMod)
-    powerMod += 1;
-  if (powers < 0)
-      powerMod -= 1;
+  let powerMod = Math.floor(powers);
   return n * Math.pow(d, -powerMod);
 }
 
@@ -779,6 +777,25 @@ function stackRatios(ratioStr1, ratioStr2) {
   return simplifyRatio(n1 * n2, d1 * d2).join("/");
 }
 
+function periodReduceRatio(ratio, period) {
+  const [ratioNum, ratioDen] = ratio.split("/").map(x => parseInt(x))
+  let ratioDecimal = ratioNum / ratioDen;
+  if (!ratioDecimal || ratioDecimal === Infinity)
+    return NaN;
+
+  const [modNum, modDen] = period.split("/").map(x => parseInt(x))
+  let modDecimal = modNum / modDen;
+  if (!modDecimal || modDecimal === Infinity || modDecimal === 1)
+    return NaN;
+
+  let powers = Math.log2(ratioDecimal)/Math.log2(modDecimal);
+  let modded = Math.floor(powers);
+
+  // Note the map operation on the reciprocal of the period
+  let [powNum, powDen] = [modDen, modNum].map(x=>Math.pow(x, modded));
+  return simplifyRatio(ratioNum * powNum, ratioDen * powDen).join("/");
+}
+
 function stackNOfEDOs(nOfEdo1Str, nOfEdo2Str) {
   if (typeof nOfEdo1Str !== "string" || typeof nOfEdo2Str !== "string")
     return NaN;
@@ -916,6 +933,10 @@ function moduloLine(line, modLine) {
 
     // Preserve ratio type if possible
     if (numType === LINE_TYPE.RATIO) {
+      if (modType === LINE_TYPE.RATIO) {
+        return periodReduceRatio(line, modLine);
+      }
+
       // See if mod type is a reasonable whole number ratio
       const modDecimal = line_to_decimal(modLine);
       const mod_cf = get_cf(modDecimal);
