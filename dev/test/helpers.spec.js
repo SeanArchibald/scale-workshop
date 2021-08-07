@@ -14,6 +14,27 @@ describe("helpers.js", () => {
     });
   });
 
+  describe("logModulo", () => {
+    it("takes 2 numbers and returns a number", () => {
+      expect(typeof logModulo(3, 2)).toBe("number");
+    });
+    it("returns the exponential modulus of the first number based in the second number", () => {
+      expect(logModulo(2/3, 2)).toBe(4/3);
+      expect(logModulo(45/7, 1.5)).toBe(1.2698412698412698);
+    });
+    it("returns NaN, when non-numeric parameters were given", () => {
+      expect(logModulo(1, "foo")).toBeNaN();
+      expect(logModulo("cat", 1.25)).toBeNaN();
+    });
+    it("returns NaN, when first number is 0", () => {
+      expect(logModulo(0, 2)).toBeNaN();
+    });
+    it("returns NaN, when modulus is 0 or 1", () => {
+      expect(logModulo(2, 0)).toBeNaN();
+      expect(logModulo(2, 1)).toBeNaN();
+    });
+  });
+
   describe("isCent", () => {
     it("returns false, when given input is not a string", () => {
       expect(isCent(6.52)).toBe(false);
@@ -244,6 +265,30 @@ describe("helpers.js", () => {
     });
     it("returns NaN if given a denominator of 0", () => {
       expect(simplifyRatioString("1/0")).toBeNaN();
+    });
+  });
+
+  describe("periodReduceRatio", () => {
+    it("takes two ratios, representing an interval and period, and returns the first ratio reduced between 1 and the second ratio", () => {
+      expect(periodReduceRatio("1/1", "3/2")).toBe("1/1");
+      expect(periodReduceRatio("3/2", "3/2")).toBe("1/1");
+      expect(periodReduceRatio("5/4", "16/15")).toBe("16875/16384");
+    });
+    it("returns NaN if given a non-numerical value", () => {
+      expect(periodReduceRatio("foo", "2/1")).toBeNaN();
+      expect(periodReduceRatio("1/1", "foo")).toBeNaN();
+    });
+    it("returns NaN if given a denominator of 0", () => {
+      expect(periodReduceRatio("1/0", "2/1")).toBeNaN();
+      expect(periodReduceRatio("1/1", "1/0")).toBeNaN();
+    });
+    it("returns NaN if a ratio is 0", () => {
+      expect(periodReduceRatio("0/1", "2/1")).toBeNaN();
+      expect(periodReduceRatio("2/1", "0/1")).toBeNaN();
+    });
+    it("returns NaN if the mod ratio is 0 or 1", () => {
+      expect(periodReduceRatio("2/1", "0/1")).toBeNaN();
+      expect(periodReduceRatio("2/1", "1/1")).toBeNaN();
     });
   });
 
