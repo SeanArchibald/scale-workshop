@@ -560,18 +560,47 @@ function exportReaperNamedNotes(
     return false
   }
 
+  // Prepare suffix containing chosen options
+  let options = ['NoteNames'];
+  
+  if (pitchFormat !== 'scale data')
+    options.push([pitchFormat]);
+    
+  if (showPeriodNumbers) {
+    if (rootPeriod !== 0) {
+      const rootPeriodStr = (rootPeriod < 0) ? rootPeriod : `+${rootPeriod}`;
+      options.push(`${rootPeriodStr}p`);
+    } else
+      options.push('p');
+  }
+
+  if (pitchFormat === 'cents' && centsRoot !== 0) {
+    const centsRootStr = (centsRoot < 0) ? centsRoot : `+${centsRoot}`;
+    options.push(`${centsRootStr}c`);
+  }
+  
+  else if (pitchFormat === 'degree' && degreeRoot !== 0) {
+    const degreeRootStr = (degreeRoot < 0) ? degreeRoot : `+${degreeRoot}`;
+    options.push(`${degreeRootStr}deg`);
+  }
+
+  if (calculatePeriodInPitch)
+    options.push('exact');
+
+  const filenameSuffix = options.join('_');
+
   // general properties
-  const period = tuning_table.scale_data.slice(-1)[0]
-  const tuningSize = tuning_table.note_count - 1
+  const period      = tuning_table.scale_data.slice(-1)[0]
+  const tuningSize  = tuning_table.note_count - 1
 
   // line building functions
-  const prepend = (num, line) => num + ' ' + line
-  const rootOffset = num => num - tuning_table.base_midi_note
-  const circularIndex = num => mathModulo(rootOffset(num), tuningSize)
-  const periodNumber = num => Math.floor(rootOffset(num) / tuningSize + rootPeriod)
-  const appendPeriodNum = (line, num) => line + ' (' + periodNumber(num) + ')'
-  const calcPeriod = (line, ind) => stackLines(line, stackSelf(period, periodNumber(ind) + rootPeriod))
-  const addCentsRoot = cents => parseFloat(cents) + centsRoot
+  const prepend           = (num, line) => `${num} ${line}`
+  const rootOffset        = num => num - tuning_table.base_midi_note
+  const circularIndex     = num => mathModulo(rootOffset(num), tuningSize)
+  const periodNumber      = num => Math.floor(rootOffset(num) / tuningSize + rootPeriod)
+  const appendPeriodNum   = (line, num) => `${line} (${periodNumber(num)})`
+  const calcPeriod        = (line, ind) => stackLines(line, stackSelf(period, periodNumber(ind) + rootPeriod))
+  const addCentsRoot      = cents => parseFloat(cents) + centsRoot
 
   let fileFunction, pitchTable
 
@@ -585,8 +614,9 @@ function exportReaperNamedNotes(
     const unison = stackSelf(period, 0) // use a 1/1 in the line type of the period
     pitchTable = [unison, ...tuning_table.scale_data.slice(1, -1)]
 
-    let scalePitch = (line, ind) => pitchLine(line, ind)
-    if (calculatePeriodInPitch) scalePitch = (line, ind) => pitchLine(calcPeriod(line, ind), ind)
+    let scalePitch = (calculatePeriodInPitch) 
+      ? (line, ind) => pitchLine(calcPeriod(line, ind), ind)
+      : (line, ind) => pitchLine(line, ind)
 
     // Iterate over scale data, applying periods if chosen
     const scaleData = (num, array, table) => {
@@ -595,6 +625,7 @@ function exportReaperNamedNotes(
     }
 
     fileFunction = table => tuning_table.cents.map((x, i, a) => scaleData(i, a, table)).join(newline)
+  
   } else if (pitchFormat !== 'degree') {
     let pitchOffset = (line, ind) => pitchLine(roundToNDecimals(6, parseFloat(line)), ind)
 
@@ -642,7 +673,7 @@ function exportReaperNamedNotes(
       if (!calculatePeriodInPitch) 
         deg = mathModulo(deg, tuningSize)
 
-      return prepend(ind, pitchLine(deg + '\\' + tuningSize, ind))
+      return prepend(ind, pitchLine(`${deg}\\${tuningSize}`, ind))
     }
 
     fileFunction = table => table.map((x, i) => degreeLine(i, table)).join(newline)
@@ -650,7 +681,7 @@ function exportReaperNamedNotes(
 
   file += fileFunction(pitchTable)
 
-  save_file(tuning_table.filename + '.txt', file)
+  save_file(`${tuning_table.filename} ${filenameSuffix}.txt`, file)
 
   // success
   return true
