@@ -599,7 +599,7 @@ function exportReaperNamedNotes(
   const circularIndex     = num => mathModulo(rootOffset(num), tuningSize)
   const periodNumber      = num => Math.floor(rootOffset(num) / tuningSize + rootPeriod)
   const appendPeriodNum   = (line, num) => `${line} (${periodNumber(num)})`
-  const calcPeriod        = (line, ind) => stackLines(line, stackSelf(period, periodNumber(ind) + rootPeriod))
+  const calcPeriod        = (line, ind) => transposeLine(line, transposeSelf(period, periodNumber(ind) + rootPeriod))
   const addCentsRoot      = cents => parseFloat(cents) + centsRoot
 
   let fileFunction, pitchTable
@@ -611,7 +611,7 @@ function exportReaperNamedNotes(
   if (showPeriodNumbers) pitchLine = (line, ind) => appendPeriodNum(line, ind)
 
   if (pitchFormat === 'scale data') {
-    const unison = stackSelf(period, 0) // use a 1/1 in the line type of the period
+    const unison = transposeSelf(period, 0) // use a 1/1 in the line type of the period
     pitchTable = [unison, ...tuning_table.scale_data.slice(1, -1)]
 
     let scalePitch = (calculatePeriodInPitch) 

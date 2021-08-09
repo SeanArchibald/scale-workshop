@@ -811,10 +811,11 @@ function stackNOfEDOs(nOfEdo1Str, nOfEdo2Str) {
   return [newDegree, newEdo].join("\\");
 }
 
-// TODO: proper regex tests for +/- lines
-function stackLines(line1, line2) {
-  const line1Type = getLineType(line1);
-  const line2Type = getLineType(line2);
+// transpose an interval by another interval,
+// retaining their types when possible
+function transposeLine(line, transposer) {
+  const line1Type = getLineType(line);
+  const line2Type = getLineType(transposer);
 
   if (line1Type === LINE_TYPE.INVALID || line2Type === LINE_TYPE.INVALID)
     return NaN;
@@ -822,11 +823,11 @@ function stackLines(line1, line2) {
   // If both are ratios, preserve ratio notation
   if (line1Type === LINE_TYPE.RATIO) {
     if (line2Type === LINE_TYPE.RATIO)
-      return stackRatios(line1, line2);
+      return stackRatios(line, transposer);
 
     else if (line2Type === LINE_TYPE.DECIMAL) {
-      let ratio2 = decimal_to_ratio(line2);
-      return stackRatios(line1, ratio2);
+      let ratio2 = decimal_to_ratio(transposer);
+      return stackRatios(line, ratio2);
       }
   }
 
@@ -834,71 +835,73 @@ function stackLines(line1, line2) {
     
     // If both are N of EDOs, preserve N of EDO notation
     if (line2Type === LINE_TYPE.N_OF_EDO)
-      return stackNOfEDOs(line1, line2);
+      return stackNOfEDOs(line, transposer);
     
     // See if second type is a power of two
-    const line2Ratio = roundToNDecimals(6, line_to_decimal(line2));
+    const line2Ratio = roundToNDecimals(6, line_to_decimal(transposer));
     const octs = Math.log2(line2Ratio);
     if (octs === Math.trunc(octs))
-      return stackNOfEDOs(line1, `${octs}\\1`);
+      return stackNOfEDOs(line, `${octs}\\1`);
 
     // Return result as commadecimal type
     if (line2Type === LINE_TYPE.DECIMAL)
-      return decimal_to_commadecimal(n_of_edo_to_decimal(line1) * line2Ratio);
+      return decimal_to_commadecimal(n_of_edo_to_decimal(line) * line2Ratio);
   }
 
   // If the first line is a decimal type, keep decimals
   else if (line1Type === LINE_TYPE.DECIMAL)
     return decimal_to_commadecimal(
-      line_to_decimal(line1) * line_to_decimal(line2)
+      line_to_decimal(line) * line_to_decimal(transposer)
     );
 
   // All other cases convert to cents, allow negative values
-  let val1 = line_to_cents(line1);
-  if (!val1 && line1.startsWith("-")) val1 = parseFloat(line1);
+  let val1 = line_to_cents(line);
+  if (!val1 && line.startsWith("-")) val1 = parseFloat(line);
 
-  let val2 = line_to_cents(line2);
-  if (!val2 && line2.startsWith("-")) val2 = parseFloat(line2);
+  let val2 = line_to_cents(transposer);
+  if (!val2 && transposer.startsWith("-")) val2 = parseFloat(transposer);
 
   const valueOut = val1 + val2;
   return roundToNDecimals(6, valueOut).toFixed(6);
 }
 
-// stacks an interval on itself
-function stackSelf(line, numStacks) {
+// stacks an interval on itself, like a power function.
+// if transposeAmt=0, this returns unison.
+// if transposeAmt=1, this returns the line unchanged.
+function transposeSelf(line, transposeAmt) {
   const lineType = getLineType(line);
 
-  if (lineType === LINE_TYPE.INVALID || typeof numStacks !== "number")
+  if (lineType === LINE_TYPE.INVALID || typeof transposeAmt !== "number")
     return NaN;
 
-  const wholeExp = numStacks === Math.trunc(numStacks);
+  const wholeExp = transposeAmt === Math.trunc(transposeAmt);
 
   // power function
   if (lineType === LINE_TYPE.DECIMAL)
-    return decimal_to_commadecimal(Math.pow(line_to_decimal(line), numStacks));
+    return decimal_to_commadecimal(Math.pow(line_to_decimal(line), transposeAmt));
 
   // power function on numerator and denominator
   else if (wholeExp && lineType === LINE_TYPE.RATIO) {
     let ratio = "1/1";
 
-    if (numStacks > 0) 
+    if (transposeAmt > 0) 
       ratio = line.split("/");
     else if 
-      (numStacks < 0) ratio = line.split("/").reverse();
+      (transposeAmt < 0) ratio = line.split("/").reverse();
     else 
       return ratio;
     
-    return ratio.map((x) => Math.trunc(Math.pow(x, Math.abs(numStacks))))
+    return ratio.map((x) => Math.trunc(Math.pow(x, Math.abs(transposeAmt))))
                 .join("/");
   }
 
   // multiply degree by stack amount
   else if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
     const [deg, edo] = line.split("\\");
-    return deg * numStacks + "\\" + edo;
+    return deg * transposeAmt + "\\" + edo;
   }
     
-  const value = line_to_cents(line) * numStacks;
+  const value = line_to_cents(line) * transposeAmt;
   return value.toFixed(6);
 }
 
@@ -958,38 +961,6 @@ function moduloLine(line, modLine) {
   return [line, modLine].map(x => roundToNDecimals(6, line_to_cents(x)))
                         .reduce(mathModulo)
                         .toFixed(6);
-}
-
-function transposeLine(line,transposer) {
-  const lineType = getLineType(line);
-  const transposerType = getLineType(transposer);
-
-  // If both are ratios, preserve ratio notation
-  if (lineType === LINE_TYPE.RATIO && transposerType === LINE_TYPE.RATIO) {
-    const [lineNum, lineDen] = line.split("/").map((x) => parseInt(x));
-    const [transposerNum, transposerDen] = transposer.split("/").map((x) => parseInt(x));
-    return simplifyRatio(lineNum*transposerNum,lineDen*transposerDen).join("/");
-  }
-
-  // If both are N of EDOs, preserve N of EDO notation
-  if (lineType === LINE_TYPE.N_OF_EDO && transposerType === LINE_TYPE.N_OF_EDO) {
-    const [lineDeg, lineEdo] = line.split("\\").map((x) => parseInt(x));
-    const [transposerDeg, transposerEdo] = transposer.split("\\").map((x) => parseInt(x));
-    const lcmEdo = getLCM(lineEdo, transposerEdo);
-    return (
-      (((lineDeg * lcmEdo) / lineEdo) + ((transposerDeg * lcmEdo) / transposerEdo)) +
-      "\\" +
-      lcmEdo
-    );
-  }
-
-  // If the first line is a decimal type, keep decimals
-  if (lineType === LINE_TYPE.DECIMAL) {
-    return decimal_to_commadecimal(line_to_decimal(line) * line_to_decimal(transposer));
-  }
-
-  // All other cases convert to cents
-  return line_to_cents(line) + line_to_cents(transposer);
 }
 
 // TODO: functional improvements
