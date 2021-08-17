@@ -165,6 +165,44 @@ function line_to_decimal(input) {
   return converterFn(input);
 }
 
+function isNegativeInterval(input) {
+  // true if ratio or decimal is below 1, or
+  //   if cents or N of EDO evaluates to a negative number
+  // NaN if invalid type or if ratio, decimal, 
+  //   or N of EDO denominator is negative
+  // false otherwise
+
+  if (typeof input !== 'string')
+    return NaN;
+
+  const hasNegation = input.match('-') !== null;
+  const strippedInput = input.replace('-', '');
+  const type = getLineType(strippedInput);
+  switch(type) {
+    case LINE_TYPE.RATIO:
+      if (hasNegation)
+        return NaN;
+      else
+        return input.split('/').map(x => parseInt(x)).reduce((n, d) => n < d);
+
+    case LINE_TYPE.DECIMAL:
+      if (hasNegation)
+        return NaN;
+      else
+        return input.startsWith('0');
+    
+    case LINE_TYPE.CENTS:
+      return hasNegation;
+
+    case LINE_TYPE.N_OF_EDO:
+      if (input.split('\\').slice(1).map(x => parseInt(x))[0] > 0)
+        return hasNegation;
+
+    default:
+      return NaN;
+  }
+}
+
 // convert any input 'line' to a cents value
 function line_to_cents(input) {
   return decimal_to_cents(line_to_decimal(input));
