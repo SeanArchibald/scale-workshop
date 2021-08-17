@@ -764,12 +764,12 @@ function simplifyRatioString(ratio) {
   return simplifyRatio(n, d).join("/");
 }
 
-function stackRatios(ratioStr1, ratioStr2) {
-  if (typeof ratioStr1 !== "string" || typeof ratioStr2 !== "string")
+function transposeRatios(ratio, transposerRatio) {
+  if (typeof ratio !== "string" || typeof transposerRatio !== "string")
     return NaN;
 
-  const [n1, d1] = ratioStr1.split("/").map((x) => parseInt(x));
-  const [n2, d2] = ratioStr2.split("/").map((x) => parseInt(x));
+  const [n1, d1] = ratio.split("/").map((x) => parseInt(x));
+  const [n2, d2] = transposerRatio.split("/").map((x) => parseInt(x));
 
   if ((!d1 || !d2) || (n1 !== 0 && !n1) || (n2 !== 0 && !n2))
     return NaN;
@@ -796,12 +796,12 @@ function periodReduceRatio(ratio, period) {
   return simplifyRatio(ratioNum * powNum, ratioDen * powDen).join("/");
 }
 
-function stackNOfEDOs(nOfEdo1Str, nOfEdo2Str) {
-  if (typeof nOfEdo1Str !== "string" || typeof nOfEdo2Str !== "string")
+function transposeNOfEdos(nOfEdo, transposerNOfEdo) {
+  if (typeof nOfEdo !== "string" || typeof transposerNOfEdo !== "string")
     return NaN;
 
-  const [deg1, edo1] = nOfEdo1Str.split("\\").map((x) => parseInt(x));
-  const [deg2, edo2] = nOfEdo2Str.split("\\").map((x) => parseInt(x));
+  const [deg1, edo1] = nOfEdo.split("\\").map((x) => parseInt(x));
+  const [deg2, edo2] = transposerNOfEdo.split("\\").map((x) => parseInt(x));
 
   if ((!edo1 || !edo2) || (deg1 !== 0 && !deg1) || (deg2 !== 0 && !deg2))
     return NaN;
@@ -814,6 +814,7 @@ function stackNOfEDOs(nOfEdo1Str, nOfEdo2Str) {
 // transpose an interval by another interval,
 // retaining their types when possible
 function transposeLine(line, transposer) {
+  const lineIsNegative = line.startsWith('-') || line.split('\\')[1]
   const line1Type = getLineType(line);
   const line2Type = getLineType(transposer);
 
@@ -823,11 +824,11 @@ function transposeLine(line, transposer) {
   // If both are ratios, preserve ratio notation
   if (line1Type === LINE_TYPE.RATIO) {
     if (line2Type === LINE_TYPE.RATIO)
-      return stackRatios(line, transposer);
+      return transposeRatios(line, transposer);
 
     else if (line2Type === LINE_TYPE.DECIMAL) {
       let ratio2 = decimal_to_ratio(transposer);
-      return stackRatios(line, ratio2);
+      return transposeRatios(line, ratio2);
       }
   }
 
@@ -835,13 +836,13 @@ function transposeLine(line, transposer) {
     
     // If both are N of EDOs, preserve N of EDO notation
     if (line2Type === LINE_TYPE.N_OF_EDO)
-      return stackNOfEDOs(line, transposer);
+      return transposeNOfEdos(line, transposer);
     
     // See if second type is a power of two
     const line2Ratio = roundToNDecimals(6, line_to_decimal(transposer));
     const octs = Math.log2(line2Ratio);
     if (octs === Math.trunc(octs))
-      return stackNOfEDOs(line, `${octs}\\1`);
+      return transposeNOfEdos(line, `${octs}\\1`);
 
     // Return result as commadecimal type
     if (line2Type === LINE_TYPE.DECIMAL)
@@ -895,7 +896,7 @@ function transposeSelf(line, transposeAmt) {
                 .join("/");
   }
 
-  // multiply degree by stack amount
+  // multiply degree by transpose amount
   else if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
     const [deg, edo] = line.split("\\");
     return deg * transposeAmt + "\\" + edo;
