@@ -115,18 +115,18 @@ describe("helpers.js", () => {
       expect(isNegativeInterval("-1200.0")).toBe(true);
       expect(isNegativeInterval("-1\\12")).toBe(true);
     });
-    it("returns NaN if ratio, decimal, or N of EDO denominator is negative", () => {
-      expect(isNegativeInterval("-2/1")).toBeNaN();
-      expect(isNegativeInterval("2/-1")).toBeNaN();
-      expect(isNegativeInterval("-1,5")).toBeNaN();
+    it("returns LINE_TYPE.INVALID if ratio, decimal, or N of EDO denominator is negative", () => {
+      expect(isNegativeInterval("-2/1")).toBe(LINE_TYPE.INVALID);
+      expect(isNegativeInterval("2/-1")).toBe(LINE_TYPE.INVALID);
+      expect(isNegativeInterval("-1,5")).toBe(LINE_TYPE.INVALID);
     });
-    it("returns NaN on invalid input", () => {
-      expect(isNegativeInterval("1\\-12")).toBeNaN();
-      expect(isNegativeInterval("2-3")).toBeNaN();
-      expect(isNegativeInterval("foo")).toBeNaN();
-      expect(isNegativeInterval([1, 2, 3])).toBeNaN();
-      expect(isNegativeInterval(NaN)).toBeNaN();
-      expect(isNegativeInterval()).toBeNaN();
+    it("returns LINE_TYPE.INVALID on invalid input", () => {
+      expect(isNegativeInterval("1\\-12")).toBe(LINE_TYPE.INVALID);
+      expect(isNegativeInterval("2-3")).toBe(LINE_TYPE.INVALID);
+      expect(isNegativeInterval("foo")).toBe(LINE_TYPE.INVALID);
+      expect(isNegativeInterval([1, 2, 3])).toBe(LINE_TYPE.INVALID);
+      expect(isNegativeInterval(NaN)).toBe(LINE_TYPE.INVALID);
+      expect(isNegativeInterval()).toBe(LINE_TYPE.INVALID);
     });
   })
 
@@ -378,13 +378,13 @@ describe("helpers.js", () => {
     });
     it("transposes downward with a negative cents or N Of EDO transposer", () => {
       expect(transposeLine("300.0", "-100.0")).toBe("200.000000");
-      expect(transposeLine("1\\4", "-100.0")).toBe("1\\6");
+      expect(transposeLine("1\\4", "-100.0")).toBe("200.000000");
       expect(transposeLine("3/1", "-1200.0")).toBe("3/2");
-      expect(transposeLine("3,0", "-1200.0")).toBe("1,5");
+      expect(transposeLine("3,0", "-1200.0")).toBe("1,500000");
       expect(transposeLine("300.0", "-1\\12")).toBe("200.000000");
-      expect(transposeLine("1\\4", "-1\\12")).toBe("1\\6");
+      expect(transposeLine("1\\4", "-1\\12")).toBe("2\\12");
       expect(transposeLine("3/1", "-12\\12")).toBe("3/2");
-      expect(transposeLine("3,0", "-12\\12")).toBe("1,5");
+      expect(transposeLine("3,0", "-12\\12")).toBe("1,500000");
     });
     it("allows for negative cents & N Of Edos when transposed below unison", () => {
       expect(transposeLine("100.0", "1/2")).toBe("-1100.000000");
@@ -395,7 +395,6 @@ describe("helpers.js", () => {
       expect(transposeLine("1\\12", "0,5")).toBe("-11\\12");
       expect(transposeLine("1\\12", "-12\\12")).toBe("-11\\12");
       expect(transposeLine("1\\12", "-1200.0")).toBe("-11\\12");
-      
     })
     it("preserves decimal if combined with N of EDO", () => {
       expect(transposeLine("12\\12", "1,5")).toBe("3,000000");
