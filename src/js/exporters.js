@@ -590,8 +590,8 @@ function exportReaperNamedNotes(
   const filenameSuffix = options.join('_');
 
   // general properties
-  const period      = tuning_table.scale_data.slice(-1)[0]
   const tuningSize  = tuning_table.note_count - 1
+  const period      = tuning_table.scale_data[tuningSize];
 
   // line building functions
   const prepend           = (num, line) => `${num} ${line}`
