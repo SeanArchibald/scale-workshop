@@ -165,6 +165,15 @@ function line_to_decimal(input) {
   return converterFn(input);
 }
 
+// convert any input 'line' to commadecimal
+function line_to_commadecimal(input) {
+  let decimal = line_to_decimal(input);
+  if (decimal !== false){
+      decimal = String(decimal).replace('.', ',');
+  }
+  return decimal;
+}
+
 function isNegativeInterval(input) {
   // true if ratio or decimal is below 1, or
   //   if cents or N of EDO evaluates to a negative number
