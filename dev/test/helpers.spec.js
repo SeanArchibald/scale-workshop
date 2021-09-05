@@ -280,6 +280,7 @@ describe("helpers.js", () => {
     it("returns NaN if given a denominator of 0", () => {
       expect(simplifyRatio(1, 0)).toBeNaN();
     });
+    // What should happen with a non-integer input?
   });
 
   describe("simplifyRatioString", () => {
@@ -305,6 +306,7 @@ describe("helpers.js", () => {
       expect(periodReduceRatio("1/1", "3/2")).toBe("1/1");
       expect(periodReduceRatio("3/2", "3/2")).toBe("1/1");
       expect(periodReduceRatio("5/4", "16/15")).toBe("16875/16384");
+      expect(periodReduceRatio("3/4", "3/2")).toBe("9/8");
     });
     it("returns NaN if given a non-numerical value", () => {
       expect(periodReduceRatio("foo", "2/1")).toBeNaN();
@@ -465,6 +467,7 @@ describe("helpers.js", () => {
     it("returns an octave-based interval if number is below unison", () => {
       expect(moduloLine("0,5", "2/1")).toBe("1,000000");
       expect(moduloLine("2/3", "2/1")).toBe("4/3");
+      expect(moduloLine("3/4", "3/2")).toBe("9/8");
     });
     it("returns LCM EDO if two N of EDOs are combined", () => {
       expect(moduloLine("8\\12", "3\\6")).toBe("2\\12");

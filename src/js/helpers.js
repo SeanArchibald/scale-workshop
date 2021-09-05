@@ -817,21 +817,37 @@ function transposeRatios(ratio, transposerRatio) {
 
 function periodReduceRatio(ratio, period) {
   const [ratioNum, ratioDen] = ratio.split("/").map(x => parseInt(x))
-  let ratioDecimal = ratioNum / ratioDen;
+  const ratioDecimal = ratioNum / ratioDen;
   if (!ratioDecimal || ratioDecimal === Infinity)
     return NaN;
 
   const [modNum, modDen] = period.split("/").map(x => parseInt(x))
-  let modDecimal = modNum / modDen;
+  const modDecimal = modNum / modDen;
   if (!modDecimal || modDecimal === Infinity || modDecimal === 1)
     return NaN;
 
-  let powers = Math.log2(ratioDecimal)/Math.log2(modDecimal);
-  let modded = Math.floor(powers);
+  const pow = Math.log2(ratioDecimal)/Math.log2(modDecimal);
+  const powFloor = Math.floor(pow);
 
-  // Note the map operation on the reciprocal of the period
-  let [powNum, powDen] = [modDen, modNum].map(x=>Math.pow(x, modded));
-  return simplifyRatio(ratioNum * powNum, ratioDen * powDen).join("/");
+  // This is a bit convoluted due to avoiding division
+  
+  // Make ratios from both numerator and denominator of period ratio
+  const [powerFactorNum, powerFactorDen] = 
+        [modDen, 1].map(x => Math.pow(x, Math.abs(powFloor))) // Raise by the absolute value of the floored exponent
+                   .map((x, i, a) => (powFloor < 0) ? a[a.length-i-1] : x); // Swap num & den if exponent is negative
+  
+  const [powerDivisorNum, powerDivisorDen] =
+        [modNum, 1].map(x => Math.pow(x, Math.abs(powFloor)))
+                   .map((x, i, a) => (powFloor < 0) ? a[a.length-i-1] : x);
+
+  // Combine the resulting numerators with the original ratio
+  const ratioFactorNum = ratioNum * powerFactorNum;
+  const ratioDivisorNum = ratioDen * powerDivisorNum;
+
+  // Divide the resulting ratios to get our interval, which may not be fully simplified
+  const [ratioModPowerNum, ratioModPowerDen] = [ratioFactorNum * powerDivisorDen, ratioDivisorNum * powerFactorDen];
+
+  return simplifyRatio(ratioModPowerNum, ratioModPowerDen).join("/");
 }
 
 function transposeNOfEdos(nOfEdo, transposerNOfEdo) {
