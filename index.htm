@@ -482,6 +482,13 @@
     <p style="text-align:right;">(ignore MOS with steps smaller than <input id="input_rank-2_mos_threshold" name=""
         type="number" min="0.1" max="600" value="2.5" style="width:4em;" /> cents)</p>
     <span id="info_rank_2_mos" style="display:block;margin-top:10px;"></span>
+    <hr />
+    <label>Output type:</label>
+      <select id="input_rank-2_type" name="" class="form-control" value="preserve">
+        <option value="preserve">Preserve types</option>
+        <option value="cents">Cents</option>
+        <option value="decimals">Decimals</option>
+      </select>
   </div>
 
   <div id="modal_generate_harmonic_series_segment" class="modal" title="Generate harmonic series segment">

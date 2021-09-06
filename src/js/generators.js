@@ -53,19 +53,19 @@ function generate_rank_2_temperament() {
 
   var generator = getLine('#input_rank-2_generator', 'Warning: no generator')
 
-  var generator_cents = line_to_cents(generator);
+  var generatorType = getLineType(generator);
 
   // bail if generator is invalid
-  if (!generator_cents) {
+  if (generatorType === LINE_TYPE.INVALID) {
     return false;
   }
 
   var period = getLine('#input_rank-2_period', 'Warning: no period')
 
-  var period_cents = line_to_cents(period);
+  var periodType = getLineType(period);
 
   // bail if period is invalid
-  if (!period_cents) {
+  if (periodType === LINE_TYPE.INVALID) {
     return false;
   }
 
@@ -81,7 +81,9 @@ function generate_rank_2_temperament() {
     return false;
   }
 
-  setTuningData(generate_rank_2_temperament_data(parseFloat(generator_cents), parseFloat(period_cents), size, up))
+  var lineType = jQuery("#input_rank-2_type").val();
+
+  setTuningData(generate_rank_2_temperament_data(generator, period, size, up, lineType))
 
   setScaleName("Rank 2 scale (" + generator + ", " + period + ")");
 
@@ -93,48 +95,35 @@ function generate_rank_2_temperament() {
   return true;
 }
 
-function generate_rank_2_temperament_data(generator, period, size, up) {
-
+function generate_rank_2_temperament_data(generator, period, size, up, lineType) {
   // empty existing tuning data
-  var tuning_data = "";
+  let tuningData = '';
 
-  // array aa stores the scale data, starting from 1/1 (0.0 cents)
-  var aa = [0.0];
-  for (i = 1; i < size; i++) {
-
-    // calculate generators up
-    if (i <= up) {
-
-      aa[i] = (aa[i - 1] + generator).mod(period);
-      console.log('up: ' + i + ': ' + aa[i]);
-
-    }
-
-    else {
-
-      // first down generator
-      if (i == up + 1) {
-        aa[i] = (aa[0] - generator).mod(period);
-      }
-
-      // subsequent down generators
-      else {
-        aa[i] = (aa[i - 1] - generator).mod(period);
-      }
-      console.log('down: ' + i + ': ' + aa[i]);
-    }
-
-  }
+  // Start scale on the lowest generator
+  let scale = [moduloLine(transposeSelf(generator, up - size + 1), period)];
+  
+  // Transpose each line by the generator and period reduce
+  for (let i = 1; i < size; i++)
+    scale.push(moduloLine(transposeLine(generator, scale[i - 1]), period));
 
   // sort the scale ascending
-  aa.sort(function (a, b) { return a - b });
+  scale.sort((a, b) => [a, b].map(line_to_decimal).reduce((a, b) => a - b));
 
   // add the period to the scale
-  aa.push(period);
+  scale.push(period);
 
-  tuning_data += aa.slice(1, size + 1).map(num => num.toFixed(6)).join(unix_newline)
+  // convert scale to output line type
+  switch (lineType) {
+    case "cents":
+      scale = scale.map(x => line_to_cents(x).toFixed(6));
+      break;
+    case "decimals":
+      scale = scale.map(x => line_to_commadecimal(x, 6));
+  }
 
-  return tuning_data
+  tuningData += scale.slice(1, size + 1).join(unix_newline);
+
+  return tuningData;
 }
 
 function generate_harmonic_series_segment() {
