@@ -165,13 +165,33 @@ function line_to_decimal(input) {
   return converterFn(input);
 }
 
-// convert any input 'line' to commadecimal
-function line_to_commadecimal(input) {
+// convert any input 'line' to commadecimal, with a padding options for display
+function line_to_commadecimal(input, padDecimals=0, truncateDecimalsPastPad=false) {
   let decimal = line_to_decimal(input);
-  if (decimal !== false){
-      decimal = String(decimal).replace('.', ',');
+  if (decimal === false)
+    return decimal;
+
+  let decimalStr = String(decimal);
+
+  // Padding stuff
+  if (padDecimals > 0) {
+    if (decimalStr.includes('.')) {
+      const decLength = decimalStr.split('.')[1].length;
+
+      if (padDecimals > decLength)
+        for (var i = 0; i < padDecimals - decLength; i++)
+          decimalStr += '0';
+
+      else if (truncateDecimalsPastPad && decLength > padDecimals)
+        decimalStr = decimalStr.slice(0, decimalStr.indexOf('.') + padDecimals + 1);
+    }
+    else
+      decimalStr += '.000000';
   }
-  return decimal;
+
+  decimalStr = decimalStr.replace('.', ',');
+
+  return decimalStr;
 }
 
 function isNegativeInterval(input) {
