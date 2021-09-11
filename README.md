@@ -91,7 +91,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 * New scale generator: Combination Product Set (CPS)
 * New scale modifier: Reduce
 * New scale modifier: Sort ascending
-* Improvement: Rank-2 scale generator will now preserve notation (e.g. if you enter ratios for the generator and period then the results will all be ratios)
+* Improvement: Rank-2 scale generator will now preserve interval notation (e.g. it will return ratios if you input ratios, return cents if you input cents)
 * Improvement: Reaper Note Name Map provides more options
 * Improvement: More preset scales added
 * Improvement: Updates to the user guide
