@@ -202,6 +202,8 @@
               <li><a href="#kontakt">Kontakt script (.txt)</a></li>
               <li><a href="#harmor">Harmor Pitch Map (.fnv)</a></li>
               <li><a href="#sytrus">Sytrus Pitch Map (.fnv)</a></li>
+              <li><a href="#korg-logue">Korg Sound Librarian Scale/Octave (.mnlgtuns/mnlgtuno)</a></li>
+              <li><a href="#reaper-note-names">Reaper Note Name Map (.txt)</a></li>
             </ul>
           </li>
           <li><a href="#presets">Presets</a></li>
@@ -333,6 +335,40 @@
       Click the small arrow at the bottom left and select "Open State File...".
       From there, open the file that you exported from Scale Workshop.
       Then, turn PE (Pitch Envelope) knob to the maximum value.</p>
+
+    <h4 id="#korg-logue">Korg Sound Librarian Scale/Octave (.mnlgtuns/.mnlgtuno)</h4>
+    <p>These are for the Sound Librarian software associated with Korg's Monologue, Minilogue, and Prologue synths, 
+      and can be loaded with the "File > Load Single Scale" menu option. The "Scale" format follows the MIDI 1.0 
+      "Bulk Tuning Dump" specification that allows for a 128-note table defined in semitones plus .0061 cents 
+      of precision with a supported frequency range of 8.1758 Hz to 12543.875 Hz. The "Octave" format follows 
+      the "Scale/Octave Tuning Dump" MIDI specification and only allows for 12  defined notes that will automatically 
+      repeat at the octave. Scales with more than 12 notes will be cut off, and pitches can only deviate from standard 
+      tuning by -64/+63 cents.</p>
+
+    <h4 id="reaper-note-names">Reaper Note Name Map</h4>
+    <p>Reaper allows all 128 rows in its piano roll MIDI editor to have a custom label. This export option gives
+      each note a label based on its pitch, with some other properties depending on the selected options.
+      "Scala Data" will preserve the notes' notation, keeping ratios when possible and allowing for mixed notations. 
+      For "Cents", "Frequencies", and "Decimals", each interval will be converted to the chosen format. "Degrees" 
+      will simply use "N\D" notation where N is the scale degree and D is the number of notes 
+      the scale has.</br>
+      <b>Show Period Number</b> will put the octave/period number of the interval after the pitch label.</br>
+      <b>Calculate Period in Pitch</b> will transpose each interval by the number of periods it is from the base note.
+      It will try to preserve the notation of the interval, but will fallback to cents if it's not possible.</br>
+      <b>Base Period Number</b> will shift the base note from unison by this many periods. For example if you want your
+      the base note & frequency to be note 48 at 256 Hz, but want unison to be an octave higher with note 60 at 512 Hz,
+      you can set this to -1 period, meaning the base note & frequency is shifted one period below unison.</br>
+      <b>Base Cents Value</b> and <b>Base Degree Number</b> allow you to set a different value for the base note in 
+      cents or degrees respectively, similar to the "Base Period Number" option. In most cases this should be 0.</p>
+    <p>Reaper will look for these files by default in:<ul>
+        <li>Windows - C:\Users\[username]\AppData\Roaming\REAPER\MIDINoteNames</li>
+        <li>macOS - /Users/[username]/Library/Application Support/REAPER/MIDINoteNames</li></ul>
+      A shortcut to the REAPER folder is in Reaper's Option menu, "Show REAPER resource folder in explorer/finder".</br>
+      To use a note name map, select the "Named notes" view in the MIDI editor (the option next to the piano icon 
+      in the toolbar) and load the file with "File > Note/CC names > Load Note/CC names from file".</br>
+      <i>Note: These are only labels - you must retune the synth to hear the displayed notes in the piano roll.</i></p>
+    <p class="text-center"><a href="src/assets/img/guide/reaper-named-notes.png" target="_blank"><img
+          src="src/assets/img/guide/reaper-named-notes.png"></a></p>
 
     <h3 id="presets">Presets</h3>
     <p>A handful of preset scales are provided as examples.</p>

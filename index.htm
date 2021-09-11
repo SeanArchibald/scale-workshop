@@ -868,22 +868,26 @@
         <div class="form-group">
             <label>Period options:</label>
             <div class="checkbox">
-                <label><input id="input_reaper_show_period_numbers" type="checkbox" name="period-format" checked> Show period number</input></label>
+              <label title="Show the number of periods away from the base note next to the pitch">
+                <input id="input_reaper_show_period_numbers" type="checkbox" name="period-format" checked> Show period number</input>
+              </label>
             </div>
             <div class="checkbox">
-            <label><input id="input_reaper_calculate_periods" type="checkbox" name="period-format"> Calculate period in pitch</input></label>
+              <label title="Transpose the scale intervals by the period across the whole range of notes">
+                <input id="input_reaper_calculate_periods" type="checkbox" name="period-format"> Calculate period in pitch</input>
+              </label>
             </div>
         </div>
         <div id="modal_reaper_root_period_group" class="form-group">
-            <label>Root Period Number: </label>
+            <label title="The number of periods from which the base note is offset">Base Period Number: </label>
             <input id="input_reaper_root_period" type="number" class="form-control" value="0"></input>
         </div>
         <div id="modal_reaper_root_cents_group" class="form-group">
-            <label>Root Cents Value: </label>
+            <label title="An offset of cents at which the base note set">Base Cents Value: </label>
             <input id="input_reaper_root_cents" type="number" class="form-control" value="0.0"></input>
         </div>
         <div id="modal_reaper_root_degree_group" class="form-group">
-            <label>Root Degree Value: </label>
+            <label title="An offset of degrees at which the base note is set">Base Degree Value: </label>
             <input id="input_reaper_root_degree" type="number" class="form-control" value="0"></input>
         </div>
     </form>
