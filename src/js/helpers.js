@@ -821,7 +821,7 @@ function simplifyRatio(numerator, denominator) {
 
   numerator *= (Math.abs(denominator) / denominator);
   denominator = Math.abs(denominator);
-  return [numerator, denominator].map((x) => x * gcdScalar);
+  return [numerator, denominator].map((x) => Math.round(x * gcdScalar));
 }
 
 function simplifyRatioString(ratio) {
