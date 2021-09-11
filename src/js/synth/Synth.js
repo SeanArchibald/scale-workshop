@@ -18,6 +18,42 @@ class Synth {
       this.inited = true
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 
+      // set up custom waveforms
+      this.custom_waveforms = {
+        warm1: this.audioCtx.createPeriodicWave(
+          [0, 1, 0.2, 0.2, 0.2, 0.1, 0.1, 0.05],
+          [0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00]
+        ),
+        warm2: this.audioCtx.createPeriodicWave(
+          [0, 1, 0.5, 0.333, 0.2, 0.1],
+          [0, 0, 0.0, 0.000, 0.0, 0.0]
+        ),
+        warm3: this.audioCtx.createPeriodicWave(
+          [0, 1, 0.5, 0.5, 0.3],
+          [0, 0, 0.0, 0.0, 0.0]
+        ),
+        warm4: this.audioCtx.createPeriodicWave(
+          [0, 1, 0.2, 0.2, 0.1],
+          [0, 0, 0.0, 0.0, 0.0]
+        ),
+        octaver: this.audioCtx.createPeriodicWave(
+          [0,1,0.5,0,0.333,0,0,0,0.25,0,0,0,0,0,0,0,0.166],
+          [0,0,0,  0,0,    0,0,0,0,   0,0,0,0,0,0,0,0]
+        ),
+        brightness: this.audioCtx.createPeriodicWave(
+          [0,1,0,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.1,0.1,0.1,0.1,0.1],
+          [0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+        ),
+        harmonicbell: this.audioCtx.createPeriodicWave(
+          [0, 1, 0.2, 0.2, 0.2, 0.2,0,0,0,0,0,0.7],
+          [0, 0, 0.0, 0.0, 0.0, 0.0,0,0,0,0,0,0]
+        ),
+        template: this.audioCtx.createPeriodicWave(
+          [0,1, 0.5, 0.333, 0.25, 0.2, 0.167],
+          [0,0, 0.0, 0.000, 0.00, 0.0, 0.000]
+        )
+      }
+
       // master gain
       this.masterGain = this.audioCtx.createGain(); // create master gain before output
       this.masterGain.gain.value = this.mainVolume;

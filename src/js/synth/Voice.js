@@ -110,7 +110,32 @@ class Voice {
     const now = this.synth.now();
 
     /* VCO */
-    this.vco.type = this.synth.waveform;
+    switch(this.synth.waveform) {
+      case "warm1":
+        this.vco.setPeriodicWave(synth.custom_waveforms.warm1);
+        break;
+      case "warm2":
+        this.vco.setPeriodicWave(synth.custom_waveforms.warm2);
+        break;
+      case "warm3":
+        this.vco.setPeriodicWave(synth.custom_waveforms.warm3);
+        break;
+      case "warm4":
+        this.vco.setPeriodicWave(synth.custom_waveforms.warm4);
+        break;
+      case "octaver":
+        this.vco.setPeriodicWave(synth.custom_waveforms.octaver);
+        break;
+      case "brightness":
+        this.vco.setPeriodicWave(synth.custom_waveforms.brightness);
+        break;
+      case "harmonicbell":
+        this.vco.setPeriodicWave(synth.custom_waveforms.harmonicbell);
+        break;
+      default:
+        this.vco.type = this.synth.waveform;
+    }
+
     this.vco.frequency.value = this.frequency;
 
     /* VCA */
