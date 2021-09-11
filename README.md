@@ -88,10 +88,13 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 1.4
-* New generator: Combination Product Set (CPS) scales
-* New modifier: octave reduce
-* New modifier: sort ascending
-* More preset scales added
+* New scale generator: Combination Product Set (CPS)
+* New scale modifier: Reduce
+* New scale modifier: Sort ascending
+* Improvement: Rank-2 scale generator will now preserve notation (e.g. if you enter ratios for the generator and period then the results will all be ratios)
+* Improvement: Reaper Note Name Map provides more options
+* Improvement: More preset scales added
+* Improvement: Updates to the user guide
 
 ### 1.3.2
 * Many more preset scales added. Happy exploring!

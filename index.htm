@@ -573,7 +573,7 @@
 
       <div class="form-group">
         <label>
-          <input id="input_cps_reduce" type="checkbox" checked="checked" /> Octave reduce
+          <input id="input_cps_reduce" type="checkbox" checked="checked" /> Reduce resulting scale by 2/1
         </label>
       </div>
     </form>
@@ -832,15 +832,15 @@
   </div>
 
   <div id="modal_modify_octave_reduce" class="modal" title="Reduce">
-    <p>Makes your entire scale fit within a desired interval. Typically an octave.</p>
+    <p>Makes your entire scale fit within a desired 'modulus' interval, typically 2/1. Intervals in your scale which are larger than the modulus will wrap around, leaving only a remainder.</p>
     <form>
-      <label>Interval to reduce to</label>
+      <label>Modulus</label>
       <div class="form-group">
         <input id="input_reduce_octave" name="" type="text" class="form-control" value="2/1" placeholder="2/1" />
       </div>
       <div class="form-group">
         <label>
-          <input id="input_reduce_also_sort" type="checkbox" checked="checked" /> Sort resulting scale ascending
+          <input id="input_reduce_also_sort" type="checkbox" checked="checked" /> Sort resulting scale ascendingly
         </label>
       </div>
     </form>

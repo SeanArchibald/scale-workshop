@@ -179,7 +179,7 @@
   <header>
     <p><img src="src/assets/favicon/apple-touch-icon.png" alt="Scale Workshop logo" id="logo" /></p>
     <h1>Scale Workshop</h1>
-    <h4>User guide 1.2</h4>
+    <h4>User guide 1.4</h4>
     <p class="lead">Scale Workshop allows you to design microtonal scales and play them in your web browser. Export your
       scales for use with VST instruments. Convert Scala files to various tuning formats.</p>
     <a href="#overview" class="sr-only">Skip to main content</a>
@@ -200,8 +200,10 @@
               <li><a href="#maxmsp">Max/MSP coll (.txt)</a></li>
               <li><a href="#puredata">PureData text (.txt)</a></li>
               <li><a href="#kontakt">Kontakt script (.txt)</a></li>
+              <li><a href="#soniccouture">Soniccouture tuning file (.nka)</a></li>
               <li><a href="#harmor">Harmor Pitch Map (.fnv)</a></li>
               <li><a href="#sytrus">Sytrus Pitch Map (.fnv)</a></li>
+              <li><a href="#deflemask">Deflemask 'fine tune' reference</a></li>
               <li><a href="#korg-logue">Korg Sound Librarian Scale/Octave (.mnlgtuns/mnlgtuno)</a></li>
               <li><a href="#reaper-note-names">Reaper Note Name Map (.txt)</a></li>
             </ul>
@@ -216,6 +218,7 @@
           <li><a href="#harmonic-series-segments">Harmonic series segments</a></li>
           <li><a href="#subharmonic-series-segments">Subharmonic series segments</a></li>
           <li><a href="#enumerate-chord">Enumerate chord</a></li>
+          <li><a href="#cps">Combination product set</a></li>
           <li><a href="#manual-data-entry">Manual data entry</a>
             <ul>
               <li><a href="#just-intonation">Just intonation</a></li>
@@ -225,6 +228,8 @@
           </li>
           <li><a href="#modify-scales">Modify scales</a>
             <ul>
+              <li><a href="#sort-ascending">Sort ascending</a></li>
+              <li><a href="#reduce">Reduce</a></li>
               <li><a href="#subset">Subset</a></li>
               <li><a href="#stretch-compress">Stretch/compress</a></li>
               <li><a href="#random-variance">Random variance</a></li>
@@ -274,11 +279,11 @@
 
     <h2 id="import-export-tunings">Import/export tunings</h2>
     <h3 id="import">Import</h3>
-    <p>Scale Workshop supports import of <strong>Scala .scl</strong> files and <strong>AnaMark .tun</strong> files.
+    <p>Scale Workshop supports import of <strong>Scala .scl</strong> files, <strong>AnaMark .tun</strong> files and Korg 'logue .mnlgtuns/.mnlgtuno'.
       Click 'New' on the top menu bar and then click 'Import .scl' or 'Import .tun'</p>
     <p class="text-center"><a href="src/assets/img/guide/menu-new.png" target="_blank"><img
           src="src/assets/img/guide/menu-new.png" /></a></p>
-    <p><strong>Note:</strong> AnaMark .tun import is incomplete, but it should be able to import .tun files exported by
+    <p><strong>Note:</strong> AnaMark .tun import is incomplete, but it should be able to import .tun V2.00 files exported by
       Scale Workshop and Scala.</p>
 
     <h3 id="convert">Convert</h3>
@@ -321,6 +326,9 @@
       for you automatically. Once exported, copy and paste the contents of the script into the script editor of your
       Kontakt instrument.</p>
 
+    <h4 id="soniccouture">Soniccouture tuning file (.nka)</h4>
+    <p>Tuning format for Soniccouture's sampled instruments for Kontakt.</p>
+
     <h4 id="harmor">Harmor Pitch Map (.fnv)</h4>
     <p>Harmor allows retuning keys from C0 to C10 for up to 5 octaves up or down from 12 EDO.
       To do so, go to the "Pitch" tab, then "Keyboard mapping".
@@ -344,8 +352,11 @@
       the "Scale/Octave Tuning Dump" MIDI specification and only allows for 12  defined notes that will automatically 
       repeat at the octave. Scales with more than 12 notes will be cut off, and pitches can only deviate from standard 
       tuning by -64/+63 cents.</p>
+    
+    <h4 id="deflemask">Deflemask 'fine tune' reference (.txt)</h4>
+    <p>Exports a reference sheet to help you make microtonal music using the Deflemask tracker. Notes in Deflemask can have a 'fine tune' property. This reference sheet will show you the data you need to input.</p>
 
-    <h4 id="reaper-note-names">Reaper Note Name Map</h4>
+    <h4 id="reaper-note-names">Reaper Note Name Map (.txt)</h4>
     <p>Reaper allows all 128 rows in its piano roll MIDI editor to have a custom label. This export option gives
       each note a label based on its pitch, with some other properties depending on the selected options.
       "Scala Data" will preserve the notes' notation, keeping ratios when possible and allowing for mixed notations. 
@@ -371,7 +382,7 @@
           src="src/assets/img/guide/reaper-named-notes.png"></a></p>
 
     <h3 id="presets">Presets</h3>
-    <p>A handful of preset scales are provided as examples.</p>
+    <p>A selection of preset scales are provided as examples.</p>
     <p class="text-center"><a href="src/assets/img/guide/preset-scales.png" target="_blank"><img
           src="src/assets/img/guide/preset-scales.png" /></a></p>
 
@@ -416,6 +427,10 @@
 
     <h3 id="enumerate-chord">Enumerate chord</h3>
     <p>Create a scale from a list of harmonics separated by colons.<br/>E.g. 4:5:6:7:8</p>
+
+    <h3 id="cps">Combination product set</h3>
+    <p>Create a scale by multiplying harmonics in different combinations. Optionally, the resulting scale can be reduced by 2/1 and sorted in ascending order.</p>
+    <p><a href="https://en.xen.wiki/w/Combination_product_set" target="_blank">Combination product set (Xenharmonic Wiki)</a></p>
 
     <h3 id="manual-data-entry">Manual data entry</h3>
     <p>Scales can be written manually by typing them in to the <strong>Scale data</strong> text field. Enter one
@@ -482,6 +497,12 @@
       in order to modify it. Click 'Modify' on the top menu bar to see the options.</p>
     <p class="text-center"><a href="src/assets/img/guide/menu-modify.png" target="_blank"><img
           src="src/assets/img/guide/menu-modify.png" /></a></p>
+
+    <h3 id="sort-ascending">Sort ascending</h3>
+    <p>Sorts your scale ascendingly.</p>
+    
+    <h3 id="reduce">Reduce</h3>
+    <p>Makes your entire scale fit within a desired 'modulus' interval, typically 2/1. Intervals in your scale which are larger than the modulus will wrap around, leaving only a remainder.</p>
 
     <h3 id="subset">Subset</h3>
     <p>Takes a subset of the current scale. Subsets are entered numerically.</p>
