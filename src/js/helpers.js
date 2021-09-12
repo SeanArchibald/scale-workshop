@@ -368,7 +368,7 @@ function get_convergent(cf, depth = 0) {
   let parsedCf = [];
   for (let num of cf) {
     num = parseInt(num);
-    if (num !== 0 && !num)
+    if (isNaN(num))
       return NaN;
     parsedCf.push(num);
   }
@@ -826,7 +826,7 @@ function simplifyRatio(numerator, denominator) {
 
 function simplifyRatioString(ratio) {
   const [n, d] = ratio.split("/").map((x) => parseInt(x));
-  if (!d || (n !== 0 && !n))
+  if (!d || isNaN(n))
     return NaN;
   return simplifyRatio(n, d).join("/");
 }
@@ -838,7 +838,7 @@ function transposeRatios(ratio, transposerRatio) {
   const [n1, d1] = ratio.split("/").map((x) => parseInt(x));
   const [n2, d2] = transposerRatio.split("/").map((x) => parseInt(x));
 
-  if ((!d1 || !d2) || (n1 !== 0 && !n1) || (n2 !== 0 && !n2))
+  if ((!d1 || !d2) || isNaN(n1) || isNaN(n2))
     return NaN;
 
   return simplifyRatio(n1 * n2, d1 * d2).join("/");
@@ -892,7 +892,7 @@ function transposeNOfEdos(nOfEdo, transposerNOfEdo) {
   const [deg1, edo1] = nOfEdo.split("\\").map((x) => parseInt(x));
   const [deg2, edo2] = transposerNOfEdo.split("\\").map((x) => parseInt(x));
 
-  if ((!edo1 || !edo2) || (deg1 !== 0 && !deg1) || (deg2 !== 0 && !deg2))
+  if ((!edo1 || !edo2) || isNaN(deg1) || isNaN(deg2))
     return NaN;
 
   const newEdo = getLCM(edo1, edo2);
