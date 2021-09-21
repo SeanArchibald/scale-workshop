@@ -47,6 +47,14 @@ var Layouts = {
     "ARSTDHNEIO'\\",
     "ZXCVBKM,./"
   ],
+  
+  // Colemak DH-m keyboard
+  CO_DH: [
+    "1234567890-=",
+    "QWFPBJLUY;[]\\",
+    "ARSTGMNEIO'",
+    "ZXCDVKH,./"
+  ]
 };
 
 // Map of irregular keycodes
