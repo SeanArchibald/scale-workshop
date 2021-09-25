@@ -91,6 +91,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 * New scale generator: Combination Product Set (CPS)
 * New scale modifier: Reduce
 * New scale modifier: Sort ascending
+* New keyboard keymap: Colemak DH
 * Improvement: More synth waveforms added
 * Improvement: More preset scales added
 * Improvement: Updates to the user guide
