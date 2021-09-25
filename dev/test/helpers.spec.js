@@ -435,6 +435,16 @@ describe("helpers.js", () => {
       expect(transposeSelf("1,5", 0)).toBe("1,000000");
       expect(transposeSelf("3\\31", 0)).toBe("0\\31");
     });
+    it("returns an inverted interval if transposed a negative amount of times", () => {
+      expect(transposeSelf("123.4", -2)).toBe("-246.800000");
+      expect(transposeSelf("-100.0", -2)).toBe("200.000000");
+      expect(transposeSelf("2/1", -2)).toBe("1/4");
+      expect(transposeSelf("1/2", -2)).toBe("4/1");
+      expect(transposeSelf("1,25", -2)).toBe("0,640000");
+      expect(transposeSelf("0,5", -2)).toBe("4,000000");
+      expect(transposeSelf("19\\31", -2)).toBe("-38\\31");
+      expect(transposeSelf("-3\\31", -2)).toBe("6\\31");
+    })
     it("returns NaN if given a non-numerical value", () => {
       expect(transposeSelf("foo", 1)).toBeNaN();
       expect(transposeSelf("2/1", "foo")).toBeNaN();
@@ -469,6 +479,10 @@ describe("helpers.js", () => {
       expect(moduloLine("2/3", "2/1")).toBe("4/3");
       expect(moduloLine("3/4", "3/2")).toBe("9/8");
     });
+    it ("returns a positive interval if the line is negative cents or N of EDO", () => {
+      expect(moduloLine("-100.0", "2/1")).toBe("1100.000000");
+      expect(moduloLine("-3\\7", "2/1")).toBe("4\\7");
+    });
     it("returns LCM EDO if two N of EDOs are combined", () => {
       expect(moduloLine("8\\12", "3\\6")).toBe("2\\12");
       expect(moduloLine("4\\5", "3\\7")).toBe("13\\35");
@@ -485,10 +499,12 @@ describe("helpers.js", () => {
       expect(moduloLine("2/1", "1\\12")).toBe("0.000000");
       expect(moduloLine("2/1", "700.0")).toBe("500.000000");
     });
-    // it("returns a negative numerator if computed value is negative", () => {
-    //   expect(simplifyRatioString("4/-4")).toBe("-1/1");
-    //   expect(simplifyRatioString("-4/4")).toBe("-1/1");
-    // });
+    it("returns NaN if the modLine evaluates to a decimal below 1", () => {
+      expect(moduloLine("3/2", "1/2")).toBeNaN();
+      expect(moduloLine("3/2", "-100.0")).toBeNaN();
+      expect(moduloLine("3/2", "-4\\7")).toBeNaN();
+      expect(moduloLine("3/2", "0,5")).toBeNaN();
+    });
     it("returns NaN if given a non-numerical value", () => {
       expect(moduloLine("foo", "2/1")).toBeNaN();
       expect(moduloLine("2/1", "foo")).toBeNaN();

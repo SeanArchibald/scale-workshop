@@ -100,11 +100,12 @@ function generate_rank_2_temperament_data(generator, period, size, up, lineType)
   let tuningData = '';
 
   // Start scale on the lowest generator
-  let scale = [moduloLine(transposeSelf(generator, up - size + 1), period)];
+  let powers = up - size + 1;
+  let scale = [moduloLine(transposeSelf(generator, powers), period)];
   
   // Transpose each line by the generator and period reduce
   for (let i = 1; i < size; i++)
-    scale.push(moduloLine(transposeLine(generator, scale[i - 1]), period));
+    scale.push(moduloLine(transposeSelf(generator, ++powers), period));
 
   // sort the scale ascending
   scale.sort((a, b) => [a, b].map(line_to_decimal).reduce((a, b) => a - b));

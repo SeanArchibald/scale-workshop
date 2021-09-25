@@ -12,9 +12,9 @@ function mathModulo(n, d) {
   return ((n % d) + d) % d;
 }
 
-// logarithm-based modulo function
+// logarithm-based modulo function, only supporting modulus > 1
 function logModulo(n, d) {
-  if (n === 0 || d === 0)
+  if (n === 0 || d <= 1)
     return NaN;
   const powers = Math.log2(n)/Math.log2(d);
   let powerMod = Math.floor(powers);
@@ -368,7 +368,7 @@ function get_convergent(cf, depth = 0) {
   let parsedCf = [];
   for (let num of cf) {
     num = parseInt(num);
-    if (num !== 0 && !num)
+    if (isNaN(num))
       return NaN;
     parsedCf.push(num);
   }
@@ -826,7 +826,7 @@ function simplifyRatio(numerator, denominator) {
 
 function simplifyRatioString(ratio) {
   const [n, d] = ratio.split("/").map((x) => parseInt(x));
-  if (!d || (n !== 0 && !n))
+  if (!d || isNaN(n))
     return NaN;
   return simplifyRatio(n, d).join("/");
 }
@@ -838,16 +838,22 @@ function transposeRatios(ratio, transposerRatio) {
   const [n1, d1] = ratio.split("/").map((x) => parseInt(x));
   const [n2, d2] = transposerRatio.split("/").map((x) => parseInt(x));
 
-  if ((!d1 || !d2) || (n1 !== 0 && !n1) || (n2 !== 0 && !n2))
+  if ((!d1 || !d2) || isNaN(n1) || isNaN(n2))
     return NaN;
 
   return simplifyRatio(n1 * n2, d1 * d2).join("/");
 }
 
+// Return a ratio between 1 and the period, where the period cannot be less than 1
 function periodReduceRatio(ratio, period) {
+  let periodType = getLineType(period);
+  let periodDecimal = line_to_decimal(period);
+  if (periodType !== LINE_TYPE.RATIO || periodDecimal <= 1)
+    return NaN;
+
   const [ratioNum, ratioDen] = ratio.split("/").map(x => parseInt(x))
   const ratioDecimal = ratioNum / ratioDen;
-  if (!ratioDecimal || ratioDecimal === Infinity)
+  if (!ratioDecimal || !isFinite(ratioDecimal))
     return NaN;
 
   const [modNum, modDen] = period.split("/").map(x => parseInt(x))
@@ -886,7 +892,7 @@ function transposeNOfEdos(nOfEdo, transposerNOfEdo) {
   const [deg1, edo1] = nOfEdo.split("\\").map((x) => parseInt(x));
   const [deg2, edo2] = transposerNOfEdo.split("\\").map((x) => parseInt(x));
 
-  if ((!edo1 || !edo2) || (deg1 !== 0 && !deg1) || (deg2 !== 0 && !deg2))
+  if ((!edo1 || !edo2) || isNaN(deg1) || isNaN(deg2))
     return NaN;
 
   const newEdo = getLCM(edo1, edo2);
@@ -979,10 +985,22 @@ function transposeLine(line, transposer) {
 // if transposeAmt=0, this returns unison.
 // if transposeAmt=1, this returns the line unchanged.
 function transposeSelf(line, transposeAmt) {
-  const lineType = getLineType(line);
+  // If necessary strip negative symbol before checking type
+  const lineIsNegative = isNegativeInterval(line);
+  
+  let positiveLine = line;
+
+  if (lineIsNegative === LINE_TYPE.INVALID)
+    return NaN;
+  else if (lineIsNegative)
+    positiveLine = line.replace('-', '');
+
+  const lineType = getLineType(positiveLine);
 
   if (lineType === LINE_TYPE.INVALID || typeof transposeAmt !== "number")
     return NaN;
+
+  let lineNeedsNegation = lineIsNegative && (lineType === LINE_TYPE.CENTS || lineType === LINE_TYPE.N_OF_EDO);
 
   const wholeExp = transposeAmt === Math.trunc(transposeAmt);
 
@@ -1007,26 +1025,42 @@ function transposeSelf(line, transposeAmt) {
 
   // multiply degree by transpose amount
   else if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
-    const [deg, edo] = line.split("\\");
-    return deg * transposeAmt + "\\" + edo;
+    let [deg, edo] = positiveLine.split("\\");
+    deg *= (lineNeedsNegation) ? -transposeAmt : transposeAmt;
+    return `${deg}\\${edo}`;
   }
     
-  const value = line_to_cents(line) * transposeAmt;
+  let value = line_to_cents(positiveLine);
+  value *= (lineNeedsNegation) ? -transposeAmt : transposeAmt;
   return value.toFixed(6);
 }
 
 function moduloLine(line, modLine) {
-  const numType = getLineType(line);
   const modType = getLineType(modLine);
-
-  if (numType === LINE_TYPE.INVALID || modType === LINE_TYPE.INVALID)
+  if (modType === LINE_TYPE.INVALID)
     return NaN;
 
-  if (numType !== LINE_TYPE.CENTS) {
+  // If necessary strip negative symbol before checking type
+  const lineIsNegative = isNegativeInterval(line);
+  let positiveLine = line;
+
+  if (lineIsNegative === LINE_TYPE.INVALID)
+    return NaN;
+  else if (lineIsNegative)
+    positiveLine = line.replace('-', '');
+
+  const lineType = getLineType(positiveLine);
+  if (lineType === LINE_TYPE.INVALID)
+    return NaN;
+
+  let lineNeedsNegation = lineIsNegative && (lineType === LINE_TYPE.CENTS || lineType === LINE_TYPE.N_OF_EDO);
+
+  if (lineType !== LINE_TYPE.CENTS) {
 
     // Preserve N of EDO notation
-    if (numType === LINE_TYPE.N_OF_EDO) {
-      const [numDeg, numEdo] = line.split("\\").map((x) => parseInt(x));
+    if (lineType === LINE_TYPE.N_OF_EDO) {
+      let [numDeg, numEdo] = positiveLine.split("\\").map((x) => parseInt(x));
+      numDeg *= (lineNeedsNegation) ? -1 : 1;
 
       // If both are N of EDOs, get LCM edo
       if (modType === LINE_TYPE.N_OF_EDO) {
@@ -1039,13 +1073,12 @@ function moduloLine(line, modLine) {
       const modDecimal = line_to_decimal(modLine);
       const modLog2 = roundToNDecimals(6, Math.log2(modDecimal));
       if (modLog2 === Math.trunc(modLog2)) {
-        const octs = Math.trunc(Math.log2(n_of_edo_to_decimal(line)));
-        return `${numDeg - numEdo * octs}\\${numEdo}`
+        return `${mathModulo(numDeg, numEdo)}\\${numEdo}`
       }
     }
 
     // Preserve ratio type if possible
-    if (numType === LINE_TYPE.RATIO) {
+    if (lineType === LINE_TYPE.RATIO) {
       if (modType === LINE_TYPE.RATIO) {
         return periodReduceRatio(line, modLine);
       }
@@ -1060,7 +1093,7 @@ function moduloLine(line, modLine) {
     }
 
     // Preserve decimal type
-    else if (numType === LINE_TYPE.DECIMAL || modType === LINE_TYPE.DECIMAL) {
+    else if (lineType === LINE_TYPE.DECIMAL || modType === LINE_TYPE.DECIMAL) {
       return decimal_to_commadecimal(
                [line, modLine].map(line_to_decimal)
                               .reduce(logModulo));
@@ -1068,9 +1101,10 @@ function moduloLine(line, modLine) {
   }
 
   // All other cases convert to cents
-  return [line, modLine].map(x => roundToNDecimals(6, line_to_cents(x)))
-                        .reduce(mathModulo)
-                        .toFixed(6);
+  return [positiveLine, modLine].map(x => roundToNDecimals(6, line_to_cents(x)))
+                                .map((x, i) => (lineNeedsNegation && i === 0) ? -x : x)
+                                .reduce(mathModulo)
+                                .toFixed(6);
 }
 
 // TODO: functional improvements
