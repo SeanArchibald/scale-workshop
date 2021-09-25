@@ -6,7 +6,7 @@ class Synth {
       horizontal: 1  // how many scale degrees as you move left/right by cols
     }
     this.active_voices = {} // polyphonic voice management
-    this.waveform = 'triangle'
+    this.waveform = 'semisine'
     this.mainVolume = 0.8
     this.inited = false
 
