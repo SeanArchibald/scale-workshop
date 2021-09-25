@@ -48,6 +48,10 @@ class Synth {
           new Float32Array([0, 1, 0.2, 0.2, 0.2, 0.2,0,0,0,0,0,0.7]),
           new Float32Array([0, 0, 0.0, 0.0, 0.0, 0.0,0,0,0,0,0,0])
         ),
+        semisine: this.audioCtx.createPeriodicWave(
+          new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+          new Float32Array([0, 1, 0.25, 0.111111, 0.0625, 0.04, 0.027777, 0.20408, 0.015625, 0.0123456, 0.01, 0.008264, 0.0069444])
+        ),
         template: this.audioCtx.createPeriodicWave(
           // first element is DC offset, second element is fundamental, third element is 2nd harmonic, etc.
           new Float32Array([0, 1, 0.5, 0.333, 0.25, 0.2, 0.167]), // sine components

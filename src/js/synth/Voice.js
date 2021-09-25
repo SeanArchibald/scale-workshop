@@ -132,6 +132,9 @@ class Voice {
       case "harmonicbell":
         this.vco.setPeriodicWave(synth.custom_waveforms.harmonicbell);
         break;
+      case "semisine":
+        this.vco.setPeriodicWave(synth.custom_waveforms.semisine);
+        break;
       default:
         this.vco.type = this.synth.waveform;
     }
