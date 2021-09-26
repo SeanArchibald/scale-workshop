@@ -42,8 +42,9 @@ function export_anamark_tun(version) {
 
   var scale_url = get_scale_url();
   // If version 200 or higher, display the scale URL so user can easily get back to the original scale that generates this tun file.
-  // If earlier than version 200, we must be careful that a long URL doesn't break the line-length limit of 255 characters.
-  if (version >= 200 || scale_url.length <= 252) {
+  // If earlier than version 200, we must be careful that a long URL doesn't break the line-length limit of 512 characters.
+  // Note: TUN spec says line-length limit is 255 but in the v1 file format source the limit is indeed 512.
+  if (version >= 200 || scale_url.length <= 508) {
     file += "; " + scale_url + newline;
   }
   // If version before 200 and URL is too long, fall back to an alternative way of displaying the original scale data.
