@@ -33,11 +33,26 @@ function export_anamark_tun(version) {
     version = 100;
   } 
 
-  // assemble the .tun file contents
+  // Assemble the .tun file contents:
+
+  // Comment section
   var file = "; VAZ Plus/AnaMark softsynth tuning file" + newline;
   file += "; " + jQuery("#txt_name").val() + newline;
   file += ";" + newline;
-  file += "; " + get_scale_url() + newline;
+
+  var scale_url = get_scale_url();
+  // If version 200 or higher, display the scale URL so user can easily get back to the original scale that generates this tun file.
+  // If earlier than version 200, we must be careful that a long URL doesn't break the line-length limit of 255 characters.
+  if (version >= 200 || scale_url.length <= 252) {
+    file += "; " + scale_url + newline;
+  }
+  // If version before 200 and URL is too long, fall back to an alternative way of displaying the original scale data.
+  else {
+    for (i=1; i<tuning_table.scale_data.length; i++) {
+      file += "; " + tuning_table.scale_data[i] + newline;
+    }
+  }
+
   file += ";" + newline;
   file += "; VAZ Plus section" + newline;
   file += "[Tuning]" + newline;

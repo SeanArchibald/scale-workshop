@@ -92,6 +92,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 * New scale modifier: Reduce
 * New scale modifier: Sort ascending
 * New keyboard keymap: Colemak DH
+* Bug fixed in TUN v1 file export (will improve compatibility with Serum, maybe others)
 * Improvement: More synth waveforms added
 * Improvement: More preset scales added
 * Improvement: Updates to the user guide

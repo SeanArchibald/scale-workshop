@@ -216,6 +216,7 @@ function parse_tuning_data() {
   var lines = user_tuning_data.value.split(newlineTest);
 
   // strip out the unusable lines, assemble an array of usable tuning data
+  tuning_table['scale_data'] = []; // initialise scale_data array
   tuning_table['tuning_data'] = ['1']; // when initialised the array contains only '1' (unison)
   tuning_table['note_count'] = 1;
   var empty = true;
