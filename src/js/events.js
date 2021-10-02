@@ -15,8 +15,9 @@ jQuery(document).ready(function () {
       jQuery('#input_select_newlines').val("windows");
     }
 
-    // recall night mode
-    if (localStorage.getItem('night_mode') === "true") {
+    // recall dark UI preference
+    if (localStorage.getItem('night_mode') === "true" ||
+    (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       jQuery("#input_checkbox_night_mode").trigger("click");
       jQuery('body').addClass('dark');
     }

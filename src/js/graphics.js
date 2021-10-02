@@ -30,7 +30,6 @@ function render_graphic_scale_rule()
         let equave = tuning_table.tuning_data[tuning_table.note_count-1]
         for (i=0; i<tuning_table.note_count; i++) {
             let pos = 1 + ((w-2) * (Math.log(tuning_table.tuning_data[i]) / Math.log(equave)))
-            console.log(pos)
             ctx.beginPath()
             ctx.moveTo(pos,h*0.4)
             ctx.lineTo(pos,h*0.6)
