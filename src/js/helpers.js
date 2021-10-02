@@ -292,6 +292,9 @@ function clear_all() {
     description: "",
     filename: "",
   };
+
+  // re-draw graphics
+  render_graphic_scale_rule()
 }
 
 // find MIDI note name from MIDI note number

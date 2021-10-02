@@ -285,6 +285,9 @@ function parse_tuning_data() {
 
   jQuery("#txt_tuning_data").parent().removeClass("has-error");
 
+  // draw horizontal rule graphic
+  render_graphic_scale_rule()
+
   // if has changed, convert the scale into a URL then add that URL to the browser's Back/Forward navigation
   var url = get_scale_url();
   if (url !== window.location.href) {

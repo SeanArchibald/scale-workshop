@@ -21,6 +21,10 @@ body.dark {
   background-color: #111;
 }
 
+.dark canvas {
+  filter: invert(1);
+}
+
 /* Interactable elements */
 
 .dark .navbar button, .dark .navbar-inverse .navbar-toggle:focus, .dark .navbar-inverse .navbar-toggle:hover, .dark .navbar-collapse {
