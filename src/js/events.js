@@ -28,6 +28,13 @@ jQuery(document).ready(function () {
       synth.keymap = Keymap[localStorage.getItem('keybd_region')];
     }
 
+    // recall max polyphony
+    if (!R.isNil(localStorage.getItem('max_polyphony'))) {
+      jQuery("#input_number_max_polyphony").val(
+        localStorage.getItem('max_polyphony')
+      )
+    }
+
   } else {
     console.log('localStorage not supported in your browser. Please check your browser settings. If using Safari, you may need to disable private browsing mode.');
   }
@@ -613,6 +620,11 @@ jQuery(document).ready(function () {
   });
   jQuery(document).on('input', '#input_range_delay_time', function () {
     jQuery("#delay_time_ms").text(jQuery(this).val());
+  });
+
+  // Synth Settings - Max polyphony
+  jQuery("#input_number_max_polyphony").change(function (event) {
+    localStorage.setItem('max_polyphony', jQuery("#input_number_max_polyphony").val());
   });
 
 

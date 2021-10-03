@@ -32,8 +32,8 @@
   <link rel="stylesheet" href="src/lib/bootstrap-3.3.7-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="src/lib/jquery-ui-1.12.1/jquery-ui.min.css">
   <link rel="stylesheet" href="src/lib/socicon/style.css">
-  <link rel="stylesheet" href="src/css/style.css?v=1.4">
-  <link rel="stylesheet" href="src/css/style-dark.css?v=1.4">
+  <link rel="stylesheet" href="src/css/style.css?v=1.4.1">
+  <link rel="stylesheet" href="src/css/style-dark.css?v=1.4.1">
 
   <!-- Favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="src/assets/favicon/apple-touch-icon.png">
@@ -342,6 +342,11 @@
                       <label for="input_range_delay_time">Delay Time (<span id="delay_time_ms">400</span> ms)</label>
                       <input type="range" class="form-control-range" id="input_range_delay_time" min="10" max="5000"
                         value="400">
+                    </div>
+                    <hr/>
+                    <div class="form-group">
+                      <label>Max polyphony</label>
+                      <input title="Maximum number of notes that can be played at the same time (default 6). More system resources are required for greater polyphony. Changes will take effect next time the page is refreshed." id="input_number_max_polyphony" type="number" class="form-control" value="6" min="1" max="64" />
                     </div>
                   </form>
                 </div>
@@ -1025,22 +1030,22 @@
   <script src="src/lib/jszip.min.js"></script>
 
   <!-- Scale Workshop scripts -->
-  <script src="src/js/model.js?v=1.4"></script>
-  <script src="src/js/constants.js?v=1.4"></script>
-  <script src="src/js/helpers.js?v=1.4"></script>
-  <script src="src/js/scaleworkshop.js?v=1.4"></script>
-  <script src="src/js/ui.js?v=1.4"></script>
-  <script src="src/js/generators.js?v=1.4"></script>
-  <script src="src/js/modifiers.js?v=1.4"></script>
-  <script src="src/js/exporters.js?v=1.4"></script>
-  <script src="src/js/graphics.js?v=1.4"></script>
-  <script src="src/js/keymap.js?v=1.4"></script>
-  <script src="src/js/synth/Voice.js?v=1.4"></script>
-  <script src="src/js/synth/Delay.js?v=1.4"></script>
-  <script src="src/js/synth/Synth.js?v=1.4"></script>
-  <script src="src/js/synth.js?v=1.4"></script>
-  <script src="src/js/midi.js?v=1.4"></script>
-  <script src="src/js/events.js?v=1.4"></script>
-  <script src="src/js/user.js?v=1.4"></script>
+  <script src="src/js/model.js?v=1.4.1"></script>
+  <script src="src/js/constants.js?v=1.4.1"></script>
+  <script src="src/js/helpers.js?v=1.4.1"></script>
+  <script src="src/js/scaleworkshop.js?v=1.4.1"></script>
+  <script src="src/js/ui.js?v=1.4.1"></script>
+  <script src="src/js/generators.js?v=1.4.1"></script>
+  <script src="src/js/modifiers.js?v=1.4.1"></script>
+  <script src="src/js/exporters.js?v=1.4.1"></script>
+  <script src="src/js/graphics.js?v=1.4.1"></script>
+  <script src="src/js/keymap.js?v=1.4.1"></script>
+  <script src="src/js/synth/Voice.js?v=1.4.1"></script>
+  <script src="src/js/synth/Delay.js?v=1.4.1"></script>
+  <script src="src/js/synth/Synth.js?v=1.4.1"></script>
+  <script src="src/js/synth.js?v=1.4.1"></script>
+  <script src="src/js/midi.js?v=1.4.1"></script>
+  <script src="src/js/events.js?v=1.4.1"></script>
+  <script src="src/js/user.js?v=1.4.1"></script>
 </body>
 </html>

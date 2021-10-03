@@ -87,7 +87,8 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
-### 1.5
+### 1.4.1
+* Bug fix: audio drop out issue
 * Added graphic to display currently loaded scale on a ruler
 
 ### 1.4

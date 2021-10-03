@@ -5,7 +5,11 @@ class Synth {
       vertical: 5, // how many scale degrees as you move up/down by rows
       horizontal: 1  // how many scale degrees as you move left/right by cols
     }
-    this.active_voices = {} // polyphonic voice management
+    this.voices = []
+    this.midinotes_to_voices = {} // polyphonic voice allocation
+    this.voices_to_midinotes = {} // polyphonic voice allocation
+    this.polyphony = (!R.isNil(localStorage.getItem('max_polyphony'))) ? localStorage.getItem('max_polyphony') : 6
+    this.nextVoice = 0
     this.waveform = 'semisine'
     this.mainVolume = 0.8
     this.inited = false
@@ -14,8 +18,12 @@ class Synth {
   }
 
   init() {
+
+    // only init once
     if (!this.inited) {
       this.inited = true
+
+      // set up Web Audio API context
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 
       // set up custom waveforms
@@ -59,19 +67,30 @@ class Synth {
         )
       }
 
-      // master gain
-      this.masterGain = this.audioCtx.createGain(); // create master gain before output
+      // set up master gain
+      this.masterGain = this.audioCtx.createGain();
       this.masterGain.gain.value = this.mainVolume;
-      // master filter
+
+      // set up master filter
       this.masterLPfilter = this.audioCtx.createBiquadFilter();
       this.masterLPfilter.frequency.value = 5000;
       this.masterLPfilter.Q.value = 1;
       this.masterLPfilter.type = 'lowpass';
+
       // connect master gain control > filter > master output
       this.masterGain.connect(this.masterLPfilter);
       this.masterLPfilter.connect(this.audioCtx.destination);
 
+      // init delay
       this.delay.init(this.audioCtx)
+
+      // init free running oscillators
+      for (i=0; i<this.polyphony; i++) {
+        this.voices[i] = new Voice(this.audioCtx)
+        this.voices[i].bindDelay(this.delay)
+        this.voices[i].bindSynth(this)
+        this.voices[i].init()
+      }
     }
   }
 
@@ -91,28 +110,48 @@ class Synth {
     const frequency = tuning_table.freq[midinote];
 
     if (!R.isNil(frequency)) {
+
       // make sure note triggers only on first input (prevent duplicate notes)
-      if (R.isNil(this.active_voices[midinote])) {
+      if (R.isNil(this.midinotes_to_voices[midinote])) {
         this.init()
 
-        const voice = new Voice(this.audioCtx, frequency, velocity);
-        voice.bindDelay(this.delay)
-        voice.bindSynth(this)
-        voice.start()
-        this.active_voices[midinote] = voice;
-        jQuery("#tuning-table-row-" + midinote).addClass("bg-playnote");
+        // round robin voice allocation, but skip voices that are still being held
+        for (i=this.nextVoice; i<this.nextVoice+this.polyphony; i++) {
 
-        console.log("Play note " + midinote + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
+          // if next voice is free, use it
+          if (R.isNil(this.voices_to_midinotes[(i + 1) % this.polyphony])) {
+            this.nextVoice = (i + 1) % this.polyphony
+            break;
+          }
+          // if no free voices are found when the loop ends, voice stealing will result
+        }
+
+        // keep track of allocated voices
+        this.midinotes_to_voices[midinote] = this.nextVoice
+        this.voices_to_midinotes[this.nextVoice] = midinote
+ 
+        // trigger note start
+        this.voices[this.midinotes_to_voices[midinote]].start(frequency, velocity)
+
+        // indicate playing note
+        jQuery("#tuning-table-row-" + midinote).addClass("bg-playnote");
+        console.log(this.midinotes_to_voices)
+        //console.log("Play note " + midinote + " (" + frequency.toFixed(3) + " Hz) velocity " + velocity);
       }
     }
   }
   noteOff(midinote) {
-    if (!R.isNil(this.active_voices[midinote])) {
-      this.active_voices[midinote].stop();
-      delete this.active_voices[midinote];
-      jQuery("#tuning-table-row-" + midinote).removeClass("bg-playnote");
+    if (!R.isNil(this.midinotes_to_voices[midinote])) {
 
-      console.log("Stop note " + midinote);
+      // release the note
+      this.voices[this.midinotes_to_voices[midinote]].stop()
+
+      // voice allocation
+      delete this.voices_to_midinotes[ this.midinotes_to_voices[midinote] ]
+      delete this.midinotes_to_voices[midinote]
+
+      // indicate stopped note
+      jQuery("#tuning-table-row-" + midinote).removeClass("bg-playnote");
     }
   }
 
@@ -123,12 +162,12 @@ class Synth {
   // this function stops all active voices and cuts the delay
   panic() {
     // show which voices are active (playing)
-    console.log(this.active_voices);
+    console.log(this.voices);
 
     // loop through active voices
-    for (let i = 0; i < 127; i++) {
+    for (let i = 0; i < this.polyphony; i++) {
       // turn off voice
-      this.noteOff(i);
+      this.noteOff(this.voices_to_midinotes[i]);
     }
 
     // turn down delay gain

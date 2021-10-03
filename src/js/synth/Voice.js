@@ -10,13 +10,13 @@ const getEnvelopeByName = name => {
     case 'organ':
       envelope.attackTime = 0.008; envelope.decayTime = 0.1; envelope.sustain = 0.8; envelope.releaseTime = 0.008; break;
     case 'pad':
-      envelope.attackTime = 1; envelope.decayTime = 3; envelope.sustain = 0.5; envelope.releaseTime = 3; break;
+      envelope.attackTime = 1; envelope.decayTime = 3; envelope.sustain = 0.5; envelope.releaseTime = 7; break;
     case 'perc-short':
-      envelope.attackTime = 0.001; envelope.decayTime = 0.2; envelope.sustain = 0.001; envelope.releaseTime = 0.2; break;
+      envelope.attackTime = 0.001; envelope.decayTime = 0.2; envelope.sustain = 0.0001; envelope.releaseTime = 0.2; break;
     case 'perc-medium':
-      envelope.attackTime = 0.001; envelope.decayTime = 1; envelope.sustain = 0.001; envelope.releaseTime = 1; break;
+      envelope.attackTime = 0.001; envelope.decayTime = 1; envelope.sustain = 0.0001; envelope.releaseTime = 1; break;
     case 'perc-long':
-      envelope.attackTime = 0.001; envelope.decayTime = 5; envelope.sustain = 0.001; envelope.releaseTime = 5; break;
+      envelope.attackTime = 0.001; envelope.decayTime = 5; envelope.sustain = 0.0001; envelope.releaseTime = 5; break;
   }
 
   return envelope
@@ -79,37 +79,40 @@ const interpolateValueAtTime = (minValue, maxValue, envelope, t) => {
 }
 
 class Voice {
-  constructor(audioCtx, frequency, velocity) {
-    this.frequency = frequency;
-    this.velocity = 0.2 * velocity / 127;
-    if (this.velocity === 0) {
-      this.velocity = 0.001; // prevent 0 value for velocity - safe for using exponential ramp
-    }
+  constructor(audioCtx) {
 
-    this.vco = audioCtx.createOscillator();
-    this.vca = audioCtx.createGain();
+    // set up oscillator
+    this.vco = audioCtx.createOscillator()
 
-    const envelope = getEnvelopeByName(getEnvelopeName())
-
-    this.attackTime = envelope.attackTime
-    this.decayTime = envelope.decayTime
-    this.sustain = envelope.sustain
-    this.releaseTime = envelope.releaseTime
-
-    this.oscillators = [];
+    // set up amplitude envelope generator
+    this.vca = audioCtx.createGain()
+    
   }
 
-  bindSynth(synth) {
-    this.synth = synth
-  }
-  bindDelay(delay) {
-    this.delay = delay
+  init() {
+
+    // timing
+    const now = this.synth.now()
+
+    this.vca.gain.setValueAtTime(0.0001, now)
+
+    // routing
+    this.vco.connect(this.vca)
+    this.vco.start()
+    this.vca.connect(this.delay.channelL)
+    this.vca.connect(this.synth.masterGain)
   }
 
-  start() {
-    const now = this.synth.now();
+  start(frequency, velocity) {
 
-    /* VCO */
+    // start timing
+    const now = this.synth.now()
+    this.vca.gain._startTime = now
+
+    // tune oscillator to correct frequency
+    this.vco.frequency.setValueAtTime(frequency, now)
+
+    // set oscillator waveform
     switch(this.synth.waveform) {
       case "warm1":
         this.vco.setPeriodicWave(synth.custom_waveforms.warm1);
@@ -139,39 +142,59 @@ class Voice {
         this.vco.type = this.synth.waveform;
     }
 
-    this.vco.frequency.value = this.frequency;
+    // get target gain   
+    if (velocity === 0) {
+      // in exponentialRampToValueAtTime, target gain can't be 0
+      this.targetGain = 0.0001; 
+    }
+    else {
+      // use velocity to determine target gain
+      this.targetGain = velocity = 0.2 * velocity / 127;
+    }
 
-    /* VCA */
-    this.vca.gain._startTime = now
-    this.vca.gain.value = 0;
-    this.vca.gain.setValueAtTime(this.vca.gain.value, now); // initial gain
-    this.vca.gain.linearRampToValueAtTime(this.velocity, now + this.attackTime); // attack
-    this.vca.gain.exponentialRampToValueAtTime(this.velocity * this.sustain, now + this.attackTime + this.decayTime); // decay & sustain
+    // get and set amplitude envelope
+    const envelope = getEnvelopeByName(getEnvelopeName())
+    this.attackTime = envelope.attackTime
+    this.decayTime = envelope.decayTime
+    this.sustain = envelope.sustain
+    this.releaseTime = envelope.releaseTime
 
-    /* routing */
-    this.vco.connect(this.vca);
-    this.vca.connect(this.delay.channelL);
-    this.vca.connect(this.synth.masterGain);
+    // Attack
+    this.cancelEnvelope(this.vca.gain, now)
+    this.vca.gain.setValueAtTime(0.0001, now);
+    this.vca.gain.linearRampToValueAtTime(this.targetGain, now + this.attackTime);
 
-    this.vco.start(0);
-
-    /* keep track of oscillators used */
-    this.oscillators.push(this.vco);
+    // Decay & Sustain
+    this.vca.gain.exponentialRampToValueAtTime(this.targetGain * this.sustain, now + this.attackTime + this.decayTime);
   }
 
   stop() {
+
+    // timing
     const now = this.synth.now();
-    const vcaGain = this.vca.gain
-    this.oscillators.forEach(oscillator => {
-      // Firefox and Safari doesn't support cancelAndHoldAtTime.. shame!!
-      if (isFunction(vcaGain.cancelAndHoldAtTime)) {
-        vcaGain.cancelAndHoldAtTime(now);
-      } else {
-        vcaGain.cancelScheduledValues(now);
-        vcaGain.setValueAtTime(interpolateValueAtTime(0, this.velocity, getEnvelopeByName(getEnvelopeName()), now - this.vca.gain._startTime), now)
-      }
-      vcaGain.exponentialRampToValueAtTime(0.001, now + this.releaseTime); // release
-      oscillator.stop(now + this.releaseTime);
-    });
+
+    // Release
+    this.cancelEnvelope(this.vca.gain, now)
+    this.vca.gain.exponentialRampToValueAtTime(0.0001, now + this.releaseTime);
+  }
+
+  // cancels any scheduled envelope changes in a given property's value
+  cancelEnvelope(property, now) {
+
+    // Firefox and Safari do not support cancelAndHoldAtTime
+    if (isFunction(property.cancelAndHoldAtTime)) {
+      property.cancelAndHoldAtTime(now);
+    }
+    else {
+      property.cancelScheduledValues(now);
+      property.setValueAtTime(interpolateValueAtTime(0.0001, this.targetGain, getEnvelopeByName(getEnvelopeName()), now - property._startTime), now)
+    }
+  }
+
+  bindSynth(synth) {
+    this.synth = synth
+  }
+  bindDelay(delay) {
+    this.delay = delay
   }
 }
