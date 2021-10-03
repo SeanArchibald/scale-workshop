@@ -624,7 +624,13 @@ jQuery(document).ready(function () {
 
   // Synth Settings - Max polyphony
   jQuery("#input_number_max_polyphony").change(function (event) {
-    localStorage.setItem('max_polyphony', jQuery("#input_number_max_polyphony").val());
+
+    let value = jQuery("#input_number_max_polyphony").val()
+    
+    // only save if input is not empty
+    if ( !R.isEmpty(value) ) {
+      localStorage.setItem('max_polyphony', value)
+    }
   });
 
 
