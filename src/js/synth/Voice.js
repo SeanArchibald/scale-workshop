@@ -8,15 +8,15 @@ const getEnvelopeByName = name => {
 
   switch (name) {
     case 'organ':
-      envelope.attackTime = 0.008; envelope.decayTime = 0.1; envelope.sustain = 0.8; envelope.releaseTime = 0.008; break;
+      envelope.attackTime = 0.01; envelope.decayTime = 0.1; envelope.sustain = 0.8; envelope.releaseTime = 0.01; break;
     case 'pad':
       envelope.attackTime = 1; envelope.decayTime = 3; envelope.sustain = 0.5; envelope.releaseTime = 7; break;
     case 'perc-short':
-      envelope.attackTime = 0.001; envelope.decayTime = 0.2; envelope.sustain = 0.0001; envelope.releaseTime = 0.2; break;
+      envelope.attackTime = 0.005; envelope.decayTime = 0.2; envelope.sustain = 0.0001; envelope.releaseTime = 0.2; break;
     case 'perc-medium':
-      envelope.attackTime = 0.001; envelope.decayTime = 1; envelope.sustain = 0.0001; envelope.releaseTime = 1; break;
+      envelope.attackTime = 0.005; envelope.decayTime = 1; envelope.sustain = 0.0001; envelope.releaseTime = 1; break;
     case 'perc-long':
-      envelope.attackTime = 0.001; envelope.decayTime = 5; envelope.sustain = 0.0001; envelope.releaseTime = 5; break;
+      envelope.attackTime = 0.01; envelope.decayTime = 5; envelope.sustain = 0.0001; envelope.releaseTime = 5; break;
   }
 
   return envelope

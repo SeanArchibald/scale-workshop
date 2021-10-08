@@ -8,7 +8,7 @@ class Synth {
     this.voices = []
     this.midinotes_to_voices = {} // polyphonic voice allocation
     this.voices_to_midinotes = {} // polyphonic voice allocation
-    this.polyphony = (!R.isNil(localStorage.getItem('max_polyphony'))) ? localStorage.getItem('max_polyphony') : 6
+    this.polyphony = (!R.isNil(localStorage.getItem('max_polyphony'))) ? localStorage.getItem('max_polyphony') : 16
     this.nextVoice = 0
     this.waveform = 'semisine'
     this.mainVolume = 0.8
