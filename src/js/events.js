@@ -399,14 +399,18 @@ jQuery(document).ready(function () {
 
   // update the available sizes for selection
   jQuery("#modal_modify_mos_degree").change(function () {
+    let p = tuning_table.note_count - 1;
     let nn = [];
     let dd = [];
-    var gp = jQuery("#modal_modify_mos_degree").val() / (tuning_table.note_count - 1);
-    get_rational_approximations(gp, nn, dd);
+    var gp = jQuery("#modal_modify_mos_degree").val() / p;
+    get_rational_approximations(gp, nn, dd, p);
     jQuery("#modal_modify_mos_size").empty();
-    for (var d = 2; d < dd.length - 1; d++) {
-      var num = dd[d];
-      jQuery("#modal_modify_mos_size").append('<option value="' + num + '">' + num + '</option>');
+    
+    let size = 0;
+    let i = 2;
+    while (i < dd.length - 1) {
+      size = dd[i++];
+      jQuery("#modal_modify_mos_size").append('<option value="' + size + '">' + size + '</option>');
     }
   })
 
@@ -418,14 +422,14 @@ jQuery(document).ready(function () {
   // move the mode steps back one
   jQuery("#input_mode_step_left").click(function () {
     var mode = jQuery("#input_modify_mode").val().split(" ");
-    rotate(mode, -1);
+    mode = rotate(mode, -1);
     jQuery("#input_modify_mode").val(mode.join(" "));
   })
 
   // move the mode steps forward one
   jQuery("#input_mode_step_right").click(function () {
     var mode = jQuery("#input_modify_mode").val().split(" ");
-    rotate(mode, 1);
+    mode = rotate(mode, 1);
     jQuery("#input_modify_mode").val(mode.join(" "));
   })
 
