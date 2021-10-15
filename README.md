@@ -87,9 +87,13 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.4.2
+* Bug fixed: synth notes stuck, click on note release
+
 ### 1.4.1
-* Bug fix: audio drop out issue
-* Added graphic to display currently loaded scale on a ruler
+* Bug fixed: lag on Subset option
+* Bug fixed: audio drop out
+* Improvement: Graphical ruler shows currently loaded scale
 
 ### 1.4
 * New scale generator: Combination Product Set (CPS)

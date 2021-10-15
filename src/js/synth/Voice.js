@@ -8,15 +8,15 @@ const getEnvelopeByName = name => {
 
   switch (name) {
     case 'organ':
-      envelope.attackTime = 0.01; envelope.decayTime = 0.1; envelope.sustain = 0.8; envelope.releaseTime = 0.01; break;
+      envelope.attackTime = 0.01; envelope.decayTime = 0.3; envelope.sustain = 0.8; envelope.releaseTime = 0.01; break;
     case 'pad':
-      envelope.attackTime = 1; envelope.decayTime = 3; envelope.sustain = 0.5; envelope.releaseTime = 7; break;
+      envelope.attackTime = 1; envelope.decayTime = 3; envelope.sustain = 0.5; envelope.releaseTime = 0.7; break;
     case 'perc-short':
-      envelope.attackTime = 0.005; envelope.decayTime = 0.2; envelope.sustain = 0.0001; envelope.releaseTime = 0.2; break;
+      envelope.attackTime = 0.005; envelope.decayTime = 0.3; envelope.sustain = 0.00001; envelope.releaseTime = 0.05; break;
     case 'perc-medium':
-      envelope.attackTime = 0.005; envelope.decayTime = 1; envelope.sustain = 0.0001; envelope.releaseTime = 1; break;
+      envelope.attackTime = 0.005; envelope.decayTime = 1.5; envelope.sustain = 0.00001; envelope.releaseTime = 0.25; break;
     case 'perc-long':
-      envelope.attackTime = 0.01; envelope.decayTime = 5; envelope.sustain = 0.0001; envelope.releaseTime = 5; break;
+      envelope.attackTime = 0.01; envelope.decayTime = 8; envelope.sustain = 0.00001; envelope.releaseTime = 0.8; break;
   }
 
   return envelope
@@ -94,7 +94,7 @@ class Voice {
     // timing
     const now = this.synth.now()
 
-    this.vca.gain.setValueAtTime(0.0001, now)
+    this.vca.gain.setValueAtTime(0, now)
 
     // routing
     this.vco.connect(this.vca)
@@ -145,7 +145,7 @@ class Voice {
     // get target gain   
     if (velocity === 0) {
       // in exponentialRampToValueAtTime, target gain can't be 0
-      this.targetGain = 0.0001; 
+      this.targetGain = 0.00001; 
     }
     else {
       // use velocity to determine target gain
@@ -161,7 +161,7 @@ class Voice {
 
     // Attack
     this.cancelEnvelope(this.vca.gain, now)
-    this.vca.gain.setValueAtTime(0.0001, now);
+    this.vca.gain.setValueAtTime(0, now);
     this.vca.gain.linearRampToValueAtTime(this.targetGain, now + this.attackTime);
 
     // Decay & Sustain
@@ -171,11 +171,11 @@ class Voice {
   stop() {
 
     // timing
-    const now = this.synth.now();
+    const now = this.synth.now()
 
     // Release
     this.cancelEnvelope(this.vca.gain, now)
-    this.vca.gain.exponentialRampToValueAtTime(0.0001, now + this.releaseTime);
+    this.vca.gain.setTargetAtTime(0.0, now, this.releaseTime);
   }
 
   // cancels any scheduled envelope changes in a given property's value
@@ -187,7 +187,7 @@ class Voice {
     }
     else {
       property.cancelScheduledValues(now);
-      property.setValueAtTime(interpolateValueAtTime(0.0001, this.targetGain, getEnvelopeByName(getEnvelopeName()), now - property._startTime), now)
+      property.setValueAtTime(interpolateValueAtTime(0.00001, this.targetGain, getEnvelopeByName(getEnvelopeName()), now - property._startTime), now)
     }
   }
 
