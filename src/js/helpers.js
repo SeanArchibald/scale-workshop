@@ -98,11 +98,11 @@ function n_of_edo_to_cents(input) {
 
 function isCent(input) {
   // true, when the input has numbers at the beginning, followed by a dot, ending with any number of numbers
-  // for example: 700.00
+  // for example: 700.00, -700.00
   if (typeof input !== "string") {
     return false;
   }
-  return /^\d+\.\d*$/.test(input.trim());
+  return /^-?\d+\.\d*$/.test(input.trim());
 }
 
 function isCommaDecimal(input) {
@@ -116,8 +116,8 @@ function isCommaDecimal(input) {
 
 function isNOfEdo(input) {
   // true, when the input has numbers at the beginning and the end, separated by a single backslash
-  // for example: 7\12
-  return /^\d+\\\d+$/.test(input);
+  // for example: 7\12, -7\12
+  return /^-?\d+\\\d+$/.test(input);
 }
 
 function isRatio(input) {
@@ -1108,6 +1108,32 @@ function moduloLine(line, modLine) {
                                 .map((x, i) => (lineNeedsNegation && i === 0) ? -x : x)
                                 .reduce(mathModulo)
                                 .toFixed(6);
+}
+
+// inverts a line into its negative form, while preserving line-type
+function negateLine(line) {
+
+  switch(getLineType(line)) {
+    case LINE_TYPE.RATIO:
+      let [num, den] = line.split("/")
+      return den + "/" + num
+    case LINE_TYPE.DECIMAL:
+      return decimal_to_commadecimal( 1 / commadecimal_to_decimal(line) )
+    case LINE_TYPE.CENTS:
+      if (!isNegativeInterval(line)) {
+        return "-"+line
+      } else {
+        return line.replace('-', '')
+      }
+    case LINE_TYPE.N_OF_EDO:
+      if (!isNegativeInterval(line)) {
+        return "-"+line
+      } else {
+        return line.replace('-', '')
+      }
+    default:
+      return NaN
+  }
 }
 
 // TODO: functional improvements

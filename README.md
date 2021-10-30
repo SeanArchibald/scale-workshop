@@ -88,7 +88,8 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 1.4.2
-* Bug fixed: synth notes stuck, click on note release
+* New modifier: Rotate. This allows you to choose an interval from your scale to be the new 1/1
+* Bug fixed: synth notes stuck playing quietly in the background
 
 ### 1.4.1
 * Bug fixed: lag on Subset option

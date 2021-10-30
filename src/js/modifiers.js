@@ -274,68 +274,51 @@ function modify_sync_beating() {
   return true;
 }
 
-// key transpose
-function modify_key_transpose() {
+// rotate scale
+function modify_rotate() {
 
-  // I will come back to this later... it's going to require some thinking with regards to just ratios...
-  return false;
-
-  /*
   // remove white space from tuning data field
   trimSelf("#txt_tuning_data")
 
+  // catch missing scale data
   if ( R.isEmpty(jQuery( "#txt_tuning_data" ).val()) ) {
-
-    alert( "No scale data to modify." );
-    return false;
-
+    alert( "No scale data to modify." )
+    return false
   }
 
-  // split user data into individual lines
-  var lines = document.getElementById("txt_tuning_data").value.split(newlineTest);
+  // split scale data into individual lines
+  var lines = jQuery("#txt_tuning_data").val().trim().split(unix_newline)
 
-  // key to transpose to
-  var key = parseInt( jQuery( "#input_modify_key_transpose" ).val() );
+  // get transposing degree, transposing interval and equave
+  let degree = parseInt(jQuery("#input_rotate_new_1_1").val())
+  let transposer = negateLine(lines[degree])
+  let equave = lines[lines.length-1]
+  console.log(transposer)
+  console.log(equave)
 
-  // warn user when their input is unusable
-  if ( isNaN( key ) || key < 0 ) {
-    alert( "Could not transpose, input error" );
-    return false;
-  }
-
-  // if key number is larger than the scale, wrap it around
-  key = key % lines.length;
-
-  // warn on using 0
-  if ( key == 0 ) {
-    alert( "1/1 is already on key 0, so no change." );
-  }
-
-  // strip out the unusable lines, assemble a multi-line string which will later replace the existing tuning data
-  var new_tuning = "";
-  for ( let i = 0; i < lines.length; i++ ) {
-
-    // TODO
-
-    new_tuning = new_tuning + lines[i];
-
-    // add a newline for all lines except the last
-    if ( i < lines.length-1 ) {
-      new_tuning += unix_newline;
+  // transpose each line, mod equave
+  for ( let i=0; i<lines.length; i++ ) {
+    if (i !== degree) {
+      lines[i] = moduloLine( transposeLine(lines[i], transposer), equave )
     }
-
+    else {
+      lines[i] = equave
+    }
+    console.log(i)
+    console.log(degree)
   }
+
+  // sort resulting scale
+  lines = scaleSort(lines)
+  console.log(lines)
 
   // update tuning input field with new tuning
-  jQuery( "#txt_tuning_data" ).val( new_tuning );
-
-  parse_tuning_data();
-
-  jQuery( "#modal_modify_mode" ).dialog( "close" );
+  jQuery( "#txt_tuning_data" ).val( lines.join(unix_newline) )
+  parse_tuning_data()
+  jQuery( "#modal_modify_rotate" ).dialog( "close" )
 
   // success
   return true;
-  */
 }
 
 // approximate rationals

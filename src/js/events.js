@@ -274,6 +274,22 @@ jQuery(document).ready(function () {
     jQuery("#txt_tuning_data").val(scale);
     parse_tuning_data();
   });
+
+  // modify_rotate option clicked
+  jQuery("#modify_rotate").click(function (event) {
+    event.preventDefault()
+    // get scale intervals
+    let scale = jQuery("#txt_tuning_data").val().trim().split(unix_newline)
+    // remove any options from drop-down
+    jQuery("#input_rotate_new_1_1").empty()
+    // loop through intervals and populate drop-down options
+    for (i=0; i<scale.length-1; i++) {
+      jQuery("#input_rotate_new_1_1").append('<option value="'+i+'">'+scale[i]+'</option>')
+    }
+    // show modal
+    openDialog("#modal_modify_rotate", modify_rotate)
+    parse_tuning_data()
+  });
   
 
   // calculate and list rational approximations within user parameters

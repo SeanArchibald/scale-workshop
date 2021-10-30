@@ -112,11 +112,10 @@
             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-adjust"
                 aria-hidden="true"></span> Modify <span class="caret"></span></a>
             <ul class="dropdown-menu" id="modify-buttons">
-              <!--<li><a href="#" id="modify_key_transpose"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span> Key transpose</a></li>-->
-              <li><a href="#" id="modify_sort_ascending"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Sort ascending</a></li>
+              <li><a href="#" id="modify_sort_ascending"><span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span> Sort ascending</a></li>
               <li><a href="#" id="modify_octave_reduce"><span class="glyphicon glyphicon-resize-small" aria-hidden="true"></span> Reduce</a></li>
+              <li><a href="#" id="modify_rotate"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> Rotate</a></li>
               <li><a href="#" id="modify_mode"><span class="glyphicon glyphicon-equalizer" aria-hidden="true"></span> Subset</a></li>
-              <!--<li><a href="#" id="modify_extend">Extend/repeat</a></li>-->
               <li><a href="#" id="modify_stretch"><span class="glyphicon glyphicon-compressed"
                     aria-hidden="true"></span> Stretch/compress</a></li>
               <li><a href="#" id="modify_random_variance"><span class="glyphicon glyphicon-random"
@@ -857,6 +856,17 @@
         <label>
           <input id="input_reduce_also_sort" type="checkbox" checked="checked" /> Sort resulting scale ascendingly
         </label>
+      </div>
+    </form>
+  </div>
+
+  <div id="modal_modify_rotate" class="modal" title="Rotate">
+    <p>Rotates the mode of your scale.</p>
+    <form>
+      <label>New 1/1</label>
+      <div class="form-group">
+        <select id="input_rotate_new_1_1" class="form-control">
+        </select>
       </div>
     </form>
   </div>

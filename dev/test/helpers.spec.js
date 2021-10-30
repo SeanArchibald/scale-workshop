@@ -63,6 +63,9 @@ describe("helpers.js", () => {
       expect(isCent("")).toBe(false);
       expect(isCent("      ")).toBe(false);
     });
+    it("returns true, when negative", () => {
+      expect(isCent("-100.0")).toBe(true);
+    });
   });
 
   describe("isCommaDecimal", () => {
@@ -95,6 +98,12 @@ describe("helpers.js", () => {
       expect(isCommaDecimal("// this is a comment")).toBe(false);
       expect(isCommaDecimal("")).toBe(false);
       expect(isCommaDecimal("      ")).toBe(false);
+    });
+  });
+
+  describe("isNOfEdo", () => {
+    it("returns true, when given input is negative", () => {
+      expect(isNOfEdo("-10\\12")).toBe(true);
     });
   });
 
@@ -419,6 +428,9 @@ describe("helpers.js", () => {
     });
     it("returns NaN if given a denominator of 0", () => {
       expect(transposeLine("1/0")).toBeNaN();
+    });
+    it("returns 1,0 if transposing a commadecimal by its negation", () => {
+      expect(transposeLine("2,0", negateLine("2,0"))).toBe("1,000000");
     });
   });
 
