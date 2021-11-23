@@ -88,7 +88,7 @@ Please base any work on develop branch, and pull requests should also be made ag
 ## Changelog
 
 ### 1.4.2
-* New modifier: Rotate. This allows you to choose an interval from your scale to be the new 1/1
+* New modifier: Rotate. This allows you to choose an interval from your scale to be the new 1/1. (Known issue: it doesn't work as expected for intervals with decimal notation e.g. `1,5`, `2,0`)
 * Bug fixed: synth notes stuck playing quietly in the background
 
 ### 1.4.1
