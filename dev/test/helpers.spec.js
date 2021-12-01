@@ -108,13 +108,11 @@ describe("helpers.js", () => {
   });
 
   describe("isNegativeInterval", () => {
-    it("takes an interval and returns true if ratio or decimal is below 1", () => {
-      expect(isNegativeInterval("1/2")).toBe(true);
-      expect(isNegativeInterval("0,5")).toBe(true);
-    });
-    it("returns false if input is a ratio or decimal 1 or above", () => {
+    it("returns false if input is a nonnegative ratio or decimal", () => {
       expect(isNegativeInterval("3/2")).toBe(false);
       expect(isNegativeInterval("1,5")).toBe(false);
+      expect(isNegativeInterval("1/2")).toBe(false);
+      expect(isNegativeInterval("0,5")).toBe(false);
     });
     it("returns false if cents or N of EDO is positive", () => {
       expect(isNegativeInterval("1200.0")).toBe(false);
