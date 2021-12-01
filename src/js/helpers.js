@@ -194,9 +194,9 @@ function line_to_commadecimal(input, padDecimals=0, truncateDecimalsPastPad=fals
   return decimalStr;
 }
 
+
 function isNegativeInterval(input) {
-  // true if ratio or decimal is below 1, or
-  //   if cents or N of EDO evaluates to a negative number
+  // true if cents or N of EDO evaluates to a negative number
   // LINE_TYPE.INVALID if invalid type or if ratio, decimal, 
   //   or N of EDO denominator is negative
   // false otherwise
@@ -205,32 +205,24 @@ function isNegativeInterval(input) {
     return LINE_TYPE.INVALID;
 
   const hasNegation = input.match('-') !== null;
-  const strippedInput = input.replace('-', '');
-  const type = getLineType(strippedInput);
+  const type = getLineType(input);
   switch(type) {
-    case LINE_TYPE.RATIO:
-      if (hasNegation)
-        return LINE_TYPE.INVALID;
-      else
-        return input.split('/').map(x => parseInt(x)).reduce((n, d) => n < d);
-
-    case LINE_TYPE.DECIMAL:
-      if (hasNegation)
-        return LINE_TYPE.INVALID;
-      else
-        return input.startsWith('0');
-    
+    // Zero is nonnegative
     case LINE_TYPE.CENTS:
-      return hasNegation;
+      return (/^0+\.0*$/.test(input)) ? false : hasNegation;
 
     case LINE_TYPE.N_OF_EDO:
-      if (input.split('\\').slice(1).map(x => parseInt(x))[0] > 0)
-        return hasNegation;
+        return (input.trim()[0] === '0') ? false : hasNegation;
+
+    case LINE_TYPE.RATIO:
+    case LINE_TYPE.DECIMAL:
+      return (hasNegation) ? LINE_TYPE.INVALID : false;
 
     default:
       return LINE_TYPE.INVALID;
   }
 }
+
 
 // convert any input 'line' to a cents value
 function line_to_cents(input) {
@@ -906,23 +898,10 @@ function transposeNOfEdos(nOfEdo, transposerNOfEdo) {
 // transpose an interval by another interval,
 // retaining their types when possible
 function transposeLine(line, transposer) {
-  // If necessary strip negative symbol before checking type
-  const transposerIsNegative = isNegativeInterval(transposer);
-  
-  let positiveTransposer = transposer;
-
-  if (transposerIsNegative === LINE_TYPE.INVALID)
-    return NaN;
-  else if (transposerIsNegative)
-    positiveTransposer = transposer.replace('-', '');
-
   const lineType = getLineType(line);
-  const transposerType = getLineType(positiveTransposer);
-
+  const transposerType = getLineType(transposer);
   if (lineType === LINE_TYPE.INVALID || transposerType === LINE_TYPE.INVALID)
     return NaN;
-
-  let transposerNeedsNegation = transposerIsNegative && (transposerType === LINE_TYPE.CENTS || transposerType === LINE_TYPE.N_OF_EDO);
 
   // If both are ratios, preserve ratio notation
   if (lineType === LINE_TYPE.RATIO) {
@@ -932,17 +911,17 @@ function transposeLine(line, transposer) {
     else if (transposerType === LINE_TYPE.DECIMAL) {
       let ratio2 = decimal_to_ratio(transposer);
       return transposeRatios(line, ratio2);
-      }
+    }
 
     // see if cents or N of EDO is an octave
     else {
-      let octs = Math.log2(line_to_decimal(positiveTransposer));
-      if (octs === Math.trunc(octs))
-        {
-        const octDecimal = Math.pow(2, octs);
-        const octTransposer = (transposerIsNegative) ? "1/" + octDecimal : octDecimal + "/1";
+      let octs = Math.log2(line_to_decimal(transposer));
+      if (octs === Math.trunc(octs)) {
+        const octDecimal = Math.pow(2, Math.abs(octs));
+        const octTransposer = (octs < 0) ? "1/" + octDecimal 
+                                         : octDecimal + "/1";
         return transposeRatios(line, octTransposer);
-        }
+      }
     }
   }
 
@@ -953,10 +932,8 @@ function transposeLine(line, transposer) {
       return transposeNOfEdos(line, transposer);
     
     // See if second type is a power of two
-    const line2Ratio = roundToNDecimals(6, line_to_decimal(positiveTransposer));
+    const line2Ratio = roundToNDecimals(6, line_to_decimal(transposer));
     let octs = Math.log2(line2Ratio);
-    if (transposerNeedsNegation)
-      octs *= -1;
     if (octs === Math.trunc(octs))
       return transposeNOfEdos(line, `${octs}\\1`);
 
@@ -968,17 +945,13 @@ function transposeLine(line, transposer) {
   // If the first line is a decimal type, keep decimals
   else if (lineType === LINE_TYPE.DECIMAL) {
     const lineDecimal = line_to_decimal(line);
-    let transposerDecimal = line_to_decimal(positiveTransposer);
-    if (transposerIsNegative)
-      transposerDecimal = 1 / transposerDecimal;
+    let transposerDecimal = line_to_decimal(transposer);
     return decimal_to_commadecimal(lineDecimal * transposerDecimal);
   }
 
   // All other cases convert to cents, allow negative values
   let lineCents = line_to_cents(line);
-  let transposerCents = line_to_cents(positiveTransposer);
-  if (transposerNeedsNegation)
-    transposerCents *= -1;
+  let transposerCents = line_to_cents(transposer);
 
   const valueOut = lineCents + transposerCents;
   return roundToNDecimals(6, valueOut).toFixed(6);
@@ -988,22 +961,10 @@ function transposeLine(line, transposer) {
 // if transposeAmt=0, this returns unison.
 // if transposeAmt=1, this returns the line unchanged.
 function transposeSelf(line, transposeAmt) {
-  // If necessary strip negative symbol before checking type
+  const lineType = getLineType(line);
   const lineIsNegative = isNegativeInterval(line);
-  
-  let positiveLine = line;
-
-  if (lineIsNegative === LINE_TYPE.INVALID)
+  if (lineIsNegative === LINE_TYPE.INVALID || lineType === LINE_TYPE.INVALID || typeof transposeAmt !== "number")
     return NaN;
-  else if (lineIsNegative)
-    positiveLine = line.replace('-', '');
-
-  const lineType = getLineType(positiveLine);
-
-  if (lineType === LINE_TYPE.INVALID || typeof transposeAmt !== "number")
-    return NaN;
-
-  let lineNeedsNegation = lineIsNegative && (lineType === LINE_TYPE.CENTS || lineType === LINE_TYPE.N_OF_EDO);
 
   const wholeExp = transposeAmt === Math.trunc(transposeAmt);
 
@@ -1028,42 +989,31 @@ function transposeSelf(line, transposeAmt) {
 
   // multiply degree by transpose amount
   else if (wholeExp && lineType === LINE_TYPE.N_OF_EDO) {
-    let [deg, edo] = positiveLine.split("\\");
-    deg *= (lineNeedsNegation) ? -transposeAmt : transposeAmt;
+    let [deg, edo] = line.split("\\");
+    deg *= transposeAmt;
     return `${deg}\\${edo}`;
   }
     
-  let value = line_to_cents(positiveLine);
-  value *= (lineNeedsNegation) ? -transposeAmt : transposeAmt;
+  let value = transposeAmt * line_to_cents(line);
   return value.toFixed(6);
 }
 
 function moduloLine(line, modLine) {
   const modType = getLineType(modLine);
-  if (modType === LINE_TYPE.INVALID)
+  const modIsNegative = isNegativeInterval(modLine);
+  if (modType === LINE_TYPE.INVALID || modIsNegative)
     return NaN;
 
-  // If necessary strip negative symbol before checking type
   const lineIsNegative = isNegativeInterval(line);
-  let positiveLine = line;
-
-  if (lineIsNegative === LINE_TYPE.INVALID)
+  const lineType = getLineType(line);
+  if (lineIsNegative === LINE_TYPE.INVALID || lineType === LINE_TYPE.INVALID)
     return NaN;
-  else if (lineIsNegative)
-    positiveLine = line.replace('-', '');
-
-  const lineType = getLineType(positiveLine);
-  if (lineType === LINE_TYPE.INVALID)
-    return NaN;
-
-  let lineNeedsNegation = lineIsNegative && (lineType === LINE_TYPE.CENTS || lineType === LINE_TYPE.N_OF_EDO);
 
   if (lineType !== LINE_TYPE.CENTS) {
 
     // Preserve N of EDO notation
     if (lineType === LINE_TYPE.N_OF_EDO) {
-      let [numDeg, numEdo] = positiveLine.split("\\").map((x) => parseInt(x));
-      numDeg *= (lineNeedsNegation) ? -1 : 1;
+      let [numDeg, numEdo] = line.split("\\").map((x) => parseInt(x));
 
       // If both are N of EDOs, get LCM edo
       if (modType === LINE_TYPE.N_OF_EDO) {
@@ -1089,7 +1039,7 @@ function moduloLine(line, modLine) {
       // See if mod type is a reasonable whole number ratio
       const modDecimal = line_to_decimal(modLine);
       const mod_cf = get_cf(modDecimal);
-      if (mod_cf.length < 12) { // Maybe less than 15 is sufficient
+      if (mod_cf.length < 12) {
         const lineDecimal = ratio_to_decimal(line);
         return get_convergent(get_cf(logModulo(lineDecimal, modDecimal)));
       }
@@ -1104,8 +1054,7 @@ function moduloLine(line, modLine) {
   }
 
   // All other cases convert to cents
-  return [positiveLine, modLine].map(x => roundToNDecimals(6, line_to_cents(x)))
-                                .map((x, i) => (lineNeedsNegation && i === 0) ? -x : x)
+  return [line, modLine].map(x => roundToNDecimals(6, line_to_cents(x)))
                                 .reduce(mathModulo)
                                 .toFixed(6);
 }
