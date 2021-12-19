@@ -83,6 +83,7 @@ var Keycodes = {
 var Keymap = {}
 for (var id in Layouts) {
   Keymap[id] = buildKeymapFromLayout(Layouts[id]);
+  console.log(Keymap[id])
 }
 
 function buildKeymapFromLayout(rows) {
