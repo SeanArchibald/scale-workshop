@@ -818,8 +818,13 @@ jQuery(document).ready(function () {
 
   // handle QWERTY key active indicator
   is_qwerty_active()
-  jQuery('input,textarea').focusin(is_qwerty_active)
-  jQuery('input,textarea').focusout(is_qwerty_active)
+  jQuery('input,textarea')
+    .focusin(() => {
+      is_qwerty_active()
+    })
+    .focusout(() => {
+      is_qwerty_active()
+    })
 
   // Remove splash screen
   jQuery('div#splash').fadeOut()
