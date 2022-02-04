@@ -1,4 +1,3 @@
-
 /**
  * synth.js
  * Web audio synth
@@ -16,23 +15,31 @@ const synth = new Synth()
 //
 function keycode_to_midinote(keycode) {
   // get row/col vals from the keymap
-  var key = synth.keymap[keycode];
+  var key = synth.keymap[keycode]
 
   if (R.isNil(key)) {
     // return false if there is no note assigned to this key
-    return false;
-  } else {
-    var [row, col] = key;
-    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
+    return false
   }
+
+  var [row, col] = key
+  return (
+    row * synth.isomorphicMapping.vertical +
+    col * synth.isomorphicMapping.horizontal +
+    tuning_table['base_midi_note']
+  )
 }
 
 function touch_to_midinote([row, col]) {
   if (R.isNil(row) || R.isNil(col)) {
     return false
-  } else {
-    return (row * synth.isomorphicMapping.vertical) + (col * synth.isomorphicMapping.horizontal) + tuning_table['base_midi_note'];
   }
+
+  return (
+    row * synth.isomorphicMapping.vertical +
+    col * synth.isomorphicMapping.horizontal +
+    tuning_table['base_midi_note']
+  )
 }
 
 // is_qwerty_active()
@@ -40,63 +47,111 @@ function touch_to_midinote([row, col]) {
 // returns true if focus is in safe area for typing
 // returns false if focus is on an input or textarea element
 function is_qwerty_active() {
-  jQuery("div#qwerty-indicator").empty();
-  var focus = document.activeElement.tagName;
+  jQuery('div#qwerty-indicator').empty()
+  var focus = document.activeElement.tagName
   if (focus == 'TEXTAREA' || focus == 'INPUT') {
-    jQuery("div#qwerty-indicator").html('<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-off" aria-hidden="true" style="color:#d9534f"></span> Keyboard disabled</h4><p>Click here to enable QWERTY keyboard playing.</p>');
-    return false;
-  }
-  else {
-    jQuery("div#qwerty-indicator").html('<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-down" aria-hidden="true"></span> Keyboard enabled</h4><p>Press QWERTY keys to play current tuning.</p>');
-    return true;
+    jQuery('div#qwerty-indicator').html(
+      '<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-off" aria-hidden="true" style="color:#d9534f"></span> Keyboard disabled</h4><p>Click here to enable QWERTY keyboard playing.</p>'
+    )
+    return false
+  } else {
+    jQuery('div#qwerty-indicator').html(
+      '<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-down" aria-hidden="true"></span> Keyboard enabled</h4><p>Press QWERTY keys to play current tuning.</p>'
+    )
+    return true
   }
 }
 
 // KEYDOWN -- capture keyboard input
-document.addEventListener("keydown", function (event) {
-
+document.addEventListener('keydown', function (event) {
   // bail if focus is on an input or textarea element
   if (!is_qwerty_active()) {
-    return false;
+    return false
   }
 
   // bail, if a modifier is pressed alongside the key
   if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
-    return false;
+    return false
   }
 
-  const midiNote = keycode_to_midinote(event.which); // midi note number 0-127
+  const midiNote = keycode_to_midinote(event.which) // midi note number 0-127
   const velocity = 100
 
   if (midiNote !== false) {
-    event.preventDefault();
-    synth.noteOn(midiNote, velocity);
+    event.preventDefault()
+    synth.noteOn(midiNote, velocity)
   }
-});
+})
 
 // KEYUP -- capture keyboard input
-document.addEventListener("keyup", function (event) {
+document.addEventListener('keyup', function (event) {
   // bail, if a modifier is pressed alongside the key
   if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
-    return false;
+    return false
   }
   const midiNote = keycode_to_midinote(event.which)
   if (midiNote !== false) {
-    event.preventDefault();
-    synth.noteOff(midiNote);
+    event.preventDefault()
+    synth.noteOff(midiNote)
   }
-});
+})
 
-// TOUCHSTART -- virtual keyboard
-jQuery('#virtual-keyboard').on('touchstart', 'td', function (event) {
-  event.preventDefault();
-  jQuery(event.originalEvent.targetTouches[0].target).addClass('active');
-  synth.noteOn(R.tap(console.log.bind(console), touch_to_midinote(getCoordsFromKey(event.target))));
-});
+// -[virtual keyboard mobile]-----------------------------------------------
 
-// TOUCHEND -- virtual keyboard
-jQuery('#virtual-keyboard').on('touchend', 'td', function (event) {
-  event.preventDefault();
-  jQuery(event.originalEvent.changedTouches[0].target).removeClass('active');
-  synth.noteOff(R.tap(console.log.bind(console), touch_to_midinote(getCoordsFromKey(event.target))));
-});
+// TODO: multi-touch support; https://stackoverflow.com/a/7236327/1806628
+
+jQuery('#virtual-keyboard')
+  .on('touchstart', (e) => {
+    e.preventDefault()
+    synth.noteOn(touch_to_midinote(getCoordsFromKey(e.target)))
+  })
+  .on('touchend', (e) => {
+    e.preventDefault()
+    synth.noteOff(touch_to_midinote(getCoordsFromKey(e.target)))
+  })
+  .on('touchcancel', (e) => {
+    e.preventDefault()
+    synth.noteOff(touch_to_midinote(getCoordsFromKey(e.target)))
+  })
+// .on('touchmove', (e) => {
+//   e.preventDefault()
+//   console.log('touchmove', e.target)
+// })
+
+// -[virtual keyboard desktop]----------------------------------------------
+
+const LEFT_MOUSE_BTN = 0
+
+let isMousePressed = false
+
+jQuery('#virtual-keyboard')
+  .on('mousedown', 'td', (e) => {
+    if (e.button !== LEFT_MOUSE_BTN) {
+      return
+    }
+
+    isMousePressed = true
+    synth.noteOn(touch_to_midinote(getCoordsFromKey(e.target)))
+  })
+  .on('mouseup', 'td', (e) => {
+    if (e.button !== LEFT_MOUSE_BTN) {
+      return
+    }
+
+    isMousePressed = false
+    synth.noteOff(touch_to_midinote(getCoordsFromKey(e.target)))
+  })
+  .on('mouseenter', 'td', (e) => {
+    if (!isMousePressed) {
+      return
+    }
+
+    synth.noteOn(touch_to_midinote(getCoordsFromKey(e.target)))
+  })
+  .on('mouseleave', 'td', (e) => {
+    if (!isMousePressed) {
+      return
+    }
+
+    synth.noteOff(touch_to_midinote(getCoordsFromKey(e.target)))
+  })
