@@ -241,12 +241,31 @@ div#splash-center img {
   user-select: none;
   cursor: pointer;
 }
-
 #virtual-keyboard td p {
   pointer-events: none;
   word-break: break-word;
   line-height: 1.1em;
   color: #888;
+}
+
+#virtual-keyboard .key.white {
+  background: white;
+}
+#virtual-keyboard .key.white:hover {
+  background: #f4faf2;
+}
+#virtual-keyboard .key.white.active {
+  background: #dff0d8 !important;
+}
+
+#virtual-keyboard .key.black {
+  background: black;
+}
+#virtual-keyboard .key.black:hover {
+  background: #1e1e1e;
+}
+#virtual-keyboard .key.black.active {
+  background: #70786c !important;
 }
 
 /*

@@ -111,14 +111,17 @@ jQuery('#virtual-keyboard')
   .on('touchstart', (e) => {
     e.preventDefault()
     synth.noteOn(touch_to_midinote(getCoordsFromKey(e.target)))
+    e.target.classList.add('active')
   })
   .on('touchend', (e) => {
     e.preventDefault()
     synth.noteOff(touch_to_midinote(getCoordsFromKey(e.target)))
+    e.target.classList.remove('active')
   })
   .on('touchcancel', (e) => {
     e.preventDefault()
     synth.noteOff(touch_to_midinote(getCoordsFromKey(e.target)))
+    e.target.classList.remove('active')
   })
 // .on('touchmove', (e) => {
 //   e.preventDefault()
@@ -139,6 +142,7 @@ jQuery('#virtual-keyboard')
 
     isMousePressed = true
     synth.noteOn(touch_to_midinote(getCoordsFromKey(e.target)))
+    e.target.classList.add('active')
   })
   .on('mouseup', 'td', (e) => {
     if (e.button !== LEFT_MOUSE_BTN) {
@@ -147,6 +151,7 @@ jQuery('#virtual-keyboard')
 
     isMousePressed = false
     synth.noteOff(touch_to_midinote(getCoordsFromKey(e.target)))
+    e.target.classList.remove('active')
   })
   .on('mouseenter', 'td', (e) => {
     if (!isMousePressed) {
@@ -154,6 +159,7 @@ jQuery('#virtual-keyboard')
     }
 
     synth.noteOn(touch_to_midinote(getCoordsFromKey(e.target)))
+    e.target.classList.add('active')
   })
   .on('mouseleave', 'td', (e) => {
     if (!isMousePressed) {
@@ -161,4 +167,5 @@ jQuery('#virtual-keyboard')
     }
 
     synth.noteOff(touch_to_midinote(getCoordsFromKey(e.target)))
+    e.target.classList.remove('active')
   })
