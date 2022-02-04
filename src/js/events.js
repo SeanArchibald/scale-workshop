@@ -501,12 +501,12 @@ jQuery(document).ready(function () {
   jQuery('#nav_play, #launch-kbd').click(function (event) {
     event.preventDefault()
     // close or open the touch keyboard depending on if it is already visible
-    jQuery('#virtual-keyboard').is(':visible') ? touch_kbd_close() : touch_kbd_open()
+    isVirtualKeyboardVisible() ? touch_kbd_close() : touch_kbd_open()
   })
 
   // hide virtual keyboard when mobile hamburger menu button is clicked
   jQuery('button.navbar-toggle').click(function () {
-    if (jQuery('#virtual-keyboard').is(':visible')) {
+    if (isVirtualKeyboardVisible()) {
       jQuery('#virtual-keyboard').slideUp()
     }
   })

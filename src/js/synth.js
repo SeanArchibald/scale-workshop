@@ -64,6 +64,13 @@ function is_qwerty_active() {
 
 // KEYDOWN -- capture keyboard input
 document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape') {
+    if (isVirtualKeyboardVisible()) {
+      touch_kbd_close()
+      return
+    }
+  }
+
   // bail if focus is on an input or textarea element
   if (!is_qwerty_active()) {
     return false
