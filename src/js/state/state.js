@@ -23,5 +23,6 @@ class State extends EventEmitter {
 const state = new State({
   'main volume': 0.8,
   'midi velocity sensing': true,
-  'virtual keyboard visible': false
+  'virtual keyboard visible': false,
+  'mobile menu visible': false
 })

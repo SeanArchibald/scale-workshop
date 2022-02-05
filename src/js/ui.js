@@ -50,10 +50,7 @@ function touch_kbd_open() {
     this.classList.add('key', key_colors[keynum])
   })
 
-  // if the mobile navigation menu is visibile, move it away to reveal the virtual keyboard
-  if (jQuery('button.navbar-toggle').is(':visible')) {
-    jQuery('#bs-example-navbar-collapse-1').toggle()
-  }
+  state.set('mobile menu visible', false)
 
   // show the virtual keyboard
   jQuery('#virtual-keyboard').slideDown()
@@ -63,7 +60,3 @@ function touch_kbd_close() {
   // hide the virtual keyboard
   jQuery('#virtual-keyboard').slideUp()
 }
-
-jQuery('button.navbar-toggle').on('click', () => {
-  jQuery('#bs-example-navbar-collapse-1').toggle()
-})

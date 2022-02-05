@@ -9,12 +9,13 @@ jQuery('#velocity-toggler').on('click', () => {
 })
 
 // hide virtual keyboard when mobile hamburger menu button is clicked
-jQuery('button.navbar-toggle').click(() => {
+jQuery('button.navbar-toggle').on('click', () => {
   state.set('virtual keyboard visible', false)
+  state.set('mobile menu visible', !state.get('mobile menu visible'))
 })
 
 // Touch keyboard (#nav_play) option clicked
-jQuery('#nav_play, #launch-kbd').click((event) => {
+jQuery('#nav_play, #launch-kbd').on('click', (event) => {
   event.preventDefault()
   state.set('virtual keyboard visible', !state.get('virtual keyboard visible'))
 })

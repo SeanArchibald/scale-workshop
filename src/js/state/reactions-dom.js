@@ -21,3 +21,11 @@ state.on('virtual keyboard visible', (value) => {
     touch_kbd_close()
   }
 })
+
+state.on('mobile menu visible', (value) => {
+  if (value) {
+    jQuery('#mobile-menu').show()
+  } else {
+    jQuery('#mobile-menu').hide()
+  }
+})
