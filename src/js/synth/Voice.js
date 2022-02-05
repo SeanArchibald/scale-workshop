@@ -1,4 +1,4 @@
-const getEnvelopeByName = name => {
+const getEnvelopeByName = (name) => {
   const envelope = {
     attackTime: 0,
     decayTime: 0,
@@ -8,15 +8,35 @@ const getEnvelopeByName = name => {
 
   switch (name) {
     case 'organ':
-      envelope.attackTime = 0.01; envelope.decayTime = 0.3; envelope.sustain = 0.8; envelope.releaseTime = 0.01; break;
+      envelope.attackTime = 0.01
+      envelope.decayTime = 0.3
+      envelope.sustain = 0.8
+      envelope.releaseTime = 0.01
+      break
     case 'pad':
-      envelope.attackTime = 1; envelope.decayTime = 3; envelope.sustain = 0.5; envelope.releaseTime = 0.7; break;
+      envelope.attackTime = 1
+      envelope.decayTime = 3
+      envelope.sustain = 0.5
+      envelope.releaseTime = 0.7
+      break
     case 'perc-short':
-      envelope.attackTime = 0.005; envelope.decayTime = 0.3; envelope.sustain = 0.00001; envelope.releaseTime = 0.05; break;
+      envelope.attackTime = 0.005
+      envelope.decayTime = 0.3
+      envelope.sustain = 0.00001
+      envelope.releaseTime = 0.05
+      break
     case 'perc-medium':
-      envelope.attackTime = 0.005; envelope.decayTime = 1.5; envelope.sustain = 0.00001; envelope.releaseTime = 0.25; break;
+      envelope.attackTime = 0.005
+      envelope.decayTime = 1.5
+      envelope.sustain = 0.00001
+      envelope.releaseTime = 0.25
+      break
     case 'perc-long':
-      envelope.attackTime = 0.01; envelope.decayTime = 8; envelope.sustain = 0.00001; envelope.releaseTime = 0.8; break;
+      envelope.attackTime = 0.01
+      envelope.decayTime = 8
+      envelope.sustain = 0.00001
+      envelope.releaseTime = 0.8
+      break
   }
 
   return envelope
@@ -26,41 +46,41 @@ const getEnvelopeName = () => jQuery('#input_select_synth_amp_env').val()
 
 // https://github.com/mohayonao/pseudo-audio-param/blob/master/lib/expr.js#L3
 function getLinearRampToValueAtTime(t, v0, v1, t0, t1) {
-  var a;
+  var a
 
   if (t <= t0) {
-    return v0;
+    return v0
   }
   if (t1 <= t) {
-    return v1;
+    return v1
   }
 
-  a = (t - t0) / (t1 - t0);
+  a = (t - t0) / (t1 - t0)
 
-  return v0 + a * (v1 - v0);
+  return v0 + a * (v1 - v0)
 }
 
 // https://github.com/mohayonao/pseudo-audio-param/blob/master/lib/expr.js#L18
 function getExponentialRampToValueAtTime(t, v0, v1, t0, t1) {
-  var a;
+  var a
 
   if (t <= t0) {
-    return v0;
+    return v0
   }
   if (t1 <= t) {
-    return v1;
+    return v1
   }
   if (v0 === v1) {
-    return v0;
+    return v0
   }
 
-  a = (t - t0) / (t1 - t0);
+  a = (t - t0) / (t1 - t0)
 
   if ((0 < v0 && 0 < v1) || (v0 < 0 && v1 < 0)) {
-    return v0 * Math.pow(v1 / v0, a);
+    return v0 * Math.pow(v1 / v0, a)
   }
 
-  return 0;
+  return 0
 }
 
 const interpolateValueAtTime = (minValue, maxValue, envelope, t) => {
@@ -71,7 +91,13 @@ const interpolateValueAtTime = (minValue, maxValue, envelope, t) => {
 
   // interpolate decay
   if (envelope.attackTime + envelope.decayTime > t) {
-    return getExponentialRampToValueAtTime(t, maxValue, maxValue * envelope.sustain, envelope.attackTime, envelope.attackTime + envelope.decayTime)
+    return getExponentialRampToValueAtTime(
+      t,
+      maxValue,
+      maxValue * envelope.sustain,
+      envelope.attackTime,
+      envelope.attackTime + envelope.decayTime
+    )
   }
 
   // interpolate sustain
@@ -80,17 +106,14 @@ const interpolateValueAtTime = (minValue, maxValue, envelope, t) => {
 
 class Voice {
   constructor(audioCtx) {
-
     // set up oscillator
     this.vco = audioCtx.createOscillator()
 
     // set up amplitude envelope generator
     this.vca = audioCtx.createGain()
-    
   }
 
   init() {
-
     // timing
     const now = this.synth.now()
 
@@ -104,7 +127,6 @@ class Voice {
   }
 
   start(frequency, velocity) {
-
     // start timing
     const now = this.synth.now()
     this.vca.gain._startTime = now
@@ -113,43 +135,42 @@ class Voice {
     this.vco.frequency.setValueAtTime(frequency, now)
 
     // set oscillator waveform
-    switch(this.synth.waveform) {
-      case "warm1":
-        this.vco.setPeriodicWave(synth.custom_waveforms.warm1);
-        break;
-      case "warm2":
-        this.vco.setPeriodicWave(synth.custom_waveforms.warm2);
-        break;
-      case "warm3":
-        this.vco.setPeriodicWave(synth.custom_waveforms.warm3);
-        break;
-      case "warm4":
-        this.vco.setPeriodicWave(synth.custom_waveforms.warm4);
-        break;
-      case "octaver":
-        this.vco.setPeriodicWave(synth.custom_waveforms.octaver);
-        break;
-      case "brightness":
-        this.vco.setPeriodicWave(synth.custom_waveforms.brightness);
-        break;
-      case "harmonicbell":
-        this.vco.setPeriodicWave(synth.custom_waveforms.harmonicbell);
-        break;
-      case "semisine":
-        this.vco.setPeriodicWave(synth.custom_waveforms.semisine);
-        break;
+    switch (this.synth.waveform) {
+      case 'warm1':
+        this.vco.setPeriodicWave(synth.custom_waveforms.warm1)
+        break
+      case 'warm2':
+        this.vco.setPeriodicWave(synth.custom_waveforms.warm2)
+        break
+      case 'warm3':
+        this.vco.setPeriodicWave(synth.custom_waveforms.warm3)
+        break
+      case 'warm4':
+        this.vco.setPeriodicWave(synth.custom_waveforms.warm4)
+        break
+      case 'octaver':
+        this.vco.setPeriodicWave(synth.custom_waveforms.octaver)
+        break
+      case 'brightness':
+        this.vco.setPeriodicWave(synth.custom_waveforms.brightness)
+        break
+      case 'harmonicbell':
+        this.vco.setPeriodicWave(synth.custom_waveforms.harmonicbell)
+        break
+      case 'semisine':
+        this.vco.setPeriodicWave(synth.custom_waveforms.semisine)
+        break
       default:
-        this.vco.type = this.synth.waveform;
+        this.vco.type = this.synth.waveform
     }
 
-    // get target gain   
+    // get target gain
     if (velocity === 0) {
       // in exponentialRampToValueAtTime, target gain can't be 0
-      this.targetGain = 0.00001; 
-    }
-    else {
+      this.targetGain = 0.00001
+    } else {
       // use velocity to determine target gain
-      this.targetGain = velocity = 0.2 * velocity / 127;
+      this.targetGain = velocity = (0.2 * velocity) / 127
     }
 
     // get and set amplitude envelope
@@ -161,33 +182,41 @@ class Voice {
 
     // Attack
     this.cancelEnvelope(this.vca.gain, now)
-    this.vca.gain.setValueAtTime(0, now);
-    this.vca.gain.linearRampToValueAtTime(this.targetGain, now + this.attackTime);
+    this.vca.gain.setValueAtTime(0, now)
+    this.vca.gain.linearRampToValueAtTime(this.targetGain, now + this.attackTime)
 
     // Decay & Sustain
-    this.vca.gain.exponentialRampToValueAtTime(this.targetGain * this.sustain, now + this.attackTime + this.decayTime);
+    this.vca.gain.exponentialRampToValueAtTime(
+      this.targetGain * this.sustain,
+      now + this.attackTime + this.decayTime
+    )
   }
 
   stop() {
-
     // timing
     const now = this.synth.now()
 
     // Release
     this.cancelEnvelope(this.vca.gain, now)
-    this.vca.gain.setTargetAtTime(0.0, now, this.releaseTime);
+    this.vca.gain.setTargetAtTime(0.0, now, this.releaseTime)
   }
 
   // cancels any scheduled envelope changes in a given property's value
   cancelEnvelope(property, now) {
-
     // Firefox and Safari do not support cancelAndHoldAtTime
     if (isFunction(property.cancelAndHoldAtTime)) {
-      property.cancelAndHoldAtTime(now);
-    }
-    else {
-      property.cancelScheduledValues(now);
-      property.setValueAtTime(interpolateValueAtTime(0.00001, this.targetGain, getEnvelopeByName(getEnvelopeName()), now - property._startTime), now)
+      property.cancelAndHoldAtTime(now)
+    } else {
+      property.cancelScheduledValues(now)
+      property.setValueAtTime(
+        interpolateValueAtTime(
+          0.00001,
+          this.targetGain,
+          getEnvelopeByName(getEnvelopeName()),
+          now - property._startTime
+        ),
+        now
+      )
     }
   }
 

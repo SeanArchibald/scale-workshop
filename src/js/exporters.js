@@ -1,9 +1,8 @@
 function export_error() {
-
   // no tuning data to export
   if (R.isNil(tuning_table['freq'][tuning_table['base_midi_note']])) {
-    alert("No tuning data to export.");
-    return true;
+    alert('No tuning data to export.')
+    return true
   }
 }
 
@@ -15,339 +14,351 @@ function save_file(filename, contents, raw, mimeType = 'application/octet-stream
     const blob = new Blob([contents], { type: 'application/octet-stream' })
     link.href = window.URL.createObjectURL(blob)
   } else {
-    link.href = 'data:' + mimeType + encodeURIComponent(contents);
+    link.href = 'data:' + mimeType + encodeURIComponent(contents)
   }
 
   link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })) // opens save dialog
 }
 
 function export_anamark_tun(version) {
-
   if (export_error()) {
-    return;
+    return
   }
 
   // TUN format spec:
   // http://www.mark-henning.de/files/am/Tuning_File_V2_Doc.pdf
   if (version === undefined) {
-    version = 100;
-  } 
+    version = 100
+  }
 
   // Assemble the .tun file contents:
 
   // Comment section
-  var file = "; VAZ Plus/AnaMark softsynth tuning file" + newline;
-  file += "; " + jQuery("#txt_name").val() + newline;
-  file += ";" + newline;
+  var file = '; VAZ Plus/AnaMark softsynth tuning file' + newline
+  file += '; ' + jQuery('#txt_name').val() + newline
+  file += ';' + newline
 
-  var scale_url = get_scale_url();
+  var scale_url = get_scale_url()
   // If version 200 or higher, display the scale URL so user can easily get back to the original scale that generates this tun file.
   // If earlier than version 200, we must be careful that a long URL doesn't break the line-length limit of 512 characters.
   // Note: TUN spec says line-length limit is 255 but in the v1 file format source the limit is indeed 512.
   if (version >= 200 || scale_url.length <= 508) {
-    file += "; " + scale_url + newline;
+    file += '; ' + scale_url + newline
   }
   // If version before 200 and URL is too long, fall back to an alternative way of displaying the original scale data.
   else {
-    for (i=1; i<tuning_table.scale_data.length; i++) {
-      file += "; " + tuning_table.scale_data[i] + newline;
+    for (i = 1; i < tuning_table.scale_data.length; i++) {
+      file += '; ' + tuning_table.scale_data[i] + newline
     }
   }
 
-  file += ";" + newline;
-  file += "; VAZ Plus section" + newline;
-  file += "[Tuning]" + newline;
+  file += ';' + newline
+  file += '; VAZ Plus section' + newline
+  file += '[Tuning]' + newline
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-    file += "note " + i + "=" + parseInt(decimal_to_cents(parseFloat(tuning_table['freq'][i]) / mtof(0))) + newline;
+    file +=
+      'note ' +
+      i +
+      '=' +
+      parseInt(decimal_to_cents(parseFloat(tuning_table['freq'][i]) / mtof(0))) +
+      newline
   }
 
-  file += newline + "; AnaMark section" + newline;
-  file += "[Scale Begin]" + newline;
-  file += 'Format= "AnaMark-TUN"' + newline;
-  file += "FormatVersion= " + version + newline;
-  file += 'FormatSpecs= "http://www.mark-henning.de/eternity/tuningspecs.html"' + newline + newline;
-  file += "[Info]" + newline;
-  file += 'Name= "' + tuning_table['filename'] + '.tun"' + newline;
-  file += 'ID= "' + tuning_table['filename'].replace(/ /g, '') + '.tun"' + newline; // this line strips whitespace from filename, as per .tun spec
-  file += 'Filename= "' + tuning_table['filename'] + '.tun"' + newline;
-  file += 'Description= "' + tuning_table['description'] + '"' + newline;
-  var date = new Date().toISOString().slice(0, 10);
-  file += 'Date= "' + date + '"' + newline;
-  file += 'Editor= "' + APP_TITLE + '"' + newline + newline;
-  file += "[Exact Tuning]" + newline;
+  file += newline + '; AnaMark section' + newline
+  file += '[Scale Begin]' + newline
+  file += 'Format= "AnaMark-TUN"' + newline
+  file += 'FormatVersion= ' + version + newline
+  file += 'FormatSpecs= "http://www.mark-henning.de/eternity/tuningspecs.html"' + newline + newline
+  file += '[Info]' + newline
+  file += 'Name= "' + tuning_table['filename'] + '.tun"' + newline
+  file += 'ID= "' + tuning_table['filename'].replace(/ /g, '') + '.tun"' + newline // this line strips whitespace from filename, as per .tun spec
+  file += 'Filename= "' + tuning_table['filename'] + '.tun"' + newline
+  file += 'Description= "' + tuning_table['description'] + '"' + newline
+  var date = new Date().toISOString().slice(0, 10)
+  file += 'Date= "' + date + '"' + newline
+  file += 'Editor= "' + APP_TITLE + '"' + newline + newline
+  file += '[Exact Tuning]' + newline
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-    file += "note " + i + "= " + decimal_to_cents(parseFloat(tuning_table['freq'][i]) / mtof(0)).toFixed(6) + newline;
+    file +=
+      'note ' +
+      i +
+      '= ' +
+      decimal_to_cents(parseFloat(tuning_table['freq'][i]) / mtof(0)).toFixed(6) +
+      newline
   }
 
   // version 2.00 only
   if (version >= 200) {
-
-    file += newline + "[Functional Tuning]" + newline;
+    file += newline + '[Functional Tuning]' + newline
 
     for (let i = 1; i < tuning_table['note_count']; i++) {
-  
       if (i == tuning_table['note_count'] - 1) {
-        file += "note " + i + '="#>-' + i + ' % ' + decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) + ' ~999"' + newline;
+        file +=
+          'note ' +
+          i +
+          '="#>-' +
+          i +
+          ' % ' +
+          decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) +
+          ' ~999"' +
+          newline
+      } else {
+        file +=
+          'note ' +
+          i +
+          '="#=0 % ' +
+          decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) +
+          '"' +
+          newline
       }
-      else {
-        file += "note " + i + '="#=0 % ' + decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6) + '"' + newline;
-      }
-  
     }
-  
-    file += newline + "; Set reference key to absolute frequency (not scale note but midi key)" + newline;
-    file += "note " + tuning_table['base_midi_note'] + '="! ' + tuning_table['base_frequency'].toFixed(6) + '"' + newline;
 
+    file +=
+      newline + '; Set reference key to absolute frequency (not scale note but midi key)' + newline
+    file +=
+      'note ' +
+      tuning_table['base_midi_note'] +
+      '="! ' +
+      tuning_table['base_frequency'].toFixed(6) +
+      '"' +
+      newline
   }
 
-  file += newline + "[Scale End]" + newline;
+  file += newline + '[Scale End]' + newline
 
-  save_file(tuning_table['filename'] + '.tun', file);
+  save_file(tuning_table['filename'] + '.tun', file)
 
   // success
-  return true;
-
+  return true
 }
 
 function export_scala_scl() {
-
   if (export_error()) {
-    return;
+    return
   }
 
   // assemble the .scl file contents
-  var file = "! " + tuning_table['filename'] + ".scl" + newline;
-  file += "! Created using " + APP_TITLE + newline;
-  file += "!" + newline;
-  file += "! " + get_scale_url() + newline;
-  file += "!" + newline;
-  if (R.isEmpty(jQuery("#txt_name").val())) {
-    file += "Untitled tuning";
+  var file = '! ' + tuning_table['filename'] + '.scl' + newline
+  file += '! Created using ' + APP_TITLE + newline
+  file += '!' + newline
+  file += '! ' + get_scale_url() + newline
+  file += '!' + newline
+  if (R.isEmpty(jQuery('#txt_name').val())) {
+    file += 'Untitled tuning'
+  } else {
+    file += jQuery('#txt_name').val()
   }
-  else {
-    file += jQuery("#txt_name").val();
-  }
-  file += newline + " "
+  file += newline + ' '
 
-  file += tuning_table['note_count'] - 1 + newline;
-  file += "!" + newline;
+  file += tuning_table['note_count'] - 1 + newline
+  file += '!' + newline
 
   for (let i = 1; i < tuning_table['note_count']; i++) {
-    file += " "
+    file += ' '
 
     // if the current interval is n-of-m edo or commadecimal linetype, output as cents instead
-    if (getLineType(tuning_table['scale_data'][i]) === LINE_TYPE.N_OF_EDO || getLineType(tuning_table['scale_data'][i]) === LINE_TYPE.DECIMAL) {
-      file += decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6);
-    }
-    else {
-      file += tuning_table['scale_data'][i];
+    if (
+      getLineType(tuning_table['scale_data'][i]) === LINE_TYPE.N_OF_EDO ||
+      getLineType(tuning_table['scale_data'][i]) === LINE_TYPE.DECIMAL
+    ) {
+      file += decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6)
+    } else {
+      file += tuning_table['scale_data'][i]
     }
 
     file += newline
   }
 
-  save_file(tuning_table['filename'] + '.scl', file);
+  save_file(tuning_table['filename'] + '.scl', file)
 
   // success
-  return true;
-
+  return true
 }
 
 function export_scala_kbm() {
-
   if (export_error()) {
-    return;
+    return
   }
 
   // assemble the .kbm file contents
-  var file = "! Template for a keyboard mapping" + newline;
-  file += "!" + newline;
-  file += "! Size of map. The pattern repeats every so many keys:" + newline;
-  file += parseInt(tuning_table['note_count'] - 1) + newline;
-  file += "! First MIDI note number to retune:" + newline;
-  file += "0" + newline;
-  file += "! Last MIDI note number to retune:" + newline;
-  file += "127" + newline;
-  file += "! Middle note where the first entry of the mapping is mapped to:" + newline;
-  file += parseInt(tuning_table['base_midi_note']) + newline;
-  file += "! Reference note for which frequency is given:" + newline;
-  file += parseInt(tuning_table['base_midi_note']) + newline;
-  file += "! Frequency to tune the above note to" + newline;
-  file += parseFloat(tuning_table['base_frequency']) + newline;
-  file += "! Scale degree to consider as formal octave (determines difference in pitch" + newline;
-  file += "! between adjacent mapping patterns):" + newline;
-  file += parseInt(tuning_table['note_count'] - 1) + newline;
-  file += "! Mapping." + newline;
-  file += "! The numbers represent scale degrees mapped to keys. The first entry is for" + newline;
-  file += "! the given middle note, the next for subsequent higher keys." + newline;
-  file += "! For an unmapped key, put in an \"x\". At the end, unmapped keys may be left out." + newline;
+  var file = '! Template for a keyboard mapping' + newline
+  file += '!' + newline
+  file += '! Size of map. The pattern repeats every so many keys:' + newline
+  file += parseInt(tuning_table['note_count'] - 1) + newline
+  file += '! First MIDI note number to retune:' + newline
+  file += '0' + newline
+  file += '! Last MIDI note number to retune:' + newline
+  file += '127' + newline
+  file += '! Middle note where the first entry of the mapping is mapped to:' + newline
+  file += parseInt(tuning_table['base_midi_note']) + newline
+  file += '! Reference note for which frequency is given:' + newline
+  file += parseInt(tuning_table['base_midi_note']) + newline
+  file += '! Frequency to tune the above note to' + newline
+  file += parseFloat(tuning_table['base_frequency']) + newline
+  file += '! Scale degree to consider as formal octave (determines difference in pitch' + newline
+  file += '! between adjacent mapping patterns):' + newline
+  file += parseInt(tuning_table['note_count'] - 1) + newline
+  file += '! Mapping.' + newline
+  file += '! The numbers represent scale degrees mapped to keys. The first entry is for' + newline
+  file += '! the given middle note, the next for subsequent higher keys.' + newline
+  file +=
+    '! For an unmapped key, put in an "x". At the end, unmapped keys may be left out.' + newline
 
   for (let i = 0; i < parseInt(tuning_table['note_count'] - 1); i++) {
-    file += i + newline;
+    file += i + newline
   }
 
-  save_file(tuning_table['filename'] + '.kbm', file);
+  save_file(tuning_table['filename'] + '.kbm', file)
 
   // success
-  return true;
-
+  return true
 }
 
 function export_maxmsp_coll() {
-
   if (export_error()) {
-    return;
+    return
   }
 
   // assemble the coll file contents
-  var file = "# Tuning file for Max/MSP coll objects. - Created using " + APP_TITLE + newline;
-  file += "# " + jQuery("#txt_name").val() + newline;
-  file += "#" + newline;
-  file += "# " + get_scale_url() + newline;
-  file += "#" + newline;
+  var file = '# Tuning file for Max/MSP coll objects. - Created using ' + APP_TITLE + newline
+  file += '# ' + jQuery('#txt_name').val() + newline
+  file += '#' + newline
+  file += '# ' + get_scale_url() + newline
+  file += '#' + newline
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-    file += i + ", " + tuning_table['freq'][i].toFixed(7) + ";" + newline;
+    file += i + ', ' + tuning_table['freq'][i].toFixed(7) + ';' + newline
   }
 
-  save_file(tuning_table['filename'] + '.txt', file);
+  save_file(tuning_table['filename'] + '.txt', file)
 
   // success
-  return true;
-
+  return true
 }
 
 function export_pd_text() {
-
   if (export_error()) {
-    return;
+    return
   }
 
   // assemble the text file contents
-  var file = "";
+  var file = ''
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-    file += tuning_table['freq'][i].toFixed(7) + ";" + newline;
+    file += tuning_table['freq'][i].toFixed(7) + ';' + newline
   }
 
-  save_file(tuning_table['filename'] + '.txt', file);
+  save_file(tuning_table['filename'] + '.txt', file)
 
   // success
-  return true;
-
+  return true
 }
 
 function export_kontakt_script() {
-
   if (export_error()) {
-    return;
+    return
   }
 
   // assemble the kontakt script contents
-  var file = "{**************************************" + newline;
-  file += jQuery("#txt_name").val() + newline;
-  file += "MIDI note " + tuning_table['base_midi_note'] + " (" + midi_note_number_to_name(tuning_table['base_midi_note']) + ") = " + parseFloat(tuning_table['base_frequency']) + " Hz" + newline;
-  file += "Created using " + APP_TITLE + newline + newline;
-  file += get_scale_url() + newline;
-  file += "****************************************}" + newline + newline;
+  var file = '{**************************************' + newline
+  file += jQuery('#txt_name').val() + newline
+  file +=
+    'MIDI note ' +
+    tuning_table['base_midi_note'] +
+    ' (' +
+    midi_note_number_to_name(tuning_table['base_midi_note']) +
+    ') = ' +
+    parseFloat(tuning_table['base_frequency']) +
+    ' Hz' +
+    newline
+  file += 'Created using ' + APP_TITLE + newline + newline
+  file += get_scale_url() + newline
+  file += '****************************************}' + newline + newline
 
-  file += "on init" + newline;
-  file += "declare %keynum[" + TUNING_MAX_SIZE + "]" + newline;
-  file += "declare %tune[" + TUNING_MAX_SIZE + "]" + newline;
-  file += "declare $bend" + newline;
-  file += "declare $key" + newline + newline;
+  file += 'on init' + newline
+  file += 'declare %keynum[' + TUNING_MAX_SIZE + ']' + newline
+  file += 'declare %tune[' + TUNING_MAX_SIZE + ']' + newline
+  file += 'declare $bend' + newline
+  file += 'declare $key' + newline + newline
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-
-    var this_note = ftom(tuning_table['freq'][i]);
+    var this_note = ftom(tuning_table['freq'][i])
 
     // if we're out of range of the default Kontakt tuning, leave note as default tuning
     if (this_note[0] < 0 || this_note[0] >= TUNING_MAX_SIZE) {
-
-      file += "%keynum[" + i + "] := " + i + newline;
-      file += "%tune[" + i + "] := 0" + newline;
-
+      file += '%keynum[' + i + '] := ' + i + newline
+      file += '%tune[' + i + '] := 0' + newline
     }
 
     // success, we're in range of another note, so we'll change the tuning +/- 50c
     else {
-
-      file += "%keynum[" + i + "] := " + this_note[0] + newline;
-      file += "%tune[" + i + "] := " + parseInt(this_note[1] * 1000) + newline;
-
+      file += '%keynum[' + i + '] := ' + this_note[0] + newline
+      file += '%tune[' + i + '] := ' + parseInt(this_note[1] * 1000) + newline
     }
-
   }
 
-  file += "end on" + newline + newline;
+  file += 'end on' + newline + newline
 
-  file += "on note" + newline;
-  file += "$key := %keynum[$EVENT_NOTE]" + newline;
-  file += "$bend := %tune[$EVENT_NOTE]" + newline;
-  file += "change_note ($EVENT_ID, $key)" + newline;
-  file += "change_tune ($EVENT_ID, $bend, 0)" + newline;
-  file += "end on" + newline;
+  file += 'on note' + newline
+  file += '$key := %keynum[$EVENT_NOTE]' + newline
+  file += '$bend := %tune[$EVENT_NOTE]' + newline
+  file += 'change_note ($EVENT_ID, $key)' + newline
+  file += 'change_tune ($EVENT_ID, $bend, 0)' + newline
+  file += 'end on' + newline
 
-  save_file(tuning_table['filename'] + '.txt', file);
+  save_file(tuning_table['filename'] + '.txt', file)
 
   // success
-  return true;
-
+  return true
 }
 
 function export_soniccouture_nka() {
-
   if (export_error()) {
-    return;
+    return
   }
 
   // assemble the nka contents
   // first line should always be "%XenSetup"
-  var file = "%XenSetup" + newline;
+  var file = '%XenSetup' + newline
 
   // loop through 128 notes to get semitone offset
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-
-    var this_note = ftom(tuning_table['freq'][i]);
+    var this_note = ftom(tuning_table['freq'][i])
 
     // if we're out of MIDI note range, leave semitone offset as default
     if (this_note[0] < 0 || this_note[0] >= TUNING_MAX_SIZE) {
-      file += "0" + newline;
+      file += '0' + newline
     }
 
     // success, we're in range of another note, so get the semitone offset
     else {
-      file += (this_note[0]-i) + newline;
+      file += this_note[0] - i + newline
     }
-
   }
 
   // loop through 128 notes to get cents offset
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-
-    var this_note = ftom(tuning_table['freq'][i]);
+    var this_note = ftom(tuning_table['freq'][i])
 
     // if we're out of MIDI note range, leave semitone offset as default
     if (this_note[0] < 0 || this_note[0] >= TUNING_MAX_SIZE) {
-      file += "0" + newline;
+      file += '0' + newline
     }
 
     // success, we're in range of another note, so we'll change the tuning +/- 5000 hundredths of a cent
     else {
-      file += parseInt(this_note[1] * 100) + newline;
+      file += parseInt(this_note[1] * 100) + newline
     }
-    
   }
 
   // Soniccouture .nka format requires 0 followed by newline to end the file
-  file += "0" + newline;
+  file += '0' + newline
 
-  save_file(tuning_table['filename'] + '.nka', file);
+  save_file(tuning_table['filename'] + '.nka', file)
 
   // success
-  return true;
-
+  return true
 }
 
 function exportImageLinePitchMap(range) {
@@ -358,7 +369,9 @@ function exportImageLinePitchMap(range) {
   }
   const NB_NOTES = 121 // IL products can only retune from C0 to C10
   const HEADER_BYTES = Uint8Array.from([3, 0, 0, 0, 3, 0, 0, 0, NB_NOTES, 0, 0, 0])
-  const ENDING_BYTES = Uint8Array.from([0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255])
+  const ENDING_BYTES = Uint8Array.from([
+    0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
+  ])
   const X_STRIDE = 1 / NB_NOTES // constant x offset from one point to the next
   const CURVE_DATA = 33554432 // curve data for straight line, observed experimentally
 
@@ -374,7 +387,8 @@ function exportImageLinePitchMap(range) {
     const normalizedOffset = ((offset / 1200 + baseFreqOffset) / range) * 0.5 + 0.5
     const yCoord = clamp(0, 1, normalizedOffset)
     pointsDoubles[i * 3 + 1] = yCoord
-    if (i !== 0) { // no x offset and no curve data for first point
+    if (i !== 0) {
+      // no x offset and no curve data for first point
       pointsDoubles[i * 3] = X_STRIDE
       pointsUint32[i * 6 + 4] = 0
       pointsUint32[i * 6 + 5] = CURVE_DATA
@@ -406,7 +420,9 @@ function exportSytrusPitchMap() {
 
 function getMnlgtunTuningInfoXML(useScaleFormat, programmer, comment) {
   // Builds an XML file necessary for the .mnlgtun file format
-  const rootName = useScaleFormat ? 'minilogue_TuneScaleInformation' : 'minilogue_TuneOctInformation'
+  const rootName = useScaleFormat
+    ? 'minilogue_TuneScaleInformation'
+    : 'minilogue_TuneOctInformation'
   const xml = document.implementation.createDocument(null, rootName)
 
   const Programmer = xml.createElement('Programmer')
@@ -467,10 +483,11 @@ function exportMnlgtun(useScaleFormat) {
   }
 
   // the index of the table that's equal to the baseNote should have the following value
-  const refOffsetCents = MNLG_A_REF.val + decimal_to_cents(tuning_table.base_frequency / MNLG_A_REF.freq)
+  const refOffsetCents =
+    MNLG_A_REF.val + decimal_to_cents(tuning_table.base_frequency / MNLG_A_REF.freq)
 
   // offset cents array for binary conversion
-  let centsTable = tuning_table.cents.map(c => roundToNDecimals(3, c + refOffsetCents))
+  let centsTable = tuning_table.cents.map((c) => roundToNDecimals(3, c + refOffsetCents))
 
   if (useScaleFormat) {
     // ensure table length is exactly 128
@@ -478,16 +495,18 @@ function exportMnlgtun(useScaleFormat) {
 
     // this shouldn't happen unless something goes really wrong
     if (centsTable.length !== MNLG_SCALESIZE) {
-      console.log('Somehow the mnlgtun table was less than 128 values, the end will be padded with 0s.')
+      console.log(
+        'Somehow the mnlgtun table was less than 128 values, the end will be padded with 0s.'
+      )
       const padding = new Array(MNLG_SCALESIZE - centsTable.length).fill(0)
       centsTable = [...centsTable, ...padding]
     }
-    
   } else {
     // normalize around root, truncate to 12 notes, and wrap flattened Cs
     let cNote = parseInt(tuning_table.base_midi_note / MNLG_OCTAVESIZE) * MNLG_OCTAVESIZE
-    centsTable = centsTable.slice(cNote, cNote + MNLG_OCTAVESIZE)
-                           .map(cents => mathModulo(cents - MNLG_C_REF.val, MNLG_MAXCENTS))
+    centsTable = centsTable
+      .slice(cNote, cNote + MNLG_OCTAVESIZE)
+      .map((cents) => mathModulo(cents - MNLG_C_REF.val, MNLG_MAXCENTS))
   }
 
   // convert to binary
@@ -496,7 +515,9 @@ function exportMnlgtun(useScaleFormat) {
   // prepare files for zipping
   const tuningInfo = getMnlgtunTuningInfoXML(useScaleFormat, 'ScaleWorkshop', tuning_table.filename)
   const fileInfo = getMnlgtunFileInfoXML(useScaleFormat)
-  const [fileNameHeader, fileType] = useScaleFormat ? ['TunS_000.TunS_', '.mnlgtuns'] : ['TunO_000.TunO_', '.mnlgtuno']
+  const [fileNameHeader, fileType] = useScaleFormat
+    ? ['TunS_000.TunS_', '.mnlgtuns']
+    : ['TunO_000.TunO_', '.mnlgtuno']
 
   // build zip
   const zip = new JSZip()
@@ -504,10 +525,10 @@ function exportMnlgtun(useScaleFormat) {
   zip.file(fileNameHeader + 'info', tuningInfo.documentElement.outerHTML)
   zip.file('FileInformation.xml', fileInfo.documentElement.outerHTML)
   zip.generateAsync({ type: 'base64' }).then(
-    base64 => {
+    (base64) => {
       save_file(tuning_table.filename + fileType, base64, false, 'application/zip;base64,')
     },
-    err => alert(err)
+    (err) => alert(err)
   )
 
   // success
@@ -515,44 +536,58 @@ function exportMnlgtun(useScaleFormat) {
 }
 
 function export_reference_deflemask() {
-
   // This exporter converts your tuning data into a readable format you can easily input manually into Deflemask.
   // For example if you have a note 50 cents below A4, you would input that into Deflemask as A-4 -- - E5 40
   // Deflemask manual: http://www.deflemask.com/manual.pdf
 
   if (export_error()) {
-    return;
+    return
   }
 
   // assemble the text file contents
-  var file = tuning_table['description'] + newline + "Reference for Deflemask note input - generated by " + APP_TITLE + newline + newline;
-  file += get_scale_url() + newline + newline;
+  var file =
+    tuning_table['description'] +
+    newline +
+    'Reference for Deflemask note input - generated by ' +
+    APP_TITLE +
+    newline +
+    newline
+  file += get_scale_url() + newline + newline
 
   for (let i = 0; i < TUNING_MAX_SIZE; i++) {
-
     // convert frequency into midi note number + cents offset
-    var data = ftom(tuning_table['freq'][i]);
+    var data = ftom(tuning_table['freq'][i])
 
     // acceptable range is C#0 to B7 (MIDI notes 1-95). skip this note if it's out of range
-    if (data[0] < 1 || data[0] > 95) continue;
+    if (data[0] < 1 || data[0] > 95) continue
 
     // convert note number to note name
-    data[0] = midi_note_number_to_name(data[0]);
-    data[0] = (data[0].length == 2) ? data[0].slice(0, 1) + "-" + data[0].slice(1) : data[0];
+    data[0] = midi_note_number_to_name(data[0])
+    data[0] = data[0].length == 2 ? data[0].slice(0, 1) + '-' + data[0].slice(1) : data[0]
 
     // convert cents offset to hex where -100c=00, 0c=80, 100c=FF
-    data[1] = Math.round(128 + (data[1] * 1.28)).toString(16).toUpperCase();
+    data[1] = Math.round(128 + data[1] * 1.28)
+      .toString(16)
+      .toUpperCase()
 
     // add data to text file
-    data = "[" + data[0] + " xx] [xx E5 " + data[1] + "]";
-    file += data + " ..... " + i + ": " + tuning_table['freq'][i].toFixed(2) + " Hz / " + tuning_table['cents'][i].toFixed(2) + " cents" + newline;
+    data = '[' + data[0] + ' xx] [xx E5 ' + data[1] + ']'
+    file +=
+      data +
+      ' ..... ' +
+      i +
+      ': ' +
+      tuning_table['freq'][i].toFixed(2) +
+      ' Hz / ' +
+      tuning_table['cents'][i].toFixed(2) +
+      ' cents' +
+      newline
   }
 
-  save_file(tuning_table['filename'] + '.txt', file);
+  save_file(tuning_table['filename'] + '.txt', file)
 
   // success
-  return true;
-
+  return true
 }
 
 // TODO: improve with currying?
@@ -577,46 +612,42 @@ function exportReaperNamedNotes(
   }
 
   // Prepare suffix containing chosen options
-  let options = ['NoteNames'];
-  
-  if (pitchFormat !== 'scale data')
-    options.push([pitchFormat]);
-    
+  let options = ['NoteNames']
+
+  if (pitchFormat !== 'scale data') options.push([pitchFormat])
+
   if (showPeriodNumbers) {
     if (rootPeriod !== 0) {
-      const rootPeriodStr = (rootPeriod < 0) ? rootPeriod : `+${rootPeriod}`;
-      options.push(`${rootPeriodStr}p`);
-    } else
-      options.push('p');
+      const rootPeriodStr = rootPeriod < 0 ? rootPeriod : `+${rootPeriod}`
+      options.push(`${rootPeriodStr}p`)
+    } else options.push('p')
   }
 
   if (pitchFormat === 'cents' && centsRoot !== 0) {
-    const centsRootStr = (centsRoot < 0) ? centsRoot : `+${centsRoot}`;
-    options.push(`${centsRootStr}c`);
-  }
-  
-  else if (pitchFormat === 'degree' && degreeRoot !== 0) {
-    const degreeRootStr = (degreeRoot < 0) ? degreeRoot : `+${degreeRoot}`;
-    options.push(`${degreeRootStr}deg`);
+    const centsRootStr = centsRoot < 0 ? centsRoot : `+${centsRoot}`
+    options.push(`${centsRootStr}c`)
+  } else if (pitchFormat === 'degree' && degreeRoot !== 0) {
+    const degreeRootStr = degreeRoot < 0 ? degreeRoot : `+${degreeRoot}`
+    options.push(`${degreeRootStr}deg`)
   }
 
-  if (calculatePeriodInPitch)
-    options.push('exact');
+  if (calculatePeriodInPitch) options.push('exact')
 
-  const filenameSuffix = options.join('_');
+  const filenameSuffix = options.join('_')
 
   // general properties
-  const tuningSize  = tuning_table.note_count - 1
-  const period      = tuning_table.scale_data[tuningSize];
+  const tuningSize = tuning_table.note_count - 1
+  const period = tuning_table.scale_data[tuningSize]
 
   // line building functions
-  const prepend           = (num, line) => `${num} ${line}`
-  const rootOffset        = num => num - tuning_table.base_midi_note
-  const circularIndex     = num => mathModulo(rootOffset(num), tuningSize)
-  const periodNumber      = num => Math.floor(rootOffset(num) / tuningSize + rootPeriod)
-  const appendPeriodNum   = (line, num) => `${line} (${periodNumber(num)})`
-  const calcPeriod        = (line, ind) => transposeLine(line, transposeSelf(period, periodNumber(ind) + rootPeriod))
-  const addCentsRoot      = cents => parseFloat(cents) + centsRoot
+  const prepend = (num, line) => `${num} ${line}`
+  const rootOffset = (num) => num - tuning_table.base_midi_note
+  const circularIndex = (num) => mathModulo(rootOffset(num), tuningSize)
+  const periodNumber = (num) => Math.floor(rootOffset(num) / tuningSize + rootPeriod)
+  const appendPeriodNum = (line, num) => `${line} (${periodNumber(num)})`
+  const calcPeriod = (line, ind) =>
+    transposeLine(line, transposeSelf(period, periodNumber(ind) + rootPeriod))
+  const addCentsRoot = (cents) => parseFloat(cents) + centsRoot
 
   let fileFunction, pitchTable
 
@@ -630,7 +661,7 @@ function exportReaperNamedNotes(
     const unison = transposeSelf(period, 0) // use a 1/1 in the line type of the period
     pitchTable = [unison, ...tuning_table.scale_data.slice(1, -1)]
 
-    let scalePitch = (calculatePeriodInPitch) 
+    let scalePitch = calculatePeriodInPitch
       ? (line, ind) => pitchLine(calcPeriod(line, ind), ind)
       : (line, ind) => pitchLine(line, ind)
 
@@ -640,8 +671,8 @@ function exportReaperNamedNotes(
       return prepend(ind, scalePitch(table[circularIndex(ind)], ind))
     }
 
-    fileFunction = table => tuning_table.cents.map((x, i, a) => scaleData(i, a, table)).join(newline)
-  
+    fileFunction = (table) =>
+      tuning_table.cents.map((x, i, a) => scaleData(i, a, table)).join(newline)
   } else if (pitchFormat !== 'degree') {
     let pitchOffset = (line, ind) => pitchLine(roundToNDecimals(6, parseFloat(line)), ind)
 
@@ -664,10 +695,13 @@ function exportReaperNamedNotes(
     if (!calculatePeriodInPitch) {
       const pitchValue = (i, table) => {
         const ind = table.length - i - 1
-        return prepend(ind, pitchOffset(table[circularIndex(ind) + tuning_table.base_midi_note], ind))
+        return prepend(
+          ind,
+          pitchOffset(table[circularIndex(ind) + tuning_table.base_midi_note], ind)
+        )
       }
 
-      fileFunction = table => table.map((x, i, a) => pitchValue(i, a)).join(newline)
+      fileFunction = (table) => table.map((x, i, a) => pitchValue(i, a)).join(newline)
 
       // iterate over the whole table
     } else {
@@ -676,7 +710,7 @@ function exportReaperNamedNotes(
         return prepend(ind, pitchOffset(table[ind], ind))
       }
 
-      fileFunction = table => table.map((x, i) => pitchValue(i, table)).join(newline)
+      fileFunction = (table) => table.map((x, i) => pitchValue(i, table)).join(newline)
     }
 
     // enumerate scale degrees
@@ -685,14 +719,13 @@ function exportReaperNamedNotes(
     const degreeLine = (num, table) => {
       const ind = table.length - num - 1
       let deg = rootOffset(ind) + degreeRoot + tuningSize * rootPeriod
-      
-      if (!calculatePeriodInPitch) 
-        deg = mathModulo(deg, tuningSize)
+
+      if (!calculatePeriodInPitch) deg = mathModulo(deg, tuningSize)
 
       return prepend(ind, pitchLine(`${deg}\\${tuningSize}`, ind))
     }
 
-    fileFunction = table => table.map((x, i) => degreeLine(i, table)).join(newline)
+    fileFunction = (table) => table.map((x, i) => degreeLine(i, table)).join(newline)
   }
 
   file += fileFunction(pitchTable)
@@ -708,24 +741,44 @@ function exportReaperNamedNotes(
  */
 
 function get_scale_url() {
-
-  var url = new URL(window.location.href);
-  var protocol = !R.isEmpty(url.protocol) ? url.protocol + '//' : 'http://';
-  var host = url.host;
-  var pathname = !R.isEmpty(url.pathname) ? url.pathname : '/scaleworkshop/';
+  var url = new URL(window.location.href)
+  var protocol = !R.isEmpty(url.protocol) ? url.protocol + '//' : 'http://'
+  var host = url.host
+  var pathname = !R.isEmpty(url.pathname) ? url.pathname : '/scaleworkshop/'
   // var domain = !R.isNil(window.location.href) ? window.location.href : 'http://sevish.com/scaleworkshop';
-  var name = encodeURIComponent(jQuery("#txt_name").val());
-  var data = encodeURIComponent(jQuery("#txt_tuning_data").val());
-  var freq = encodeURIComponent(jQuery("#txt_base_frequency").val());
-  var midi = encodeURIComponent(jQuery("#txt_base_midi_note").val());
-  var vert = encodeURIComponent(synth.isomorphicMapping.vertical);
-  var horiz = encodeURIComponent(synth.isomorphicMapping.horizontal);
-  var colors = encodeURIComponent(jQuery("#input_key_colors").val());
-  var waveform = encodeURIComponent(jQuery('#input_select_synth_waveform').val());
-  var ampenv = encodeURIComponent(jQuery('#input_select_synth_amp_env').val());
+  var name = encodeURIComponent(jQuery('#txt_name').val())
+  var data = encodeURIComponent(jQuery('#txt_tuning_data').val())
+  var freq = encodeURIComponent(jQuery('#txt_base_frequency').val())
+  var midi = encodeURIComponent(jQuery('#txt_base_midi_note').val())
+  var vert = encodeURIComponent(synth.isomorphicMapping.vertical)
+  var horiz = encodeURIComponent(synth.isomorphicMapping.horizontal)
+  var colors = encodeURIComponent(jQuery('#input_key_colors').val())
+  var waveform = encodeURIComponent(jQuery('#input_select_synth_waveform').val())
+  var ampenv = encodeURIComponent(jQuery('#input_select_synth_amp_env').val())
 
-  return protocol + host + pathname + '?name=' + name + '&data=' + data + '&freq=' + freq + '&midi=' + midi + '&vert=' + vert + '&horiz=' + horiz + '&colors=' + colors + '&waveform=' + waveform + '&ampenv=' + ampenv;
-
+  return (
+    protocol +
+    host +
+    pathname +
+    '?name=' +
+    name +
+    '&data=' +
+    data +
+    '&freq=' +
+    freq +
+    '&midi=' +
+    midi +
+    '&vert=' +
+    vert +
+    '&horiz=' +
+    horiz +
+    '&colors=' +
+    colors +
+    '&waveform=' +
+    waveform +
+    '&ampenv=' +
+    ampenv
+  )
 }
 
 /**
@@ -734,7 +787,7 @@ function get_scale_url() {
 
 function update_page_url(url = get_scale_url()) {
   // update this change in the browser's Back/Forward navigation
-  history.pushState({}, tuning_table['description'], url);
+  history.pushState({}, tuning_table['description'], url)
 }
 
 /**
@@ -742,36 +795,33 @@ function update_page_url(url = get_scale_url()) {
  */
 
 function export_url() {
-
-  var export_url = window.location.href;
+  var export_url = window.location.href
 
   if (export_error()) {
-    export_url = "http://sevish.com/scaleworkshop/";
+    export_url = 'http://sevish.com/scaleworkshop/'
   }
 
   // copy url in to url field
-  jQuery("#input_share_url").val(export_url);
-  console.log("export_url = " + export_url);
+  jQuery('#input_share_url').val(export_url)
+  console.log('export_url = ' + export_url)
 
-  jQuery("#input_share_url").select();
-  jQuery("#modal_share_url").dialog({
+  jQuery('#input_share_url').select()
+  jQuery('#modal_share_url').dialog({
     modal: true,
     buttons: {
-      "Copy URL": function () {
-        jQuery("#input_share_url").select();
-        document.execCommand("Copy");
-        jQuery(this).dialog('close');
+      'Copy URL': function () {
+        jQuery('#input_share_url').select()
+        document.execCommand('Copy')
+        jQuery(this).dialog('close')
       }
     }
-  });
-
+  })
 
   // url field clicked
-  jQuery("#input_share_url").click(function (event) {
-    jQuery(this).select();
-  });
+  jQuery('#input_share_url').click(function (event) {
+    jQuery(this).select()
+  })
 
   // success
-  return true;
-
+  return true
 }
