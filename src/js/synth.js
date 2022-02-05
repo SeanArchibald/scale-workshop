@@ -77,7 +77,7 @@ document.addEventListener('keydown', function (event) {
   }
 
   // bail, if a modifier is pressed alongside the key
-  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+  if (!isSimpleKeypress(event)) {
     return false
   }
 
@@ -93,7 +93,7 @@ document.addEventListener('keydown', function (event) {
 // KEYUP -- capture keyboard input
 document.addEventListener('keyup', function (event) {
   // bail, if a modifier is pressed alongside the key
-  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+  if (!isSimpleKeypress(event)) {
     return false
   }
   const midiNote = keycode_to_midinote(event.which)
