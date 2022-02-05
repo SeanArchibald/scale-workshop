@@ -555,25 +555,6 @@ jQuery(document).ready(function () {
     }
   })
 
-  // ------------------------------------
-
-  // data changed, handle programmatic reaction - no jQuery
-  state.on('main volume', (newValue) => {
-    synth.setMainVolume(newValue)
-  })
-
-  // data changed, sync it with the DOM
-  state.on('main volume', (newValue) => {
-    jQuery('#input_range_main_vol').val(newValue)
-  })
-
-  // DOM changed, need to sync it with state
-  jQuery('#input_range_main_vol').on('input', function () {
-    state.set('main volume', parseFloat(jQuery(this).val()))
-  })
-
-  // ------------------------------------
-
   // Synth Settings - Waveform
   jQuery('#input_select_synth_waveform').change(function (event) {
     synth.waveform = jQuery('#input_select_synth_waveform').val()
