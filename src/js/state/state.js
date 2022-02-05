@@ -13,6 +13,11 @@ class State extends EventEmitter {
       this.emit(key, newValue, oldValue)
     }
   }
+  ready() {
+    Object.entries(this.data).forEach(([key, value]) => {
+      this.emit(key, value)
+    })
+  }
 }
 
 const state = new State({
