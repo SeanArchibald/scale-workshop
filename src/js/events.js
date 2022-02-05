@@ -497,20 +497,6 @@ jQuery(document).ready(function () {
     jQuery('#input_reaper_root_period').prop('disabled', !event.target.checked)
   })
 
-  // Touch keyboard (#nav_play) option clicked
-  jQuery('#nav_play, #launch-kbd').click(function (event) {
-    event.preventDefault()
-    // close or open the touch keyboard depending on if it is already visible
-    isVirtualKeyboardVisible() ? touch_kbd_close() : touch_kbd_open()
-  })
-
-  // hide virtual keyboard when mobile hamburger menu button is clicked
-  jQuery('button.navbar-toggle').click(function () {
-    if (isVirtualKeyboardVisible()) {
-      jQuery('#virtual-keyboard').slideUp()
-    }
-  })
-
   // About Scale Workshop option clicked
   jQuery('#about_scale_workshop').click(function (event) {
     event.preventDefault()

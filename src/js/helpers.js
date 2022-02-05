@@ -1309,8 +1309,6 @@ function scaleSort(scale = []) {
   })
 }
 
-const isVirtualKeyboardVisible = () => jQuery('#virtual-keyboard').is(':visible')
-
 const isSimpleKeypress = (event) => {
   return !(event.ctrlKey || event.shiftKey || event.altKey || event.metaKey || event.repeat)
 }

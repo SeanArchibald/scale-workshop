@@ -13,3 +13,11 @@ state.on('midi velocity sensing', (value) => {
     velocityToggleBtn.removeClass('btn-success').addClass('btn-basic').text('off')
   }
 })
+
+state.on('virtual keyboard visible', (value) => {
+  if (value) {
+    touch_kbd_open()
+  } else {
+    touch_kbd_close()
+  }
+})

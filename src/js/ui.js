@@ -23,8 +23,16 @@ function touch_kbd_open() {
   // check if scale already set up - we can't use the touch kbd if there is no scale
   if (tuning_table['note_count'] == 0) {
     alert("Can't open the touch keyboard until you have created or loaded a scale.")
-    return false
+    return
   }
+
+  // remove info from keys
+  jQuery('#virtual-keyboard td').each(function (index) {
+    // clear content of cell
+    jQuery(this).empty()
+    // remove any classes that might be on the cell
+    jQuery(this).attr('class', '')
+  })
 
   // display tuning info on virtual keys
   jQuery('#virtual-keyboard td').each(function () {
@@ -44,26 +52,18 @@ function touch_kbd_open() {
 
   // if the mobile navigation menu is visibile, move it away to reveal the virtual keyboard
   if (jQuery('button.navbar-toggle').is(':visible')) {
-    jQuery('button.navbar-toggle').trigger('click')
+    jQuery('#bs-example-navbar-collapse-1').toggle()
   }
 
   // show the virtual keyboard
   jQuery('#virtual-keyboard').slideDown()
-
-  return true
 }
 
 function touch_kbd_close() {
   // hide the virtual keyboard
   jQuery('#virtual-keyboard').slideUp()
-
-  // remove info from keys
-  jQuery('#virtual-keyboard td').each(function (index) {
-    // clear content of cell
-    jQuery(this).empty()
-    // remove any classes that might be on the cell
-    jQuery(this).attr('class', '')
-  })
-
-  return true
 }
+
+jQuery('button.navbar-toggle').on('click', () => {
+  jQuery('#bs-example-navbar-collapse-1').toggle()
+})
