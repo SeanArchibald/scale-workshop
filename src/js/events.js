@@ -556,31 +556,15 @@ jQuery(document).ready(function () {
   })
 
   // ------------------------------------
-  // old version
-
-  /*
-  // Synth Settings - Main Volume
-  jQuery(document).on('input', '#input_range_main_vol', function() {
-    const gain = jQuery(this).val();
-    synth.setMainVolume(gain)
-  });
-  */
-
-  // ------------------------------------
-  // new version
 
   // data changed, handle programmatic reaction - no jQuery
-  state.on('change', (key, newValue) => {
-    if (key === 'main volume') {
-      synth.setMainVolume(newValue)
-    }
+  state.on('main volume', (newValue) => {
+    synth.setMainVolume(newValue)
   })
 
   // data changed, sync it with the DOM
-  state.on('change', (key, newValue) => {
-    if (key === 'main volume') {
-      jQuery('#input_range_main_vol').val(newValue)
-    }
+  state.on('main volume', (newValue) => {
+    jQuery('#input_range_main_vol').val(newValue)
   })
 
   // DOM changed, need to sync it with state

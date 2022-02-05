@@ -10,7 +10,7 @@ class State extends EventEmitter {
     const oldValue = this.data[key]
     if (oldValue !== newValue) {
       this.data[key] = newValue
-      this.emit('change', key, newValue, oldValue)
+      this.emit(key, newValue, oldValue)
     }
   }
 }
