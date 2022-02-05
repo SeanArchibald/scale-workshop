@@ -17,13 +17,6 @@ const cc = {
 }
 
 class MIDI extends EventEmitter {
-  constructor() {
-    super()
-    this.state = {
-      velocitySensing: true
-    }
-  }
-
   onMidiMessage(event) {
     const [data, ...params] = event.data
     const cmd = data >> 4
@@ -40,7 +33,7 @@ class MIDI extends EventEmitter {
         {
           const [note, velocity] = params
           if (velocity > 0) {
-            this.emit('note on', note, this.state.velocitySensing ? velocity : 127, channel)
+            this.emit('note on', note, state.get('midi velocity sensing') ? velocity : 127, channel)
           } else {
             this.emit('note off', note, velocity, channel)
           }
@@ -107,21 +100,4 @@ jQuery(() => {
       midi.init()
     }
   })
-
-  const velocityToggleBtn = jQuery('#velocity-toggler')
-
-  const updateVelocityToggleBtn = () => {
-    if (midi.state.velocitySensing) {
-      velocityToggleBtn.removeClass('btn-basic').addClass('btn-success').text('on')
-    } else {
-      velocityToggleBtn.removeClass('btn-success').addClass('btn-basic').text('off')
-    }
-  }
-
-  velocityToggleBtn.on('click', () => {
-    midi.state.velocitySensing = !midi.state.velocitySensing
-    updateVelocityToggleBtn()
-  })
-
-  updateVelocityToggleBtn()
 })

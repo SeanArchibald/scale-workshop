@@ -21,5 +21,6 @@ class State extends EventEmitter {
 }
 
 const state = new State({
-  'main volume': 0.8
+  'main volume': 0.8,
+  'midi velocity sensing': true
 })
