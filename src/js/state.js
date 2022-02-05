@@ -1,4 +1,4 @@
-class Model extends EventEmitter {
+class State extends EventEmitter {
   constructor(initialData = {}) {
     super()
     this.data = initialData
@@ -15,6 +15,6 @@ class Model extends EventEmitter {
   }
 }
 
-const model = new Model({
+const state = new State({
   'main volume': 0.8
 })

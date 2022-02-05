@@ -570,22 +570,22 @@ jQuery(document).ready(function () {
   // new version
 
   // data changed, handle programmatic reaction - no jQuery
-  model.on('change', (key, newValue) => {
+  state.on('change', (key, newValue) => {
     if (key === 'main volume') {
       synth.setMainVolume(newValue)
     }
   })
 
   // data changed, sync it with the DOM
-  model.on('change', (key, newValue) => {
+  state.on('change', (key, newValue) => {
     if (key === 'main volume') {
       jQuery('#input_range_main_vol').val(newValue)
     }
   })
 
-  // DOM changed, need to sync it with model
+  // DOM changed, need to sync it with state
   jQuery('#input_range_main_vol').on('input', function () {
-    model.set('main volume', parseFloat(jQuery(this).val()))
+    state.set('main volume', parseFloat(jQuery(this).val()))
   })
 
   // ------------------------------------

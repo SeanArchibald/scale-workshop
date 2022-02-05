@@ -17,8 +17,8 @@ function keycode_to_midinote(keycode) {
   // get row/col vals from the keymap
   var key = synth.keymap[keycode]
 
+  // return false if there is no note assigned to this key
   if (R.isNil(key)) {
-    // return false if there is no note assigned to this key
     return false
   }
 
