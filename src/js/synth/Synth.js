@@ -114,10 +114,14 @@ class Synth {
     }
   }
 
-  noteOn(midinote, velocity = 127) {
+  noteOn(midinote, velocity = 127, triggeredByMidi = false) {
     const frequency = tuning_table.freq[midinote]
 
     if (!R.isNil(frequency)) {
+      if (!triggeredByMidi) {
+        midi.playFrequency(frequency)
+      }
+
       // make sure note triggers only on first input (prevent duplicate notes)
       if (R.isNil(this.midinotes_to_voices[midinote])) {
         this.init()
@@ -146,7 +150,11 @@ class Synth {
       }
     }
   }
-  noteOff(midinote) {
+  noteOff(midinote, triggeredByMidi = false) {
+    if (!triggeredByMidi) {
+      midi.stopFrequency()
+    }
+
     if (!R.isNil(this.midinotes_to_voices[midinote])) {
       // release the note
       this.voices[this.midinotes_to_voices[midinote]].stop()
@@ -181,5 +189,7 @@ class Synth {
     const now = this.now()
     this.delay.gainL.gain.setValueAtTime(this.delay.gain, now)
     this.delay.gainR.gain.setValueAtTime(this.delay.gain, now)
+
+    midi.stopFrequency()
   }
 }
