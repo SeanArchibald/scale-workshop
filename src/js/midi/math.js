@@ -31,7 +31,6 @@ const getDistanceInSemitones = getDistanceInUnits(octaveRatio, semitonesPerOctav
 
 const bendingRatio = moveNSemitones(maxBendingDistanceInSemitones, 1)
 
-const bendNUnits = moveNUnits(bendingRatio, pitchBendMax)
 const getBendingDistance = getDistanceInUnits(bendingRatio, pitchBendMax)
 
 const getNoteFrequency = R.compose(

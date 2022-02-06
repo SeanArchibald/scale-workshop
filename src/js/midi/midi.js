@@ -3,79 +3,7 @@
  * Capture MIDI input for synth
  */
 
-/*
-class MIDI extends EventEmitter {
-  onMidiMessage(event) {
-    const [data, ...params] = event.data
-    const cmd = data >> 4
-    const channel = data & 0x0f
-
-    switch (cmd) {
-      case commands.noteOff:
-        {
-          const [note, velocity] = params
-          this.emit('note off', note, velocity, channel)
-        }
-        break
-      case commands.noteOn:
-        {
-          const [note, velocity] = params
-          if (velocity > 0) {
-            this.emit('note on', note, state.get('midi velocity sensing') ? velocity : 127, channel)
-          } else {
-            this.emit('note off', note, velocity, channel)
-          }
-        }
-        break
-    }
-  }
-
-  initPort(port) {
-    if (port.state === 'connected') {
-      if (port.type === 'input') {
-        if (port.connection === 'closed') {
-          port.open()
-        } else if (port.connection === 'open') {
-          port.onmidimessage = this.onMidiMessage.bind(this)
-        }
-      }
-      if (port.type === 'output') {
-        // TODO
-      }
-    }
-  }
-
-  enableMidiSupport(midiAccess) {
-    midiAccess.onstatechange = (event) => {
-      this.initPort(event.port)
-    }
-
-    Array.from(midiAccess.inputs.values()).forEach((port) => {
-      this.initPort(port)
-    })
-
-    Array.from(midiAccess.outputs.values()).forEach((port) => {
-      this.initPort(port)
-    })
-  }
-
-  init() {
-    navigator
-      .requestMIDIAccess({ sysex: false })
-      .then(this.enableMidiSupport.bind(this))
-      .catch(() => this.emit('blocked'))
-  }
-
-  isSupported() {
-    return !!navigator.requestMIDIAccess
-  }
-}
-*/
-
-// --------------------------------------------
-
-// TODO: rename this variable
-const demoData = {}
+const demoData = {} // TODO: rename this variable
 
 class MIDI extends EventEmitter {
   constructor() {
@@ -96,6 +24,7 @@ class MIDI extends EventEmitter {
 
   set mode(value) {
     this._.whiteOnly = value
+
     R.forEach((note) => {
       for (let channel = 1; channel <= 16; channel++) {
         this.emit('note off', note, 1, channel)
@@ -106,11 +35,6 @@ class MIDI extends EventEmitter {
   async init() {
     if (!this._.inited) {
       this._.inited = true
-
-      const ready = () => {
-        const { status } = this._
-        this.emit('ready', R.clone(status))
-      }
 
       const enableMidiSupport = (midiAccess) => {
         this._.status.supported = true
@@ -246,10 +170,9 @@ class MIDI extends EventEmitter {
       if (navigator.requestMIDIAccess) {
         const midiAccess = await navigator.requestMIDIAccess({ sysex: false })
         enableMidiSupport(midiAccess)
-        ready()
-        // .catch -> error = 'SecurityError', when user blocked at sysex:true
+        this.emit('ready', R.clone(this._.status))
       } else {
-        ready()
+        this.emit('blocked', R.clone(this._.status))
       }
     }
   }
