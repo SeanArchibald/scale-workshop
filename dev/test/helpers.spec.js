@@ -318,6 +318,9 @@ describe("helpers.js", () => {
       expect(periodReduceRatio("3/4", "3/2")).toBe("9/8");
       expect(periodReduceRatio("16677181699666569/17179869184", "2/1")).toBe("16677181699666569/9007199254740992");
     });
+    it("returns cents if a ratio integer exceeds 20 places", () => {
+      expect(periodReduceRatio("22528399544939174411840147874772641/4722366482869645213696", "2/1")).toBe("140.760062");
+    })
     it("returns NaN if given a non-numerical value", () => {
       expect(periodReduceRatio("foo", "2/1")).toBeNaN();
       expect(periodReduceRatio("1/1", "foo")).toBeNaN();
@@ -342,6 +345,9 @@ describe("helpers.js", () => {
       expect(transposeRatios("3/2", "3/2")).toBe("9/4");
       expect(transposeRatios("5/4", "16/15")).toBe("4/3");
       expect(transposeRatios("9008000000000001/8675309000000001", "17/16")).toBe("51045333333333339/46268314666666672");
+    });
+    it("returns cents if a ratio integer exceeds 20 places", () => {
+      expect(transposeRatios("22528399544939174411840147874772641/4722366482869645213696", "5/191581231380566414401")).toBe("75.252021")
     });
     // it("returns a negative numerator if computed value is negative", () => {
     //   expect(simplifyRatioString("4/-4")).toBe("-1/1");
@@ -425,6 +431,12 @@ describe("helpers.js", () => {
       expect(transposeLine("9008000000000000/8675309000000001", "700.0")).toBe("765.150019");
       expect(transposeLine("9008000000000000/8675309000000001", "7\\12")).toBe("765.150019");
     });
+    it("returns cents if a ratio integer exceeds 20 places", () => {
+      expect(transposeRatios("22528399544939174411840147874772641/4722366482869645213696", "5/191581231380566414401")).toBe("75.252021");
+      expect(transposeRatios("22528399544939174411840147874772641/4722366482869645213696", "3,2")).toBe("51242.715063");
+      expect(transposeRatios("22528399544939174411840147874772641/20769187434139310514121985316880384", "60.0")).toBe("200.760062");
+      expect(transposeRatios("22528399544939174411840147874772641/4722366482869645213696", "7\\12")).toBe("51240.760062");
+    });
     // it("returns a negative numerator if computed value is negative", () => {
     //   expect(transposeLine("4/-4")).toBe("-1/1");
     //   expect(transposeLine("-4/4")).toBe("-1/1");
@@ -447,6 +459,9 @@ describe("helpers.js", () => {
       expect(transposeSelf("1,5", 2)).toBe("2,250000");
       expect(transposeSelf("3\\31", 2)).toBe("6\\31");
       expect(transposeSelf("5/3", 23)).toBe("11920928955078125/94143178827");
+    });
+    it("returns cents if a ratio integer exceeds 20 places", () => {
+      expect(transposeRatios("3/2", 72)).toBe("50540.760062");
     });
     it("returns unison if stacked 0 times", () => {
       expect(transposeSelf("100.0", 0)).toBe("0.000000");
@@ -521,6 +536,12 @@ describe("helpers.js", () => {
       expect(moduloLine("2/1", "700.0")).toBe("500.000000");
       expect(moduloLine("16677181699666569/17179869184", "7\\12")).toBe("66.470029");
       expect(moduloLine("16677181699666569/17179869184", "700.0")).toBe("66.470029");
+    });
+    it("returns cents if a ratio integer exceeds 20 places", () => {
+      expect(transposeRatios("22528399544939174411840147874772641/4722366482869645213696", "2/1")).toBe("140.760062");
+      expect(transposeRatios("22528399544939174411840147874772641/4722366482869645213696", "3,2")).toBe("0.000000");
+      expect(transposeRatios("22528399544939174411840147874772641/4722366482869645213696", "1000.0")).toBe("540.760062");
+      expect(transposeRatios("22528399544939174411840147874772641/4722366482869645213696", "4\\31")).toBe("63.340707");
     });
     it("returns NaN if the modLine evaluates to a decimal below 1", () => {
       expect(moduloLine("3/2", "1/2")).toBeNaN();
