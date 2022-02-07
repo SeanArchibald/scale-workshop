@@ -1134,42 +1134,43 @@ function negateLine(line) {
   }
 }
 
-// TODO: functional improvements
 function invert_chord(chord) {
   if (!/^(\d+:)+\d+$/.test(chord)) {
     alert('Warning: invalid chord ' + chord)
     return false
   }
 
-  let inverted = chord
-  let intervals = chord.split(':').map((x) => parseInt(x))
-  let steps = []
-  intervals.forEach(function (item, index, array) {
+  let reduced = chord.split(':').map((x) => parseInt(x))
+  let interavls = []
+  reduced.forEach(function (item, index, array) {
     if (index > 0) {
-      steps.push([item, array[index - 1]])
+      interavls.push([item, array[index - 1]])
     }
   })
-  steps.reverse()
-  intervals = [[1, 1]]
+  interavls.reverse()
+  reduced = [[1, 1]]
 
   let denominators = []
-  steps.forEach(function (item, index) {
-    var reduced_interval = simplifyRatio(
-      item[0] * intervals[index][0],
-      item[1] * intervals[index][1]
-    )
-    intervals.push(reduced_interval)
-    denominators.push(reduced_interval[1])
+  interavls.forEach((x, index) => {
+    const num = Decimal(x[0]).mul(reduced[index][0]);
+    const den = Decimal(x[1]).mul(reduced[index][1]);
+    const ratio = `${num}/${den}`
+    const simplified = simplifyRatio(ratio);
+    if (Number.isNaN(simplified))
+      return;
+    const [n, d] = simplified.split('/').map(x => Decimal(x).valueOf());
+    reduced.push([n, d]);
+    denominators.push(parseInt(d.valueOf()));
   })
 
-  var lcm = getLCMArray(denominators)
+  var lcm = getLCMArray(denominators);
 
   chord = []
-  intervals.forEach(function (x) {
-    chord.push((x[0] * lcm) / x[1])
+  reduced.forEach(function (x) {
+    chord.push(Decimal(x[0]).mul(lcm).div(x[1]).valueOf());
   })
 
-  return chord.join(':')
+  return chord.join(':');
 }
 
 const roundToNDecimals = (decimals, number) => {
