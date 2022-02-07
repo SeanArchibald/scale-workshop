@@ -338,6 +338,7 @@ describe("helpers.js", () => {
       expect(transposeRatios("1/1", "3/2")).toBe("3/2");
       expect(transposeRatios("3/2", "3/2")).toBe("9/4");
       expect(transposeRatios("5/4", "16/15")).toBe("4/3");
+      expect(transposeRatios("9008000000000001/8675309000000001", "3/2")).toBe("27024000000000003/17350618000000002");
     });
     // it("returns a negative numerator if computed value is negative", () => {
     //   expect(simplifyRatioString("4/-4")).toBe("-1/1");
@@ -384,6 +385,8 @@ describe("helpers.js", () => {
       expect(transposeLine("1,25", "1\\4")).toBe("1,486509");
       expect(transposeLine("3/2", "4/3")).toBe("2/1");
       expect(transposeLine("4/3", "1,5")).toBe("2/1");
+      expect(transposeLine("9008000000000001/8675309000000001", "3/2")).toBe("27024000000000003/17350618000000002");
+      expect(transposeLine("9008000000000001/8675309000000001", "1,5")).toBe("27024000000000003/17350618000000002");
     });
     it("transposes downward with a negative cents or N Of EDO transposer", () => {
       expect(transposeLine("300.0", "-100.0")).toBe("200.000000");
@@ -404,7 +407,7 @@ describe("helpers.js", () => {
       expect(transposeLine("1\\12", "0,5")).toBe("-11\\12");
       expect(transposeLine("1\\12", "-12\\12")).toBe("-11\\12");
       expect(transposeLine("1\\12", "-1200.0")).toBe("-11\\12");
-    })
+    });
     it("preserves decimal if combined with N of EDO", () => {
       expect(transposeLine("12\\12", "1,5")).toBe("3,000000");
       expect(transposeLine("1\\12", "1,5")).toBe("1,589195");
@@ -416,7 +419,9 @@ describe("helpers.js", () => {
     it ("returns cents when a ratio is combined with N of EDO or cents", () => {
       expect(transposeLine("2/1", "1\\12")).toBe("1300.000000");
       expect(transposeLine("2/1", "700.0")).toBe("1900.000000");
-    })
+      expect(transposeLine("9008000000000000/8675309000000001", "700.0")).toBe("767.1050198");
+      expect(transposeLine("9008000000000000/8675309000000001", "7\\12")).toBe("767.1050198");
+    });
     // it("returns a negative numerator if computed value is negative", () => {
     //   expect(transposeLine("4/-4")).toBe("-1/1");
     //   expect(transposeLine("-4/4")).toBe("-1/1");
@@ -438,6 +443,7 @@ describe("helpers.js", () => {
       expect(transposeSelf("3/2", 3)).toBe("27/8");
       expect(transposeSelf("1,5", 2)).toBe("2,250000");
       expect(transposeSelf("3\\31", 2)).toBe("6\\31");
+      expect(transposeSelf("5/3", 23)).toBe("11920928955078125/94143178827")
     });
     it("returns unison if stacked 0 times", () => {
       expect(transposeSelf("100.0", 0)).toBe("0.000000");
@@ -483,6 +489,8 @@ describe("helpers.js", () => {
       expect(moduloLine("3/1", "2,0")).toBe("3/2");
       expect(moduloLine("3/1", "1200.0")).toBe("3/2");
       expect(moduloLine("3/1", "12\\12")).toBe("3/2");
+      expect(moduloLine("16677181699666569/17179869184", "2/1")).toBe("16677181699666569/9007199254740992");
+      expect(moduloLine("16677181699666569/17179869184", "2,0")).toBe("16677181699666569/9007199254740992");
     });
     it("returns an octave-based interval if number is below unison", () => {
       expect(moduloLine("0,5", "2/1")).toBe("1,000000");
@@ -508,6 +516,8 @@ describe("helpers.js", () => {
     it ("returns cents when a ratio is combined with N of EDO or cents", () => {
       expect(moduloLine("2/1", "1\\12")).toBe("0.000000");
       expect(moduloLine("2/1", "700.0")).toBe("500.000000");
+      expect(moduloLine("16677181699666569/17179869184", "7\\12")).toBe("66.470029");
+      expect(moduloLine("16677181699666569/17179869184", "700.0")).toBe("66.470029");
     });
     it("returns NaN if the modLine evaluates to a decimal below 1", () => {
       expect(moduloLine("3/2", "1/2")).toBeNaN();
