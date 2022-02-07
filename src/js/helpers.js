@@ -2,6 +2,9 @@
  * HELPER FUNCTIONS
  */
 
+// Set precision to cover possible integers before scientific notation
+Decimal.precision = 21
+
 // modulo function
 Number.prototype.mod = function (n) {
   return ((this % n) + n) % n
@@ -14,22 +17,31 @@ function mathModulo(n, d) {
 
 // logarithm-based modulo function, only supporting modulus > 1
 function logModulo(n, d) {
-  if (n === 0 || d <= 1) return NaN
-  const powers = Math.log2(n) / Math.log2(d)
-  let powerMod = Math.floor(powers)
-  return n * Math.pow(d, -powerMod)
+  const [floatn, floatd] = [n, d].map(parseFloat);
+  if ( floatn === 0 
+    || floatd <= 1 
+    || Number.isNaN(floatn) 
+    || Number.isNaN(floatd)
+    )
+    return NaN;
+
+  const [nlog, dlog] = [Decimal.log2(n), Decimal.log2(d)];
+  const modPower = nlog.div(dlog).floor();
+  return Decimal(n).div(Decimal(d).pow(modPower)).toNumber();
 }
 
 // convert a cents value to decimal
 function cents_to_decimal(input) {
-  return Math.pow(2, parseFloat(input) / 1200.0)
+  const inputfloat = parseFloat(input);
+  if (Number.isNaN(inputfloat)) return NaN;
+  return Decimal.pow(2, Decimal(input).div(1200)).toNumber();
 }
 
 // convert a ratio (string 'x/y') to decimal
 function ratio_to_decimal(input) {
   if (isRatio(input)) {
-    const [val1, val2] = input.split('/')
-    return val1 / val2
+    const [val1, val2] = input.split('/').map(Decimal);
+    return val1.div(val2).toNumber();
   } else {
     alert('Invalid input: ' + input)
     return false
@@ -66,11 +78,12 @@ function decimal_to_cents(input) {
   if (input === false) {
     return false
   }
-  input = parseFloat(input)
-  if (input === 0 || isNaN(input)) {
+  const inputfloat = parseFloat(input);
+  if (Number.isNaN(inputfloat) || inputfloat === 0) {
     return false
   } else {
-    return 1200.0 * Math.log2(input)
+    input = Decimal(input)
+    return Decimal.log2(input).mul(1200).toNumber();
   }
 }
 
@@ -82,8 +95,8 @@ function ratio_to_cents(input) {
 // convert an n-of-m-edo (string 'x\y') to decimal
 function n_of_edo_to_decimal(input) {
   if (isNOfEdo(input)) {
-    const [val1, val2] = input.split('\\').map((x) => parseInt(x))
-    return Math.pow(2, val1 / val2)
+    const [val1, val2] = input.split('\\').map(Decimal)
+    return Decimal(2).pow(val1.div(val2)).toNumber();
   } else {
     alert('Invalid input: ' + input)
     return false
@@ -303,28 +316,29 @@ function rotate(array, steps) {
 
 // calculate a continued fraction for the given number
 function get_cf(num, maxiterations = 15, roundf = 10) {
-  num = parseFloat(num)
+  const numfloat = parseFloat(num);
+  if (numfloat === 0 || maxiterations < 1) return [0]
+  else if (Number.isNaN(numfloat)) return NaN
 
-  if (num === 0 || maxiterations < 1) return [0]
-  else if (!num) return NaN
+  num = Decimal(num)
 
   var cf = [] // the continued fraction
   var digit
 
-  var roundinv = Math.pow(0.1, roundf)
+  var roundInv = Decimal(0.1).pow(roundf);
 
   var iterations = 0
   while (iterations < maxiterations) {
-    digit = Math.floor(num)
+    digit = num.floor().toNumber();
     cf.push(digit)
 
-    num -= digit
+    num = num.sub(digit)
 
-    if (num == 0 || num <= roundinv) {
+    if (num.eq(0) || num.lte(roundInv))
       break
-    }
 
-    num = 1.0 / num
+    num = Decimal(1).div(num);
+
     iterations++
   }
 
@@ -378,9 +392,9 @@ function decimal_to_ratio(input, iterations = 15, depth = 0) {
   if (isCommaDecimal(input)) input = commadecimal_to_decimal(input)
   if (input === false) return false
 
-  input = parseFloat(input)
+  const inputfloat = parseFloat(input)
 
-  if (input === 0 || isNaN(input)) {
+  if (inputfloat === 0 || Number.isNaN(inputfloat)) {
     return false
   } else {
     var inputcf = get_cf(input, iterations, 6)
@@ -451,6 +465,8 @@ function show_mos_cf(per, gen, ssz, threshold) {
   var maxcfsize = 12 // maximum continued fraction length
   var roundf = 4 // rounding factor in case continued fraction blows up
 
+  threshold = Decimal(threshold);
+
   per = line_to_decimal(per)
   if (per <= 0 || isNaN(per)) {
     jQuery('#info_rank_2_mos').text('invalid period')
@@ -463,7 +479,7 @@ function show_mos_cf(per, gen, ssz, threshold) {
     return false
   }
 
-  var genlog = Math.log(gen) / Math.log(per) // the logarithmic ratio to generate MOS info
+  var genlog = Decimal.log(gen).div(Decimal.log(per)).toNumber(); // the logarithmic ratio to generate MOS info
 
   var cf = [] // continued fraction
   var nn = [] // MOS generators
@@ -479,13 +495,15 @@ function show_mos_cf(per, gen, ssz, threshold) {
   var s = pc // small step
   var c = gc // chroma (L - s)
 
+  let roundInv = Decimal(1).div(roundf);
+
   for (var i = 1; i < cf.length; i++) {
     L -= c * cf[i]
     s = c
     c = L - s
 
     // break if g is some equal division of period
-    if (c < 1 / roundf && cf.length < maxcfsize) {
+    if (roundInv.gte(c) && cf.length < maxcfsize) {
       // add size-1
       // not sure if flaw in the algorithm or weird edge case
 
@@ -495,7 +513,7 @@ function show_mos_cf(per, gen, ssz, threshold) {
       break
     }
 
-    if (c < threshold) {
+    if (threshold.gte(c)) {
       var ind = sum_array(cf, i + 1)
       dd.splice(ind + 1, dd.length - ind)
       break
@@ -727,18 +745,22 @@ function get_factors(number) {
 }
 
 function getGCD(num1, num2) {
-  // Check types
-  let areNums = [num1, num2].reduce((result, num) => result && typeof num === 'number', true)
-  if (!areNums) return NaN
+  const floats = [num1, num2].map(parseFloat);
+  for (const float of floats) if (!Number.isInteger(float) || Number.isNaN(float)) return NaN;
 
-  num1 = Math.abs(num1)
-  num2 = Math.abs(num2)
+  const n1 = Decimal.abs(num1);
+  const n2 = Decimal.abs(num2);
 
-  if (num1 === 0 || num2 === 0) return num1 + num2
-  else if (num1 === 1 || num2 === 1) return 1
-  else if (num1 === num2) return num1
+  if (n1.eq(0) || n2.eq(0)) 
+    return n1.add(n2).valueOf();
+  
+  if (n1.eq(1) || n2.eq(1)) 
+    return "1";
 
-  return getGCD(num2, num1 % num2)
+  if (n1.eq(n2)) 
+    return n1.valueOf();
+
+  return getGCD(n2.valueOf(), n1.mod(n2).valueOf());
 }
 
 // TODO: GCD of an array
@@ -784,73 +806,85 @@ function getLCMArray(array) {
 }
 
 // returns array of the numerator and denominator of the reduced form of given ratio
+// for best precision pass in strings
 function simplifyRatio(numerator, denominator) {
-  if (denominator === 0) return NaN
+  const floats = [numerator, denominator].map(parseFloat);
+  if (Number.isNaN(floats[0])) return NaN;
+  if (floats[1] === 0) return NaN;
 
-  const gcdScalar = 1.0 / getGCD(numerator, denominator)
-  if (!gcdScalar) return NaN
+  const gcd = getGCD(numerator, denominator);
+  if (gcd == 0 || Number.isNaN(parseFloat(gcd))) return NaN;
+  const gcdScalar = Decimal(1).div(gcd);
 
-  numerator *= Math.abs(denominator) / denominator
-  denominator = Math.abs(denominator)
-  return [numerator, denominator].map((x) => Math.round(x * gcdScalar))
+  let numSigned = Decimal(numerator).mul(Decimal.sign(denominator));
+  let denAbs = Decimal.abs(denominator);
+
+  const [numOut, denOut] = [numSigned, denAbs].map(x => x.mul(gcdScalar).round());
+  return `${numOut}/${denOut}`;
 }
 
 function simplifyRatioString(ratio) {
-  const [n, d] = ratio.split('/').map((x) => parseInt(x))
-  if (!d || isNaN(n)) return NaN
-  return simplifyRatio(n, d).join('/')
+  const strings = ratio.split('/');
+  const floats = strings.map(parseFloat);
+  if (floats[1] == 0) return NaN;
+  for (const float of floats) if (Number.isNaN(float)) return NaN;
+  
+  return simplifyRatio(strings[0], strings[1]);
 }
 
 function transposeRatios(ratio, transposerRatio) {
   if (typeof ratio !== 'string' || typeof transposerRatio !== 'string') return NaN
 
-  const [n1, d1] = ratio.split('/').map((x) => parseInt(x))
-  const [n2, d2] = transposerRatio.split('/').map((x) => parseInt(x))
+  const floats = [ ...ratio.split('/').map(parseFloat), 
+                   ...transposerRatio.split('/').map(parseFloat) ];
 
-  if (!d1 || !d2 || isNaN(n1) || isNaN(n2)) return NaN
+  for (const float of floats) if (Number.isNaN(float)) return NaN;
 
-  return simplifyRatio(n1 * n2, d1 * d2).join('/')
+  const [n1, d1] = ratio.split('/').map(Decimal);
+  const [n2, d2] = transposerRatio.split('/').map(Decimal);
+
+  const numProduct = n1.mul(n2).valueOf();
+  const denProduct = d1.mul(d2).valueOf();
+
+  return simplifyRatio(numProduct, denProduct);
 }
 
 // Return a ratio between 1 and the period, where the period cannot be less than 1
 function periodReduceRatio(ratio, period) {
-  let periodType = getLineType(period)
-  let periodDecimal = line_to_decimal(period)
-  if (periodType !== LINE_TYPE.RATIO || periodDecimal <= 1) return NaN
+  const periodType = getLineType(period);
+  if (periodType !== LINE_TYPE.RATIO) return NaN;
+  
+  const periodStrings = period.split('/');
+  const periodFloats = periodStrings.map(parseFloat);
+  if (periodFloats[0] == 0 || periodFloats[1] < 1) return NaN;
+  for (const float of periodFloats) if (Number.isNaN(float)) return NaN;
 
-  const [ratioNum, ratioDen] = ratio.split('/').map((x) => parseInt(x))
-  const ratioDecimal = ratioNum / ratioDen
-  if (!ratioDecimal || !isFinite(ratioDecimal)) return NaN
+  const ratioType = getLineType(ratio);
+  if (ratioType !== LINE_TYPE.RATIO) return NaN;
 
-  const [modNum, modDen] = period.split('/').map((x) => parseInt(x))
-  const modDecimal = modNum / modDen
-  if (!modDecimal || modDecimal === Infinity || modDecimal === 1) return NaN
+  const ratioStrings = ratio.split('/');
+  const ratioFloats = ratioStrings.map(parseFloat);
+  if (ratioFloats[1] == 0) return NaN;
+  for (const float of ratioFloats) if (Number.isNaN(float)) return NaN;
 
-  const pow = Math.log2(ratioDecimal) / Math.log2(modDecimal)
-  const powFloor = Math.floor(pow)
 
-  // This is a bit convoluted due to avoiding division
+  const ratioDecimal = Decimal(ratioStrings[0]).div(ratioStrings[1]);
+  const periodDecimal = Decimal(periodStrings[0]).div(periodStrings[1]);
 
-  // Make ratios from both numerator and denominator of period ratio
-  const [powerFactorNum, powerFactorDen] = [modDen, 1]
-    .map((x) => Math.pow(x, Math.abs(powFloor))) // Raise by the absolute value of the floored exponent
-    .map((x, i, a) => (powFloor < 0 ? a[a.length - i - 1] : x)) // Swap num & den if exponent is negative
+  const power = ratioDecimal.ln().div(periodDecimal.ln()).floor();
 
-  const [powerDivisorNum, powerDivisorDen] = [modNum, 1]
-    .map((x) => Math.pow(x, Math.abs(powFloor)))
-    .map((x, i, a) => (powFloor < 0 ? a[a.length - i - 1] : x))
+  // Make scalars from both numerator and denominator of the period ratio to keep integers
+  // The reciprocal of the period ratio is used, and if the 'power' is negative, the scalars are also reciprocated
+  const periodNumPower = Decimal.pow(periodStrings[1], power.abs());
+  const periodDenPower = Decimal.pow(periodStrings[0], power.abs());
+  const periodNumScalar = (Decimal.sign(power) > 0) ? [ periodNumPower, 1 ] : [ 1, periodNumPower ];
+  const periodDenScalar = (Decimal.sign(power) > 0) ? [ periodDenPower, 1 ] : [ 1, periodDenPower ];
 
-  // Combine the resulting numerators with the original ratio
-  const ratioFactorNum = ratioNum * powerFactorNum
-  const ratioDivisorNum = ratioDen * powerDivisorNum
+  // Cross multiply with period's numerator & denominator scalars
+  const ratioReducedNum = Decimal(ratioStrings[0]).mul(periodNumScalar[0]).mul(periodDenScalar[1]);
+  const ratioReducedDen = Decimal(ratioStrings[1]).mul(periodNumScalar[1]).mul(periodDenScalar[0]);
 
-  // Divide the resulting ratios to get our interval, which may not be fully simplified
-  const [ratioModPowerNum, ratioModPowerDen] = [
-    ratioFactorNum * powerDivisorDen,
-    ratioDivisorNum * powerFactorDen
-  ]
-
-  return simplifyRatio(ratioModPowerNum, ratioModPowerDen).join('/')
+  return simplifyRatio(ratioReducedNum.valueOf(), ratioReducedDen.valueOf());
 }
 
 function transposeNOfEdos(nOfEdo, transposerNOfEdo) {
@@ -884,11 +918,11 @@ function transposeLine(line, transposer) {
 
     // see if cents or N of EDO is an octave
     else {
-      let octs = Math.log2(line_to_decimal(transposer));
-      if (octs === Math.trunc(octs)) {
-        const octDecimal = Math.pow(2, Math.abs(octs));
-        const octTransposer = (octs < 0) ? "1/" + octDecimal 
-                                         : octDecimal + "/1";
+      let octs = Decimal.log2(line_to_decimal(transposer));
+      if (octs.isInteger()) { // TODO - work with other harmonics?
+        const octRatio = Decimal.pow(2, octs.abs());
+        const octTransposer = (octs.lt(0)) ? "1/" + octRatio
+                                           : octRatio + "/1";
         return transposeRatios(line, octTransposer);
       }
     }
@@ -898,8 +932,8 @@ function transposeLine(line, transposer) {
 
     // See if second type is a power of two
     const line2Ratio = roundToNDecimals(6, line_to_decimal(transposer));
-    let octs = Math.log2(line2Ratio);
-    if (octs === Math.trunc(octs))
+    let octs = Decimal.log2(line2Ratio);
+    if (octs.isInteger())
       return transposeNOfEdos(line, `${octs}\\1`);
 
     // Return result as commadecimal type
@@ -931,7 +965,7 @@ function transposeSelf(line, transposeAmt) {
   if (lineIsNegative === LINE_TYPE.INVALID || lineType === LINE_TYPE.INVALID || typeof transposeAmt !== "number")
     return NaN;
 
-  const wholeExp = transposeAmt === Math.trunc(transposeAmt);
+  const wholeExp = Number.isInteger(transposeAmt);
 
   // power function
   if (lineType === LINE_TYPE.DECIMAL)
@@ -944,7 +978,7 @@ function transposeSelf(line, transposeAmt) {
     else if (transposeAmt < 0) ratio = line.split('/').reverse()
     else return ratio
 
-    return ratio.map((x) => Math.trunc(Math.pow(x, Math.abs(transposeAmt)))).join('/')
+    return ratio.map((x) => Decimal.pow(x, Decimal(transposeAmt).abs()).valueOf()).join('/')
   }
 
   // multiply degree by transpose amount
@@ -983,8 +1017,8 @@ function moduloLine(line, modLine) {
 
       // See if mod is a power of 2
       const modDecimal = line_to_decimal(modLine)
-      const modLog2 = roundToNDecimals(6, Math.log2(modDecimal))
-      if (modLog2 === Math.trunc(modLog2)) {
+      const modLog2 = Decimal.log2(modDecimal)
+      if (modLog2.isInteger()) {
         return `${mathModulo(numDeg, numEdo)}\\${numEdo}`
       }
     }
@@ -992,15 +1026,20 @@ function moduloLine(line, modLine) {
     // Preserve ratio type if possible
     if (lineType === LINE_TYPE.RATIO) {
       if (modType === LINE_TYPE.RATIO) {
+        const modDecimal = line_to_decimal(modLine);
+        if (modDecimal < 1) return NaN;
+
         return periodReduceRatio(line, modLine)
       }
 
       // See if mod type is a reasonable whole number ratio
       const modDecimal = line_to_decimal(modLine);
+      if (modDecimal < 1) return NaN;
+
       const mod_cf = get_cf(modDecimal);
       if (mod_cf.length < 12) {
-        const lineDecimal = ratio_to_decimal(line);
-        return get_convergent(get_cf(logModulo(lineDecimal, modDecimal)));
+        const modRatio = get_convergent(mod_cf);
+        return periodReduceRatio(line, modRatio);
       }
     }
 

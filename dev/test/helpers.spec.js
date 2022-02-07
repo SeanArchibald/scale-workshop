@@ -20,7 +20,7 @@ describe("helpers.js", () => {
     });
     it("returns the exponential modulus of the first number based in the second number", () => {
       expect(logModulo(2/3, 2)).toBe(4/3);
-      expect(logModulo(45/7, 1.5)).toBe(1.2698412698412698);
+      expect(logModulo(45/7, 1.5)).toBe(1.26984126984127);
     });
     it("returns NaN, when non-numeric parameters were given", () => {
       expect(logModulo(1, "foo")).toBeNaN();
@@ -164,14 +164,14 @@ describe("helpers.js", () => {
       expect(get_cf(1.25)).toEqual([1, 4]);
       expect(get_cf(1 / 3)).toEqual([0, 3]);
       expect(get_cf(Math.sqrt(2), 4)).toEqual([1, 2, 2, 2]);
-      expect(get_cf(Math.PI)).toEqual([3, 7, 15, 1, 292, 1, 1, 1, 2, 1, 3, 1, 14, 3, 3]);
+      expect(get_cf(Decimal.acos(-1))).toEqual([3, 7, 15, 1, 292, 1, 1, 1, 2, 1, 3, 1, 14, 2, 1]);
     });
     it("returns an array containing zero if set to 0 iterations", () => {
       expect(get_cf(1, 0)).toEqual([0]);
     });
     it("round significant digits down to 0 if they are below a given precision", () => {
       expect(get_cf(1 + 1e-7, 4, 6)).toEqual([1]);
-      expect(get_cf(Math.PI, 15, 2)).toEqual([3, 7, 15, 1]);
+      expect(get_cf(Decimal.acos(-1), 15, 2)).toEqual([3, 7, 15, 1]);
     });
     it("returns NaN if given a non-numerical value", () => {
       expect(get_cf("foo")).toBeNaN();
@@ -183,7 +183,7 @@ describe("helpers.js", () => {
       expect(get_convergent([3])).toEqual("3/1");
       expect(get_convergent([1, 1, 1])).toEqual("3/2");
       expect(get_convergent([1, 2, 10])).toEqual("31/21");
-      expect(get_convergent(get_cf(Math.PI), 3)).toEqual("333/106");
+      expect(get_convergent(get_cf(Decimal.acos(-1)), 3)).toEqual("333/106");
     });
     it ("returns a whole number fraction if given a number instead of a continued fraction", () => {
       expect(get_convergent(2)).toBe("2/1");
@@ -196,19 +196,19 @@ describe("helpers.js", () => {
   })
 
   describe("decimal_to_ratio", () => {
-    it("takes a decimal value and returns a ratio", () => {
+    it("takes a decimal value and returns a ratio", () => { 
       // expect(decimal_to_ratio(0)).toBe("0/1");
       expect(decimal_to_ratio("1.5")).toBe("3/2");
       expect(decimal_to_ratio(1 / 3)).toBe("1/3");
-      expect(decimal_to_ratio(Math.PI)).toBe("817696623/260280919");
+      expect(decimal_to_ratio(Decimal.acos(-1))).toBe("245850922/78256779");
     });
     it ("takes a commadecimal value and returns a ratio", () => {
       expect(decimal_to_ratio("1,3")).toBe("13/10");
     });
     it("parses the ratio with given a given depth", () => {
-      expect(decimal_to_ratio(Math.PI, 1)).toBe("3/1");
-      expect(decimal_to_ratio(Math.PI, 2)).toBe("22/7");
-      expect(decimal_to_ratio(Math.PI, 3)).toBe("333/106");
+      expect(decimal_to_ratio(Decimal.acos(-1), 1)).toBe("3/1");
+      expect(decimal_to_ratio(Decimal.acos(-1), 2)).toBe("22/7");
+      expect(decimal_to_ratio(Decimal.acos(-1), 3)).toBe("333/106");
     });
     it("returns false if the given value is not a valid LINE_TYPE.DECIMAL", () => {
       expect(decimal_to_ratio("foo")).toBe(false);
@@ -254,32 +254,33 @@ describe("helpers.js", () => {
 
   describe("getGCD", () => {
     it("returns the largest factor of both numbers given", () => {
-      expect(getGCD(3, 12)).toBe(3);
-      expect(getGCD(7, 19)).toBe(1);
-      expect(getGCD(17, 51)).toBe(17);
+      expect(getGCD(3, 12)).toBe("3");
+      expect(getGCD(7, 19)).toBe("1");
+      expect(getGCD(17, 51)).toBe("17");
+      expect(getGCD("116825103759765625", "12971141321962887")).toBe("7")
     });
     it("returns NaN if a non-numerical value is given", () => {
       expect(getGCD(1, "foo")).toBeNaN();
     });
     it("returns the largest number if 0 is an argument", () => {
-      expect(getGCD(0, 4)).toBe(4);
+      expect(getGCD(0, 4)).toBe("4");
     });
     it("returns a positive integer regardless of input signs", () => {
-      expect(getGCD(-1, -1)).toBe(1);
-      expect(getGCD(-21, 15)).toBe(3);
-      expect(getGCD(-4, 20)).toBe(4);
+      expect(getGCD(-1, -1)).toBe("1");
+      expect(getGCD(-21, 15)).toBe("3");
+      expect(getGCD(-4, 20)).toBe("4");
     });
   });
 
   describe("simplifyRatio", () => {
     it("returns a reduced [numerator, denominator] pair given a numerator and denominator", () => {
-      expect(simplifyRatio(2, 4)).toEqual([1, 2]);
-      expect(simplifyRatio(17, 51)).toEqual([1, 3]);
-      expect(simplifyRatio(0, 100)).toEqual([0, 1]);
+      expect(simplifyRatio(2, 4)).toEqual("1/2");
+      expect(simplifyRatio(17, 51)).toEqual("1/3");
+      expect(simplifyRatio(0, 100)).toEqual("0/1");
     });
     it("returns a negative numerator if computed value is negative", () => {
-      expect(simplifyRatio(4, -4)).toEqual([-1, 1]);
-      expect(simplifyRatio(-4, 4)).toEqual([-1, 1]);
+      expect(simplifyRatio(4, -4)).toEqual("-1/1");
+      expect(simplifyRatio(-4, 4)).toEqual("-1/1");
     });
     it("returns NaN if given a non-numerical value", () => {
       expect(simplifyRatio(1, "foo")).toBeNaN();
@@ -311,9 +312,11 @@ describe("helpers.js", () => {
   describe("periodReduceRatio", () => {
     it("takes two ratios, representing an interval and period, and returns the first ratio reduced between 1 and the second ratio", () => {
       expect(periodReduceRatio("1/1", "3/2")).toBe("1/1");
+      expect(periodReduceRatio("9/1", "2/1")).toBe("9/8");
       expect(periodReduceRatio("3/2", "3/2")).toBe("1/1");
       expect(periodReduceRatio("5/4", "16/15")).toBe("16875/16384");
       expect(periodReduceRatio("3/4", "3/2")).toBe("9/8");
+      expect(periodReduceRatio("16677181699666569/17179869184", "2/1")).toBe("16677181699666569/9007199254740992");
     });
     it("returns NaN if given a non-numerical value", () => {
       expect(periodReduceRatio("foo", "2/1")).toBeNaN();
@@ -338,7 +341,7 @@ describe("helpers.js", () => {
       expect(transposeRatios("1/1", "3/2")).toBe("3/2");
       expect(transposeRatios("3/2", "3/2")).toBe("9/4");
       expect(transposeRatios("5/4", "16/15")).toBe("4/3");
-      expect(transposeRatios("9008000000000001/8675309000000001", "3/2")).toBe("27024000000000003/17350618000000002");
+      expect(transposeRatios("9008000000000001/8675309000000001", "17/16")).toBe("51045333333333339/46268314666666672");
     });
     // it("returns a negative numerator if computed value is negative", () => {
     //   expect(simplifyRatioString("4/-4")).toBe("-1/1");
@@ -385,8 +388,8 @@ describe("helpers.js", () => {
       expect(transposeLine("1,25", "1\\4")).toBe("1,486509");
       expect(transposeLine("3/2", "4/3")).toBe("2/1");
       expect(transposeLine("4/3", "1,5")).toBe("2/1");
-      expect(transposeLine("9008000000000001/8675309000000001", "3/2")).toBe("27024000000000003/17350618000000002");
-      expect(transposeLine("9008000000000001/8675309000000001", "1,5")).toBe("27024000000000003/17350618000000002");
+      expect(transposeLine("9008000000000001/8675309000000001", "5/2")).toBe("15013333333333335/5783539333333334");
+      expect(transposeLine("9008000000000001/8675309000000001", "1,5")).toBe("9008000000000001/5783539333333334");
     });
     it("transposes downward with a negative cents or N Of EDO transposer", () => {
       expect(transposeLine("300.0", "-100.0")).toBe("200.000000");
@@ -419,8 +422,8 @@ describe("helpers.js", () => {
     it ("returns cents when a ratio is combined with N of EDO or cents", () => {
       expect(transposeLine("2/1", "1\\12")).toBe("1300.000000");
       expect(transposeLine("2/1", "700.0")).toBe("1900.000000");
-      expect(transposeLine("9008000000000000/8675309000000001", "700.0")).toBe("767.1050198");
-      expect(transposeLine("9008000000000000/8675309000000001", "7\\12")).toBe("767.1050198");
+      expect(transposeLine("9008000000000000/8675309000000001", "700.0")).toBe("765.150019");
+      expect(transposeLine("9008000000000000/8675309000000001", "7\\12")).toBe("765.150019");
     });
     // it("returns a negative numerator if computed value is negative", () => {
     //   expect(transposeLine("4/-4")).toBe("-1/1");
@@ -443,7 +446,7 @@ describe("helpers.js", () => {
       expect(transposeSelf("3/2", 3)).toBe("27/8");
       expect(transposeSelf("1,5", 2)).toBe("2,250000");
       expect(transposeSelf("3\\31", 2)).toBe("6\\31");
-      expect(transposeSelf("5/3", 23)).toBe("11920928955078125/94143178827")
+      expect(transposeSelf("5/3", 23)).toBe("11920928955078125/94143178827");
     });
     it("returns unison if stacked 0 times", () => {
       expect(transposeSelf("100.0", 0)).toBe("0.000000");
