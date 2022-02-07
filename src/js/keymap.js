@@ -3,6 +3,7 @@
  * International keyboard layouts
  */
 
+// prettier-ignore
 var Layouts = {
   // English QWERTY Layout
   //
@@ -63,6 +64,7 @@ var Layouts = {
 //
 //    https://keycode.info
 //
+// prettier-ignore
 var Keycodes = {
   ";": 186,
   "=": 187,
@@ -82,18 +84,18 @@ var Keycodes = {
 // Build Keymap from Layouts
 var Keymap = {}
 for (var id in Layouts) {
-  Keymap[id] = buildKeymapFromLayout(Layouts[id]);
+  Keymap[id] = buildKeymapFromLayout(Layouts[id])
 }
 
 function buildKeymapFromLayout(rows) {
   var map = {}
   for (var r = rows.length - 1; r >= 0; r--) {
-    var row = rows[r];
-    var rowId = rows.length - r - 2;
+    var row = rows[r]
+    var rowId = rows.length - r - 2
     for (var c = 0; c < row.length; c++) {
-      var keycode = Keycodes[row.charAt(c)] || row.charCodeAt(c);
-      map[keycode] = [rowId, c];
+      var keycode = Keycodes[row.charAt(c)] || row.charCodeAt(c)
+      map[keycode] = [rowId, c]
     }
   }
-  return map;
+  return map
 }

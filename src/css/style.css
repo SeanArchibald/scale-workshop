@@ -1,5 +1,6 @@
-img, canvas {
-  max-width:100%;
+img,
+canvas {
+  max-width: 100%;
 }
 
 .helpicon {
@@ -12,29 +13,39 @@ img, canvas {
 }
 
 .ui-widget-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
-    opacity: 0.5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: 0.5;
 }
 
 /* Make jQuery UI colors match with Bootstrap */
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
-  color:black;
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default,
+.ui-button,
+html .ui-button.ui-state-disabled:hover,
+html .ui-button.ui-state-disabled:active {
+  color: black;
   background-color: #eee;
   border-color: #ccc;
 }
-.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
-  color:black;
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
+  color: black;
   background-color: #eee;
   border-color: #ccc;
 }
 
 h3.ui-accordion-header {
-  font-weight:bold;
+  font-weight: bold;
 }
 
 textarea {
@@ -75,7 +86,7 @@ textarea {
   padding: 10px;
 }
 
-.navbar-toggle .icon-bar+.icon-bar {
+.navbar-toggle .icon-bar + .icon-bar {
   margin-top: 12px;
 }
 
@@ -92,25 +103,22 @@ textarea {
   max-height: 100vh;
 }
 
-.navbar {
-  /*min-height: 38px;*/
-}
-
 .navbar-brand {
   display: none;
   cursor: default;
 }
 
-.nav>li {
+.nav > li {
   width: 49%;
   display: inline-block;
 }
 
-.nav>li:hover, .navbar-brand:hover {
+.nav > li:hover,
+.navbar-brand:hover {
   background-color: #222;
 }
 
-.nav>li.open {
+.nav > li.open {
   width: 100%;
 }
 
@@ -132,7 +140,8 @@ body > .container-fluid > .row {
   margin-top: 20px;
 }
 
-input#btn_frequency_auto, input#btn_key_colors_auto {
+input#btn_frequency_auto,
+input#btn_key_colors_auto {
   margin-top: 3px;
 }
 
@@ -150,15 +159,21 @@ input#btn_frequency_auto, input#btn_key_colors_auto {
   margin-bottom: 4px;
 }
 
-.table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
-  padding:3px 5px;
+.table-condensed > tbody > tr > td,
+.table-condensed > tbody > tr > th,
+.table-condensed > tfoot > tr > td,
+.table-condensed > tfoot > tr > th,
+.table-condensed > thead > tr > td,
+.table-condensed > thead > tr > th {
+  padding: 3px 5px;
 }
 
 tr.bg-playnote td {
   background-color: #dff0d8 !important;
 }
 
-#tuning-table td, #tuning-table th {
+#tuning-table td,
+#tuning-table th {
   text-align: center;
 }
 
@@ -172,7 +187,7 @@ p.social-icons {
 
 div#qwerty-indicator {
   padding: 1em;
-  display:none;
+  display: none;
 }
 
 #btn_panic {
@@ -205,17 +220,16 @@ div#splash-center img {
   margin-top: 1em;
 }
 
-
 /* Virtual keyboard */
 
 #virtual-keyboard {
   background-color: white;
   position: fixed;
-  top:50px;
+  top: 50px;
   left: 0;
   width: 100vw;
   min-width: 500px; /* this stops the keys getting too close together for portrait mobile users */
-  height: calc( 100vh - 50px );
+  height: calc(100vh - 50px);
   display: none;
   z-index: 2;
 }
@@ -224,8 +238,9 @@ div#splash-center img {
   vertical-align: middle;
   border: 1px solid grey;
   font-size: 0.6em;
+  user-select: none;
+  cursor: pointer;
 }
-
 #virtual-keyboard td p {
   pointer-events: none;
   word-break: break-word;
@@ -233,7 +248,25 @@ div#splash-center img {
   color: #888;
 }
 
+#virtual-keyboard .key.white {
+  background: white;
+}
+#virtual-keyboard .key.white:hover {
+  background: #f4faf2;
+}
+#virtual-keyboard .key.white.active {
+  background: #dff0d8 !important;
+}
 
+#virtual-keyboard .key.black {
+  background: black;
+}
+#virtual-keyboard .key.black:hover {
+  background: #1e1e1e;
+}
+#virtual-keyboard .key.black.active {
+  background: #70786c !important;
+}
 
 /*
  * JQUERY MODAL UI MOBILE-ONLY FIXES
@@ -249,21 +282,20 @@ div#splash-center img {
   }
 }
 
-
 /*
  * NON-MOBILE
  */
 @media (min-width: 768px) {
-
   body > .container-fluid > .row {
     margin-top: 0px;
   }
 
   div#qwerty-indicator {
-    display:block;
+    display: block;
   }
 
-  .col-main { /* main columns of the Scale Workshop UI */
+  .col-main {
+    /* main columns of the Scale Workshop UI */
     height: calc(100vh - 70px);
     overflow-y: auto;
   }
@@ -274,10 +306,11 @@ div#splash-center img {
 
   #virtual-keyboard {
     font-size: 0.9em;
-    height: calc( 100vh - 50px );
+    height: calc(100vh - 50px);
   }
 
-  #tuning-table td.key-color, #tuning-table th.key-color {
+  #tuning-table td.key-color,
+  #tuning-table th.key-color {
     border-left: 1px solid #ddd;
   }
 
@@ -307,19 +340,18 @@ div#splash-center img {
     display: block;
   }
 
-  .nav>li {
+  .nav > li {
     width: unset;
     display: block;
   }
 
-  .nav>li.open {
+  .nav > li.open {
     width: unset;
   }
-
 }
 @media (min-width: 992px) {
-
-  .col-sub { /* main columns of the Scale Workshop UI */
+  .col-sub {
+    /* main columns of the Scale Workshop UI */
     height: calc(100vh - 70px);
     overflow-y: auto;
   }
@@ -327,14 +359,11 @@ div#splash-center img {
   .navbar {
     border-radius: 0px;
   }
-
 }
 @media (max-width: 991px) {
-
   #col-tuning-table {
     margin-top: 1em;
     padding-left: 0px;
     padding-right: 0px;
   }
-
 }

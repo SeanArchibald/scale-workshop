@@ -65,8 +65,7 @@
   <nav class="navbar navbar-inverse bg-inverse">
     <div class="container-fluid">
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed pull-right" data-toggle="collapse"
-          data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <button type="button" class="navbar-toggle collapsed pull-right">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
@@ -78,7 +77,7 @@
         </span>
       </div>
 
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <div class="collapse navbar-collapse" id="mobile-menu">
         <ul class="nav navbar-nav">
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-asterisk"
@@ -132,7 +131,7 @@
                     aria-hidden="true"></span> Equalize</a></li>
             </ul>
           </li>
-          <li><a href="#" id="nav_play"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> Touch Kbd</a>
+          <li><a href="#" id="nav_play"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> Virtual Kbd</a>
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-download-alt"
@@ -252,8 +251,7 @@
             <a id="btn_panic" href="#" class="btn btn-link" style="float:right;margin-top:1em;"
               title="Stops all currently playing notes and also turns down the Delay feedback gain.">Quiet</a>
 
-            <div id="qwerty-indicator">
-            </div>
+            <div id="qwerty-indicator"></div>
 
             <div id="settings-accordion">
 
@@ -274,7 +272,7 @@
 
                       <div class="checkbox">
                         <label>
-                          <input id="input_checkbox_night_mode" type="checkbox" /> <label>Dark mode</label>
+                          <input id="input_checkbox_night_mode" type="checkbox" /> <label for="input_checkbox_night_mode">Dark mode</label>
                         </label>
                       </div>
                     </div>
@@ -286,9 +284,21 @@
               <div id="settings_synth" class="group">
                 <h3>Synth settings</h3>
                 <div>
-                  <div class="form-group">
-                    <label for="midi-enabler">MIDI</label>
-                    <button type="button" class="btn btn-danger" id="midi-enabler">off</button>
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="midi-enabler">MIDI</label>
+                          <button type="button" class="btn btn-danger" id="midi-enabler">off</button>
+                        </div>
+                      </div>
+                      <div class="col-md-6 text-right">
+                        <div class="form-group">
+                          <label for="velocity-toggler">velocity</label>
+                          <button type="button" class="btn btn-success" id="velocity-toggler">on</button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <form>
                     <div class="form-group">
@@ -371,7 +381,7 @@
               <div id="settings_note_input" class="group">
                 <h3>Isomorphic keyboard settings</h3>
                 <div>
-                  <p>Play your scale using your computer keyboard or the touch keyboard.</p>
+                  <p>Play your scale using your computer keyboard or the virtual keyboard.</p>
                   <form>
 
                     <div class="form-group">
@@ -935,7 +945,6 @@
     <p>Sevish, Lajos Mészáros, Vincenzo Sicurella, Scott Thompson, Carl Lumma, Tobia, Azorlogh</p>
   </div>
 
-
   <!-- Play virtual keyboard -->
   <table id="virtual-keyboard">
     <tr class="hidden-xs hidden-sm">
@@ -1030,8 +1039,6 @@
     </tr>
   </table>
 
-
-
   <!-- Dependencies -->
   <script src="src/lib/jquery-3.2.1.min.js"></script>
   <script src="src/lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
@@ -1040,9 +1047,10 @@
   <script src="src/lib/eventemitter3.js"></script>
   <script src="src/lib/ramda-0.27.1.min.js"></script>
   <script src="src/lib/jszip.min.js"></script>
+  <script src="src/lib/decimal.js"></script>
 
   <!-- Scale Workshop scripts -->
-  <script src="src/js/model.js?v=1.4.2"></script>
+  <script src="src/js/state/state.js?v=1.4.2"></script>
   <script src="src/js/constants.js?v=1.4.2"></script>
   <script src="src/js/helpers.js?v=1.4.2"></script>
   <script src="src/js/scaleworkshop.js?v=1.4.2"></script>
@@ -1056,8 +1064,19 @@
   <script src="src/js/synth/Delay.js?v=1.4.2"></script>
   <script src="src/js/synth/Synth.js?v=1.4.2"></script>
   <script src="src/js/synth.js?v=1.4.2"></script>
-  <script src="src/js/midi.js?v=1.4.2"></script>
+
+  <script src="src/js/midi/constants.js"></script>
+  <script src="src/js/midi/helpers.js?v=1.4.2"></script>
+  <script src="src/js/midi/commands.js?v=1.4.2"></script>
+  <script src="src/js/midi/math.js?v=1.4.2"></script>
+  <script src="src/js/midi/midi.js?v=1.4.2"></script>
+  
   <script src="src/js/events.js?v=1.4.2"></script>
+  <script src="src/js/state/reactions.js?v=1.4.2"></script>
+  <script src="src/js/state/reactions-dom.js?v=1.4.2"></script>
+  <script src="src/js/state/actions.js?v=1.4.2"></script>
+  <script src="src/js/state/actions-dom.js?v=1.4.2"></script>
+  <script src="src/js/state/on-ready.js?v=1.4.2"></script>
   <script src="src/js/user.js?v=1.4.2"></script>
 </body>
 </html>
