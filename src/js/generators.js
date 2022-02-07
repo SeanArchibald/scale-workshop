@@ -576,7 +576,7 @@ function load_preset_scale(a) {
 
     case "gradycentaurah":
     name = "Kraig Grady Centaura Harmonic";
-    data = ["33/2", "9/8", "7/6", "5/4", "4/3", "11/8", "3/2", "14/9", "5/3", "7/4", "15/8", "2/1"];
+    data = ["33/32", "9/8", "7/6", "5/4", "4/3", "11/8", "3/2", "14/9", "5/3", "7/4", "15/8", "2/1"];
     break;
 
     // Equal temperament subsets
