@@ -161,7 +161,11 @@ function export_scala_scl() {
     // if the current interval is n-of-m edo or commadecimal linetype, output as cents instead
     if (
       getLineType(tuning_table['scale_data'][i]) === LINE_TYPE.N_OF_EDO ||
-      getLineType(tuning_table['scale_data'][i]) === LINE_TYPE.DECIMAL
+      getLineType(tuning_table['scale_data'][i]) === LINE_TYPE.DECIMAL ||
+      ( // Don't allow ratio integers above (2^31) - 1
+        getLineType(tuning_table['scale_data'][i]) === LINE_TYPE.RATIO &&
+        tuning_table['scale_data'][i].split('/').reduce((overflow, d) => overflow || parseInt(d) > 2147483647, false)
+      )
     ) {
       file += decimal_to_cents(tuning_table['tuning_data'][i]).toFixed(6)
     } else {
