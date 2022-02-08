@@ -943,7 +943,7 @@ function periodReduceRatio(ratio, period) {
   // TODO simplify in place
 
   const result = `${ratioReducedNum}/${ratioReducedDen}`;
-  if (!ratioIsSafe(ratio))
+  if (!ratioIsSafe(result))
     return bailToCents();
 
   return simplifyRatio(result);

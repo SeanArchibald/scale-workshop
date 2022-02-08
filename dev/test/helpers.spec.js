@@ -352,6 +352,7 @@ describe("helpers.js", () => {
     });
     it("returns cents if a ratio integer exceeds 20 places", () => {
       expect(periodReduceRatio("22528399544939174411840147874772641/4722366482869645213696", "2/1")).toBe("140.760062");
+      expect(periodReduceRatio("444141444444/222211123134124", "1770695989828143/1124948488149")).toBe("1984.254914")
     })
     it("returns NaN if given a non-numerical value", () => {
       expect(periodReduceRatio("foo", "2/1")).toBeNaN();
