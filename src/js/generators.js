@@ -36,7 +36,7 @@ function generate_equal_temperament_data(divider, period) {
 
   for (i = 1; i <= divider; i++) {
 
-    var note = i * step;
+    var note = roundToNDecimals(6, i * step);
 
     // if returned value is an integer, append a . just to make sure the parser will see it as a cents value later
     if (!note.toString().includes('.')) {
