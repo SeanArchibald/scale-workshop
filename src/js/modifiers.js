@@ -272,26 +272,22 @@ function modify_rotate() {
   let degree = parseInt(jQuery('#input_rotate_new_1_1').val())
   let transposer = negateLine(lines[degree])
   let equave = lines[lines.length - 1]
-  console.log(transposer)
-  console.log(equave)
 
-  // transpose each line, mod equave
-  for (let i = 0; i < lines.length; i++) {
-    if (i !== degree) {
-      lines[i] = moduloLine(transposeLine(lines[i], transposer), equave)
-    } else {
-      lines[i] = equave
-    }
-    console.log(i)
-    console.log(degree)
+  let rotatedLines = []
+
+  // transpose lines, mod equave
+  // start on degree after transposer/new root, cycle around and stop before transposer
+  for (let i = 1; i < lines.length; i++) {
+    let deg = (i + degree) % lines.length
+    let scaleIndex = i - 1
+    rotatedLines[scaleIndex] = moduloLine(transposeLine(lines[deg], transposer), equave)
   }
-
-  // sort resulting scale
-  lines = scaleSort(lines)
-  console.log(lines)
+  
+  // add equave
+  rotatedLines.push(equave)
 
   // update tuning input field with new tuning
-  jQuery('#txt_tuning_data').val(lines.join(unix_newline))
+  jQuery('#txt_tuning_data').val(rotatedLines.join(unix_newline))
   parse_tuning_data()
   jQuery('#modal_modify_rotate').dialog('close')
 
