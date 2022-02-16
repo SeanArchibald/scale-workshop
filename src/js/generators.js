@@ -36,7 +36,7 @@ function generate_equal_temperament_data(divider, period) {
 
   for (i = 1; i <= divider; i++) {
 
-    var note = i * step;
+    var note = roundToNDecimals(6, i * step);
 
     // if returned value is an integer, append a . just to make sure the parser will see it as a cents value later
     if (!note.toString().includes('.')) {
@@ -98,6 +98,21 @@ function generate_rank_2_temperament() {
 function generate_rank_2_temperament_data(generator, period, size, up, lineType) {
   // empty existing tuning data
   let tuningData = '';
+
+  // I added these to fix a NaN issue, but they might have been a result of a typo.
+  // If there's still NaN with some params, try uncommenting out these if-statements.
+  // Should only affect ginormous integer ratios - vsicurella
+
+  // Convert to cents if ratio integers are longer than 20 digits
+  // if (getLineType(generator) === LINE_TYPE.RATIO && !ratioIsSafe(generator))
+  //   generator = ratio_to_cents(generator);
+
+  // if (getLineType(period) === LINE_TYPE.RATIO && !ratioIsSafe(period))
+  //   period = ratio_to_cents(period);
+
+  // Scale down generator to start within the period 
+  // (helps avoid NaN and 0.0 cents with huge integer ratios)
+  generator = moduloLine(generator, period);
 
   // Start scale on the lowest generator
   let powers = up - size + 1;
