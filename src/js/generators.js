@@ -403,7 +403,7 @@ function generate_cps() {
 
     // simplify the ratios
     for (let i=0; i<products.length; i++) {
-      products[i] = simplifyRatioString(products[i]);
+      products[i] = simplifyRatio(products[i]);
     }
 
   }
