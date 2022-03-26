@@ -87,6 +87,15 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
+### 1.4.3
+* Feature: added button for toggling velocity sensing for MIDI in
+* Feature: initial support for MIDI out (output MIDI to MTS-capable synths)
+* Improvement: various improvements to Virtual Keyboard (it now works better on desktop, can be closed with the Esc key, now shows hover and active colours)
+* Improvement: better decimal precision
+* Bug fix: typo in Kraig Grady Centaura Harmonic preset scale
+* Bug fix: enumerate chord inversion
+* Bug fix: Rotate modifier now preserves nonlinear scale data
+
 ### 1.4.2
 * New modifier: Rotate. This allows you to choose an interval from your scale to be the new 1/1. (Known issue: it doesn't work as expected for intervals with decimal notation e.g. `1,5`, `2,0`)
 * Bug fixed: synth notes stuck playing quietly in the background
