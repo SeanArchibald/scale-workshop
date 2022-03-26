@@ -30,8 +30,8 @@ function touch_kbd_open() {
   jQuery('#virtual-keyboard td').each(function (index) {
     // clear content of cell
     jQuery(this).empty()
-    // remove any classes that might be on the cell
-    jQuery(this).attr('class', '')
+    // reset any classes that might be on the cell
+    jQuery(this).attr('class', 'key')
   })
 
   // display tuning info on virtual keys
@@ -47,7 +47,7 @@ function touch_kbd_open() {
     var keynum = (midinote - tuning_table['base_midi_note']).mod(key_colors.length)
 
     // set the color of the key
-    this.classList.add('key', key_colors[keynum])
+    this.style.backgroundColor = key_colors[keynum]
   })
 
   state.set('mobile menu visible', false)

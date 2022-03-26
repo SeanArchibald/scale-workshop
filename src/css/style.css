@@ -248,24 +248,11 @@ div#splash-center img {
   color: #888;
 }
 
-#virtual-keyboard .key.white {
-  background: white;
+#virtual-keyboard .key:hover {
+  background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,0,0,0.5) 50%, rgba(255,255,255,0) 100%);
 }
-#virtual-keyboard .key.white:hover {
-  background: #f4faf2;
-}
-#virtual-keyboard .key.white.active {
-  background: #dff0d8 !important;
-}
-
-#virtual-keyboard .key.black {
-  background: black;
-}
-#virtual-keyboard .key.black:hover {
-  background: #1e1e1e;
-}
-#virtual-keyboard .key.black.active {
-  background: #70786c !important;
+#virtual-keyboard .key.active {
+  background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,255,0,0.5) 50%, rgba(0,0,0,0) 100%);
 }
 
 /*
