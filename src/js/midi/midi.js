@@ -313,11 +313,20 @@ jQuery(() => {
 
       midi.init().then(() => {
         // temporary code until a proper UI is created to handle MIDI devices and channels
-        Object.keys(midi._.status.devices.outputs).forEach((outputName) => {
-          midi.toggleDevice('output', outputName)
-          // the device, which takes the MIDI OUTPUT should have it's INPUT part disabled, or else there will be feedback
-          midi._.status.devices.inputs[outputName].enabled = false
-        })
+        if (state.get('midi out enabled')) {
+          Object.keys(midi._.status.devices.outputs).forEach((outputName) => {
+            midi.toggleDevice('output', outputName)
+            // the device, which takes the MIDI OUTPUT should have it's INPUT part disabled, or else there will be feedback
+            if (outputName in midi._.status.devices.inputs) {
+              midi._.status.devices.inputs[outputName].enabled = false
+            }
+          })
+        } else {
+          // Not sure if needed, but let's make sure all outputs are disabled.
+          Object.values(midi._.status.devices.outputs).forEach((output) => {
+            output.enabled = false
+          })
+        }
       })
     }
   })

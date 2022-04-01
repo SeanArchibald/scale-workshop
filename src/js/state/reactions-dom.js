@@ -14,6 +14,16 @@ state.on('midi velocity sensing', (value) => {
   }
 })
 
+state.on('midi out enabled', (value) => {
+  const midiOutToggleBtn = jQuery('#midi-out-toggler')
+
+  if (value) {
+    midiOutToggleBtn.removeClass('btn-basic').addClass('btn-success').text('on')
+  } else {
+    midiOutToggleBtn.removeClass('btn-success').addClass('btn-basic').text('off')
+  }
+})
+
 state.on('virtual keyboard visible', (value) => {
   if (value) {
     touch_kbd_open()

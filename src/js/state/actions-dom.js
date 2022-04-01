@@ -8,6 +8,10 @@ jQuery('#velocity-toggler').on('click', () => {
   state.set('midi velocity sensing', !state.get('midi velocity sensing'))
 })
 
+jQuery('#midi-out-toggler').on('click', () => {
+  state.set('midi out enabled', !state.get('midi out enabled'))
+})
+
 // hide virtual keyboard when mobile hamburger menu button is clicked
 jQuery('button.navbar-toggle').on('click', () => {
   state.set('virtual keyboard visible', false)
