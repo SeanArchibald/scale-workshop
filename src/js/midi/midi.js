@@ -22,7 +22,7 @@ class MIDI extends EventEmitter {
     }
   }
 
-  set mode(value) {
+  set whiteOnly(value) {
     this._.whiteOnly = value
 
     R.forEach((note) => {
@@ -177,35 +177,35 @@ class MIDI extends EventEmitter {
     }
   }
 
-  toggleDevice(type, name) {
+  toggleDevice(type, name, newValue = null) {
     const { status } = this._
 
     const device = status.devices[`${type}s`][name]
-    device.enabled = !device.enabled
+    device.enabled = newValue === null ? !device.enabled : newValue
 
     if (type === 'output') {
       if (device.enabled) {
-        R.forEach((channel) => {
+        device.channels.forEach((channel) => {
           device.port.send(setPitchBendLimit(channel, maxBendingDistanceInSemitones))
-        })(device.channels)
+        })
       } else {
-        R.forEach((channel) => {
+        device.channels.forEach((channel) => {
           device.port.send(bendPitch(channel, 0))
-        })(device.channels)
+        })
       }
     }
 
     this.emit('update', R.clone(status))
   }
 
-  toggleChannel(type, name, channelID) {
+  toggleChannel(type, name, channelID, newValue = null) {
     const { status } = this._
 
     const device = status.devices[`${type}s`][name]
 
     if (device.enabled) {
       const channel = R.find(R.propEq('id', parseInt(channelID)))(device.channels)
-      channel.enabled = !channel.enabled
+      channel.enabled = newValue === null ? !channel.enabled : newValue
       this.emit('update', R.clone(status))
     }
   }
@@ -302,6 +302,12 @@ jQuery(() => {
     .on('note off', (note, velocity, channel) => {
       synth.noteOff(note, true)
     })
+    .on('update', (status) => {
+      if (state.get('midi modal visible')) {
+        state.set('midi modal visible', false)
+        state.set('midi modal visible', true)
+      }
+    })
 
   midiEnablerBtn.on('click', () => {
     if (midi.isSupported()) {
@@ -311,14 +317,7 @@ jQuery(() => {
         .addClass('btn-success')
         .text('on')
 
-      midi.init().then(() => {
-        // temporary code until a proper UI is created to handle MIDI devices and channels
-        Object.keys(midi._.status.devices.outputs).forEach((outputName) => {
-          midi.toggleDevice('output', outputName)
-          // the device, which takes the MIDI OUTPUT should have it's INPUT part disabled, or else there will be feedback
-          midi._.status.devices.inputs[outputName].enabled = false
-        })
-      })
+      midi.init()
     }
   })
 })

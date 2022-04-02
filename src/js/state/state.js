@@ -24,5 +24,6 @@ const state = new State({
   'main volume': 0.8,
   'midi velocity sensing': true,
   'virtual keyboard visible': false,
-  'mobile menu visible': false
+  'mobile menu visible': false,
+  'midi modal visible': false
 })
