@@ -9,18 +9,21 @@ const MidiChannel = ({ id, enabled }) => {
   return template.content
 }
 
-const MidiDevice = ({ name, channels, enabled }) => {
+const MidiDevice = ({ type, name, channels, enabled }) => {
   const template = document.createElement('template')
   template.innerHTML = `
     <div style="display:flex">
-      <input type="checkbox" ${enabled ? 'checked="checked"' : ''} />
-      <h4>${name}</h4>
+      <input id="${type}--${name}" type="checkbox" ${enabled ? 'checked="checked"' : ''} />
+      <h4><label for="${type}--${name}">${name}</label></h4>
       <div class="channels" style="display:flex"></div>
     </div>
   `
   const content = template.content
   channels.forEach((channel) => {
     content.querySelector('.channels').appendChild(MidiChannel(channel))
+  })
+  content.getElementById(`${type}--${name}`).addEventListener('change', (e) => {
+    midi.toggleDevice(type, name, e.target.checked)
   })
   return content
 }
@@ -54,10 +57,10 @@ const MidiModal = ({
   `
   const content = template.content
   Object.entries(inputs).forEach(([name, input]) => {
-    content.querySelector('.inputs').appendChild(MidiDevice({ name, ...input }))
+    content.querySelector('.inputs').appendChild(MidiDevice({ type: 'input', name, ...input }))
   })
   Object.entries(outputs).forEach(([name, output]) => {
-    content.querySelector('.outputs').appendChild(MidiDevice({ name, ...output }))
+    content.querySelector('.outputs').appendChild(MidiDevice({ type: 'output', name, ...output }))
   })
   content.querySelector('[name="midi-whitemode"]').addEventListener('change', (e) => {
     midi.whiteOnly = e.target.checked
