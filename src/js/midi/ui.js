@@ -1,12 +1,16 @@
-const MidiChannel = ({ id, enabled }) => {
+const MidiChannel = ({ type, name, id, enabled }) => {
   const template = document.createElement('template')
   template.innerHTML = `
-    <label>
+    <label style="display:flex;flex-direction:column;padding:0 10px;align-items:center">
       <input type="checkbox" ${enabled ? 'checked="checked"' : ''} />
       <span>${id}</span>
     </label>
   `
-  return template.content
+  const content = template.content
+  content.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+    midi.toggleChannel(type, name, id, e.target.checked)
+  })
+  return content
 }
 
 const MidiDevice = ({ type, name, channels, enabled }) => {
@@ -20,7 +24,7 @@ const MidiDevice = ({ type, name, channels, enabled }) => {
   `
   const content = template.content
   channels.forEach((channel) => {
-    content.querySelector('.channels').appendChild(MidiChannel(channel))
+    content.querySelector('.channels').appendChild(MidiChannel({ type, name, ...channel }))
   })
   content.getElementById(`${type}--${name}`).addEventListener('change', (e) => {
     midi.toggleDevice(type, name, e.target.checked)
