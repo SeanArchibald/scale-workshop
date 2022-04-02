@@ -8,9 +8,9 @@ state.on('midi velocity sensing', (value) => {
   const velocityToggleBtn = jQuery('#velocity-toggler')
 
   if (value) {
-    velocityToggleBtn.removeClass('btn-basic').addClass('btn-success').text('on')
+    velocityToggleBtn.removeClass('btn-basic').addClass('btn-success').text('velocity: on')
   } else {
-    velocityToggleBtn.removeClass('btn-success').addClass('btn-basic').text('off')
+    velocityToggleBtn.removeClass('btn-success').addClass('btn-basic').text('velocity: off')
   }
 })
 
