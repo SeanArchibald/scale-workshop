@@ -146,7 +146,7 @@ class MIDI extends EventEmitter {
               case commands.pitchbend:
                 {
                   const [low, high] = params
-                  this.emit('pitchbend', (((high << 8) | low) / 0x3fff - 1) * 100)
+                  this.emit('pitchbend', (((high << 7) | low) / 0x3fff - 1) * 100)
                 }
                 break
               case commands.cc:
