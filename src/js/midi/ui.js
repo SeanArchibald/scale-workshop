@@ -38,12 +38,7 @@ const MidiDevice = ({ type, name, channels, enabled }) => {
   return content
 }
 
-const MidiModal = ({
-  status: {
-    devices: { inputs, outputs }
-  },
-  whiteOnly
-}) => {
+const MidiModal = ({ devices: { inputs, outputs }, whiteOnly }) => {
   const template = document.createElement('template')
   template.innerHTML = `
     <div id="midi-modal" style="user-select:none">

@@ -11,12 +11,10 @@ class MIDI extends EventEmitter {
 
     this._ = {
       inited: false,
-      status: {
-        supported: false,
-        devices: {
-          inputs: {},
-          outputs: {}
-        }
+      supported: false,
+      devices: {
+        inputs: {},
+        outputs: {}
       },
       whiteOnly: false
     }
@@ -37,7 +35,7 @@ class MIDI extends EventEmitter {
       this._.inited = true
 
       const enableMidiSupport = (midiAccess) => {
-        this._.status.supported = true
+        this._.supported = true
 
         midiAccess.onstatechange = (event) => {
           initPort(event.port)
@@ -55,39 +53,39 @@ class MIDI extends EventEmitter {
       }
 
       const initPort = (port) => {
-        const { status } = this._
+        const { devices } = this._
 
         const name = getNameFromPort(port)
 
         if (port.type === 'input') {
-          if (!status.devices.inputs[name]) {
-            status.devices.inputs[name] = { port, ...R.clone(defaultInputData) }
+          if (!devices.inputs[name]) {
+            devices.inputs[name] = { port, ...R.clone(defaultInputData) }
           }
 
-          status.devices.inputs[name].connected = false
+          devices.inputs[name].connected = false
           if (port.state === 'connected') {
             if (port.connection === 'closed') {
               port.open()
             } else if (port.connection === 'open') {
-              port.onmidimessage = onMidiMessage(status.devices.inputs[name])
-              status.devices.inputs[name].connected = true
+              port.onmidimessage = onMidiMessage(devices.inputs[name])
+              devices.inputs[name].connected = true
             }
           }
         } else if (port.type === 'output') {
-          if (!status.devices.outputs[name]) {
-            status.devices.outputs[name] = { port, ...R.clone(defaultOutputData) }
+          if (!devices.outputs[name]) {
+            devices.outputs[name] = { port, ...R.clone(defaultOutputData) }
           }
 
           if (port.state === 'connected') {
             if (port.connection === 'closed') {
               port.open()
             } else if (port.connection === 'open') {
-              status.devices.outputs[name].connected = true
+              devices.outputs[name].connected = true
             }
           }
         }
 
-        this.emit('update', R.clone(status))
+        this.emit('update')
       }
 
       const onMidiMessage = R.curry((device, event) => {
@@ -170,17 +168,17 @@ class MIDI extends EventEmitter {
       if (navigator.requestMIDIAccess) {
         const midiAccess = await navigator.requestMIDIAccess({ sysex: false })
         enableMidiSupport(midiAccess)
-        this.emit('ready', R.clone(this._.status))
+        this.emit('ready')
       } else {
-        this.emit('blocked', R.clone(this._.status))
+        this.emit('blocked')
       }
     }
   }
 
   toggleDevice(type, name, newValue = null) {
-    const { status } = this._
+    const { devices } = this._
 
-    const device = status.devices[`${type}s`][name]
+    const device = devices[`${type}s`][name]
     device.enabled = newValue === null ? !device.enabled : newValue
 
     if (type === 'output') {
@@ -195,21 +193,21 @@ class MIDI extends EventEmitter {
       }
     }
 
-    this.emit('update', R.clone(status))
+    this.emit('update')
   }
 
   toggleChannel(type, name, channelID, newValue = null) {
-    const { status } = this._
+    const { devices } = this._
 
-    const device = status.devices[`${type}s`][name]
+    const device = devices[`${type}s`][name]
     const channel = device.channels.find(({ id }) => id === channelID)
     channel.enabled = newValue === null ? !channel.enabled : newValue
 
-    this.emit('update', R.clone(status))
+    this.emit('update')
   }
 
   getEnabledOutputs() {
-    return Object.values(this._.status.devices.outputs).filter(({ enabled, channels }) => {
+    return Object.values(this._.devices.outputs).filter(({ enabled, channels }) => {
       return enabled === true && channels.find(({ enabled }) => enabled === true) !== undefined
     })
   }
@@ -270,7 +268,7 @@ class MIDI extends EventEmitter {
   }
 
   isSupported() {
-    return !!navigator.requestMIDIAccess
+    return this._.supported
   }
 }
 
@@ -295,22 +293,22 @@ jQuery(() => {
     .on('note off', (note, velocity, channel) => {
       synth.noteOff(note, true)
     })
-    .on('update', (status) => {
+    .on('update', () => {
       if (state.get('midi modal visible')) {
         state.set('midi modal visible', false)
         state.set('midi modal visible', true)
       }
     })
 
-  midiEnablerBtn.on('click', () => {
+  midiEnablerBtn.on('click', async () => {
+    await midi.init()
+
     if (midi.isSupported()) {
       midiEnablerBtn
         .prop('disabled', true)
         .removeClass('btn-danger')
         .addClass('btn-success')
         .text('on')
-
-      midi.init()
     }
   })
 })
