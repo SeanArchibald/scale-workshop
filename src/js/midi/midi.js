@@ -97,7 +97,7 @@ class MIDI extends EventEmitter {
           const cmd = data >> 4
           const channel = data & 0x0f
 
-          if (device.channels[channel] && device.channels[channel].enabled) {
+          if (device.channels[channel]?.enabled === true) {
             switch (cmd) {
               case commands.noteOff:
                 {
@@ -204,35 +204,30 @@ class MIDI extends EventEmitter {
     const device = status.devices[`${type}s`][name]
 
     if (device.enabled) {
-      const channel = R.find(R.propEq('id', parseInt(channelID)))(device.channels)
+      const channel = device.channels.find(({ id }) => id === channelID)
       channel.enabled = newValue === null ? !channel.enabled : newValue
       this.emit('update', R.clone(status))
     }
   }
 
   getEnabledOutputs() {
-    return R.compose(
-      R.filter((device) => device.enabled && R.any((channel) => channel.enabled)(device.channels)),
-      R.values
-    )(this._.status.devices.outputs)
+    return Object.values(this._.status.devices.outputs).filter(({ enabled, channels }) => {
+      return enabled === true && channels.find(({ enabled }) => enabled === true) !== undefined
+    })
   }
 
   getLowestEnabledChannel(channels) {
-    return R.find((channel) => channel.enabled, channels)
+    return channels.find(({ enabled }) => enabled === true)
   }
 
   // -------------------------------------------
 
   playFrequency(frequency = 0, noteLength = Infinity) {
-    // find midi devices, which are enabled and contain at least one open channel
-    const devices = R.compose(
-      R.filter((device) => device.enabled && R.any((channel) => channel.enabled)(device.channels)),
-      R.values
-    )(this._.status.devices.outputs)
+    const devices = this.getEnabledOutputs()
 
     if (devices.length) {
       R.forEach(({ port, channels }) => {
-        const channel = R.compose(R.head, R.filter(R.propEq('enabled', true)))(channels)
+        const channel = channels.filter(({ enabled }) => enabled === true)[0]
         const portName = getNameFromPort(port)
         if (!demoData[portName]) {
           demoData[portName] = {}

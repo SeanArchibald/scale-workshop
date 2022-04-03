@@ -1,10 +1,12 @@
 const MidiChannel = ({ type, name, id, enabled }) => {
   const template = document.createElement('template')
   template.innerHTML = `
-    <label style="display:flex;flex-direction:column;padding:0 10px;align-items:center">
-      <input type="checkbox" ${enabled ? 'checked="checked"' : ''} />
-      <span>${id}</span>
-    </label>
+    <div style="display:flex;flex-direction:column;padding:0 10px;align-items:center">
+      <input id="${type}--${name}--${id}" style="margin:0" type="checkbox" ${
+    enabled ? 'checked="checked"' : ''
+  } />
+      <label for="${type}--${name}--${id}">${id}</label>
+    </div>
   `
   const content = template.content
   content.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
@@ -16,9 +18,13 @@ const MidiChannel = ({ type, name, id, enabled }) => {
 const MidiDevice = ({ type, name, channels, enabled }) => {
   const template = document.createElement('template')
   template.innerHTML = `
-    <div style="display:flex">
-      <input id="${type}--${name}" type="checkbox" ${enabled ? 'checked="checked"' : ''} />
-      <h4><label for="${type}--${name}">${name}</label></h4>
+    <div style="display:flex;align-items:center">
+      <div style="padding:0 10px">
+        <input id="${type}--${name}" style="margin:0" type="checkbox" ${
+    enabled ? 'checked="checked"' : ''
+  } />
+      </div>
+      <h4 style="flex-grow:1"><label style="margin:0" for="${type}--${name}">${name}</label></h4>
       <div class="channels" style="display:flex"></div>
     </div>
   `
@@ -40,7 +46,7 @@ const MidiModal = ({
 }) => {
   const template = document.createElement('template')
   template.innerHTML = `
-    <div id="midi-modal">
+    <div id="midi-modal" style="user-select:none">
       <h2>MIDI Settings</h2>
 
       <h3>INPUT ports of attached MIDI devices</h3>
