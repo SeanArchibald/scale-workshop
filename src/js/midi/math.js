@@ -12,26 +12,27 @@ const log = R.curry((a, b) => Decimal.log(a, b))
 
 const floor = (a) => Decimal.floor(a)
 
-const moveNUnits = R.curryN(4, (ratioOfSymmetry, divisionsPerRatio, n, frequency) =>
-  R.compose(multiply(frequency), pow(ratioOfSymmetry), divide(n))(divisionsPerRatio)
-)
+const moveNUnits = (ratioOfSymmetry, divisionsPerRatio, n, frequency) => {
+  return multiply(frequency, pow(ratioOfSymmetry, divide(n, divisionsPerRatio)))
+}
 
-const getDistanceInUnits = R.curryN(
-  4,
-  (ratioOfSymmetry, divisionsPerRatio, frequency2, frequency1) =>
-    R.compose(
-      multiply(divisionsPerRatio),
-      log(R.__, ratioOfSymmetry),
-      divide(frequency2)
-    )(frequency1)
-)
+const getDistanceInUnits = (ratioOfSymmetry, divisionsPerRatio, freq2, freq1) => {
+  return multiply(divisionsPerRatio, log(divide(freq2, freq1), ratioOfSymmetry))
+}
 
-const moveNSemitones = moveNUnits(octaveRatio, semitonesPerOctave)
-const getDistanceInSemitones = getDistanceInUnits(octaveRatio, semitonesPerOctave)
+const moveNSemitones = (n, frequency) => {
+  return moveNUnits(octaveRatio, semitonesPerOctave, n, frequency)
+}
+
+const getDistanceInSemitones = (freq2, freq1) => {
+  return getDistanceInUnits(octaveRatio, semitonesPerOctave, freq2, freq1)
+}
 
 const bendingRatio = moveNSemitones(maxBendingDistanceInSemitones, 1)
 
-const getBendingDistance = getDistanceInUnits(bendingRatio, pitchBendMax)
+const getBendingDistance = (freq2, freq1) => {
+  return getDistanceInUnits(bendingRatio, pitchBendMax, freq2, freq1)
+}
 
 const getNoteFrequency = R.compose(
   moveNSemitones(R.__, referenceNote.frequency),
