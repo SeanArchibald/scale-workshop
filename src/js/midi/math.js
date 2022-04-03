@@ -13,10 +13,12 @@ const log = R.curry((a, b) => Decimal.log(a, b))
 const floor = (a) => Decimal.floor(a)
 
 const moveNUnits = (ratioOfSymmetry, divisionsPerRatio, n, frequency) => {
+  // return frequency * ratioOfSymmetry ** (n / divisionsPerRatio)
   return multiply(frequency, pow(ratioOfSymmetry, divide(n, divisionsPerRatio)))
 }
 
 const getDistanceInUnits = (ratioOfSymmetry, divisionsPerRatio, freq2, freq1) => {
+  // return divisionsPerRatio * Math.log(freq2 / freq1, ratioOfSymmetry)
   return multiply(divisionsPerRatio, log(divide(freq2, freq1), ratioOfSymmetry))
 }
 
