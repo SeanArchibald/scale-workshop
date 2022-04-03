@@ -61,7 +61,7 @@ class MIDI extends EventEmitter {
 
         if (port.type === 'input') {
           if (!status.devices.inputs[name]) {
-            status.devices.inputs[name] = R.merge({ port }, defaultInputData)
+            status.devices.inputs[name] = { port, ...R.clone(defaultInputData) }
           }
 
           status.devices.inputs[name].connected = false
@@ -75,7 +75,7 @@ class MIDI extends EventEmitter {
           }
         } else if (port.type === 'output') {
           if (!status.devices.outputs[name]) {
-            status.devices.outputs[name] = R.merge({ port }, defaultOutputData)
+            status.devices.outputs[name] = { port, ...R.clone(defaultOutputData) }
           }
 
           if (port.state === 'connected') {
@@ -202,12 +202,10 @@ class MIDI extends EventEmitter {
     const { status } = this._
 
     const device = status.devices[`${type}s`][name]
+    const channel = device.channels.find(({ id }) => id === channelID)
+    channel.enabled = newValue === null ? !channel.enabled : newValue
 
-    if (device.enabled) {
-      const channel = device.channels.find(({ id }) => id === channelID)
-      channel.enabled = newValue === null ? !channel.enabled : newValue
-      this.emit('update', R.clone(status))
-    }
+    this.emit('update', R.clone(status))
   }
 
   getEnabledOutputs() {
