@@ -223,7 +223,7 @@ class MIDI extends EventEmitter {
 
     if (devices.length) {
       R.forEach(({ port, channels }) => {
-        const channel = channels.filter(({ enabled }) => enabled === true)[0]
+        const channel = channels.find(({ enabled }) => enabled === true)
         const portName = getNameFromPort(port)
         if (!demoData[portName]) {
           demoData[portName] = {}
