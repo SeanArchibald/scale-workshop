@@ -295,10 +295,10 @@ jQuery(() => {
         .text('off (blocked)')
     })
     .on('note on', (note, velocity, channel) => {
-      synth.noteOn(note, velocity, true)
+      synth.noteOn(note, velocity)
     })
     .on('note off', (note, velocity, channel) => {
-      synth.noteOff(note, true)
+      synth.noteOff(note)
     })
     .on('update', () => {
       // need to redraw modal here, which is hooked up to the state variable below to change
