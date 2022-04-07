@@ -301,6 +301,10 @@ jQuery(() => {
       synth.noteOff(note, true)
     })
     .on('update', () => {
+      // need to redraw modal here, which is hooked up to the state variable below to change
+      // but since sending the same value as we currently have for a state doesn't emit a change
+      // we quickly close and re-open the modal
+      // (a proper state based templating engine, like react could solve this without the state toggle)
       if (state.get('midi modal visible')) {
         state.set('midi modal visible', false)
         state.set('midi modal visible', true)
