@@ -37,13 +37,11 @@ const getBendingDistance = (freq2, freq1) => {
 }
 
 const getNoteFrequency = R.compose(
-  moveNSemitones(R.__, referenceNote.frequency),
+  (n) => moveNSemitones(n, referenceNote.frequency),
   subtract(R.__, referenceNote.id),
   R.clamp(keyIdMin, keyIdMax)
 )
 
-const getNoteId = R.compose(
-  floor,
-  add(R.__, referenceNote.id),
-  getDistanceInSemitones(R.__, referenceNote.frequency)
+const getNoteId = R.compose(floor, add(R.__, referenceNote.id), (n) =>
+  getDistanceInSemitones(n, referenceNote.frequency)
 )
