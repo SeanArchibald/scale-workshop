@@ -201,9 +201,16 @@ class MIDI extends EventEmitter {
 
     const device = devices[`${type}s`][name]
     const channel = device.channels.find(({ id }) => id === channelID)
-    channel.enabled = newValue === null ? !channel.enabled : newValue
 
-    this.emit('update')
+    newValue = newValue === null ? !channel.enabled : newValue
+    if (channel.enabled !== newValue) {
+      channel.enabled = newValue
+      this.emit('update')
+    }
+  }
+
+  setChannel(type, name, channelID, newValue) {
+    this.toggleChannel(type, name, channelID, newValue)
   }
 
   getEnabledOutputs() {
@@ -222,7 +229,7 @@ class MIDI extends EventEmitter {
     const devices = this.getEnabledOutputs()
 
     if (devices.length) {
-      R.forEach(({ port, channels }) => {
+      devices.forEach(({ port, channels }) => {
         const channel = channels.find(({ enabled }) => enabled === true)
         const portName = getNameFromPort(port)
         if (!demoData[portName]) {
@@ -259,7 +266,7 @@ class MIDI extends EventEmitter {
             }, noteLength)
           }
         }
-      })(devices)
+      })
     }
   }
 

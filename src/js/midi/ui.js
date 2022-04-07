@@ -10,7 +10,7 @@ const MidiChannel = ({ type, name, id, enabled }) => {
   `
   const content = template.content
   content.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
-    midi.toggleChannel(type, name, id, e.target.checked)
+    midi.setChannel(type, name, id, e.target.checked)
   })
   return content
 }
