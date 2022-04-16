@@ -57,19 +57,23 @@ class Synth {
           new Float32Array([0, 10, 2, 2, 2, 2, 0, 0, 0, 0, 0, 7]),
           new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         ),
-        semisine: this.audioCtx.createPeriodicWave(
-          new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-          new Float32Array([
-            0, 1, 0.25, 0.111111, 0.0625, 0.04, 0.027777, 0.020408, 0.015625, 0.0123456, 0.01,
-            0.008264, 0.0069444, 0.0059171, 0.005102041, 0.0044444, 0.00390625
-          ])
-        ),
         template: this.audioCtx.createPeriodicWave(
           // first element is DC offset, second element is fundamental, third element is 2nd harmonic, etc.
           new Float32Array([0, 1, 0.5, 0.333, 0.25, 0.2, 0.167]), // sine components
           new Float32Array([0, 0, 0.0, 0.0, 0.0, 0.0, 0.0]) // cosine components
         )
       }
+
+      // DC-blocked semisine
+      const semisineSineComponents = new Float32Array(64);
+      const semisineCosineComponents = new Float32Array(64);
+      for (let n = 1; n < 64; ++n) {
+        semisineCosineComponents[n] = 1 / (1 - 4*n*n);
+      }
+      this.custom_waveforms.semisine = this.audioCtx.createPeriodicWave(
+        semisineSineComponents,
+        semisineCosineComponents
+      );
 
       // set up master gain
       this.masterGain = this.audioCtx.createGain()
