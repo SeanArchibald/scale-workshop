@@ -6,11 +6,15 @@ class State extends EventEmitter {
   get(key) {
     return this.data[key]
   }
-  set(key, newValue) {
+  set(key, newValue, forceEmit = false) {
     const oldValue = this.data[key]
     if (oldValue !== newValue) {
       this.data[key] = newValue
       this.emit(key, newValue, oldValue)
+    } else {
+      if (forceEmit) {
+        this.emit(key, newValue, oldValue)
+      }
     }
   }
   ready() {
