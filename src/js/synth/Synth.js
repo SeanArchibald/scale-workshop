@@ -159,6 +159,9 @@ class Synth {
 
       // indicate stopped note
       jQuery('#tuning-table-row-' + midinote).removeClass('bg-playnote')
+      if (Object.values(this.midinotes_to_voices).length) {
+        console.log(this.midinotes_to_voices)
+      }
     }
   }
 
