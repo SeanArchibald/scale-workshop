@@ -1,16 +1,15 @@
 const MidiChannel = ({ type, name, id, enabled }) => {
   const template = document.createElement('template')
   template.innerHTML = `
-    <div style="display:flex;flex-direction:column;padding:0 10px;align-items:center">
-      <input id="${type}--${name}--${id}" style="margin:0" type="checkbox" ${
-    enabled ? 'checked="checked"' : ''
-  } />
+    <div class="channel">
+      <input id="${type}--${name}--${id}" type="checkbox" ${enabled ? 'checked="checked"' : ''} />
       <label for="${type}--${name}--${id}">${id}</label>
     </div>
   `
   const content = template.content
   content.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
-    midi.setChannel(type, name, id, e.target.checked)
+    const isEnabled = e.target.checked
+    midi.setChannel(type, name, id, isEnabled)
   })
   return content
 }
@@ -18,14 +17,12 @@ const MidiChannel = ({ type, name, id, enabled }) => {
 const MidiDevice = ({ type, name, channels, enabled }) => {
   const template = document.createElement('template')
   template.innerHTML = `
-    <div style="display:flex;align-items:center">
-      <div style="padding:0 10px">
-        <input id="${type}--${name}" style="margin:0" type="checkbox" ${
-    enabled ? 'checked="checked"' : ''
-  } />
+    <div class="device">
+      <div class="checkbox-wrapper">
+        <input id="${type}--${name}" type="checkbox" ${enabled ? 'checked="checked"' : ''} />
       </div>
-      <h4 style="flex-grow:1"><label style="margin:0" for="${type}--${name}">${name}</label></h4>
-      <div class="channels" style="display:flex"></div>
+      <h4><label for="${type}--${name}">${name}</label></h4>
+      <div class="channels"></div>
     </div>
   `
   const content = template.content
@@ -33,7 +30,8 @@ const MidiDevice = ({ type, name, channels, enabled }) => {
     content.querySelector('.channels').appendChild(MidiChannel({ type, name, ...channel }))
   })
   content.getElementById(`${type}--${name}`).addEventListener('change', (e) => {
-    midi.toggleDevice(type, name, e.target.checked)
+    const isEnabled = e.target.checked
+    midi.setDevice(type, name, isEnabled)
   })
   return content
 }
@@ -41,7 +39,7 @@ const MidiDevice = ({ type, name, channels, enabled }) => {
 const MidiModal = ({ devices: { inputs, outputs }, whiteOnly }) => {
   const template = document.createElement('template')
   template.innerHTML = `
-    <div id="midi-modal" style="user-select:none">
+    <div id="midi-modal">
       <h2>MIDI Settings</h2>
 
       <h3>INPUT ports of attached MIDI devices</h3>
@@ -52,7 +50,7 @@ const MidiModal = ({ devices: { inputs, outputs }, whiteOnly }) => {
 
       <h3>Settings</h3>
       <div class="settings">
-        <label style="display:flex">
+        <label>
           <input name="midi-whitemode" type="checkbox" ${whiteOnly ? 'checked="checked"' : ''} />
           <h4>White Key Only mode</h4>
           <p>remaps the keyboard so that it doesn't take note of black keys</p>

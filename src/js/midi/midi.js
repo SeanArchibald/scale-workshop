@@ -196,6 +196,10 @@ class MIDI extends EventEmitter {
     this.emit('update')
   }
 
+  setDevice(type, name, newValue) {
+    this.toggleDevice(type, name, newValue)
+  }
+
   toggleChannel(type, name, channelID, newValue = null) {
     const { devices } = this._
 
@@ -298,7 +302,9 @@ jQuery(() => {
       synth.noteOff(note)
     })
     .on('update', () => {
-      state.set('midi modal visible', true, true)
+      if (state.get('midi modal visible')) {
+        state.set('midi modal visible', true, true)
+      }
     })
 
   midiEnablerBtn.on('click', async () => {

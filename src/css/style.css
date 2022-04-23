@@ -249,10 +249,20 @@ div#splash-center img {
 }
 
 #virtual-keyboard .key:hover {
-  background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,0,0,0.5) 50%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 0, 0, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 #virtual-keyboard .key.active {
-  background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,255,0,0.5) 50%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 255, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 
 /*
@@ -353,4 +363,39 @@ div#splash-center img {
     padding-left: 0px;
     padding-right: 0px;
   }
+}
+
+#midi-modal {
+  user-select: none;
+}
+#midi-modal .settings label {
+  display: flex;
+}
+#midi-modal .device {
+  display: flex;
+  align-items: center;
+}
+#midi-modal .device .checkbox-wrapper {
+  padding: 0 10px;
+}
+#midi-modal .device input[type='checkbox'] {
+  margin: 0;
+}
+#midi-modal .device h4 {
+  flex-grow: 1;
+}
+#midi-modal .device h4 label {
+  margin: 0;
+}
+#midi-modal .channels {
+  display: flex;
+}
+#midi-modal .channel {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+  align-items: center;
+}
+#midi-modal .channel input[type='checkbox'] {
+  margin: 0;
 }
