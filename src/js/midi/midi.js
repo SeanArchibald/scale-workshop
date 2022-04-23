@@ -27,7 +27,7 @@ class MIDI extends EventEmitter {
       for (let channel = 1; channel <= 16; channel++) {
         this.emit('note off', note, 1, channel)
       }
-    }, getAllKeys())
+    }, allMidiKeys)
   }
 
   async init() {
@@ -107,7 +107,7 @@ class MIDI extends EventEmitter {
                 {
                   const [note, velocity] = params
                   if (whiteOnly) {
-                    if (getWhiteKeys().includes(note)) {
+                    if (whiteMidiKeys.includes(note)) {
                       this.emit('note off', whiteOnlyMap[note], velocity, channel)
                     }
                   } else {
@@ -119,7 +119,7 @@ class MIDI extends EventEmitter {
                 {
                   const [note, velocity] = params
                   if (whiteOnly) {
-                    if (getWhiteKeys().includes(note)) {
+                    if (whiteMidiKeys.includes(note)) {
                       this.emit(
                         'note on',
                         whiteOnlyMap[note],
@@ -141,7 +141,7 @@ class MIDI extends EventEmitter {
                 {
                   const [note, pressure] = params
                   if (whiteOnly) {
-                    if (getWhiteKeys().includes(note)) {
+                    if (whiteMidiKeys.includes(note)) {
                       this.emit('aftertouch', whiteOnlyMap[note], (pressure / 128) * 100, channel)
                     }
                   } else {

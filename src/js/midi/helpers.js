@@ -3,14 +3,8 @@ const getNameFromPort = (port) => {
   return `${name} (version ${version}) ${manufacturer}`
 }
 
-const getAllKeys = () => {
-  return [...Array(128).keys()] // [0, 1, 2, ..., 127]
-}
+const allMidiKeys = [...Array(128).keys()] // [0, 1, 2, ..., 127]
 
-const getWhiteKeys = () => {
-  return Object.keys(whiteOnlyMap).map((id) => parseInt(id))
-}
+const whiteMidiKeys = Object.keys(whiteOnlyMap).map((id) => parseInt(id))
 
-const getBlackKeys = () => {
-  return R.difference(getAllKeys(), getWhiteKeys())
-}
+const blackMidiKeys = R.difference(allMidiKeys, whiteMidiKeys)
