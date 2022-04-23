@@ -4,7 +4,7 @@ const getNameFromPort = (port) => {
 }
 
 const getAllKeys = () => {
-  return [...Array(128).keys()]
+  return [...Array(128).keys()] // [0, 1, 2, ..., 127]
 }
 
 const getWhiteKeys = () => {

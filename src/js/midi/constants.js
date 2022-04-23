@@ -100,8 +100,8 @@ const referenceNote = {
   id: 69
 }
 
-const pitchBendMin = -8191
-const pitchBendMax = 8192
+const pitchBendMin = 1 - (1 << 14) / 2 // -8191
+const pitchBendMax = (1 << 14) / 2 // 8192
 
 // settings for MIDI OUT ports
 const defaultInputData = {
