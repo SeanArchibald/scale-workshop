@@ -284,20 +284,17 @@
               <div id="settings_synth" class="group">
                 <h3>Synth settings</h3>
                 <div>
-                  <div class="container-fluid">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="midi-enabler">MIDI</label>
-                          <button type="button" class="btn btn-danger" id="midi-enabler">off</button>
-                        </div>
-                      </div>
-                      <div class="col-md-6 text-right">
-                        <div class="form-group">
-                          <label for="velocity-toggler">velocity</label>
-                          <button type="button" class="btn btn-success" id="velocity-toggler">on</button>
-                        </div>
-                      </div>
+                  <div style="display:flex">
+                    <div class="form-group" style="flex-grow:1">
+                      <label for="midi-enabler">MIDI</label>
+                      <button type="button" class="btn btn-danger" id="midi-enabler">off</button>
+                      <button type="button" class="btn" id="midi-modal-toggler">
+                        <span class="glyphicon glyphicon-wrench"></span>
+                        devices
+                      </button>
+                    </div>
+                    <div class="form-group">
+                      <button type="button" class="btn btn-success" id="velocity-toggler">velocity: on</button>
                     </div>
                   </div>
                   <form>
@@ -1048,6 +1045,7 @@
   <script src="src/lib/ramda-0.27.1.min.js"></script>
   <script src="src/lib/jszip.min.js"></script>
   <script src="src/lib/decimal.js"></script>
+  <script src="src/lib/webmidi-3.0.19.iife.min.js"></script>
 
   <!-- Scale Workshop scripts -->
   <script src="src/js/state/state.js?v=1.4.3"></script>
@@ -1066,11 +1064,11 @@
   <script src="src/js/synth.js?v=1.4.3"></script>
 
   <script src="src/js/midi/constants.js"></script>
-  <script src="src/js/midi/helpers.js?v=1.4.3"></script>
   <script src="src/js/midi/commands.js?v=1.4.3"></script>
   <script src="src/js/midi/math.js?v=1.4.3"></script>
+  <script src="src/js/midi/ui.js?v=1.4.3"></script>
   <script src="src/js/midi/midi.js?v=1.4.3"></script>
-  
+
   <script src="src/js/events.js?v=1.4.3"></script>
   <script src="src/js/state/reactions.js?v=1.4.3"></script>
   <script src="src/js/state/reactions-dom.js?v=1.4.3"></script>

@@ -1,46 +1,36 @@
-const add = R.curry((a, b) => Decimal.add(a, b))
+const moveNUnits = (ratioOfSymmetry, divisionsPerRatio, n, frequency) => {
+  // return frequency * ratioOfSymmetry ** (n / divisionsPerRatio)
+  return Decimal.mul(frequency, Decimal.pow(ratioOfSymmetry, Decimal.div(n, divisionsPerRatio)))
+}
 
-const subtract = R.curry((a, b) => Decimal.sub(a, b))
+const getDistanceInUnits = (ratioOfSymmetry, divisionsPerRatio, freq2, freq1) => {
+  // return divisionsPerRatio * Math.log(freq2 / freq1, ratioOfSymmetry)
+  return Decimal.mul(divisionsPerRatio, Decimal.log(Decimal.div(freq2, freq1), ratioOfSymmetry))
+}
 
-const multiply = R.curry((a, b) => Decimal.mul(a, b))
+const moveNSemitones = (n, frequency) => {
+  return moveNUnits(octaveRatio, semitonesPerOctave, n, frequency)
+}
 
-const divide = R.curry((a, b) => Decimal.div(a, b))
-
-const pow = R.curry((a, b) => Decimal.pow(a, b))
-
-const log = R.curry((a, b) => Decimal.log(a, b))
-
-const floor = (a) => Decimal.floor(a)
-
-const moveNUnits = R.curryN(4, (ratioOfSymmetry, divisionsPerRatio, n, frequency) =>
-  R.compose(multiply(frequency), pow(ratioOfSymmetry), divide(n))(divisionsPerRatio)
-)
-
-const getDistanceInUnits = R.curryN(
-  4,
-  (ratioOfSymmetry, divisionsPerRatio, frequency2, frequency1) =>
-    R.compose(
-      multiply(divisionsPerRatio),
-      log(R.__, ratioOfSymmetry),
-      divide(frequency2)
-    )(frequency1)
-)
-
-const moveNSemitones = moveNUnits(octaveRatio, semitonesPerOctave)
-const getDistanceInSemitones = getDistanceInUnits(octaveRatio, semitonesPerOctave)
+const getDistanceInSemitones = (freq2, freq1) => {
+  return getDistanceInUnits(octaveRatio, semitonesPerOctave, freq2, freq1)
+}
 
 const bendingRatio = moveNSemitones(maxBendingDistanceInSemitones, 1)
 
-const getBendingDistance = getDistanceInUnits(bendingRatio, pitchBendMax)
+const getBendingDistance = (freq2, freq1) => {
+  return getDistanceInUnits(bendingRatio, pitchBendMax, freq2, freq1)
+}
 
-const getNoteFrequency = R.compose(
-  moveNSemitones(R.__, referenceNote.frequency),
-  subtract(R.__, referenceNote.id),
-  R.clamp(keyIdMin, keyIdMax)
-)
+const getNoteFrequency = (midinote) => {
+  return moveNSemitones(
+    Decimal.sub(R.clamp(0, 127, midinote), referenceNote.id),
+    referenceNote.frequency
+  )
+}
 
-const getNoteId = R.compose(
-  floor,
-  add(R.__, referenceNote.id),
-  getDistanceInSemitones(R.__, referenceNote.frequency)
-)
+const getNoteId = (frequency) => {
+  return Decimal.floor(
+    Decimal.add(getDistanceInSemitones(frequency, referenceNote.frequency), referenceNote.id)
+  )
+}

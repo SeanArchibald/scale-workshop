@@ -1,4 +1,4 @@
-const setPitchBendLimit = R.curry((channel, semitones) => {
+const setPitchBendLimit = (channel, semitones) => {
   return [
     (commands.cc << 4) | (channel - 1),
     cc.registeredParameterLSB,
@@ -16,28 +16,27 @@ const setPitchBendLimit = R.curry((channel, semitones) => {
     cc.registeredParameterMSB,
     127
   ]
-})
+}
 
 const pitchBendAmountToDataBytes = (pitchBendAmount) => {
   const realValue = pitchBendAmount - pitchBendMin
   return [realValue & 0b01111111, (realValue >> 7) & 0b01111111]
 }
 
-const bendPitch = R.curry((channel, pitchBendAmount) => {
-  return R.concat(
-    [(commands.pitchbend << 4) | (channel - 1)],
-    pitchBendAmountToDataBytes(pitchBendAmount)
-  )
-})
+const bendPitch = (channel, pitchBendAmount) => {
+  return [
+    ...[(commands.pitchbend << 4) | (channel - 1)],
+    ...pitchBendAmountToDataBytes(pitchBendAmount)
+  ]
+}
 
-const noteOn = R.curryN(2, (channel, note, pitchBendAmount = null, velocity = 127) => {
-  return R.concat(pitchBendAmount !== null ? bendPitch(channel, pitchBendAmount) : [], [
-    (commands.noteOn << 4) | (channel - 1),
-    note,
-    velocity
-  ])
-})
+const noteOn = (channel, note, pitchBendAmount = null, velocity = 127) => {
+  return [
+    ...(pitchBendAmount !== null ? bendPitch(channel, pitchBendAmount) : []),
+    ...[(commands.noteOn << 4) | (channel - 1), note, velocity]
+  ]
+}
 
-const noteOff = R.curryN(2, (channel, note, velocity = 127) => {
+const noteOff = (channel, note, velocity = 127) => {
   return [(commands.noteOff << 4) | (channel - 1), note, velocity]
-})
+}

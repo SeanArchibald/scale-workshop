@@ -50,7 +50,9 @@ class Synth {
           new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         ),
         brightness: this.audioCtx.createPeriodicWave(
-          new Float32Array([0, 10, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 0.75, 0.5, 0.2, 0.1]),
+          new Float32Array([
+            0, 10, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 0.75, 0.5, 0.2, 0.1
+          ]),
           new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         ),
         harmonicbell: this.audioCtx.createPeriodicWave(
@@ -114,13 +116,11 @@ class Synth {
     }
   }
 
-  noteOn(midinote, velocity = 127, triggeredByMidi = false) {
+  noteOn(midinote, velocity = 127) {
     const frequency = tuning_table.freq[midinote]
 
     if (!R.isNil(frequency)) {
-      if (!triggeredByMidi) {
-        midi.playFrequency(frequency)
-      }
+      midi.playFrequency(frequency)
 
       // make sure note triggers only on first input (prevent duplicate notes)
       if (R.isNil(this.midinotes_to_voices[midinote])) {
@@ -150,10 +150,8 @@ class Synth {
       }
     }
   }
-  noteOff(midinote, triggeredByMidi = false) {
-    if (!triggeredByMidi) {
-      midi.stopFrequency()
-    }
+  noteOff(midinote) {
+    midi.stopFrequency()
 
     if (!R.isNil(this.midinotes_to_voices[midinote])) {
       // release the note
@@ -165,6 +163,9 @@ class Synth {
 
       // indicate stopped note
       jQuery('#tuning-table-row-' + midinote).removeClass('bg-playnote')
+      if (Object.values(this.midinotes_to_voices).length) {
+        console.log(this.midinotes_to_voices)
+      }
     }
   }
 

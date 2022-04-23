@@ -3,7 +3,12 @@
  * Capture MIDI input for synth
  */
 
-const demoData = {} // TODO: rename this variable
+const deviceChannelInfo = {}
+
+const getNameFromPort = (port) => {
+  const { name, version, manufacturer } = port
+  return `${name} (version ${version}) ${manufacturer}`
+}
 
 class MIDI extends EventEmitter {
   constructor() {
@@ -11,25 +16,23 @@ class MIDI extends EventEmitter {
 
     this._ = {
       inited: false,
-      status: {
-        supported: false,
-        devices: {
-          inputs: {},
-          outputs: {}
-        }
+      supported: false,
+      devices: {
+        inputs: {},
+        outputs: {}
       },
       whiteOnly: false
     }
   }
 
-  set mode(value) {
+  set whiteOnly(value) {
     this._.whiteOnly = value
 
-    R.forEach((note) => {
+    allMidiKeys.forEach((note) => {
       for (let channel = 1; channel <= 16; channel++) {
         this.emit('note off', note, 1, channel)
       }
-    }, getAllKeys())
+    })
   }
 
   async init() {
@@ -37,7 +40,7 @@ class MIDI extends EventEmitter {
       this._.inited = true
 
       const enableMidiSupport = (midiAccess) => {
-        this._.status.supported = true
+        this._.supported = true
 
         midiAccess.onstatechange = (event) => {
           initPort(event.port)
@@ -55,55 +58,61 @@ class MIDI extends EventEmitter {
       }
 
       const initPort = (port) => {
-        const { status } = this._
-
-        const name = getNameFromPort(port)
+        const { devices } = this._
 
         if (port.type === 'input') {
-          if (!status.devices.inputs[name]) {
-            status.devices.inputs[name] = R.merge({ port }, defaultInputData)
+          if (!devices.inputs[port.id]) {
+            devices.inputs[port.id] = {
+              port,
+              name: getNameFromPort(port),
+              ...R.clone(defaultInputData)
+            }
           }
 
-          status.devices.inputs[name].connected = false
+          devices.inputs[port.id].connected = false
           if (port.state === 'connected') {
             if (port.connection === 'closed') {
               port.open()
             } else if (port.connection === 'open') {
-              port.onmidimessage = onMidiMessage(status.devices.inputs[name])
-              status.devices.inputs[name].connected = true
+              port.onmidimessage = onMidiMessage(devices.inputs[port.id])
+              devices.inputs[port.id].connected = true
             }
           }
         } else if (port.type === 'output') {
-          if (!status.devices.outputs[name]) {
-            status.devices.outputs[name] = R.merge({ port }, defaultOutputData)
+          if (!devices.outputs[port.id]) {
+            devices.outputs[port.id] = {
+              port,
+              name: getNameFromPort(port),
+              ...R.clone(defaultOutputData)
+            }
           }
 
           if (port.state === 'connected') {
             if (port.connection === 'closed') {
               port.open()
             } else if (port.connection === 'open') {
-              status.devices.outputs[name].connected = true
+              devices.outputs[port.id].connected = true
             }
           }
         }
 
-        this.emit('update', R.clone(status))
+        this.emit('update')
       }
 
-      const onMidiMessage = R.curry((device, event) => {
+      const onMidiMessage = (device) => (event) => {
         if (device.enabled) {
           const { whiteOnly } = this._
           const [data, ...params] = event.data
           const cmd = data >> 4
           const channel = data & 0x0f
 
-          if (device.channels[channel] && device.channels[channel].enabled) {
+          if (device.channels[channel]?.enabled === true) {
             switch (cmd) {
               case commands.noteOff:
                 {
                   const [note, velocity] = params
                   if (whiteOnly) {
-                    if (R.includes(note, getWhiteKeys())) {
+                    if (whiteMidiKeys.includes(note)) {
                       this.emit('note off', whiteOnlyMap[note], velocity, channel)
                     }
                   } else {
@@ -115,7 +124,7 @@ class MIDI extends EventEmitter {
                 {
                   const [note, velocity] = params
                   if (whiteOnly) {
-                    if (R.includes(note, getWhiteKeys())) {
+                    if (whiteMidiKeys.includes(note)) {
                       this.emit(
                         'note on',
                         whiteOnlyMap[note],
@@ -137,7 +146,7 @@ class MIDI extends EventEmitter {
                 {
                   const [note, pressure] = params
                   if (whiteOnly) {
-                    if (R.includes(note, getWhiteKeys())) {
+                    if (whiteMidiKeys.includes(note)) {
                       this.emit('aftertouch', whiteOnlyMap[note], (pressure / 128) * 100, channel)
                     }
                   } else {
@@ -148,7 +157,7 @@ class MIDI extends EventEmitter {
               case commands.pitchbend:
                 {
                   const [low, high] = params
-                  this.emit('pitchbend', (((high << 8) | low) / 0x3fff - 1) * 100)
+                  this.emit('pitchbend', (((high << 7) | low) / 0x3fff - 1) * 100)
                 }
                 break
               case commands.cc:
@@ -165,94 +174,94 @@ class MIDI extends EventEmitter {
             }
           }
         }
-      })
+      }
 
       if (navigator.requestMIDIAccess) {
         const midiAccess = await navigator.requestMIDIAccess({ sysex: false })
         enableMidiSupport(midiAccess)
-        this.emit('ready', R.clone(this._.status))
+        this.emit('ready')
       } else {
-        this.emit('blocked', R.clone(this._.status))
+        this.emit('blocked')
       }
     }
   }
 
-  toggleDevice(type, name) {
-    const { status } = this._
+  toggleDevice(type, deviceId, newValue = null) {
+    const { devices } = this._
 
-    const device = status.devices[`${type}s`][name]
-    device.enabled = !device.enabled
+    const device = devices[`${type}s`][deviceId]
+    device.enabled = newValue === null ? !device.enabled : newValue
 
     if (type === 'output') {
       if (device.enabled) {
-        R.forEach((channel) => {
+        device.channels.forEach((channel) => {
           device.port.send(setPitchBendLimit(channel, maxBendingDistanceInSemitones))
-        })(device.channels)
+        })
       } else {
-        R.forEach((channel) => {
+        device.channels.forEach((channel) => {
           device.port.send(bendPitch(channel, 0))
-        })(device.channels)
+        })
       }
     }
 
-    this.emit('update', R.clone(status))
+    this.emit('update')
   }
 
-  toggleChannel(type, name, channelID) {
-    const { status } = this._
+  setDevice(type, deviceId, newValue) {
+    this.toggleDevice(type, deviceId, newValue)
+  }
 
-    const device = status.devices[`${type}s`][name]
+  toggleChannel(type, deviceId, channelId, newValue = null) {
+    const { devices } = this._
 
-    if (device.enabled) {
-      const channel = R.find(R.propEq('id', parseInt(channelID)))(device.channels)
-      channel.enabled = !channel.enabled
-      this.emit('update', R.clone(status))
+    const device = devices[`${type}s`][deviceId]
+    const channel = device.channels.find(({ id }) => id === channelId)
+
+    newValue = newValue === null ? !channel.enabled : newValue
+    if (channel.enabled !== newValue) {
+      channel.enabled = newValue
+      this.emit('update')
     }
   }
 
+  setChannel(type, deviceId, channelId, newValue) {
+    this.toggleChannel(type, deviceId, channelId, newValue)
+  }
+
   getEnabledOutputs() {
-    return R.compose(
-      R.filter((device) => device.enabled && R.any((channel) => channel.enabled)(device.channels)),
-      R.values
-    )(this._.status.devices.outputs)
+    return Object.values(this._.devices.outputs).filter(({ enabled, channels }) => {
+      return enabled === true && channels.find(({ enabled }) => enabled === true) !== undefined
+    })
   }
 
   getLowestEnabledChannel(channels) {
-    return R.find((channel) => channel.enabled, channels)
+    return channels.find(({ enabled }) => enabled === true)
   }
 
-  // -------------------------------------------
-
-  playFrequency(frequency = 0, noteLength = Infinity) {
-    // find midi devices, which are enabled and contain at least one open channel
-    const devices = R.compose(
-      R.filter((device) => device.enabled && R.any((channel) => channel.enabled)(device.channels)),
-      R.values
-    )(this._.status.devices.outputs)
+  playFrequency(frequency = 0) {
+    const devices = this.getEnabledOutputs()
 
     if (devices.length) {
-      R.forEach(({ port, channels }) => {
-        const channel = R.compose(R.head, R.filter(R.propEq('enabled', true)))(channels)
-        const portName = getNameFromPort(port)
-        if (!demoData[portName]) {
-          demoData[portName] = {}
+      devices.forEach(({ port, channels }) => {
+        const channel = channels.find(({ enabled }) => enabled === true)
+        if (!deviceChannelInfo[port.id]) {
+          deviceChannelInfo[port.id] = {}
         }
-        if (!demoData[portName][channel]) {
-          demoData[portName][channel] = {
+        if (!deviceChannelInfo[port.id][channel]) {
+          deviceChannelInfo[port.id][channel] = {
             pressedNoteIds: []
           }
         }
 
         if (frequency === 0) {
-          if (demoData[portName][channel].pressedNoteIds.length) {
+          if (deviceChannelInfo[port.id][channel].pressedNoteIds.length) {
             port.send(
-              R.compose(
-                R.flatten,
-                R.map((noteId) => noteOff(channel, noteId))
-              )(demoData[portName][channel].pressedNoteIds)
+              deviceChannelInfo[port.id][channel].pressedNoteIds.flatMap((noteId) => {
+                return noteOff(channel, noteId)
+              })
             )
 
-            demoData[portName][channel].pressedNoteIds = []
+            deviceChannelInfo[port.id][channel].pressedNoteIds = []
           }
         } else {
           const noteId = parseInt(getNoteId(frequency).toString())
@@ -261,14 +270,9 @@ class MIDI extends EventEmitter {
           )
 
           port.send(noteOn(channel, noteId, pitchbendAmount))
-          demoData[portName][channel].pressedNoteIds.push(noteId)
-          if (noteLength !== Infinity) {
-            setTimeout(() => {
-              this.playFrequency(0)
-            }, noteLength)
-          }
+          deviceChannelInfo[port.id][channel].pressedNoteIds.push(noteId)
         }
-      })(devices)
+      })
     }
   }
 
@@ -277,7 +281,7 @@ class MIDI extends EventEmitter {
   }
 
   isSupported() {
-    return !!navigator.requestMIDIAccess
+    return this._.supported
   }
 }
 
@@ -297,28 +301,26 @@ jQuery(() => {
         .text('off (blocked)')
     })
     .on('note on', (note, velocity, channel) => {
-      synth.noteOn(note, velocity, true)
+      synth.noteOn(note, velocity)
     })
     .on('note off', (note, velocity, channel) => {
-      synth.noteOff(note, true)
+      synth.noteOff(note)
+    })
+    .on('update', () => {
+      if (state.get('midi modal visible')) {
+        state.set('midi modal visible', true, true)
+      }
     })
 
-  midiEnablerBtn.on('click', () => {
+  midiEnablerBtn.on('click', async () => {
+    await midi.init()
+
     if (midi.isSupported()) {
       midiEnablerBtn
         .prop('disabled', true)
         .removeClass('btn-danger')
         .addClass('btn-success')
         .text('on')
-
-      midi.init().then(() => {
-        // temporary code until a proper UI is created to handle MIDI devices and channels
-        Object.keys(midi._.status.devices.outputs).forEach((outputName) => {
-          midi.toggleDevice('output', outputName)
-          // the device, which takes the MIDI OUTPUT should have it's INPUT part disabled, or else there will be feedback
-          midi._.status.devices.inputs[outputName].enabled = false
-        })
-      })
     }
   })
 })
