@@ -3,7 +3,7 @@
  * Capture MIDI input for synth
  */
 
-const demoData = {} // TODO: rename this variable
+const deviceChannelInfo = {}
 
 class MIDI extends EventEmitter {
   constructor() {
@@ -55,32 +55,38 @@ class MIDI extends EventEmitter {
       const initPort = (port) => {
         const { devices } = this._
 
-        const name = getNameFromPort(port)
-
         if (port.type === 'input') {
-          if (!devices.inputs[name]) {
-            devices.inputs[name] = { port, ...R.clone(defaultInputData) }
+          if (!devices.inputs[port.id]) {
+            devices.inputs[port.id] = {
+              port,
+              name: getNameFromPort(port),
+              ...R.clone(defaultInputData)
+            }
           }
 
-          devices.inputs[name].connected = false
+          devices.inputs[port.id].connected = false
           if (port.state === 'connected') {
             if (port.connection === 'closed') {
               port.open()
             } else if (port.connection === 'open') {
-              port.onmidimessage = onMidiMessage(devices.inputs[name])
-              devices.inputs[name].connected = true
+              port.onmidimessage = onMidiMessage(devices.inputs[port.id])
+              devices.inputs[port.id].connected = true
             }
           }
         } else if (port.type === 'output') {
-          if (!devices.outputs[name]) {
-            devices.outputs[name] = { port, ...R.clone(defaultOutputData) }
+          if (!devices.outputs[port.id]) {
+            devices.outputs[port.id] = {
+              port,
+              name: getNameFromPort(port),
+              ...R.clone(defaultOutputData)
+            }
           }
 
           if (port.state === 'connected') {
             if (port.connection === 'closed') {
               port.open()
             } else if (port.connection === 'open') {
-              devices.outputs[name].connected = true
+              devices.outputs[port.id].connected = true
             }
           }
         }
@@ -175,10 +181,10 @@ class MIDI extends EventEmitter {
     }
   }
 
-  toggleDevice(type, name, newValue = null) {
+  toggleDevice(type, deviceId, newValue = null) {
     const { devices } = this._
 
-    const device = devices[`${type}s`][name]
+    const device = devices[`${type}s`][deviceId]
     device.enabled = newValue === null ? !device.enabled : newValue
 
     if (type === 'output') {
@@ -196,15 +202,15 @@ class MIDI extends EventEmitter {
     this.emit('update')
   }
 
-  setDevice(type, name, newValue) {
-    this.toggleDevice(type, name, newValue)
+  setDevice(type, deviceId, newValue) {
+    this.toggleDevice(type, deviceId, newValue)
   }
 
-  toggleChannel(type, name, channelID, newValue = null) {
+  toggleChannel(type, deviceId, channelId, newValue = null) {
     const { devices } = this._
 
-    const device = devices[`${type}s`][name]
-    const channel = device.channels.find(({ id }) => id === channelID)
+    const device = devices[`${type}s`][deviceId]
+    const channel = device.channels.find(({ id }) => id === channelId)
 
     newValue = newValue === null ? !channel.enabled : newValue
     if (channel.enabled !== newValue) {
@@ -213,8 +219,8 @@ class MIDI extends EventEmitter {
     }
   }
 
-  setChannel(type, name, channelID, newValue) {
-    this.toggleChannel(type, name, channelID, newValue)
+  setChannel(type, deviceId, channelId, newValue) {
+    this.toggleChannel(type, deviceId, channelId, newValue)
   }
 
   getEnabledOutputs() {
@@ -233,25 +239,24 @@ class MIDI extends EventEmitter {
     if (devices.length) {
       devices.forEach(({ port, channels }) => {
         const channel = channels.find(({ enabled }) => enabled === true)
-        const portName = getNameFromPort(port)
-        if (!demoData[portName]) {
-          demoData[portName] = {}
+        if (!deviceChannelInfo[port.id]) {
+          deviceChannelInfo[port.id] = {}
         }
-        if (!demoData[portName][channel]) {
-          demoData[portName][channel] = {
+        if (!deviceChannelInfo[port.id][channel]) {
+          deviceChannelInfo[port.id][channel] = {
             pressedNoteIds: []
           }
         }
 
         if (frequency === 0) {
-          if (demoData[portName][channel].pressedNoteIds.length) {
+          if (deviceChannelInfo[port.id][channel].pressedNoteIds.length) {
             port.send(
-              demoData[portName][channel].pressedNoteIds.flatMap((noteId) => {
+              deviceChannelInfo[port.id][channel].pressedNoteIds.flatMap((noteId) => {
                 return noteOff(channel, noteId)
               })
             )
 
-            demoData[portName][channel].pressedNoteIds = []
+            deviceChannelInfo[port.id][channel].pressedNoteIds = []
           }
         } else {
           const noteId = parseInt(getNoteId(frequency).toString())
@@ -260,7 +265,7 @@ class MIDI extends EventEmitter {
           )
 
           port.send(noteOn(channel, noteId, pitchbendAmount))
-          demoData[portName][channel].pressedNoteIds.push(noteId)
+          deviceChannelInfo[port.id][channel].pressedNoteIds.push(noteId)
           if (noteLength !== Infinity) {
             setTimeout(() => {
               this.playFrequency(0)

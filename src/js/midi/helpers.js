@@ -1,6 +1,6 @@
 const getNameFromPort = (port) => {
-  const { id, name, version, manufacturer } = port
-  return `${name} (version ${version}) ${manufacturer} (${id})`
+  const { name, version, manufacturer } = port
+  return `${name} (version ${version}) ${manufacturer}`
 }
 
 const getAllKeys = () => {
