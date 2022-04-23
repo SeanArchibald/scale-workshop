@@ -36,11 +36,13 @@ const getBendingDistance = (freq2, freq1) => {
   return getDistanceInUnits(bendingRatio, pitchBendMax, freq2, freq1)
 }
 
-const getNoteFrequency = R.compose(
-  (n) => moveNSemitones(n, referenceNote.frequency),
-  subtract(R.__, referenceNote.id),
-  R.clamp(keyIdMin, keyIdMax)
-)
+const getNoteFrequency = (keyId) => {
+  return R.compose(
+    (n) => moveNSemitones(n, referenceNote.frequency),
+    subtract(R.__, referenceNote.id),
+    R.clamp(0, 127)
+  )(keyId)
+}
 
 const getNoteId = R.compose(floor, add(R.__, referenceNote.id), (n) =>
   getDistanceInSemitones(n, referenceNote.frequency)

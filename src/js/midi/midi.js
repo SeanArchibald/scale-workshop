@@ -88,7 +88,7 @@ class MIDI extends EventEmitter {
         this.emit('update')
       }
 
-      const onMidiMessage = R.curry((device, event) => {
+      const onMidiMessage = (device) => (event) => {
         if (device.enabled) {
           const { whiteOnly } = this._
           const [data, ...params] = event.data
@@ -101,7 +101,7 @@ class MIDI extends EventEmitter {
                 {
                   const [note, velocity] = params
                   if (whiteOnly) {
-                    if (R.includes(note, getWhiteKeys())) {
+                    if (getWhiteKeys().includes(note)) {
                       this.emit('note off', whiteOnlyMap[note], velocity, channel)
                     }
                   } else {
@@ -113,7 +113,7 @@ class MIDI extends EventEmitter {
                 {
                   const [note, velocity] = params
                   if (whiteOnly) {
-                    if (R.includes(note, getWhiteKeys())) {
+                    if (getWhiteKeys().includes(note)) {
                       this.emit(
                         'note on',
                         whiteOnlyMap[note],
@@ -135,7 +135,7 @@ class MIDI extends EventEmitter {
                 {
                   const [note, pressure] = params
                   if (whiteOnly) {
-                    if (R.includes(note, getWhiteKeys())) {
+                    if (getWhiteKeys().includes(note)) {
                       this.emit('aftertouch', whiteOnlyMap[note], (pressure / 128) * 100, channel)
                     }
                   } else {
@@ -163,7 +163,7 @@ class MIDI extends EventEmitter {
             }
           }
         }
-      })
+      }
 
       if (navigator.requestMIDIAccess) {
         const midiAccess = await navigator.requestMIDIAccess({ sysex: false })
@@ -223,8 +223,6 @@ class MIDI extends EventEmitter {
     return channels.find(({ enabled }) => enabled === true)
   }
 
-  // -------------------------------------------
-
   playFrequency(frequency = 0, noteLength = Infinity) {
     const devices = this.getEnabledOutputs()
 
@@ -244,10 +242,9 @@ class MIDI extends EventEmitter {
         if (frequency === 0) {
           if (demoData[portName][channel].pressedNoteIds.length) {
             port.send(
-              R.compose(
-                R.flatten,
-                R.map((noteId) => noteOff(channel, noteId))
-              )(demoData[portName][channel].pressedNoteIds)
+              demoData[portName][channel].pressedNoteIds.flatMap((noteId) => {
+                return noteOff(channel, noteId)
+              })
             )
 
             demoData[portName][channel].pressedNoteIds = []
