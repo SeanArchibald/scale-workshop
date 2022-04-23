@@ -233,7 +233,7 @@ class MIDI extends EventEmitter {
     return channels.find(({ enabled }) => enabled === true)
   }
 
-  playFrequency(frequency = 0, noteLength = Infinity) {
+  playFrequency(frequency = 0) {
     const devices = this.getEnabledOutputs()
 
     if (devices.length) {
@@ -266,11 +266,6 @@ class MIDI extends EventEmitter {
 
           port.send(noteOn(channel, noteId, pitchbendAmount))
           deviceChannelInfo[port.id][channel].pressedNoteIds.push(noteId)
-          if (noteLength !== Infinity) {
-            setTimeout(() => {
-              this.playFrequency(0)
-            }, noteLength)
-          }
         }
       })
     }
