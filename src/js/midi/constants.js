@@ -154,8 +154,11 @@ const semitonesPerOctave = 12
 const maxBendingDistanceInSemitones = 12
 const centsPerOctave = 1200
 
-// semitones = 1..12
-// channel = 1..16
-
 const middleC = 60
 const drumChannel = 10 // when counting from 1
+
+const allMidiKeys = [...Array(128).keys()] // [0, 1, 2, ..., 127]
+
+const whiteMidiKeys = Object.keys(whiteOnlyMap).map((id) => parseInt(id))
+
+const blackMidiKeys = R.difference(allMidiKeys, whiteMidiKeys)

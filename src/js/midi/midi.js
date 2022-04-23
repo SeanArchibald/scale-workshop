@@ -5,6 +5,11 @@
 
 const deviceChannelInfo = {}
 
+const getNameFromPort = (port) => {
+  const { name, version, manufacturer } = port
+  return `${name} (version ${version}) ${manufacturer}`
+}
+
 class MIDI extends EventEmitter {
   constructor() {
     super()
@@ -23,11 +28,11 @@ class MIDI extends EventEmitter {
   set whiteOnly(value) {
     this._.whiteOnly = value
 
-    R.forEach((note) => {
+    allMidiKeys.forEach((note) => {
       for (let channel = 1; channel <= 16; channel++) {
         this.emit('note off', note, 1, channel)
       }
-    }, allMidiKeys)
+    })
   }
 
   async init() {
