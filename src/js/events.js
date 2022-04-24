@@ -497,6 +497,22 @@ jQuery(document).ready(function () {
     jQuery('#input_reaper_root_period').prop('disabled', !event.target.checked)
   })
 
+  // MIDI nav item clicked
+  jQuery('#nav_midi').click(function (event) {
+    event.preventDefault()
+    jQuery('#modal_midi_settings').dialog({
+      modal: true,
+      dialogClass: 'fullscreen-modal',
+      resizable: false,
+      draggable: false,
+      buttons: {
+        OK: function () {
+          jQuery(this).dialog('close')
+        }
+      }
+    })
+  })
+
   // About Scale Workshop option clicked
   jQuery('#about_scale_workshop').click(function (event) {
     event.preventDefault()

@@ -180,6 +180,7 @@
                     class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Share scale as URL</a></li>
             </ul>
           </li>
+          <li><a href="#" id="nav_midi"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> MIDI</a>
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-info-sign"
                 aria-hidden="true"></span> About <span class="caret"></span></a>
@@ -284,19 +285,6 @@
               <div id="settings_synth" class="group">
                 <h3>Synth settings</h3>
                 <div>
-                  <div style="display:flex">
-                    <div class="form-group" style="flex-grow:1">
-                      <label for="midi-enabler">MIDI</label>
-                      <button type="button" class="btn btn-danger" id="midi-enabler">off</button>
-                      <button type="button" class="btn" id="midi-modal-toggler">
-                        <span class="glyphicon glyphicon-wrench"></span>
-                        devices
-                      </button>
-                    </div>
-                    <div class="form-group">
-                      <button type="button" class="btn btn-success" id="velocity-toggler">velocity: on</button>
-                    </div>
-                  </div>
                   <form>
                     <div class="form-group">
                       <label for="input_range_main_vol">Main Volume</label>
@@ -358,21 +346,6 @@
                   </form>
                 </div>
               </div>
-
-              <!-- MIDI settings -->
-              <!--<div id="settings_midi" class="group">
-                  <h3>MIDI settings</h3>
-                  <div>
-                    <form>
-                      <!--<div class="form-group" id="midi-group">
-                        <label>MIDI input device</label>
-                        <select id="input_select_midi_device" class="form-control">
-                          <option>???</option>
-                        </select>
-                      </div>
-                    </form>
-                  </div>
-                </div>-->
 
               <!-- Isomorphic keyboard settings -->
               <div id="settings_note_input" class="group">
@@ -930,6 +903,40 @@
             <label title="An offset of degrees at which the base note is set">Base Degree Value: </label>
             <input id="input_reaper_root_degree" type="number" class="form-control" value="0"></input>
         </div>
+    </form>
+  </div>
+
+  <!-- MIDI Settings modal -->
+  <div id="modal_midi_settings" class="modal" title="MIDI settings">
+    <div style="display:flex">
+      <div class="form-group" style="flex-grow:1">
+        <label for="midi-enabler">MIDI</label>
+        <button type="button" class="btn btn-danger" id="midi-enabler">off</button>
+        <button type="button" class="btn" id="midi-modal-toggler">
+          <span class="glyphicon glyphicon-wrench"></span>
+          devices
+        </button>
+      </div>
+      <div class="form-group">
+        <button type="button" class="btn btn-success" id="velocity-toggler">velocity: on</button>
+      </div>
+    </div>
+    <form>
+      <div class="form-group">
+        <label>Input device ports</label>
+      </div>
+      <div class="inputs"></div>
+
+      <div class="form-group">
+        <label>Output device ports</label>
+      </div>
+      <div class="outputs"></div>
+
+      <div class="form-group">
+        <label>
+          <input id="input_midi_whitemode" type="checkbox" /> Map to white keys only
+        </label>
+      </div>
     </form>
   </div>
 

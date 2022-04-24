@@ -266,6 +266,20 @@ div#splash-center img {
 }
 
 /*
+ * Fullscreen variant for jQueryUI modal widget
+ */
+.fullscreen-modal {
+  top: 0px !important;
+  left: 0px !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  position: fixed;
+  overflow-x: scroll;
+}
+.fullscreen-modal .ui-dialog-buttonpane {
+}
+
+/*
  * JQUERY MODAL UI MOBILE-ONLY FIXES
  */
 @media (max-width: 420px), /* OR */ (max-height: 420px) {
