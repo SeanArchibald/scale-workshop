@@ -32,7 +32,7 @@ state.on('mobile menu visible', (value) => {
 
 state.on('midi modal visible', (value, ...args) => {
   const midiModal = document.getElementById('modal_midi_settings')
-  if (value && state.get('midi enabled')) {
+  if (value) {
     renderMidiInputsTo(midiModal.querySelector('.inputs'))
     renderMidiOutputsTo(midiModal.querySelector('.outputs'))
     renderMidiSettingsTo(midiModal.querySelector('.settings'))

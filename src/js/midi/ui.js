@@ -60,5 +60,9 @@ const renderMidiOutputsTo = (container) => {
 
 const renderMidiSettingsTo = (container) => {
   const { whiteOnly } = midi._
-  container.querySelector('#input_midi_whitemode').checked = whiteOnly
+  const whiteModeSwitch = container.querySelector('#input_midi_whitemode')
+  whiteModeSwitch.checked = whiteOnly
+  whiteModeSwitch.addEventListener('change', (e) => {
+    midi.whiteOnly = e.target.checked
+  })
 }
