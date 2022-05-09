@@ -40,47 +40,25 @@ const MidiDevice = ({ type, deviceId, name, channels, enabled }) => {
   return content
 }
 
-const MidiModal = ({ devices: { inputs, outputs }, whiteOnly }) => {
-  const template = document.createElement('template')
-  template.innerHTML = `
-    <div id="midi-modal">
-      <h2>MIDI Settings</h2>
+const renderMidiInputsTo = (container) => {
+  const { inputs } = midi._.devices
 
-      <h3>INPUT ports of attached MIDI devices</h3>
-      <div class="inputs"></div>
-
-      <h3>OUTPUT ports of attached MIDI devices</h3>
-      <div class="outputs"></div>
-
-      <h3>Settings</h3>
-      <div class="settings">
-        <label>
-          <input name="midi-whitemode" type="checkbox" ${whiteOnly ? 'checked="checked"' : ''} />
-          <h4>White Key Only mode</h4>
-          <p>remaps the keyboard so that it doesn't take note of black keys</p>
-        </label>
-      </div>
-    </div>
-  `
-  const content = template.content
+  container.innerHTML = ''
   Object.values(inputs).forEach((input) => {
-    content
-      .querySelector('.inputs')
-      .appendChild(MidiDevice({ type: 'input', deviceId: input.port.id, ...input }))
+    container.appendChild(MidiDevice({ type: 'input', deviceId: input.port.id, ...input }))
   })
-  Object.values(outputs).forEach((output) => {
-    content
-      .querySelector('.outputs')
-      .appendChild(MidiDevice({ type: 'output', deviceId: output.port.id, ...output }))
-  })
-  content.querySelector('[name="midi-whitemode"]').addEventListener('change', (e) => {
-    midi.whiteOnly = e.target.checked
-  })
-  return content
 }
 
-const renderMidiModal = (midi) => {
-  const content = document.createDocumentFragment()
-  content.appendChild(MidiModal(midi._))
-  return content
+const renderMidiOutputsTo = (container) => {
+  const { outputs } = midi._.devices
+
+  container.innerHTML = ''
+  Object.values(outputs).forEach((output) => {
+    container.appendChild(MidiDevice({ type: 'output', deviceId: output.port.id, ...output }))
+  })
+}
+
+const renderMidiSettingsTo = (container) => {
+  const { whiteOnly } = midi._
+  container.querySelector('#input_midi_whitemode').checked = whiteOnly
 }

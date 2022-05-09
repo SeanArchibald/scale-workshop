@@ -508,9 +508,11 @@ jQuery(document).ready(function () {
       buttons: {
         OK: function () {
           jQuery(this).dialog('close')
+          state.set('midi modal visible', false)
         }
       }
     })
+    state.set('midi modal visible', true)
   })
 
   // About Scale Workshop option clicked

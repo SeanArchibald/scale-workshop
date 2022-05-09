@@ -30,15 +30,21 @@ state.on('mobile menu visible', (value) => {
   }
 })
 
-state.on('midi modal visible', (value) => {
-  const modal = document.getElementById('midi-modal')
+state.on('midi modal visible', (value, ...args) => {
+  const midiModal = document.getElementById('modal_midi_settings')
+  if (value && state.get('midi enabled')) {
+    renderMidiInputsTo(midiModal.querySelector('.inputs'))
+    renderMidiOutputsTo(midiModal.querySelector('.outputs'))
+    renderMidiSettingsTo(midiModal.querySelector('.settings'))
+  }
+})
+
+state.on('midi enabled', (value) => {
   if (value) {
-    if (!modal) {
-      document.body.appendChild(renderMidiModal(midi))
-    }
-  } else {
-    if (modal) {
-      modal.parentNode.removeChild(modal)
-    }
+    jQuery('#midi-enabler')
+      .prop('disabled', true)
+      .removeClass('btn-danger')
+      .addClass('btn-success')
+      .text('on')
   }
 })

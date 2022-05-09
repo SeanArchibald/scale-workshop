@@ -912,10 +912,6 @@
       <div class="form-group" style="flex-grow:1">
         <label for="midi-enabler">MIDI</label>
         <button type="button" class="btn btn-danger" id="midi-enabler">off</button>
-        <button type="button" class="btn" id="midi-modal-toggler">
-          <span class="glyphicon glyphicon-wrench"></span>
-          devices
-        </button>
       </div>
       <div class="form-group">
         <button type="button" class="btn btn-success" id="velocity-toggler">velocity: on</button>
@@ -933,9 +929,15 @@
       <div class="outputs"></div>
 
       <div class="form-group">
-        <label>
-          <input id="input_midi_whitemode" type="checkbox" /> Map to white keys only
-        </label>
+        <label>Other settings</label>
+      </div>
+      <div class="settings">
+        <div class="row">
+          <div class="checkbox-wrapper">
+            <input id="input_midi_whitemode" type="checkbox" />
+          </div>
+          <label for="input_midi_whitemode">Map to white keys only</label>
+        </div>
       </div>
     </form>
   </div>

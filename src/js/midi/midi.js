@@ -316,11 +316,7 @@ jQuery(() => {
     await midi.init()
 
     if (midi.isSupported()) {
-      midiEnablerBtn
-        .prop('disabled', true)
-        .removeClass('btn-danger')
-        .addClass('btn-success')
-        .text('on')
+      state.set('midi enabled', true)
     }
   })
 })

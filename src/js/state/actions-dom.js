@@ -19,7 +19,3 @@ jQuery('#nav_play, #launch-kbd').on('click', (event) => {
   event.preventDefault()
   state.set('virtual keyboard visible', !state.get('virtual keyboard visible'))
 })
-
-document.getElementById('midi-modal-toggler').addEventListener('click', () => {
-  state.set('midi modal visible', !state.get('midi modal visible'))
-})
