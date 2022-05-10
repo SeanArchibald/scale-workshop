@@ -274,7 +274,6 @@ div#splash-center img {
   width: 100vw !important;
   height: 100vh !important;
   position: fixed;
-  overflow-x: scroll;
 }
 .fullscreen-modal .ui-dialog-buttonpane {
 }
@@ -401,12 +400,21 @@ div#splash-center img {
 }
 #modal_midi_settings .device h4 {
   flex-grow: 1;
+  font-size: unset;
 }
 #modal_midi_settings .device h4 label {
   margin: 0;
+  font-weight: unset;
 }
 #modal_midi_settings .channels {
   display: flex;
+  flex-wrap: wrap;
+}
+#modal_midi_settings .channels label, #modal_midi_settings .settings label {
+  font-weight: unset;
+}
+#modal_midi_settings .device + .device {
+  margin-top: 2em;
 }
 #modal_midi_settings .channel {
   display: flex;
