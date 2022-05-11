@@ -87,10 +87,11 @@ Please base any work on develop branch, and pull requests should also be made ag
 
 ## Changelog
 
-### 1.4.3
-* Feature: output MIDI to MTS-capable synths for real-time MIDI microtuning
+### 1.5
+* Feature: output MIDI for real-time microtuning in MIDI synths that support multichannel pitch bend
 * Feature: added button for toggling velocity sensing for MIDI in
 * Improvement: Virtual Keyboard now works better on desktop, can be closed with the Esc key, keys are highlighted when pressed
+* Improvement: user guide documentation is updated
 * Improvement: better decimal precision
 * Bug fix: typo in Kraig Grady Centaura Harmonic preset scale
 * Bug fix: enumerate chord inversion
