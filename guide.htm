@@ -21,8 +21,8 @@
   <!-- Open Graph -->
   <meta property="og:title" content="Scale Workshop User Guide" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="http://sevish.com/scaleworkshop/guide.htm" />
-  <meta property="og:image" content="http://sevish.com/scaleworkshop/src/assets/img/scale-workshop-og-image.png" />
+  <meta property="og:url" content="https://sevish.com/scaleworkshop/guide.htm" />
+  <meta property="og:image" content="https://sevish.com/scaleworkshop/src/assets/img/scale-workshop-og-image.png" />
   <meta property="og:description"
     content="Scale Workshop is a tool that allows you to create microtonal tunings within your web browser. You can export these tunings to your device and use them to tune various synthesizers." />
   <meta property="og:site_name" content="Sevish Music" />
@@ -179,7 +179,7 @@
   <header>
     <p><img src="src/assets/favicon/apple-touch-icon.png" alt="Scale Workshop logo" id="logo" /></p>
     <h1>Scale Workshop</h1>
-    <h4>User guide 1.4</h4>
+    <h4>User guide 1.5</h4>
     <p class="lead">Scale Workshop allows you to design microtonal scales and play them in your web browser. Export your
       scales for use with VST instruments. Convert Scala files to various tuning formats.</p>
     <a href="#overview" class="sr-only">Skip to main content</a>
@@ -203,8 +203,8 @@
               <li><a href="#soniccouture">Soniccouture tuning file (.nka)</a></li>
               <li><a href="#harmor">Harmor Pitch Map (.fnv)</a></li>
               <li><a href="#sytrus">Sytrus Pitch Map (.fnv)</a></li>
-              <li><a href="#deflemask">Deflemask 'fine tune' reference</a></li>
               <li><a href="#korg-logue">Korg Sound Librarian Scale/Octave (.mnlgtuns/mnlgtuno)</a></li>
+              <li><a href="#deflemask">Deflemask 'fine tune' reference</a></li>
               <li><a href="#reaper-note-names">Reaper Note Name Map (.txt)</a></li>
             </ul>
           </li>
@@ -230,6 +230,7 @@
             <ul>
               <li><a href="#sort-ascending">Sort ascending</a></li>
               <li><a href="#reduce">Reduce</a></li>
+              <li><a href="#rotate">Rotate</a></li>
               <li><a href="#subset">Subset</a></li>
               <li><a href="#stretch-compress">Stretch/compress</a></li>
               <li><a href="#random-variance">Random variance</a></li>
@@ -244,13 +245,14 @@
       </li>
       <li><a href="#synthesizer">Synthesizer</a>
         <ul>
-          <li><a href="#playing-with-midi">Playing with MIDI</a></li>
+          <li><a href="#playing-with-midi">Playing with a MIDI controller</a></li>
           <li><a href="#playing-with-qwerty">Playing with QWERTY</a></li>
           <li><a href="#playing-with-touch-screen">Playing with mouse / touch screen</a></li>
           <li><a href="#isomorphic-mapping">Isomorphic mapping</a></li>
           <li><a href="#changing-the-sound-of-the-synth">Changing the sound of the synth</a></li>
         </ul>
       </li>
+      <li><a href="#midi">MIDI I/O</a></li>
       <li><a href="#misc-tips">Misc. tips</a></li>
     </ul>
     <a class="btn btn-default" href="index.htm" target="_blank">Launch Scale Workshop</a>
@@ -427,10 +429,12 @@
 
     <h3 id="enumerate-chord">Enumerate chord</h3>
     <p>Create a scale from a list of harmonics separated by colons.<br/>E.g. 4:5:6:7:8</p>
+    <p class="text-center"><a href="src/assets/img/guide/enumerate-chord.png" target="_blank"><img src="src/assets/img/guide/enumerate-chord.png" /></a></p>
 
     <h3 id="cps">Combination product set</h3>
     <p>Create a scale by multiplying harmonics in different combinations. Optionally, the resulting scale can be reduced by 2/1 and sorted in ascending order.</p>
     <p><a href="https://en.xen.wiki/w/Combination_product_set" target="_blank">Combination product set (Xenharmonic Wiki)</a></p>
+    <p class="text-center"><a href="src/assets/img/guide/cps.png" target="_blank"><img src="src/assets/img/guide/cps.png" /></a></p>
 
     <h3 id="manual-data-entry">Manual data entry</h3>
     <p>Scales can be written manually by typing them in to the <strong>Scale data</strong> text field. Enter one
@@ -440,6 +444,7 @@
     <p>Values with a . are cents values: e.g. 701.955<br />
       Values with slash (/) are ratios: e.g. 3/2<br />
       Values with a backslash (n\m) are n degrees of m-EDO: e.g. 7\12<br />
+      Values with comma (,) are decimals: e.g. 1,5<br />
       The final value is your octave or pseudo-octave: e.g. 2/1</p>
 
     <h4 id="just-intonation">Just intonation examples</h4>
@@ -484,12 +489,11 @@
 1200.</pre>
 
     <h4 id="misc">Misc examples</h4>
-    <p>You can combine all the above styles in the same scale if needed:</p>
-    <pre>1\9
-2\9
+    <p>You can combine any of the above styles in the same scale if needed:</p>
+    <pre>1,2
 3\9
-3/2
-1206.6</pre>
+700.1
+2/1</pre>
 
 
     <h3 id="modify-scales">Modify scales</h3>
@@ -504,10 +508,13 @@
     <h3 id="reduce">Reduce</h3>
     <p>Makes your entire scale fit within a desired 'modulus' interval, typically 2/1. Intervals in your scale which are larger than the modulus will wrap around, leaving only a remainder.</p>
 
+    <h3 id="rotate">Rotate</h3>
+    <p>Allows you to choose an interval of your scale to become 1/1.</p>
+
     <h3 id="subset">Subset</h3>
     <p>Takes a subset of the current scale. Subsets are entered numerically.</p>
-    <p class="text-center"><a href="src/assets/img/guide/mode.png" target="_blank"><img
-          src="src/assets/img/guide/mode.png" /></a></p>
+    <p class="text-center"><a href="src/assets/img/guide/subset.png" target="_blank"><img
+          src="src/assets/img/guide/subset.png" /></a></p>
 
     <h3 id="stretch-compress">Stretch/compress</h3>
     <p>Applies a linear stretch across the current scale. Enter a stretch factor, where 1 is no stretch at all.</p>
@@ -548,9 +555,9 @@
     <p>Scale Workshop has a built-in synth so that you can play and hear your scales. This is useful for auditioning the
       scale you're working on, however it is very simple and isn't recommended for live performance.</p>
 
-    <h3 id="playing-with-midi">Playing with MIDI</h3>
-    <p>Play notes on any connected MIDI device in order to hear your current scale. Must be enabled first by clicking
-      the 'MIDI on' button within Synth Settings. You will also need a web-MIDI capable browser.</p>
+    <h3 id="playing-with-midi">Playing with a MIDI controller</h3>
+    <p>Play notes on any connected MIDI device in order to hear your current scale. This requires you to use a web-MIDI capable browser. Must be enabled first by clicking
+      the 'MIDI I/O' menu option then clicking the 'MIDI on' button while your controller is connected.</p>
 
     <h3 id="playing-with-qwerty">Playing with QWERTY</h3>
     <p>Use your computer keyboard to play your current scale, much like an isomorphic keyboard.</p>
@@ -566,8 +573,8 @@
     <h3 id="playing-with-touch-screen">Playing with mouse / touch screen</h3>
     <p>On the top menu, click Virtual Kbd to display a grid overlay. Click / Touch the grid to hear your scale. The mapping on the
       grid is the same as the mapping on the QWERTY keys.</p>
-    <p class="text-center"><a href="src/assets/img/guide/touch-keyboard.png" target="_blank"><img
-          src="src/assets/img/guide/touch-keyboard.png" /></a></p>
+    <p class="text-center"><a href="src/assets/img/guide/virtual-keyboard.png" target="_blank"><img
+          src="src/assets/img/guide/virtual-keyboard.png" /></a></p>
 
     <h3 id="isomorphic-mapping">Isomorphic mapping</h3>
     <p>When using the QWERTY or the Virtual keyboard, by default each note along a horizontal axis is 1 scale degree
@@ -580,12 +587,20 @@
     <p>The synth has the following options:</p>
     <ul>
       <li><strong>Main Volume</strong></li>
-      <li><strong>Waveform</strong>: Triangle, Sawtooth, Square, Sine</li>
+      <li><strong>Waveform</strong>: Semisine (default), Octaver, Triangle, Square, Sawtooth, Brightness, Harmonic Bell, Warm, Sine</li>
       <li><strong>Amplitude envelope</strong>: Organ, Pad, Percussive (Short, Medium and Long)</li>
       <li><strong>Delay effect</strong>: feedback delay echo</li>
+      <li><strong>Max polyphony</strong>: maximum number of voices that can be played at one time. Use a low value if you're on a low powered device. Many devices will be capable of 64 or more simultaneous voices. Must refresh the page for changes to take effect.</li>
     </ul>
     <p class="text-center"><a href="src/assets/img/guide/synth-settings.png" target="_blank"><img
           src="src/assets/img/guide/synth-settings.png" /></a></p>
+    
+    <h2 id="midi">MIDI I/O</h2>
+    <p>Scale Workshop can behave like a MIDI tuning box, allowing for MIDI input into the app and then outputting MIDI notes plus multichannel pitch bend messages, thereby allowing you to hear your scale on a supported MIDI synth.</p>
+    <p>Before getting started, make sure that your web browser is web-MIDI compatible. Not all browsers support MIDI I/O.</p>
+    <p>Connect your MIDI device(s) to your computer, then click the MIDI I/O option in the top menu. Then click the red 'MIDI on' button. If this was successful, the button will turn green and you will see a list of your MIDI devices below.</p>
+    <p class="text-center"><a href="src/assets/img/guide/midi-io-settings.png" target="_blank"><img src="src/assets/img/guide/midi-io-settings.png" /></a></p>
+    <p>MIDI devices can be enabled or disabled by selecting the check boxes next to each device. Each individual channel can also be enabled or disabled by the check boxes.</p>
 
     <h2 id="misc-tips">Misc. tips</h2>
     <p><strong>General settings</strong> can be found on the right side of the Scale Workshop interface.</p>
@@ -594,9 +609,9 @@
     <p>If an exported tuning file doesn't seem to load into a softsynth properly, then try changing the value of
       <strong>Line endings format</strong> and re-saving the file. If you're using a Windows computer it's recommended
       to set this to Microsoft, otherwise set this to Unix.</p>
-    <p><strong>Night mode</strong> makes the Scale Workshop interface dark.</p>
-    <p class="text-center"><a href="src/assets/img/guide/night-mode.png" target="_blank"><img
-          src="src/assets/img/guide/night-mode.png" /></a></p>
+    <p><strong>Dark mode</strong> makes the Scale Workshop interface dark.</p>
+    <p class="text-center"><a href="src/assets/img/guide/dark-mode.png" target="_blank"><img
+          src="src/assets/img/guide/dark-mode.png" /></a></p>
     <p>Undo/redo your tuning changes by using the back/forward browser navigation buttons.</p>
     <p>If the synth gets too noisy, you can kill all sound by clicking the <strong>Quiet</strong> button.</p>
   </article>
