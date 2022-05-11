@@ -20,7 +20,7 @@ if (
  * GLOBALS
  */
 
-const APP_TITLE = 'Scale Workshop 1.4.3'
+const APP_TITLE = 'Scale Workshop 1.5'
 const TUNING_MAX_SIZE = 128
 let newline = localStorage && localStorage.getItem('newline') === 'windows' ? '\r\n' : '\n'
 const newlineTest = /\r?\n/
