@@ -73,8 +73,8 @@ class Synth {
         semisineCosineComponents[n] = 1 / (1 - 4*n*n);
       }
       this.custom_waveforms.semisine = this.audioCtx.createPeriodicWave(
-        semisineSineComponents,
-        semisineCosineComponents
+        semisineCosineComponents,
+        semisineSineComponents
       );
 
       // set up master gain
