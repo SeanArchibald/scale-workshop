@@ -49,7 +49,7 @@ function touch_to_midinote([row, col]) {
 function is_qwerty_active() {
   jQuery('div#qwerty-indicator').empty()
   var focus = document.activeElement.tagName
-  if (focus == 'TEXTAREA' || focus == 'INPUT') {
+  if (focus == 'TEXTAREA' || focus == 'INPUT' || focus == 'SELECT') {
     jQuery('div#qwerty-indicator').html(
       '<img src="" style="float:right" /><h4><span class="glyphicon glyphicon glyphicon-volume-off" aria-hidden="true" style="color:#d9534f"></span> Keyboard disabled</h4><p>Click here to enable QWERTY keyboard playing.</p>'
     )
