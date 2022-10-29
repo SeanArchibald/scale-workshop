@@ -748,8 +748,8 @@ function get_scale_url() {
   var url = new URL(window.location.href)
   var protocol = !R.isEmpty(url.protocol) ? url.protocol + '//' : 'http://'
   var host = url.host
-  var pathname = !R.isEmpty(url.pathname) ? url.pathname : '/scaleworkshop/'
-  // var domain = !R.isNil(window.location.href) ? window.location.href : 'http://sevish.com/scaleworkshop';
+  var pathname = !R.isEmpty(url.pathname) ? url.pathname : '/scaleworkshop1/'
+  // var domain = !R.isNil(window.location.href) ? window.location.href : 'http://sevish.com/scaleworkshop1';
   var name = encodeURIComponent(jQuery('#txt_name').val())
   var data = encodeURIComponent(jQuery('#txt_tuning_data').val())
   var freq = encodeURIComponent(jQuery('#txt_base_frequency').val())
@@ -802,7 +802,7 @@ function export_url() {
   var export_url = window.location.href
 
   if (export_error()) {
-    export_url = 'http://sevish.com/scaleworkshop/'
+    export_url = 'http://sevish.com/scaleworkshop1/'
   }
 
   // copy url in to url field
